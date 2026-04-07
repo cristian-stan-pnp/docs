@@ -1,0 +1,56 @@
+---
+title: "API REST"
+---
+
+## Uso de la API[​](#uso-de-la-api "Enlace directo al Uso de la API")
+
+La [API de Paylands](/reference) está basada en un servicio REST y utiliza los códigos de respuesta HTTP estándar para indicar errores que se produzcan al realizar peticiones a la API.
+
+Ejemplo de petición
+
+```
+curl --include \     --request POST \     --header "Content-Type: application/json" \     --header "Authorization: Basic c2tfdGVzdF9CUW9raWtKT3ZCaUkySGxXZ0g0b2xmUTI6" \     --data-binary "{  "amount": 1000,  "operative": "AUTHORIZATION",  "signature": "c6f00988430dbc8e83a7bc7ab5256346",  "customer_ext_id": "user1024",  "description": "Subscripción mensual",  "url_post": "https://mysite.com/payment/result",  "url_ok": "https://mysite.com/payment/success",  "url_ko": "https://mysite.com/payment/error"}" \'https://api.paylands.com/v1/sandbox/payment'
+```
+
+En Paylands todas nuestras respuestas son servidas en formato JSON, incluyendo las respuestas que contienen mensajes de error.
+
+Un ejemplo de respuesta correcta es el siguiente:
+
+Respuesta correcta
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-04-15T07:12:36+0200",  "response_field": "example response"}
+```
+
+Una respuesta con error tendrá una estructura similar:
+
+Respuesta con error
+
+```
+{  "message": "Bad Request",  "code": 400,  "details": "Service not found: F46ER1Q8"}
+```
+
+Para que la API acepte las peticiones que realices, éstas deben ser debidamente [autenticadas](/docs/api-usage/authentication). En la siguiente sección explicamos como autenticar las peticiones a nuestra API.
+
+Puedes consultar los endpoints disponibles en la [referencia API](/reference).
+
+Dichas respuestas pueden no tener siempre la misma estructura debido a cambios progresivos que pueden incluir nuevos campos en las respuestas de la api, por lo que se recomienda que no se valide estrictamente toda la respuesta.
+
+## Códigos de error de la API[​](#códigos-de-error-de-la-api "Enlace directo al Códigos de error de la API")
+
+Los códigos que se podrán recibir desde los endpoints de Paylands serán los siguientes:
+
+| Code | Message           | Explanation                                                                  |
+| ---- | ----------------- | ---------------------------------------------------------------------------- |
+| 200  | OK                | Everything worked as expected                                                |
+| 400  | Bad Request       | The request was unacceptable, often due to missing a required parameter      |
+| 401  | Unauthorized      | No valid API key provided                                                    |
+| 402  | Failed            | The requested resource doesn't exist                                         |
+| 403  | Unauthenticated   | Api key or signature are incorrect or they are not being sent as they should |
+| 404  | Not Found         | The parameters were valid but the request failed                             |
+| 409  | Conflict          | The request conflicts with another request                                   |
+| 429  | Too Many Requests | Too many requests hit the API too quickly                                    |
+| 500  | Server Errors     | Something went wrong on services end                                         |
+| 502  | Server Errors     | Something went wrong on services end                                         |
+| 503  | Server Errors     | Something went wrong on services end                                         |
+| 504  | Server Errors     | Something went wrong on services end                                         |

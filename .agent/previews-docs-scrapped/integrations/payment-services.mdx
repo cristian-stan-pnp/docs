@@ -1,0 +1,47 @@
+---
+title: "Servicios de pago"
+description: "Paylands permite al comercio conectar multiples servicios como pasarelas de pago. Un servicio de pago es una pasarela de un determinado proveedor y que Paylands pone a disposición del comercio para su uso de forma transparente y teniendo resuelta la integración con el mismo. De este modo, el comercio puede configurar las pasarelas de forma integrada sin tener que preocuparse en desarrollos con los distintos proveedores."
+---
+
+Disponemos de un amplio catálogo de tipos de servicios de pago de los que el comercio podrá [**solicitar la activación del servicio**](#activaci%C3%B3n-de-servicio-de-pago) según sus necesidades. Para poder empezar a vender es necesario configurar al menos una pasarela de pago para un tipo de servicio.
+
+## Tipos de servicios de pago[​](#tipos-de-servicios-de-pago "Enlace directo al Tipos de servicios de pago")
+
+A continuación se muestra una **tabla comparativa** de los servicios de pago disponibles en Paylands destacando las características de cada uno. Podrás elegir el servicio o servicios de pago que mejor se adapten a las necesidades del comercio en base a las características que ofrece cada uno.
+
+| Servicio                                                              |  3DS | Recurrencias | Devoluciones | Retenciones | Abonos | Alternativo | DPAN |
+| --------------------------------------------------------------------- | :--: | :----------: | :----------: | :---------: | :----: | :---------: | :--: |
+| [**CASHFLOWS**](/docs/integrations/payment-service-cashflows)         |  ✔️️ |      ✔️️     |      ✔️️     |      ❌      |    ❌   |      ❌      |   ❌  |
+| [**CECABANK**](/docs/integrations/payment-service-cecabank)           |  ✔️️ |      ✔️️     |      ✔️️     |     ✔️️     |    ❌   |      ❌      |   ❌  |
+| [**CLEARHAUS**](/docs/integrations/payment-service-clearhaus)         |  ✔️️ |      ✔️️     |      ✔️️     |     ✔️️     |   ✔️️  |      ❌      |   ❌  |
+| [**CREDIBANCO**](/docs/integrations/payment-service-credibanco)       |   ❌  |      ✔️️     |      ✔️️     |      ❌      |    ❌   |      ❌      |   ❌  |
+| [**CREDORAX**](/docs/integrations/payment-service-credorax)           |  ✔️️ |      ✔️️     |      ✔️️     |     ✔️️     |   ✔️️  |      ❌      |  ✔️  |
+| [**CYBERSOURCE**](/docs/integrations/payment-service-cybersource)     | ️✔️️ |     ️✔️️     |     ✔️️️     |     ️✔️️    |    ❌   |      ❌      |   ❌  |
+| [**NUVEI**](/docs/integrations/payment-service-nuvei)                 |  ✔️️ |      ✔️️     |      ✔️️     |     ✔️️     |    ❌   |      ❌      |  ✔️  |
+| [**PAYLANDS**](/docs/integrations/payment-service-paylands)           |  ✔️️ |      ✔️️     |      ✔️️     |     ✔️️     |   ✔️   |      ✔️     |  ✔️  |
+| [**REDSYS**](/docs/integrations/payment-service-redsys)               |  ✔️️ |      ✔️️     |      ✔️️     |     ✔️️     |   ✔️️  |      ❌      |  ✔️  |
+| [**TRUSTPAYMENTS**](/docs/integrations/payment-service-trustpayments) |  ✔️️ |      ✔️️     |      ✔️️     |     ✔️️     |    ❌   |      ❌      |   ❌  |
+| [**MIT**](/docs/integrations/payment-service-mit)                     |  ✔️️ |       ❌      |      ✔️️     |      ❌      |    ❌   |      ❌      |   ❌  |
+| [**INESPAY**](/docs/integrations/payment-service-inespay)             |  ✔️️ |       ❌      |      ✔️️     |      ❌      |    ❌   |      ✔️     |   ❌  |
+| [**PAYRETAILERS**](/docs/integrations/payment-service-payretailers)   |   ❌  |       ❌      |       ❌      |      ❌      |    ❌   |      ✔️     |   ❌  |
+| EVOSNAP                                                               |  ✔️️ |      ✔️️     |      ✔️️     |     ✔️️     |    ❌   |      ❌      |   ❌  |
+| DLOCAL                                                                |   ❌  |      ✔️️     |      ✔️️     |     ✔️️     |    ❌   |      ❌      |   ❌  |
+| NMI                                                                   |   ❌  |      ✔️️     |      ✔️️     |     ✔️️     |    ❌   |      ❌      |   ❌  |
+| GIROPAY                                                               |   ❌  |       ❌      |      ✔️️     |      ❌      |    ❌   |     ✔️️     |   ❌  |
+| SOFORT                                                                |   ❌  |       ❌      |      ✔️️     |      ❌      |    ❌   |     ✔️️     |   ❌  |
+| VIACASH                                                               |   ❌  |       ❌      |      ✔️️     |      ❌      |    ❌   |     ✔️️     |   ❌  |
+| BITNOVO                                                               |   ❌  |       ❌      |      ✔️️     |      ❌      |    ❌   |     ✔️️     |   ❌  |
+
+## Procesador vs Adquiriente[​](#procesador-vs-adquiriente "Enlace directo al Procesador vs Adquiriente")
+
+Un **procesador** de pagos es un sistema que recepta las autorizaciones y autenticaciones de una transacción, las organiza y válida contra los diferentes bancos o entidades emisoras.
+
+Un **adquiriente** es una entidad financiera con licencia para la captación, gestión y movimiento de fondos entre una tarjeta de crédito o débito hacia la cuenta bancaria de un comercio. Habitualmente son entidades bancarias pero podria no serlo.
+
+Los servicios de pago de Paylands siempre pertenecen a un procesador y algunas veces coincide que el procesador es a su vez un adquiriente.
+
+## Activación de servicio de pago[​](#activación-de-servicio-de-pago "Enlace directo al Activación de servicio de pago")
+
+Si deseas la activación de un servicio en concreto como pasarela de pago, puedes hacerlo utilizando el [**Formulario de solicitud de activación de servicios de pago**](https://docs.google.com/forms/d/e/1FAIpQLScKlwENien4gP_iWwSOMTRiGdYCaF9xPju5qS04tcwAMzuQGQ/viewform) que tenemos disponible.
+
+Tras enviar la solicitud, nuestro equipo la revisará y te solicitará la información adicional para la configuración de los servicios solicitados. Una vez configurado el servicio quedará activado para su uso.

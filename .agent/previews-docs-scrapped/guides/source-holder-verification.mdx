@@ -1,0 +1,212 @@
+---
+title: "Verificación del titular del medio de pago (SHV)"
+description: "La  es una funcionalidad que permite  de un medio de pago ( o ), comparando los datos del titular aportados en la operación con la información real asociada al medio de pago."
+---
+
+La verificación puede realizarse mediante el nombre del titular o mediante un identificador legal del titular, según el método seleccionado.
+
+***
+
+## Métodos de verificación[​](#métodos-de-verificación "Enlace directo al Métodos de verificación")
+
+SHV permite verificar la titularidad de un `source` utilizando uno de los siguientes métodos:
+
+* `NAME` (**por defecto**): verifica si el nombre del titular indicado coincide con el titular real del medio de pago.
+* `IDENTIFICATION_NUMBER`: verifica si el identificador legal indicado corresponde con el titular real del medio de pago.
+
+El método se puede indicar mediante el campo `verification_method`. Si no se especifica, se utiliza `NAME`.
+
+***
+
+## ¿En qué flujos se puede usar?[​](#en-qué-flujos-se-puede-usar "Enlace directo al ¿En qué flujos se puede usar?")
+
+SHV puede aplicarse en **tres flujos**:
+
+1. **[Endpoint específico de verificación](/reference/#operation/verify-source-holder)**
+
+   * Permite **verificar un `source` frente a un titular** y **obtener el resultado** de la verificación.
+   * Devuelve el resultado de coincidencia: `MATCH`, `NO_MATCH`, `PARTIAL_MATCH` (cuando la verificación se realiza).
+
+2. **Almacenar un medio de pago ([tokenizar tarjeta](/reference/#operation/save-card) / [crear cuenta bancaria](/reference/#operation/save-bank))**
+
+   * En el endpoint de **almacenamiento** de tarjeta o cuenta bancaria, si se envían los campos requeridos, SHV valida si el `source` que se pretende almacenar **pertenece al titular indicado**.
+   * Según las políticas configuradas, el flujo puede **bloquearse** y evitar que el `source` se almacene.
+
+3. **Flujo de pago (payins y payouts)**
+
+   * Al [**generar la orden de pago**](/reference/#operation/generate-payment-order), se puede indicar en `extra_data` el cuerpo de `source_holder_verification`.
+
+   * Antes de intentar el pago, se ejecuta una verificación SHV del `source` con el que se pretende pagar.
+
+   * Permite **bloquear el pago** si:
+
+     * la verificación **no puede llevarse a cabo** (según política), o
+     * el resultado **no coincide** (según `accepted_verification_results`).
+
+***
+
+## Endpoint específico: verificar titular de un source[​](#endpoint-específico-verificar-titular-de-un-source "Enlace directo al Endpoint específico: verificar titular de un source")
+
+### Ejemplo de petición con NAME[​](#ejemplo-de-petición-con-name "Enlace directo al Ejemplo de petición con NAME")
+
+```
+{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",  "service": "E8952860-5441-45A2-9233-33651DABA250",  "holder": {    "first_name": "Luis",    "last_name": "Pérez López"  }}
+```
+
+### Ejemplo de petición con IDENTIFICATION\_NUMBER[​](#ejemplo-de-petición-con-identification_number "Enlace directo al Ejemplo de petición con IDENTIFICATION_NUMBER")
+
+> Cuando `verification_method` es `IDENTIFICATION_NUMBER`, debe enviarse `holder.identification_number`. El campo `first_name` sigue siendo necesario para la verificación.
+
+```
+{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",  "service": "E8952860-5441-45A2-9233-33651DABA250",  "holder": {    "first_name": "Luis",    "last_name": "Pérez López",    "identification_number": "B88353412"  },  "verification_method": "IDENTIFICATION_NUMBER"}
+```
+
+### Ejemplo de respuesta[​](#ejemplo-de-respuesta "Enlace directo al Ejemplo de respuesta")
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2026-02-24T14:35:01+0100",  "verification": {    "uuid": "A8CABF0C-C690-46C7-9F4B-E6AC3F929799",    "status": "PERFORMED",    "match_result": "MATCH",    "error": null,    "policy_action": null,    "verification_method": "NAME"  }}
+```
+
+***
+
+## Aplicar SHV en almacenamiento de source o en pagos[​](#aplicar-shv-en-almacenamiento-de-source-o-en-pagos "Enlace directo al Aplicar SHV en almacenamiento de source o en pagos")
+
+En los flujos de **almacenamiento de source** y **pago**, el cuerpo que se envía es el mismo:
+
+```
+{  "source_holder_verification": {    "enabled": true,    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```
+
+### ¿Qué hace este cuerpo?[​](#qué-hace-este-cuerpo "Enlace directo al ¿Qué hace este cuerpo?")
+
+* Si `enabled = true`, se intenta ejecutar SHV durante el flujo.
+
+* Permite definir **políticas**:
+
+  * qué resultados son aceptables (`accepted_verification_results`),
+  * qué hacer si la verificación **no está disponible** o **no se realiza** (`allow_unavailable`),
+  * qué hacer ante **errores** (`allow_error`).
+
+* Permite informar `first_name` y `last_name`. Si no se envían:
+
+  * En **pagos**, se intenta obtener de `extra_data.profile`.
+  * En **almacenamiento**, se intenta obtener de `card_holder` / `account_holder`.
+
+* Permite seleccionar el método de verificación mediante `verification_method`.
+
+Para que la verificación pueda realizarse, los datos necesarios deben estar disponibles en la operación:
+
+* El **nombre del titular** (`first_name`) debe estar presente, ya sea enviado en `source_holder_verification` u obtenido de `extra_data.profile.first_name`.
+* Si el método seleccionado es `IDENTIFICATION_NUMBER`, también debe estar disponible el **identificador legal del titular** (`identification_number`), ya sea enviado explícitamente u obtenido de `extra_data.profile.document_identification_number`.
+
+***
+
+## Ejemplos de uso[​](#ejemplos-de-uso "Enlace directo al Ejemplos de uso")
+
+### Tokenizar tarjeta (almacenamiento)[​](#tokenizar-tarjeta-almacenamiento "Enlace directo al Tokenizar tarjeta (almacenamiento)")
+
+```
+{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "customer_ext_id": "test1",  "card_holder": "TEST",  "card_pan": "4242424242424242",  "card_expiry_year": 34,  "card_expiry_month": "12",  "additional": null,  "url_post": "",  "validate": false,  "service": "E8952860-5441-45A2-9233-33651DABA250",  "card_cvv": 123,  "source_holder_verification": {    "enabled": true,    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```
+
+### Crear cuenta bancaria (almacenamiento)[​](#crear-cuenta-bancaria-almacenamiento "Enlace directo al Crear cuenta bancaria (almacenamiento)")
+
+```
+{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "account_holder": "prueba",  "iban": "ES4469400001180255458867",  "customer_ext_id": "test",  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",  "source_holder_verification": {    "enabled": true,    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH", "NO_MATCH"],    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```
+
+### Crear orden (flujo de pago)[​](#crear-orden-flujo-de-pago "Enlace directo al Crear orden (flujo de pago)")
+
+> En pagos, `source_holder_verification` se envía dentro de `extra_data`.
+
+```
+{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 10,  "operative": "PAYOUT",  "secure": false,  "customer_ext_id": "test",  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",  "description": "test",  "additional": "Paylands test",  "url_post": "https://enpxp0f8f1owh.x.pipedream.net/",  "url_ok": "",  "url_ko": "",  "template_uuid": null,  "dcc_template_uuid": null,  "extra_data": {    "profile": {      "first_name": "Luis",      "last_name": "test",      "email": "victor.colejo@paynopain.com",      "birthdate": "1996-04-04"    },    "source_holder_verification": {      "enabled": true,      "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],      "allow_unavailable": true,      "allow_error": false,      "first_name": "Pedro",      "last_name": "Perez"    }  }}
+```
+
+***
+
+## Campos de `source_holder_verification`[​](#campos-de-source_holder_verification "Enlace directo al campos-de-source_holder_verification")
+
+| Campo                           | Tipo                | Requerido   | Default | Descripción                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------- | ------------------- | ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `enabled`                       | `boolean`           | **Sí**      | —       | Activa la verificación del titular del medio de pago. Cuando se establece en `true`, la plataforma realiza una comprobación SHV antes de continuar con el flujo (por ejemplo, antes de ejecutar el pago).                                                                                                                                                                                                                                  |
+| `verification_method`           | `string` *(enum)*   | No          | `NAME`  | Método utilizado para verificar la titularidad del medio de pago. Valores permitidos: `NAME` o `IDENTIFICATION_NUMBER`. Si se establece `NAME`, la verificación se basa en comprobar si el nombre del titular indicado coincide con el titular real del medio de pago. Si se establece `IDENTIFICATION_NUMBER`, la verificación se basa en comprobar si el identificador legal indicado corresponde con el titular real del medio de pago. |
+| `accepted_verification_results` | `string[]` *(enum)* | No          | —       | Lista de resultados de verificación que se consideran aceptables para continuar con la operación. Si se omite o está vacía, el flujo continúa independientemente del resultado SHV. Valores permitidos: `MATCH`, `NO_MATCH`, `PARTIAL_MATCH`.                                                                                                                                                                                              |
+| `allow_unavailable`             | `boolean`           | No          | `true`  | Permite continuar con el flujo si la verificación **no ha sido realizada** porque no es soportada por el banco o por el tipo/marca de tarjeta, o porque aun pudiendo ser soportada el banco no la ejecuta.                                                                                                                                                                                                                                 |
+| `allow_error`                   | `boolean`           | No          | `false` | Determina el comportamiento cuando la comprobación no puede completarse debido a fallos/errores transitorios (p. ej. timeout o indisponibilidad temporal). Cuando es `true`, estos errores **no** bloquean el flujo. Cuando es `false`, estos errores **bloquean** la operación.                                                                                                                                                           |
+| `first_name`                    | `string`            | No          | —       | Nombre del titular del medio de pago. Si no se envía: en pagos se intenta obtener de `extra_data.profile`; en almacenamiento, de `card_holder` / `account_holder`. Este dato debe estar disponible para que la verificación pueda realizarse.                                                                                                                                                                                              |
+| `last_name`                     | `string`            | No          | —       | Apellidos del titular del medio de pago (misma lógica que `first_name`).                                                                                                                                                                                                                                                                                                                                                                   |
+| `identification_number`         | `string`            | Condicional | —       | Identificador legal del titular del medio de pago (por ejemplo, NIF, DNI, pasaporte o número de registro de empresa). Obligatorio cuando `verification_method` es `IDENTIFICATION_NUMBER`. Si no se envía, en pagos se intenta obtener de `extra_data.profile.document_identification_number`.                                                                                                                                             |
+
+***
+
+## Respuesta SHV (formato común)[​](#respuesta-shv-formato-común "Enlace directo al Respuesta SHV (formato común)")
+
+Independientemente del endpoint/flujo, el bloque de respuesta de SHV se devuelve con esta forma:
+
+```
+{  "source_holder_verification": {    "uuid": "ED17EDE3-51A7-47A9-BD13-50448587278C",    "status": "PERFORMED",    "match_result": "NO_MATCH",    "error": null,    "policy_action": "ALLOWED",    "verification_method": "NAME"  }}
+```
+
+### Significado de los campos[​](#significado-de-los-campos "Enlace directo al Significado de los campos")
+
+* `uuid`: identificador único de la verificación realizada.
+* `status`: estado final del intento de verificación.
+* `match_result`: resultado de coincidencia (si aplica).
+* `error`: el error que se haya podido producir durante la verificación.
+* `policy_action`: aplica solo a los flujos de **creación de source** y **pago** (cuando se envía `source_holder_verification` con políticas). Indica la decisión final tomada sobre la continuación del flujo.
+
+***
+
+## Estados de `status`[​](#estados-de-status "Enlace directo al estados-de-status")
+
+Valores posibles:
+
+* `PERFORMED` La verificación se pudo realizar. Se espera que `match_result` venga informado (`MATCH`, `PARTIAL_MATCH` o `NO_MATCH`).
+
+* `NOT_PERFORMED` No se realizó la verificación (por motivos no necesariamente de soporte).
+
+* `NOT_SUPPORTED` La verificación no está soportada para el banco / tipo de cuenta / marca o tipo de tarjeta.
+
+* `FAILED` Fallo durante la ejecución de la verificación.
+
+* `ERROR` Error transitorio o técnico (por ejemplo, timeout o indisponibilidad temporal).
+
+***
+
+## Resultados de coincidencia `match_result`[​](#resultados-de-coincidencia-match_result "Enlace directo al resultados-de-coincidencia-match_result")
+
+Una comprobación SHV puede devolver:
+
+* `MATCH` — Los datos del titular coinciden completamente con los del titular real del medio de pago.
+* `PARTIAL_MATCH` — Coincidencia aproximada con pequeñas discrepancias.
+* `NO_MATCH` — Los datos del titular no coinciden con el titular real.
+
+***
+
+## Acciones de política `policy_action`[​](#acciones-de-política-policy_action "Enlace directo al acciones-de-política-policy_action")
+
+> Aplica en flujos de **creación de source** y **pago** cuando se han enviado políticas en `source_holder_verification`.
+
+Valores posibles:
+
+* `ALLOWED`
+* `BLOCKED_NOT_ACCEPTED_MATCH_RESULT`
+* `SKIPPED_UNAVAILABLE`
+* `SKIPPED_ERROR`
+* `BLOCKED_UNAVAILABLE`
+* `BLOCKED_ERROR`
+* `BLOCKED_UNEXPECTED_STATUS`
+
+***
+
+## Simulación en Sandbox (IBAN)[​](#simulación-en-sandbox-iban "Enlace directo al Simulación en Sandbox (IBAN)")
+
+En entornos de **sandbox**, para **cuentas bancarias**, se pueden simular resultados de `match_result` usando estos IBAN:
+
+| IBAN                       | Resultado simulado           | Descripción                                 |
+| -------------------------- | ---------------------------- | ------------------------------------------- |
+| `ES8569400001160529041877` | rechazado                    | Simula siempre una verificación rechazada.  |
+| `ES6769400001110836662135` | fallido (`NO_MATCH`)         | Simula siempre un resultado `NO_MATCH`.     |
+| `ES3369400001190536473836` | confirmado (`PARTIAL_MATCH`) | Simula siempre una coincidencia aproximada. |
+| Cualquier otro IBAN        | confirmado (`MATCH`)         | Simula siempre una coincidencia completa.   |

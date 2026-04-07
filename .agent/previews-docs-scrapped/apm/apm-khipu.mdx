@@ -1,0 +1,53 @@
+---
+description: "Khipu es un método de pago alternativo exclusivo de Chile, que ofrecemos a través de Flow y Payretailers. Se trata de una plataforma de pagos electrónicos que permite realizar transacciones seguras y rápidas en línea, permitiendo al usuario usar sus propias cuentas corrientes, tarjetas de crédito y tarjetas de débito."
+---
+
+## Integración mediante redirección para FLOW[​](#integración-mediante-redirección-para-flow "Enlace directo al Integración mediante redirección para FLOW")
+
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order), indicando el email.
+
+```
+  "extra_data": {    "profile": {      "first_name": " ",      "last_name": " ",      "email": "test@gmail.com",    }  }
+```
+
+Como identificador de servicio, debe indicarse el **service\_uuid** del servicio de FLOW que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Una vez generada la orden, se debe redirigir al usuario a [la pantalla de pago](/reference/#operation/redirection-payment) indicando el token de la orden y en la query, el nombre del APM:
+
+Construimos la URL de redirección reemplazando el **token** por el valor devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
+```
+
+Una vez el usuario sea redirigido a esta pantalla, el usuario podrá seleccionar su banco para autorizar la transacción. Cuando complete el pago, será redirigido de vuelta a la URL OK o KO, dependiendo del resultado del pago.
+
+## Integración mediante redirección para Payretailers[​](#integración-mediante-redirección-para-payretailers "Enlace directo al Integración mediante redirección para Payretailers")
+
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order), indicando el first\_name, last\_name, email, document\_identification\_number, phone, city, country, address1, zip\_code, state\_code.
+
+```
+  "extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "Kobe",        "last_name": "Bryant",        "email": "andreu.sanchez@paynopain.com",        "document_identification_number": "92309089",        "phone": {            "number": "02614235138",            "prefix": "54"        }    },    "billing_address": {        "city": "Castellon",        "country": "COL",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }  }
+```
+
+Como identificador de servicio, debe indicarse el **service\_uuid** del servicio de Payretailers que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Una vez generada la orden, se debe redirigir al usuario a [la pantalla de pago](/reference/#operation/redirection-payment) indicando el token de la orden y en la query, el nombre del APM:
+
+Construimos la URL de redirección reemplazando el **token** por el valor devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
+```
+
+## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+
+Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de FLOW y Payretailers.
+
+## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+
+Opcionalmente, dentro del objeto `extra_data` se puede incluir el campo `payment_reason`, que permite indicar una descripción del pago.
+
+```
+  "extra_data": {    "payment": {      "payment_reason": "Payment description"    }  }
+```

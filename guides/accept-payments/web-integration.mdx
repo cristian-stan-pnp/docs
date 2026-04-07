@@ -1,0 +1,51 @@
+---
+title: 'Pagos Online'
+description: 'Integrate Paylands into your website using our JavaScript library'
+---
+
+# Integración Simple (Redirección)
+
+La carta de pago por redirección de Paylands es la forma más sencilla y segura para cobrar los pagos a tus clientes. Se les muestra una pantalla con un formulario para que introduzcan sus datos de tarjeta. Esto se puede realizar mediante una redirección o mostrándole el formulario embebido en un iframe de tu web.
+
+## Características
+- **Sin fricción**: Validación de tarjetas en tiempo real.
+- **Responsive**: Diseño adaptado a móviles.
+- **Métodos de pago**: Soporte para múltiples métodos.
+- **Seguro**: Soporte para 3D Secure y cumplimiento PCI.
+- **Personalizable**: Logotipo y colores ajustables.
+
+## Flujo de Integración
+
+### 1. Generar la orden de pago
+El comercio debe enviar las características del pago al endpoint `/payment` para generar la orden.
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+--header 'Authorization: YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "signature": "YOUR_SIGNATURE",
+    "amount": 100,
+    "operative": "AUTHORIZATION",
+    "customer_ext_id": "test",
+    "service": "SERVICE_UUID",
+    "description": "Payment #1",
+    "url_post": "https://my.website.com/process",
+    "url_ok": "https://my.website.com/ok",
+    "url_ko": "https://my.website.com/ko"
+}'
+```
+
+### 2. Redirigir al cliente
+En la respuesta obtendrás un `token`. Usa este token para construir la URL de la carta de pago:
+
+`https://api.paylands.com/v1/payment/process/{TOKEN}`
+
+Puedes redirigir al usuario o usar un iframe:
+
+```html
+<iframe src="https://api.paylands.com/v1/payment/process/{TOKEN}" width="600" height="800"></iframe>
+```
+
+### 3. Notificación
+Una vez completado el pago, Paylands enviará una notificación a tu `url_post` con el resultado de la operación.

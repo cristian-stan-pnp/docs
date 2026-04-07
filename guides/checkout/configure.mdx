@@ -1,0 +1,43 @@
+---
+title: 'Configurar un Checkout'
+description: 'Aprende a crear y configurar un checkout en el panel de Paylands'
+---
+
+# Configurar un Checkout
+
+Antes de poder usar el Checkout de Paylands en tu integración, es necesario crearlo y configurarlo desde el panel de administración.
+
+## Crear un Checkout
+
+1. Accede al **Backend de Paylands** → **Checkout**.
+2. Pulsa en **"Nuevo Checkout"**.
+3. Dale un nombre identificativo (p. ej. `Tienda Principal`).
+4. Guarda los cambios. Se generará un **Checkout ID** que usarás en tu integración.
+
+## Configurar los métodos de pago
+
+Dentro de la configuración de tu checkout, accede a la pestaña **"Métodos de pago"** para activar o desactivar los métodos disponibles para ese checkout en concreto.
+
+Los métodos de pago disponibles dependen de los **Servicios de pago** que tengas configurados en tu cuenta.
+
+<Note>
+  Algunos métodos de pago requieren una asociación especial de comercio antes de poder activarse. En concreto:
+  - **Google Pay**: Requiere registrar tu comercio en la consola de Google Pay y configurar el ID en Paylands.
+  - **Apple Pay**: Requiere validar tu dominio con Apple.
+  - **Mastercard Click to Pay**: Requiere contactar con el equipo de Paylands para su activación.
+</Note>
+
+## Parámetros de configuración
+
+| Parámetro | Descripción |
+|-----------|-------------|
+| **Nombre** | Nombre interno identificativo del checkout. |
+| **Servicio de pago** | Pasarela asociada por defecto para tarjeta. |
+| **Métodos de pago** | Listado de métodos activos (tarjeta, wallets, APMs). |
+| **Personalización** | Tema, colores, logo y tipografía (ver página siguiente). |
+| **URL de retorno (OK/KO)** | URLs a las que se redirige tras el pago según resultado. |
+| **URL de notificación (webhook)** | Endpoint de tu servidor para recibir la notificación de pago. |
+
+## Obtener el Checkout ID
+
+El **Checkout ID** es el identificador único necesario para usar este checkout en tu integración. Puedes encontrarlo en el panel de administración dentro del detalle del checkout creado. Lo necesitarás para generar órdenes de pago.

@@ -1,0 +1,102 @@
+---
+title: 'Primer pago en 5 minutos'
+description: 'Realiza tu primer pago con Paylands en pocos minutos usando el entorno Sandbox'
+---
+
+# Primer pago en 5 minutos
+
+Esta guía te mostrará cómo hacer tu primer pago de prueba con Paylands usando el entorno **Sandbox** (sin dinero real).
+
+## Prerrequisitos
+
+- Una cuenta de Paylands con acceso al entorno Sandbox.
+- Tu **API Key** de Sandbox. Consíguela en [Portal → Desarrolladores](https://portal.paynopain.com/settings/developers).
+- El **UUID del servicio** (Service UUID) de Sandbox. Lo encontrarás en el Backend de Paylands → Servicios.
+
+## Paso 1 — Crear la orden de pago
+
+Desde tu terminal o herramienta API (por ejemplo, curl o Postman), crea una orden de pago:
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+  --header 'Authorization: Bearer TU_API_KEY_SANDBOX' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "signature": "TU_FIRMA_SECRETA",
+    "amount": 100,
+    "operative": "AUTHORIZATION",
+    "customer_ext_id": "cliente-prueba-001",
+    "service": "TU_SERVICE_UUID",
+    "description": "Primer pago de prueba",
+    "url_post": "https://tu-web.com/webhook",
+    "url_ok": "https://tu-web.com/ok",
+    "url_ko": "https://tu-web.com/ko"
+  }'
+```
+
+La respuesta incluirá un `token` de la orden:
+
+```json
+{
+  "order": {
+    "token": "abc123def456...",
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "status": "CREATED"
+  }
+}
+```
+
+<Info>
+  El importe `amount` se especifica en **céntimos**. Un valor de `100` equivale a **1,00€**.
+</Info>
+
+## Paso 2 — Abrir la página de pago
+
+Construye la URL de pago con el token obtenido y ábrela en tu navegador:
+
+```
+https://api.paylands.com/v1/payment/process/AQUI_TU_TOKEN
+```
+
+Verás la carta de pago de Paylands con el formulario de tarjeta.
+
+## Paso 3 — Completar el pago con tarjeta de prueba
+
+Usa cualquiera de estas tarjetas de prueba para simular un pago:
+
+| Resultado | Número de tarjeta |
+|-----------|------------------|
+| ✅ Pago OK (3DS Full flow) | `4761739000091011` |
+| ❌ Pago KO | `5485009949201879` |
+
+- **CVV**: `123`
+- **Fecha de expiración**: `12/34`
+- **Titular**: cualquier nombre
+
+## Paso 4 — Verificar el resultado
+
+Tras completar el pago, Paylands enviará una notificación a la `url_post` que configuraste. Puedes consultar el estado de la orden directamente en el Backend de Paylands o mediante la API:
+
+```bash
+curl 'https://api.paylands.com/v1/sandbox/order/TU_ORDER_UUID' \
+  --header 'Authorization: Bearer TU_API_KEY_SANDBOX'
+```
+
+Si el pago fue exitoso, el campo `status` de la orden tendrá el valor `SUCCESS`. 🎉
+
+## Próximos pasos
+
+<CardGroup cols={2}>
+  <Card title="Integración Web" icon="globe" href="/guides/accept-payments/web-integration">
+    Aprende a integrar la carta de pago en tu web via redirección o iframe.
+  </Card>
+  <Card title="Checkout" icon="shopping-cart" href="/guides/checkout/introduction">
+    Descubre el Checkout moderno de Paylands con JS SDK y React Component.
+  </Card>
+  <Card title="Autenticación" icon="key" href="/guides/get-started/authentication">
+    Entiende cómo funciona la autenticación y las tarjetas de prueba disponibles.
+  </Card>
+  <Card title="Notificaciones" icon="bell" href="/guides/features/webhooks">
+    Configura los webhooks para recibir el resultado del pago en tu servidor.
+  </Card>
+</CardGroup>

@@ -1,0 +1,59 @@
+---
+title: "Mastercard Click to Pay"
+---
+
+## Introducción[​](#introducción "Enlace directo al Introducción")
+
+Mastercard Click to Pay es un sistema integrado en nuestra carta de pago que permite gestionar las tarjetas de los usuarios a través de sus dispositivos de modo que no sea necesario que introduzcan sus datos de tarjeta cada vez que quieren pagar.
+
+Como comercio, utilizar este sistema es una buena idea si los pagos siempre se llevan a cabo por carta de pago, de modo que será Mastercard Click to Pay quien realice la gestión de las tarjetas del usuario. Utilizar este sistema no tiene ningún coste para el usuario.
+
+A pesar de ser un sistema desarrollado por Mastercard, también es compatible con tarjetas VISA.
+
+## Funcionamiento[​](#funcionamiento "Enlace directo al Funcionamiento")
+
+Para que el sistema de Mastercard Click to Pay esté disponible en la carta de pago, basta indicar un UUID de plantilla (`template_uuid`) compatible con Mastercard Click to Pay en el momento de creación de la orden. El UUID de plantilla es diferente en el entorno de sandbox y producción. Hecho esto, cuando se acceda a la carta de pago ésta contendrá un campo adicional donde el usuario podrá introducir su dirección de correo electrónico.
+
+A continuación se detallan los pasos que deben seguir los usuarios para llevar a cabo el pago dependiendo de si ya están registrados o no en Mastercard Click to Pay y el dispositivo que utilizan para llevar a cabo el pago.
+
+### Nuevo usuario[​](#nuevo-usuario "Enlace directo al Nuevo usuario")
+
+Cuando un usuario todavía no se ha registrado, podrá rellenar todos los datos del formulario.
+
+![Pantalla inicial](/images/docs/wallets/assets/images/start-a63563856b5c3628caca047668eac3b6.png) ![Pantalla inicial rellenada](/images/docs/wallets/assets/images/start_filled_mc-74e0344830644cd7656323b7147b8559.png)
+
+El botón "Saber más" muestra la siguiente información:
+
+![Saber mas](/images/docs/wallets/assets/images/info-04c66d25d4478883009a007d0ee07383.png)
+
+Si acepta compartir su información con Click to Pay, cuando pulse en "Pagar" se mostrará un formulario de registro en el que se le solicitará confirmar su email y proporcionar su número de teléfono.
+
+![Registro Mastercard](/images/docs/wallets/assets/images/register_mc-442c4610d386cb7f04f95e6244ce4039.png)
+
+Finalmente, se mostrará la lista de tarjetas con las cuales puede pagar, y si pulsa en "Pagar" esta vez sí finalizará el pago.
+
+![Listado de tarjetas](/images/docs/wallets/assets/images/cards-921b1ff50740aebcf9a6d06ccc96ff93.png)
+
+### Usuario registrado, nuevo dispositivo[​](#usuario-registrado-nuevo-dispositivo "Enlace directo al Usuario registrado, nuevo dispositivo")
+
+Si un usuario ya se ha registrado pero está pagando desde otro dispositivo como por ejemplo su teléfono móvil, basta con que rellene su correo electrónico para que el sistema le reconozca y le solicite si quiere acceder a sus tarjetas. Si pulsa en "No, gracias", el usuario volverá a la carta de pago habitual donde podrá introducir sus datos de tarjeta manualmente.
+
+![Usuario reconocido](/images/docs/wallets/assets/images/recognized-afdfab67df0be2b5faaadc7f78970305.png)
+
+Cuando el usuario pulse en "Continuar", se le solicitará la introducción de un código OTP (One time pass) que recibirá en su teléfono móvil en forma de SMS, o si no tuviera acceso al mismo, al correo que utilizó para registrarse.
+
+![OTP](/images/docs/wallets/assets/images/otp-78ccd67c702baea635a32f77a8f0cd8f.png)
+
+Una vez introduczca el código, se mostrará la lista de tarjetas con las cuales puede pagar. Si pulsa en "Pagar" esta vez sí finalizará el pago.
+
+![Listado de tarjetas](/images/docs/wallets/assets/images/cards-921b1ff50740aebcf9a6d06ccc96ff93.png)
+
+### Usuario registrado, mismo dispositivo[​](#usuario-registrado-mismo-dispositivo "Enlace directo al Usuario registrado, mismo dispositivo")
+
+Si un usuario ya se ha registrado y está pagando en un dispositivo donde anteriormente realizó un pago con Mastercard Click to Pay, basta con que rellene su correo electrónico para que el sistema le reconozca y le solicite si quiere acceder a sus tarjetas.
+
+![Usuario reconocido](/images/docs/wallets/assets/images/recognized-afdfab67df0be2b5faaadc7f78970305.png)
+
+Esta vez no será necesario introducir el código OTP y se le mostrará la lista de tarjetas con las cuales puede pagar. Si pulsa en "Pagar" esta vez sí finalizará el pago.
+
+![Listado de tarjetas](/images/docs/wallets/assets/images/cards-921b1ff50740aebcf9a6d06ccc96ff93.png)

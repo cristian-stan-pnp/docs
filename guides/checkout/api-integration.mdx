@@ -1,0 +1,95 @@
+---
+title: 'Integración via API'
+description: 'Integra el checkout de Paylands redirigiendo al cliente a la URL de pago'
+---
+
+# Integración del Checkout via API
+
+La integración via API es el método más sencillo para usar el Checkout de Paylands. El flujo consiste en generar una orden de pago desde tu servidor y redirigir al cliente a la URL del checkout.
+
+## Flujo de integración
+
+<Steps>
+  <Step title="Generar la orden en tu servidor">
+    Desde tu backend, realiza una petición `POST` al endpoint de creación de orden incluyendo el `checkout_uuid` correspondiente. Paylands devolverá un `token` de orden.
+
+    ```bash
+    curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+    --header 'Authorization: Bearer YOUR_API_KEY' \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "signature": "YOUR_SIGNATURE",
+        "amount": 1000,
+        "operative": "AUTHORIZATION",
+        "customer_ext_id": "user-123",
+        "service": "SERVICE_UUID",
+        "checkout": "CHECKOUT_UUID",
+        "description": "Pedido #1234",
+        "url_post": "https://tu-web.com/webhook",
+        "url_ok": "https://tu-web.com/gracias",
+        "url_ko": "https://tu-web.com/error"
+    }'
+    ```
+
+    Respuesta:
+    ```json
+    {
+      "order": {
+        "token": "abc123def456...",
+        "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "status": "CREATED"
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Redirigir al cliente al checkout">
+    Usa el `token` recibido para construir la URL del checkout y redirige al cliente:
+
+    ```
+    https://api.paylands.com/v1/payment/process/{TOKEN}
+    ```
+
+    O bien incrústalo en un **iframe** en tu propia web:
+
+    ```html
+    <iframe
+      src="https://api.paylands.com/v1/payment/process/{TOKEN}"
+      width="100%"
+      height="700"
+      frameborder="0">
+    </iframe>
+    ```
+  </Step>
+
+  <Step title="El cliente completa el pago">
+    El cliente introduce sus datos de pago en el checkout alojado de Paylands y confirma la transacción. Paylands gestiona el 3DS y la comunicación con el banco de forma transparente.
+  </Step>
+
+  <Step title="Notificación asíncrona a tu servidor">
+    Cuando el pago finaliza (con cualquier resultado), Paylands envía una notificación `POST` a la `url_post` que especificaste con el resultado de la operación.
+
+    Consulta la página [Notificación del pago](/guides/features/webhooks) para ver el formato completo del payload y cómo validar la firma.
+  </Step>
+
+  <Step title="Redirección del cliente">
+    Según el resultado del pago, el cliente es redirigido automáticamente a la `url_ok` o `url_ko` que configuraste en la orden.
+  </Step>
+</Steps>
+
+## Parámetros importantes
+
+| Parámetro | Tipo | Descripción |
+|-----------|------|-------------|
+| `amount` | integer | Importe en céntimos (p. ej. `1000` = 10,00€). |
+| `operative` | string | `AUTHORIZATION` para cobro inmediato, `DEFERRED` para preautorización. |
+| `service` | string | UUID del servicio de pago a utilizar. |
+| `checkout` | string | UUID del checkout configurado en el panel. |
+| `customer_ext_id` | string | Identificador único del cliente en tu sistema. |
+| `url_post` | string | URL de tu servidor para recibir la notificación de resultado. |
+| `url_ok` | string | URL de redirección tras pago exitoso. |
+| `url_ko` | string | URL de redirección tras pago fallido. |
+
+<Warning>
+  El importe se especifica siempre en **céntimos de la moneda** correspondiente. Un importe de `1000` equivale a 10,00€.
+</Warning>

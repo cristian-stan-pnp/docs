@@ -1,0 +1,80 @@
+---
+title: "Introducere"
+---
+
+
+Bine ați venit la documentația Paynopain. Urmați acești pași pentru a integra gateway-ul nostru de plată în afacerea dvs., de la primul test până la încasarea reală.
+
+## Creați-vă contul de testare
+
+Înainte de a începe, veți avea nevoie de acces la mediul nostru Sandbox. Puteți crea contul de testare în două moduri:
+
+- **Autoînregistrare**: Înregistrați-vă direct la [portal.paynopain.com/register](https://portal.paynopain.com/register)
+- **Suport**: Contactați echipa noastră de asistență pentru a obține contul de testare și cheile API
+
+### Obțineți acreditările din portal
+
+Dacă aveți deja un cont Paynopain, puteți obține acreditările din portalul Paynopain accesând următorul link:
+
+[Portal Paynopain -> Dezvoltatori](https://portal.paynopain.com/settings/developers)
+
+![Secțiunea Dezvoltatori în portal cu link https://portal.paynopain.com/settings/developers
+ ](/images/es/seccion-desarolladores.png)
+
+## Construiți-vă integrarea
+
+Începeți să dezvoltați integrarea utilizând contul dvs. Sandbox. Puteți alege metoda care se potrivește cel mai bine modelului dvs. de afaceri:
+
+<CardGroup cols={2}>
+  <Card title="Plăți Online" icon="globe" href="/guides/accept-payments/web-integration">
+    Acceptați plăți pe site-ul sau aplicația mobilă folosind API-ul nostru (Redirecționare sau Webservice).
+  </Card>
+  <Card title="Plăți Fizice" icon="store" href="/api-reference/card-present">
+    Soluții pentru acceptarea plăților la punctul de vânzare (POS) și terminale fizice.
+  </Card>
+  <Card title="Plugin-uri" icon="puzzle-piece" href="/guides/plugins/ecommerce">
+    Conectați sistemul dvs. de e-commerce (WooCommerce, PrestaShop, Magento, VTex) fără a fi nevoie de programare.
+  </Card>
+  <Card title="Instrumente No-Code" icon="wand-magic-sparkles" href="/guides/get-started/introduction#instrumente-no-code">
+    Utilizați Link-uri de Plată și terminalul virtual (MoTo) pentru a încasa fără integrare tehnică complexă.
+  </Card>
+</CardGroup>
+
+
+## Solicitați contul de producție
+
+Un cont de producție vă permite să acceptați plăți reale de la clienții dvs. Deoarece Paynopain este o entitate financiară reglementată, trebuie să efectuăm o verificare a afacerii dvs. înainte de a vă activa.
+
+Înainte de a solicita trecerea la producție:
+*   Verificați dacă modelul dvs. de afaceri îndeplinește cerințele noastre.
+*   Asigurați-vă că ați finalizat testele în Sandbox în mod satisfăcător.
+*   Contactați echipa noastră comercială pentru a începe procesul.
+
+## Semnați contractul și activați-vă
+
+Dacă cererea dvs. este aprobată, vă vom trimite contractul de servicii. În funcție de integrarea dvs. (în special dacă procesați carduri direct), este posibil să trebuiască să completați un chestionar de securitate PCI-DSS.
+
+Odată ce primim contractul semnat și documentația necesară, vă vom oferi acces la **Panoul de Producție**.
+
+## Pregătiți-vă pentru încasare
+
+Pentru a începe să acceptați plăți reale, trebuie să vă configurați contul de producție. **Important**: Configurațiile din Sandbox nu sunt copiate automat în Producție.
+
+Utilizați această listă de verificare înainte de lansare:
+*   [ ] Configurați metodele de plată și checkout-ul în panoul de producție.
+*   [ ] Actualizați endpoint-urile în aplicația dvs. pentru a indica URL-urile de producție.
+*   [ ] Efectuați o tranzacție reală de test (de valoare mică) pentru a verifica fluxul complet.
+
+---
+
+## Instrumente No-Code
+
+Dacă preferați să nu efectuați o integrare tehnică, puteți utiliza instrumentele noastre directe:
+
+### Link-uri de Plată
+Generați link-uri de plată sigure și trimiteți-le clienților dvs. prin email, SMS sau rețele sociale.
+![Link-uri de Plată](/images/payment-links.png)
+
+### Plăți MoTo
+Terminal virtual pentru procesarea plăților manuale primite prin telefon sau email.
+![Plăți MoTo](/images/moto-payments.png)

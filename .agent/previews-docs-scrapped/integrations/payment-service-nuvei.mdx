@@ -1,0 +1,234 @@
+---
+title: "Nuvei"
+---
+
+## Datos extra requeridos[​](#datos-extra-requeridos "Enlace directo al Datos extra requeridos")
+
+Nuvei espera recibir la siguiente información obligatoriamente en el campo `extra_data` al crear la orden:
+
+* Nombre y apellidos
+* Email
+* Dirección
+
+Estos campos pueden aportarse con la siguiente estructura en `extra_data`:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com"    },    "address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }}
+```
+
+## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+
+Las tarjetas de prueba son las siguientes. En general, la fecha de caducidad y CVV no importan siempre y cuando la fecha sea posterior a la fecha actual, y el CVV tenga 3 cifras.
+
+| Resultado            | Tarjeta                    |
+| -------------------- | -------------------------- |
+| OK                   | 4000023104662535 12/34 123 |
+| KO (-1 Do not honor) | 5333463046218753 12/34 123 |
+
+## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+
+La estructura del error tiene la siguiente forma:
+
+```
+Código Mensaje
+```
+
+Por ejemplo:
+
+```
+-1 Do not honor
+```
+
+### Errores de la API[​](#errores-de-la-api "Enlace directo al Errores de la API")
+
+| Código | Mensaje                                                                                                            |
+| ------ | ------------------------------------------------------------------------------------------------------------------ |
+| 1000   | General Error                                                                                                      |
+| 1001   | Invalid checksum                                                                                                   |
+| 1004   | Missing or invalid CardData data                                                                                   |
+| 1007   | Invalid name on card                                                                                               |
+| 1010   | Invalid user token                                                                                                 |
+| 1011   | Missing or invalid UserPaymentOption data                                                                          |
+| 1013   | Invalid merchant ID                                                                                                |
+| 1014   | \{0}Invalid country code                                                                                           |
+| 1019   | Validation Error                                                                                                   |
+| 1021   | Invalid timestamp                                                                                                  |
+| 1022   | Invalid merchant site ID                                                                                           |
+| 1023   | User payment option is not enabled                                                                                 |
+| 1024   | UPO limit per user exceeded                                                                                        |
+| 1028   | Invalid card issuer                                                                                                |
+| 1029   | Invalid expired date                                                                                               |
+| 1038   | Communication error                                                                                                |
+| 1040   | Invalid or missing amount                                                                                          |
+| 1041   | Invalid or missing amount currency                                                                                 |
+| 1055   | Single UPO validation failed                                                                                       |
+| 1056   | User management is off                                                                                             |
+| 1057   | Invalid order ID                                                                                                   |
+| 1058   | Requested operation cannot be performed on this order                                                              |
+| 1059   | Ambiguous payment data                                                                                             |
+| 1060   | Missing or invalid payment data                                                                                    |
+| 1061   | Invalid card token                                                                                                 |
+| 1062   | Invalid CVV                                                                                                        |
+| 1063   | Total amount does not match items amount sum                                                                       |
+| 1064   | Invalid session token. There can be only one order per session token.                                              |
+| 1065   | Invalid token                                                                                                      |
+| 1066   | Invalid request                                                                                                    |
+| 1067   | Invalid or missing transaction type                                                                                |
+| 1068   | Payment method is not enabled                                                                                      |
+| 1069   | Session expired                                                                                                    |
+| 1070   | The currency is not supported by the merchant payment option settings                                              |
+| 1071   | Invalid request amount. The amount of the payment3D request is unequal to the amount of the Auth3D order.          |
+| 1072   | Missing or invalid PA response                                                                                     |
+| 1073   | Invalid Order Currency. The currency of the payment 3D request and the currency of the Auth3D order are different. |
+| 1074   | The user payment option is expired.                                                                                |
+| 1075   | Invalid language code                                                                                              |
+| 1076   | Unsupported payment method                                                                                         |
+| 1077   | API rebilling is disabled                                                                                          |
+| 1078   | Missing user payment option config                                                                                 |
+| 1079   | Rebilling is only allowed with user payment option.                                                                |
+| 1080   | Invocation of this method is forbidden                                                                             |
+| 1081   | IP Address is blocked                                                                                              |
+| 1082   | Invalid value of relatedTransactionId                                                                              |
+| 1083   | ekycUserDetails: The date of birth is invalid                                                                      |
+| 1084   | UserDetails: The date of birth is invalid                                                                          |
+| 1085   | Invalid request parameter value. The value of isPartialApproval should be empty or equal to 0 or 1                 |
+| 1086   | Sending of cardData block is not allowed                                                                           |
+| 1087   | Invalid request xss content                                                                                        |
+| 1088   | Invalid clientRequestId. It should be provided when api setting is set to check it for uniqueness.                 |
+| 1089   | There is another transaction with this clientRequestId.                                                            |
+| 1090   | UPO is not in valid status. Valid statuses are ENABLED, SUSPENDED and FROZEN.                                      |
+| 1091   | The transaction was processed by another merchant or merchant site.                                                |
+| 1092   | The transaction does not support the requested operation                                                           |
+| 1093   | Missing message text!                                                                                              |
+| 1094   | Invalid message locale!                                                                                            |
+| 1095   | Invalid results range                                                                                              |
+| 1096   | Unknown status                                                                                                     |
+| 1097   | Invalid value of account info field \{0} in request.                                                               |
+| 1098   | Missing account info field \{0} in request.                                                                        |
+| 1099   | Payment method already registered!                                                                                 |
+| 1101   | \{0}Invalid state                                                                                                  |
+| 1102   | No such product descriptor                                                                                         |
+| 1103   | The subscription plan id is invalid                                                                                |
+| 1104   | Temporary card token is forbidden for this method.                                                                 |
+| 1105   | UserDetails: firstname, lastname, email, address, zip code and country are mandatory                               |
+| 1107   | Invalid methodCode                                                                                                 |
+| 1108   | Invalid casino                                                                                                     |
+| 1109   | Invalid email                                                                                                      |
+| 1110   | Invalid locale code                                                                                                |
+| 1111   | External Error. Error received from IMS. IMS error message: \{0}.                                                  |
+| 1112   | Registration failed                                                                                                |
+| 1113   | \{0}The state is not from the country                                                                              |
+| 1114   | Invalid verification status                                                                                        |
+| 1115   | Invalid verification method                                                                                        |
+| 1116   | Payment account details not found by IMS.                                                                          |
+| 1117   | Invalid dynamic3DMode. The allowed values are: (off, on).                                                          |
+| 1118   | Invalid isDynamic3D. The allowed values are: (0, 1).                                                               |
+| 1120   | ekycUserDetails: invalid identificationType                                                                        |
+| 1121   | Merchant not verified                                                                                              |
+| 1122   | Merchant site disabled                                                                                             |
+| 1123   | Invalid items count with open amount                                                                               |
+| 1124   | Merchant site is not configured to execute Managed3D transaction.                                                  |
+| 1125   | UPO Payment method is not supported by this method.                                                                |
+| 1126   | When using rebilling, isDynamic3D must be equal to 1 and dynamic3DMode must be OFF.                                |
+| 1127   | When using externalMPI, isDynamic3D must be equal to 1 and dynamic3DMode must be OFF.                              |
+| 1128   | Invalid type: \{0}                                                                                                 |
+| 1129   | KYC Document Upload disabled.                                                                                      |
+| 1130   | Country could not be extracted from the request.                                                                   |
+| 1131   | The originUrl = \[\{0}] is not valid!                                                                              |
+| 1132   | The transaction has been already automatically settled.                                                            |
+| 1140   | A payment was not performed during this session.                                                                   |
+| 2006   | Currency conversion is not supported.                                                                              |
+| 9064   | 3D Authentication failure                                                                                          |
+| 9065   | The currency is not supported by the payment method                                                                |
+| 9066   | Exchange rate not available                                                                                        |
+| 9067   | Wrong payment method                                                                                               |
+| 9068   | Wrong DCC currency                                                                                                 |
+| 9069   | Wrong converted amount                                                                                             |
+| 9070   | Wrong original currency                                                                                            |
+| 9071   | Wrong original amount                                                                                              |
+| 9072   | Payment is still in progress                                                                                       |
+| 9073   | Invalid or missing country and currency                                                                            |
+| 9074   | externalSchemeDetails: Invalid or unsupported credit card company.                                                 |
+| 9075   | 3D Secure authentication failed, payment not allowed.                                                              |
+| 9076   | 3D Secure authentication failed.                                                                                   |
+| 9077   | Card registration failed.                                                                                          |
+| 9078   | Account Verification is not enabled for this Merchant Site.                                                        |
+| 9079   | Account Verification is not configured for this Payment Option and Country.                                        |
+| 9080   | UPO is not in valid status. Valid statuses are ENABLED, SUSPENDED or DISABLED.                                     |
+| 9081   | Invalid currency conversion type.                                                                                  |
+| 9082   | Payment Option supports single Passenger Details record only.                                                      |
+| 9083   | Invalid or missing clientRequestId.                                                                                |
+| 9084   | Provided clientRequestId is not associated with a payout transaction.                                              |
+| 9085   | Payment Option is not a Card.                                                                                      |
+| 9086   | Open Amount feature is not enabled.                                                                                |
+| 9087   | Cannot use Open Amount and MCP Currency Conversion simultaneously.                                                 |
+| 9088   | Order Amount must be between %d and %d.                                                                            |
+| 9089   | Open Amount feature is not supported for this order.                                                               |
+| 9090   | Cannot use Open Amount and Amount Details/Order Items simultaneously.                                              |
+| 9091   | Balance retrieval error.                                                                                           |
+| 9092   | User account operation failed.                                                                                     |
+| 9093   | Account not found.                                                                                                 |
+| 9094   | Account already registered.                                                                                        |
+| 9095   | Add Bank Account failed.                                                                                           |
+| 9096   | Cannot fund user account at this time.                                                                             |
+| 9097   | Unsupported document type.                                                                                         |
+| 9098   | Unsupported enrollmentAction type.                                                                                 |
+| 9099   | Unsupported enrollment type.                                                                                       |
+| 9101   | 3D Authentication is required for Apple Pay transactions.                                                          |
+| 9102   | Invalid totalSettleCount                                                                                           |
+
+### Errores de la procesadora[​](#errores-de-la-procesadora "Enlace directo al Errores de la procesadora")
+
+| Código | Motivo                                                                    | Mensaje                                                                                                                                                                                                                                                                                                                                                       |
+| ------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| -1     | Call issuer                                                               | Refers to the issuer. It is possible that such transactions could be authorized with voice AuthCode.                                                                                                                                                                                                                                                          |
+| -1     | Invalid merchant                                                          | General decline message. Typically, this does not indicate any general issue with the merchant or MID. This decline reason is usually the result of an issue regarding an internal standard.                                                                                                                                                                  |
+| -1     | Pick up card                                                              | This is a general decline message from the issuer indicating that the consumer should retrieve the card. This message may be received when the card is reported as lost/stolen.                                                                                                                                                                               |
+| -1     | Do not honor                                                              | The most common and general issuer decline code. This code is generated by the issuer when no specific decline reason/code is returned.                                                                                                                                                                                                                       |
+| -1     | External Error in Processing                                              | This is a general error message. When receiving this error, the transaction may succeed when trying again later.                                                                                                                                                                                                                                              |
+| -1     | Pick up card, special condition (fraud account)                           | This is a general decline message from the issuer indicating that the consumer should retrieve the card. This message may be received when the card is reported as lost/stolen.                                                                                                                                                                               |
+| -1     | Invalid transaction                                                       | The most common and general issuer decline code. This code is generated by the issuer when no specific decline reason/code is returned.                                                                                                                                                                                                                       |
+| -1     | Invalid amount                                                            | This decline code is the result of an issue with the transaction amount. This code may be triggered as a result of the currency or financial reasons such as insufficient funds.                                                                                                                                                                              |
+| -1     | Invalid card number                                                       | The transaction could not be processed with the provided credit card number. This may indicate that the card number does not exist.                                                                                                                                                                                                                           |
+| -1     | No such issuer                                                            | This decline code indicates that there is a problem with the credit card number, for example, the credit card BIN doesn’t match the range of any issuer in the acquirer’s list.                                                                                                                                                                               |
+| -1     | Unable to locate record in file                                           | The transaction failed due to a technical issue. When receiving this error, the transaction may succeed when trying again later.                                                                                                                                                                                                                              |
+| -1     | File temporarily not available                                            | The transaction failed due to a technical issue. When receiving this error, the transaction may succeed when trying again later.                                                                                                                                                                                                                              |
+| -1     | Format error                                                              | For MasterCard or Maestro Card, this decline code may be the result of an invalid CVV number or a CVV number that could not be verified. This decline code may also be generated as the result of a 3D-Secure related issue, for example, the issuer requires transactions to be 3D-Secure and the transaction was processed through a Non-3D-Secure account. |
+| -1     | No credit account                                                         | This usually indicates that there is an issue with the account connected to the credit card, for example, the account is expired, cancelled, or does not exist.                                                                                                                                                                                               |
+| -1     | Lost card, pickup                                                         | This decline code is returned when the card is listed as lost on the issuer’s side.                                                                                                                                                                                                                                                                           |
+| -1     | Stolen card, pickup                                                       | This decline code is returned when the card is listed as stolen on the issuer’s side.                                                                                                                                                                                                                                                                         |
+| -1     | Insufficient Funds                                                        | The credit card holder lacks sufficient funds to complete the transaction.                                                                                                                                                                                                                                                                                    |
+| -1     | No checking account                                                       | This usually indicates that there is an issue with the account connected to the credit card, for example, the account is expired, cancelled, or does not exist.                                                                                                                                                                                               |
+| -1     | No savings account                                                        | This usually indicates that there is an issue with the account connected to the credit card, for example, the account is expired, cancelled, or does not exist.                                                                                                                                                                                               |
+| -1     | Expired card                                                              | The credit card is no longer valid or was cancelled. It is also possible that the expiration date does not match the card details.                                                                                                                                                                                                                            |
+| -1     | Incorrect PIN                                                             | This decline code is similar to other PIN-based declines, and may indicate that the card is being blocked due to a security issue, such as exceeding the limit of PIN entry attempts at a point of sale.                                                                                                                                                      |
+| -1     | Transaction not permitted to cardholder                                   | The issuer did not allow this transaction against this card based on internal reasons, such as the transaction originated from a specifically restricted industry or country.                                                                                                                                                                                 |
+| -1     | Transaction not permitted on terminal                                     | The issuer rejected the transaction based on its technical origin or requester. When this error reoccurs, it may indicate that the Issuer does not allow transactions from this specific merchant or industry type.                                                                                                                                           |
+| -1     | Suspected fraud                                                           | The transaction is suspected to be fraudulent.                                                                                                                                                                                                                                                                                                                |
+| -1     | Exceeds withdrawal limit                                                  | The transaction amount exceeds the permitted amount for this card or account.                                                                                                                                                                                                                                                                                 |
+| -1     | Restricted card                                                           | The card is marked as restricted on the issuer’s systems.                                                                                                                                                                                                                                                                                                     |
+| -1     | Error in decryption of PIN block                                          | The decline code is the result of a security violation and may indicate that the card has been restricted.                                                                                                                                                                                                                                                    |
+| -1     | Exceeds withdrawal frequency                                              | The transaction amount or count exceeds the permitted frequency for this card or account.                                                                                                                                                                                                                                                                     |
+| -1     | Invalid transaction; contact card issuer                                  | A general decline message likely indicating that the transaction was rejected for financial reasons, as well as the issuer’s internal standards.                                                                                                                                                                                                              |
+| -1     | PIN not changed                                                           | The transaction was declined as a result of the PIN code.                                                                                                                                                                                                                                                                                                     |
+| -1     | PIN tries exceeded                                                        | The card was blocked on the issuer’s system due to an excessive amount of PIN entry attempts at the point of sale. This decline code may be returned during an online transaction even though the PIN is not entered for online transactions. This message may be received when a card was blocked following a card-present transaction.                      |
+| -1     | Invalid “To” account specified                                            | This decline code is also known as ‘Unsolicited Reversal’, and might mean that the ‘to’ \[debit] account does not exist, is not connected to the card, or card was restricted.                                                                                                                                                                                |
+| -1     | Invalid “From” account specified                                          | The ‘from’ \[credit] account does not exist.                                                                                                                                                                                                                                                                                                                  |
+| -1     | Invalid account specified                                                 | This indicates that there is an issue with the account associated to the credit card number, for example, the number does not exist or is invalid.                                                                                                                                                                                                            |
+| -1     | System not available                                                      | This indicates that there was a technical issue preventing the completion of this transaction.                                                                                                                                                                                                                                                                |
+| -1     | Cryptographic error found in PIN                                          | This decline code is similar to other PIN-based declines, and may indicate that the card is being blocked due to a security issue, such as exceeding the limit of PIN entry attempts at a point of sale.                                                                                                                                                      |
+| -1     | Cannot verify PIN                                                         | The transaction was declined as a result of the PIN code.                                                                                                                                                                                                                                                                                                     |
+| -1     | PIN unacceptable. Retry.                                                  | The transaction was declined as a result of an unacceptable PIN code.                                                                                                                                                                                                                                                                                         |
+| -1     | Issuer or switch inoperative                                              | The acquirer was unable to complete the transaction on the issuer’s side, for example, as a result of a timeout.                                                                                                                                                                                                                                              |
+| -1     | Routing error                                                             | This indicates that the transaction request could not reach the authorizing destination (scheme/issuer). This may indicate that the credit card type is not processed by the acquirer.                                                                                                                                                                        |
+| -1     | Transaction cannot be completed                                           | The issuer could not complete the authorization of this transaction. If this occurs again, the cardholder should try contacting the issuer.                                                                                                                                                                                                                   |
+| -1     | Duplicate transaction                                                     | Indicates that a transaction was sent twice.                                                                                                                                                                                                                                                                                                                  |
+| -1     | Timeout/Retry                                                             | A timeout occurred between the acquirer and the issuer.                                                                                                                                                                                                                                                                                                       |
+| -1     | Invalid CVV2                                                              | The transaction was rejected as a result of the CVV2 and usually indicates that CVV2 provided does not match the credit card number. This code is relevant for Visa only.                                                                                                                                                                                     |
+| -1     | Revocation of Authorization Order                                         | This decline code may indicate that the cardholder requested to discontinue recurring transactions.                                                                                                                                                                                                                                                           |
+| -1     | Revocation of All Authorizations Order                                    | This decline code may indicate that the cardholder requested to discontinue recurring transactions.                                                                                                                                                                                                                                                           |
+| -1     | Soft Decline – Authentication is Advised                                  | The issuer has declined the transaction for authentication reasons. Running the transaction again with 3DS 2.0 / 1.0 might help to get the transaction approved.                                                                                                                                                                                              |
+| -1     | 3D-Secure authentication failed, payment not allowed.                     | Payment is not allowed. Do not request this payment again, not even as a Non-3D-Secure payment.                                                                                                                                                                                                                                                               |
+| -1     | Closed account. Issuer will not approve same amount in next 30 days.      | The cardholder cancelled the card. Should not retry the transaction with this card.                                                                                                                                                                                                                                                                           |
+| -1     | Suspected fraud, issuer will not approve in the next 30 days same amount. | Issuer marked the transaction as a suspected fraud. Should not retry the transaction with this card.                                                                                                                                                                                                                                                          |
+| -1     | Closed account                                                            | The cardholder cancelled the card.                                                                                                                                                                                                                                                                                                                            |

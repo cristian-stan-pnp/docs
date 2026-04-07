@@ -1,122 +1,637 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "maple",
   "name": "Mint Starter Kit",
+  "openapi": "api-reference/openapi.yaml",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#ee1b4e",
+    "light": "#ee1b4e",
+    "dark": "#ee1b4e"
   },
   "favicon": "/favicon.svg",
+  "settings": {
+    "customScripts": [
+      "/chatwoot-widget.js"
+    ]
+  },
   "navigation": {
-    "tabs": [
+    "languages": [
       {
-        "tab": "Guides",
-        "groups": [
+        "language": "es",
+        "tabs": [
           {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
+            "tab": "Guías",
+            "groups": [
+              {
+                "group": "Comenzar",
+                "pages": [
+                  "guides/get-started/introduction",
+                  "guides/get-started/authentication",
+                  "guides/get-started/environments",
+                  "guides/get-started/quickstart"
+                ]
+              },
+              {
+                "group": "Modelos de pagos",
+                "pages": [
+                  "guides/accept-payments/web-integration",
+                  "guides/accept-payments/pos-integration",
+                  "guides/accept-payments/no-integration",
+                  "guides/accept-payments/platformas-integration",
+                  "guides/accept-payments/plugins-integration"
+                ]
+              },
+              {
+                "group": "Checkout",
+                "pages": [
+                  "guides/checkout/introduction",
+                  "guides/checkout/configure",
+                  "guides/checkout/customize",
+                  "guides/checkout/api-integration",
+                  "guides/checkout/sdk-integration",
+                  "guides/checkout/react-integration"
+                ]
+              },
+              {
+                "group": "Funcionalidades",
+                "pages": [
+                  "guides/features/tokenization",
+                  "guides/features/fraud",
+                  "guides/features/security",
+                  "guides/features/customization",
+                  "guides/features/webhooks"
+                ]
+              },
+              {
+                "group": "Herramientas",
+                "pages": [
+                  "guides/tools/subscriptions",
+                  "guides/tools/proxipci",
+                  "guides/tools/debt-collector"
+                ]
+              },
+              {
+                "group": "Wallets",
+                "pages": [
+                  "guides/wallets/introduction",
+                  "guides/wallets/google-pay",
+                  "guides/wallets/apple-pay",
+                  "guides/wallets/click-to-pay"
+                ]
+              },
+              {
+                "group": "Métodos de pago alternativos",
+                "pages": [
+                  "guides/apm/introduction",
+                  "guides/apm/bizum"
+                ]
+              },
+              {
+                "group": "Servicios de pago",
+                "pages": [
+                  "guides/payment-services/introduction"
+                ]
+              },
+              {
+                "group": "Plugins",
+                "pages": [
+                  "guides/plugins/ecommerce"
+                ]
+              },
+              {
+                "group": "Recursos",
+                "pages": [
+                  "guides/resources/CFT-and-AFT",
+                  "guides/resources/concepts",
+                  "guides/resources/error-codes",
+                  "guides/resources/glossary"
+                ]
+              }
             ]
           },
           {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+            "tab": "Referencia API",
+            "groups": [
+              {
+                "group": "Tabla de contenidos",
+                "pages": [
+                  "api-reference/authentication",
+                  "api-reference/api-keys",
+                  "api-reference/refunds",
+                  {
+                    "group": "Órdenes",
+                    "pages": [
+                      "api-reference/orders/create",
+                      "api-reference/orders/get"
+                    ]
+                  },
+                  "api-reference/transactions",
+                  "api-reference/merchants",
+                  "api-reference/services",
+                  "api-reference/terminals",
+                  {
+                    "group": "Clientes",
+                    "pages": [
+                      "api-reference/customers/create",
+                      "api-reference/customers/get"
+                    ]
+                  },
+                  "api-reference/card-present"
+                ]
+              },
+              {
+                "group": "Métodos de pago",
+                "pages": [
+                  {
+                    "group": "Tarjetas",
+                    "pages": [
+                      "api-reference/cards/save",
+                      "api-reference/cards/get"
+                    ]
+                  },
+                  "api-reference/bank-accounts",
+                  "api-reference/update-external-id"
+                ]
+              },
+              {
+                "group": "Operaciones adicionales",
+                "pages": [
+                  "api-reference/moto-campaigns",
+                  {
+                    "group": "Operaciones en lote",
+                    "pages": [
+                      "api-reference/batch/authorizations",
+                      "api-reference/batch/refunds"
+                    ]
+                  },
+                  {
+                    "group": "Suscripciones",
+                    "pages": [
+                      "api-reference/subscriptions/create-plan",
+                      "api-reference/subscriptions/create-subscription"
+                    ]
+                  },
+                  {
+                    "group": "Listas de seguridad",
+                    "pages": [
+                      "api-reference/security/blacklist",
+                      "api-reference/security/whitelist",
+                      "api-reference/security/pan-whitelist"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "POSMS",
+                "pages": [
+                  {
+                    "group": "POSMS",
+                    "pages": [
+                      "api-reference/posms/payment",
+                      "api-reference/posms/refund"
+                    ]
+                  },
+                  "api-reference/posms/app2app-payment"
+                ]
+              }
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
-        "groups": [
+        "language": "en",
+        "tabs": [
           {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
+            "tab": "Guides",
+            "groups": [
+              {
+                "group": "Get Started",
+                "pages": [
+                  "en/guides/get-started/introduction",
+                  "en/guides/get-started/authentication",
+                  "en/guides/get-started/quickstart"
+                ]
+              },
+              {
+                "group": "Accept Payments",
+                "pages": [
+                  "en/guides/accept-payments/web-integration",
+                  "en/guides/accept-payments/server-integration",
+                  "en/guides/accept-payments/payment-methods"
+                ]
+              },
+              {
+                "group": "Features",
+                "pages": [
+                  "en/guides/features/tokenization",
+                  "en/guides/features/subscriptions",
+                  "en/guides/features/security",
+                  "en/guides/features/customization",
+                  "en/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Plugins",
+                "pages": [
+                  "en/guides/plugins/ecommerce"
+                ]
+              },
+              {
+                "group": "Resources",
+                "pages": [
+                  "en/guides/resources/concepts",
+                  "en/guides/resources/error-codes"
+                ]
+              }
             ]
           },
           {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+            "tab": "API Reference",
+            "groups": [
+              {
+                "group": "Table of Contents",
+                "pages": [
+                  "en/api-reference/authentication",
+                  "en/api-reference/api-keys",
+                  "en/api-reference/refunds",
+                  {
+                    "group": "Orders",
+                    "pages": [
+                      "en/api-reference/orders/create",
+                      "en/api-reference/orders/get"
+                    ]
+                  },
+                  "en/api-reference/transactions",
+                  "en/api-reference/merchants",
+                  "en/api-reference/services",
+                  "en/api-reference/terminals",
+                  {
+                    "group": "Customers",
+                    "pages": [
+                      "en/api-reference/customers/create",
+                      "en/api-reference/customers/get"
+                    ]
+                  },
+                  "en/api-reference/card-present"
+                ]
+              },
+              {
+                "group": "Payment Methods",
+                "pages": [
+                  {
+                    "group": "Cards",
+                    "pages": [
+                      "en/api-reference/cards/save",
+                      "en/api-reference/cards/get"
+                    ]
+                  },
+                  "en/api-reference/bank-accounts",
+                  "en/api-reference/update-external-id"
+                ]
+              },
+              {
+                "group": "Additional Operations",
+                "pages": [
+                  "en/api-reference/moto-campaigns",
+                  {
+                    "group": "Batch Operations",
+                    "pages": [
+                      "en/api-reference/batch/authorizations",
+                      "en/api-reference/batch/refunds"
+                    ]
+                  },
+                  {
+                    "group": "Subscriptions",
+                    "pages": [
+                      "en/api-reference/subscriptions/create-plan",
+                      "en/api-reference/subscriptions/create-subscription"
+                    ]
+                  },
+                  {
+                    "group": "Security Lists",
+                    "pages": [
+                      "en/api-reference/security/blacklist",
+                      "en/api-reference/security/whitelist",
+                      "en/api-reference/security/pan-whitelist"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "POSMS",
+                "pages": [
+                  {
+                    "group": "POSMS",
+                    "pages": [
+                      "en/api-reference/posms/payment",
+                      "en/api-reference/posms/refund"
+                    ]
+                  },
+                  "en/api-reference/posms/app2app-payment"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "pt",
+        "tabs": [
+          {
+            "tab": "Guias",
+            "groups": [
+              {
+                "group": "Começar",
+                "pages": [
+                  "pt/guides/get-started/introduction",
+                  "pt/guides/get-started/authentication",
+                  "pt/guides/get-started/quickstart"
+                ]
+              },
+              {
+                "group": "Aceitar Pagamentos",
+                "pages": [
+                  "pt/guides/accept-payments/web-integration",
+                  "pt/guides/accept-payments/server-integration",
+                  "pt/guides/accept-payments/payment-methods"
+                ]
+              },
+              {
+                "group": "Funcionalidades",
+                "pages": [
+                  "pt/guides/features/tokenization",
+                  "pt/guides/features/subscriptions",
+                  "pt/guides/features/security",
+                  "pt/guides/features/customization",
+                  "pt/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Plugins",
+                "pages": [
+                  "pt/guides/plugins/ecommerce"
+                ]
+              },
+              {
+                "group": "Recursos",
+                "pages": [
+                  "pt/guides/resources/concepts",
+                  "pt/guides/resources/error-codes"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Referência API",
+            "groups": [
+              {
+                "group": "Tabela de Conteúdos",
+                "pages": [
+                  "pt/api-reference/authentication",
+                  "pt/api-reference/api-keys",
+                  "pt/api-reference/refunds",
+                  {
+                    "group": "Pedidos",
+                    "pages": [
+                      "pt/api-reference/orders/create",
+                      "pt/api-reference/orders/get"
+                    ]
+                  },
+                  "pt/api-reference/transactions",
+                  "pt/api-reference/merchants",
+                  "pt/api-reference/services",
+                  "pt/api-reference/terminals",
+                  {
+                    "group": "Clientes",
+                    "pages": [
+                      "pt/api-reference/customers/create",
+                      "pt/api-reference/customers/get"
+                    ]
+                  },
+                  "pt/api-reference/card-present"
+                ]
+              },
+              {
+                "group": "Métodos de Pagamento",
+                "pages": [
+                  {
+                    "group": "Cartões",
+                    "pages": [
+                      "pt/api-reference/cards/save",
+                      "pt/api-reference/cards/get"
+                    ]
+                  },
+                  "pt/api-reference/bank-accounts",
+                  "pt/api-reference/update-external-id"
+                ]
+              },
+              {
+                "group": "Operações Adicionais",
+                "pages": [
+                  "pt/api-reference/moto-campaigns",
+                  {
+                    "group": "Operações em Lote",
+                    "pages": [
+                      "pt/api-reference/batch/authorizations",
+                      "pt/api-reference/batch/refunds"
+                    ]
+                  },
+                  {
+                    "group": "Assinaturas",
+                    "pages": [
+                      "pt/api-reference/subscriptions/create-plan",
+                      "pt/api-reference/subscriptions/create-subscription"
+                    ]
+                  },
+                  {
+                    "group": "Listas de Segurança",
+                    "pages": [
+                      "pt/api-reference/security/blacklist",
+                      "pt/api-reference/security/whitelist",
+                      "pt/api-reference/security/pan-whitelist"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "POSMS",
+                "pages": [
+                  {
+                    "group": "POSMS",
+                    "pages": [
+                      "pt/api-reference/posms/payment",
+                      "pt/api-reference/posms/refund"
+                    ]
+                  },
+                  "pt/api-reference/posms/app2app-payment"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "ro",
+        "tabs": [
+          {
+            "tab": "Ghiduri",
+            "groups": [
+              {
+                "group": "Începeți",
+                "pages": [
+                  "ro/guides/get-started/introduction",
+                  "ro/guides/get-started/authentication",
+                  "ro/guides/get-started/quickstart"
+                ]
+              },
+              {
+                "group": "Acceptați Plăți",
+                "pages": [
+                  "ro/guides/accept-payments/web-integration",
+                  "ro/guides/accept-payments/server-integration",
+                  "ro/guides/accept-payments/payment-methods"
+                ]
+              },
+              {
+                "group": "Funcționalități",
+                "pages": [
+                  "ro/guides/features/tokenization",
+                  "ro/guides/features/subscriptions",
+                  "ro/guides/features/security",
+                  "ro/guides/features/customization",
+                  "ro/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Plugin-uri",
+                "pages": [
+                  "ro/guides/plugins/ecommerce"
+                ]
+              },
+              {
+                "group": "Resurse",
+                "pages": [
+                  "ro/guides/resources/concepts",
+                  "ro/guides/resources/error-codes"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Referință API",
+            "groups": [
+              {
+                "group": "Cuprins",
+                "pages": [
+                  "ro/api-reference/authentication",
+                  "ro/api-reference/api-keys",
+                  "ro/api-reference/refunds",
+                  {
+                    "group": "Comenzi",
+                    "pages": [
+                      "ro/api-reference/orders/create",
+                      "ro/api-reference/orders/get"
+                    ]
+                  },
+                  "ro/api-reference/transactions",
+                  "ro/api-reference/merchants",
+                  "ro/api-reference/services",
+                  "ro/api-reference/terminals",
+                  {
+                    "group": "Clienți",
+                    "pages": [
+                      "ro/api-reference/customers/create",
+                      "ro/api-reference/customers/get"
+                    ]
+                  },
+                  "ro/api-reference/card-present"
+                ]
+              },
+              {
+                "group": "Metode de Plată",
+                "pages": [
+                  {
+                    "group": "Carduri",
+                    "pages": [
+                      "ro/api-reference/cards/save",
+                      "ro/api-reference/cards/get"
+                    ]
+                  },
+                  "ro/api-reference/bank-accounts",
+                  "ro/api-reference/update-external-id"
+                ]
+              },
+              {
+                "group": "Operațiuni Suplimentare",
+                "pages": [
+                  "ro/api-reference/moto-campaigns",
+                  {
+                    "group": "Operațiuni în Lot",
+                    "pages": [
+                      "ro/api-reference/batch/authorizations",
+                      "ro/api-reference/batch/refunds"
+                    ]
+                  },
+                  {
+                    "group": "Abonamente",
+                    "pages": [
+                      "ro/api-reference/subscriptions/create-plan",
+                      "ro/api-reference/subscriptions/create-subscription"
+                    ]
+                  },
+                  {
+                    "group": "Liste de Securitate",
+                    "pages": [
+                      "ro/api-reference/security/blacklist",
+                      "ro/api-reference/security/whitelist",
+                      "ro/api-reference/security/pan-whitelist"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "POSMS",
+                "pages": [
+                  {
+                    "group": "POSMS",
+                    "pages": [
+                      "ro/api-reference/posms/payment",
+                      "ro/api-reference/posms/refund"
+                    ]
+                  },
+                  "ro/api-reference/posms/app2app-payment"
+                ]
+              }
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/logo-pill.svg",
+    "dark": "/logo/logo-pill.svg"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@paynopain.com"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://portal.paynopain.com"
     }
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp"
+    ]
   },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
-  }
+  "footer": {}
 }

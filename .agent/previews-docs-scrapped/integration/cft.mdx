@@ -1,0 +1,30 @@
+---
+title: "Credit fund transfer (CFT)"
+description: "Paylands permite transferir dinero del comercio al usuario mediante un abono a tarjeta, también conocido como Credit Fund Transfer o CFT. Esta modalidad de pago está disponible tanto para tarjetas Visa como Mastercard."
+---
+
+En primer lugar, es necesario [**generar la orden de pago**](/reference/#operation/generate-payment-order). Es importante que la operativa sea `PAYOUT` y setear el campo `secure: false`. El resto de datos variarán dependiendo de tu integración. Además de los campos habituales, **hay que indicar algunos datos adicionales del usuario**, que son los siguientes: nombre, apellidos, email y número de teléfono del usuario.
+
+Ejemplo de generación de la orden de pago (POST /payment)
+
+```
+{    "signature": "341f7de8e6fc49da8d8736473af6b03a",    "amount": 1245,    "operative": "PAYOUT",    "secure": false,    "customer_ext_id": "test",    "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "description": "Ejemplo CFT",    "url_post": "https://tucomercio.com/procesarpago",    "extra_data": {        "profile": {            "first_name": "Nombre",            "last_name": "Apellidos",            "email": "email@gmail.com",            "phone": {                "number": "600999999",                "prefix": "34"            }        }    }}
+```
+
+En segundo lugar hay que realizar el [**abono a tarjeta**](/reference/#operation/payout-payment) indicando el UUID de orden que acabamos de generar y el UUID de la tarjeta del usuario. Se recomienda que para evitar posibles rechazos la tarjeta haya tenido al menos un pago exitoso.
+
+Ejemplo de la petición de abono a tarjeta (POST /payment/payout)
+
+```
+{    "signature": "121149a0ba5361191d740fa898784a8b",    "order_uuid": "1F405EA3-9798-42A6-9E87-BD347EF67F55",    "source_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",    "customer_ip": "127.0.0.1"}
+```
+
+Hecho esto, inmediatamente recibiremos la respuesta con el resultado del abono, que puede resultar aceptado o rechazado. Adicionalmente, se enviará la notificación del pago a la `url_post` indicada al generar la orden de pago.
+
+**NOTA:** La transferencia de fondos es final, no es posible revertir un abono a tarjeta. Los fondos pueden tardar algunos días en llegar al destinatario, dependiendo de su banco.
+
+Ejemplo de respuesta exitosa
+
+```
+{    "message": "OK",    "code": 200,    "current_time": "2023-05-24T17:10:03+0200",    "order": {        "uuid": "77178805-0287-4046-8B9F-03CDE7CAD815",        "created": "2023-05-24T17:09:53+0200",        "created_from_client_timezone": "2023-05-24T18:09:53+0300",        "amount": 1245,        "currency": "978",        "paid": true,        "status": "SUCCESS",        "safe": false,        "refunded": 0,        "additional": "any data",        "service": "PAYLANDS",        "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",        "customer": "test",        "cof_txnid": null,        "transactions": [            {                "uuid": "BE57A5F5-5A92-4960-AC31-40CD2F28FADF",                "created": "2023-05-24T17:09:59+0200",                "created_from_client_timezone": "2023-05-24T18:09:59+0300",                "operative": "PAYOUT",                "amount": 1245,                "authorization": "506720",                "processor_id": "XZZ0159a74f89e5a77ADXRCXMDSGRGLN",                "status": "SUCCESS",                "error": "NONE",                "source": {                    "object": "CARD",                    "uuid": "BDC62AC8-AF22-4D4A-8ECA-BC1CBFDF5713",                    "type": "",                    "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",                    "brand": "VISA",                    "country": "US",                    "holder": "test",                    "bin": 476173,                    "last4": "0016",                    "is_saved": true,                    "expire_month": "12",                    "expire_year": "25",                    "additional": null,                    "bank": "",                    "prepaid": null,                    "validation_date": "2023-05-24 17:10:03",                    "creation_date": "2023-05-24 17:08:37",                    "brand_description": null,                    "origin": "API",                    "cof": {                        "is_available": false                    }                },                "antifraud": null,                "device": null,                "error_details": null            }        ],        "token": null,        "ip": "127.0.0.1",        "reference": null,        "dynamic_descriptor": null,        "threeds_data": null    },    "client": {        "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"    },    "extra_data": {        "profile": {            "first_name": "Nombre",            "last_name": "Apellidos",            "email": "email@gmail.com",            "phone": {                "number": "600999999",                "prefix": "34"            }        }    },    "validation_hash": "70ffee71c69929565810c4504d47550501a5b0816c1bea7e39e38e67dd414342"}
+```

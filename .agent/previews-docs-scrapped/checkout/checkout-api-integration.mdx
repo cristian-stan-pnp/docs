@@ -1,0 +1,94 @@
+---
+title: "Integración via API"
+description: "Usando la API podrás generar una orden de pago y obtener una URL de pago para redirigir a tus usuarios a tu checkout."
+---
+
+Nuestra API te permitirá:
+
+* generar una URL de pago con uno de tus checkouts ya creados
+* decidir qué métodos de pago se mostrarán en el checkout para ese pago
+* modificar la personalización para esa operación concreta
+
+## 1. Generar la orden de pago en tu servidor[​](#1-generar-la-orden-de-pago-en-tu-servidor "Enlace directo al 1. Generar la orden de pago en tu servidor")
+
+> **Atención**: Antes de continuar, asegúrate de tener un checkout creado en tu cuenta de Paylands. Si no sabes cómo hacerlo, consulta la sección [Crear un checkout](/docs/checkout).
+
+En la petición donde indicas toda la información del pago (endpoint `/payment`), puedes enviar un campo `extra_data` con toda la información de configuración del checkout. Los campos permitidos son:
+
+| checkout                 |                                                         |             |
+| ------------------------ | :-----------------------------------------------------: | :---------: |
+| uuid                     |   UUID de tu checkout, puedes obtenerlo desde el panel  | Obligatorio |
+| customization            | Objeto que contiene todos los campos de personalización |   Opcional  |
+| payment\_methods         |           Listado de métodos de pago a mostrar          |   Opcional  |
+| default\_payment\_method |      Método de pago que se seleccionará por defecto     |   Opcional  |
+
+| customization                  |                                                                                                   |          |
+| ------------------------------ | :-----------------------------------------------------------------------------------------------: | :------: |
+| theme\_type                    |                                 LIGHT: tema claroDARK: tema oscuro                                | Opcional |
+| description                    |                           Texto que se mostrará en el resumen de compra                           | Opcional |
+| font                           |                                           Tipo de letra                                           | Opcional |
+| accent\_color                  |                          Color de ciertos elementos como botones o iconos                         | Opcional |
+| language                       |                               Idioma en que se mostrará el checkout                               | Opcional |
+| logo                           |                       URL de la imagen que se mostrará en la parte superior                       | Opcional |
+| footer\_logo                   |                       URL de la imagen que se mostrará en la parte inferior                       | Opcional |
+| footer\_terms\_and\_conditions |                            URL de los términos y condiciones de tu web                            | Opcional |
+| payment\_details               | Lista de entradas clave-valor que se mostrarán como información adicional en el resumen de compra | Opcional |
+
+| payment\_methods |             |          |          |            |
+| ---------------- | ----------- | -------- | -------- | ---------- |
+| PAYMENT\_CARD    | SPEI        | PIX      | SERVIPAG | COFIDIS    |
+| GOOGLEPAY        | PAYSAFECARD | CRYPTO   | KHIPU    | FLOA       |
+| APPLEPAY         | PAGO\_FACIL | GIROPAY  | FLOWPAY  | VIACASH    |
+| BIZUM            | EFECTY      | TRANSFER | CASH     | MBWAY      |
+| IDEAL            | BOLETO      | PSE      | PICPAY   | KLARNA     |
+| SOFORT           | LOTERICA    | PAYPAL   | WEBPAY   | MULTIBANCO |
+
+```
+{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 100,  "operative": "AUTHORIZATION",  "secure": false,  "customer_ext_id": "test",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "reference": "50620",  "currency": "EUR",  "extra_data": {        "checkout": {            "uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",            "customization": {                "theme_type": "DARK",                "font": "Roboto",                "accent_color": "#FF0000",                "footer_logo": "https://my.website.com/footer_logo.png",                "footer_terms_and_conditions": "https://my.website.com/terms",                "payment_details": {                    "ID de la reserva": "ABCD1234X",                    "Personas": 3                }            },            "payment_methods": ["PAYMENT_CARD", "GOOGLEPAY", "APPLEPAY"],            "default_payment_method": "PAYMENT_CARD"        }    }}
+```
+
+En la Referencia API puedes consultar la especificación completa para [Generar orden de pago](/reference/#operation/generate-payment-order).
+
+## 2. Redirigir al cliente al checkout[​](#2-redirigir-al-cliente-al-checkout "Enlace directo al 2. Redirigir al cliente al checkout")
+
+En la respuesta de la anterior llamada a `/payment` obtendremos el TOKEN que necesitamos para redirigir al usuario al checkout.
+
+```
+{    "message": "OK",    "code": 200,    "current_time": "2025-01-08T13:10:20+0100",    "order": {        "uuid": "8809C546-29C1-433D-AE7F-C13FFCCC0403",        "created": "2025-01-08T13:10:20+0100",        "created_from_client_timezone": "2025-01-08T13:10:20+0100",        "amount": 100,        "currency": "978",        "paid": false,        "status": "CREATED",        "safe": false,        "refunded": 0,        "additional": null,        "service": null,        "service_uuid": null,        "customer": "test",        "cof_txnid": null,        "transactions": [],        "token": "679b3958c82a0415cfedeff1a5404d2ddc02b4046ecad8980d4a1b9f1b443a8d0ad877024e309866d7b294dffd4e232375aa32a1a000fb16898c6013db839c42",        "ip": null,        "reference": "50620",        "dynamic_descriptor": "PNP*NombreComercio",        "threeds_data": null    },    "client": {        "uuid": "692221A4-8090-4088-BB84-C267B9981D0A"    },    "extra_data": {        "checkout": {            "uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",            "customization": {                "title": null,                "description": null,                "background_color": null,                "accent_color": "#FF0000",                "text_color": null,                "font": "Roboto",                "language": null,                "theme_type": "DARK",                "payment_details": {                    "ID de la reserva": "ABCD1234X",                    "Personas": 3                },                "logo": null,                "footer_logo": "https:\/\/my.website.com\/footer_logo.png",                "footer_terms_and_conditions": "https:\/\/my.website.com\/terms"            },            "payment_methods": [                "PAYMENT_CARD",                "GOOGLEPAY",                "APPLEPAY"            ],            "default_payment_method": "PAYMENT_CARD"        }    },    "validation_hash": "c39f00c8f790af98923372a2a0cf464987e73de6fd451aefcf1e8cd630f1e794"}
+```
+
+La URL a la que deberás redirigir al usuario es `/payment/process/{TOKEN}` quedando tal que así:
+
+```
+https://api.paylands.com/v1/payment/process/dd27da7cc018f5daf85d426e2d72bb3207173a057ac0f5164a8bec9dd2286d1f64e25eb50ec68e7c37d4bf54236a014e7f2aa65834b42678bde5d882b2217fd0
+```
+
+<Info>
+  Nuestro checkout se comunica con la página contenedora (parent window) mediante eventos Javascript (*window\.postMessage*) a los cuales debes suscribirte para controlar los diferentes estados del pago.
+
+  **Eventos enviados por el iframe**
+
+  El iframe enviará mensajes al window\.top (o parent) con la siguiente estructura:
+
+  ```
+  {  redirect: "https://..."}{  render: "<html>...</html>"}{  error: "mensaje de error"}
+  ```
+
+  **Implementación recomendada**
+
+  ```
+  window.addEventListener("message", function (event) {    const allowedOrigin = "https://api.paylands.com";    if (event.origin !== allowedOrigin) {        return;    }    const data = event.data;    if (data.redirect) {      /* El pago ha finalizado y se devuelve la url_ok o url_ko */      /* Tu código debe mostrar la estrategia que necesites: */      /* - cargar la url en tu página */      /* - reemplazarla dentro del iframe */      return;    }    if (data.render) {      /* Obtén el elemento del iframe y reemplázale el srcdoc */      iframe.srcdoc = data.render;      return;    }    if (data.error) {      /* En caso de error, puedes mostrarlo como necesites */      console.error("Payment error:", data.error);    }});
+  ```
+</Info>
+
+### 3. El cliente completa el pago y se notifica a tu servidor[​](#3-el-cliente-completa-el-pago-y-se-notifica-a-tu-servidor "Enlace directo al 3. El cliente completa el pago y se notifica a tu servidor")
+
+El cliente realiza el pago seleccionando uno de los métodos disponibles en el checkout y, en caso de ser necesario, es redirigido a su banco para completar el paso del 3DS.
+
+Cuando termina el proceso, Paylands recibe la información de la operación finalizada y notifica a la `url_post` indicada al generar la orden de pago.
+
+Para conocer más sobre como validar la notificación puedes dirigirte a la sección [**Validación de la notificación**](/docs/notification-validation)
+
+### 4. Se redirige el cliente de nuevo a tu servidor[​](#4-se-redirige-el-cliente-de-nuevo-a-tu-servidor "Enlace directo al 4. Se redirige el cliente de nuevo a tu servidor")
+
+Finalmente, el usuario es redirigido a la url indicada en los campos `url_ok` o `url_ko` según corresponda.

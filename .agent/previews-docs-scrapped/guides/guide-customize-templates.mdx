@@ -1,0 +1,206 @@
+---
+title: "Personalización de plantillas"
+description: "En Paylands ofrecemos la posibilidad de personalizar las plantillas para los distintos métodos de pago que se muestran a los clientes durante el proceso de compra. En la siguiente guía veremos como podemos configurar y personalizar las diferentes plantillas dependiendo de las necesidades del comercio."
+---
+
+Tenemos acceso a la configuración de las plantillas desde el **Backend de Paylands → Personalización → [Plantillas](https://backend.paylands.com/templates)**. Aquí nos encontraremos con un listado de las plantillas personalizadas que hayamos creado.
+
+![Customize Templates](/images/docs/guides/assets/images/customize-templates-fd915bae2de1c4bf0e45159dc5e5631a.jpg)
+
+Inicialmente esta lista aparecerá vacía por lo que Paylands estará mostrando en los flujos de pago las plantillas por defecto. Para personalizar una nueva plantilla debemos pulsar el botón de **Crear nueva** para acceder al formulario de personalización.
+
+![Customize Templates Form](/images/docs/guides/assets/images/customize-templates-form-2104818a0343ac5c8fcf5b9fbd5f3800.jpg)
+
+En el formulario se debe elegir el [**tipo de plantilla**](#tipos-de-plantillas), si esta plantilla se considera la plantilla por defecto para el tipo seleccionado y una descripción de la misma. Al seleccionar **Por defecto = Sí**, la plantilla creada sustituirá la plantilla por defecto que muestra Paylands.
+
+A continuación aparece un campo de HTML donde se puede modificar el contenido de la plantilla para el tipo de plantilla seleccionado y a la derecha se muestra a su vez la previsualización de la misma. Al editar el campo HTML se actualizarán los cambios en la caja de previsualización automáticamente.
+
+Para editar en este campo HTML se deben seguir diversos [**requisitos**](#requisitos) siendo posible utilizar una serie de [**variables predefinidas**](#variables-predefinidas) como campos sustitutivos para personalizar el mensaje de forma dinámica.
+
+<Info>
+  Se puede editar el contenido HTML, CSS y Javascript de la plantilla por defecto. **Si se edita el Javascript y se envia el cambio, la plantilla quedará en estado pendiente de revisión** hasta que el equipo de Paylands revise que las modificaciones sean correctas y seguras para el usuario final.
+</Info>
+
+## Tipos de plantillas[​](#tipos-de-plantillas "Enlace directo al Tipos de plantillas")
+
+En Paylands tenemos diversos tipos de plantillas que se engloban en **2 grupos**:
+
+1. **Con Enlace**. Plantillas que tienen un enlace que te redirige al formulario de pago.
+2. **Con Formulario de pago**. Plantillas que directamente muestran un formulario de pago.
+
+| Tipo de Plantilla                                        |    Grupo   | Formato |
+| -------------------------------------------------------- | :--------: | :-----: |
+| [**Email**](#email)                                      | Con enlace |   HTML  |
+| [**SMS**](#sms)                                          | Con enlace |  Texto  |
+| [**Carta de pago**](#carta-de-pago)                      | Formulario |   HTML  |
+| [**Carta de tokenización**](#carta-de-tokenizaci%C3%B3n) | Formulario |   HTML  |
+| [**DCC**](#dcc)                                          | Formulario |   HTML  |
+
+A continuación explicamos como podemos configurar los distintos tipos de plantillas:
+
+### Email[​](#email "Enlace directo al Email")
+
+Las plantillas de tipo Email se pueden construir al gusto del comercio. Por defecto se incluye la URL de pago `{{payment_url}}` y el comercio puede personalizar el mensaje utilizando la estructura HTML que precise y las diversas [**variables predefinidas**](#variables-predefinidas) que dispone la plataforma.
+
+![Customize Templates](/images/docs/guides/assets/images/template-email-14e0a0176a504504a632977c27990cbb.png)
+
+### SMS[​](#sms "Enlace directo al SMS")
+
+La plantilla de SMS tiene ciertas características con respecto al resto de plantillas que es importante conocer:
+
+* No acepta HTML, solo se puede introducir texto plano.
+* Dispone únicamente de 160 carácteres para escribir el mensaje.
+* La URL de pago que se incluye `{{payment_url}}` se envia automáticamente en forma de URL acortada para ahorrar carácteres.
+
+![Customize Templates](/images/docs/guides/assets/images/template-sms-a4205e3c5ae2b798efb2b83224c9e07b.png)
+
+Un ejemplo de nueva plantilla SMS podría ser: `¡Hola! ya puedes abonar los {{amount}} {{currencySymbol}} accediendo al siguiente enlace {{payment_url}}`.
+
+### Carta de pago[​](#carta-de-pago "Enlace directo al Carta de pago")
+
+Al utilizar la [**integración por carta de pago**](/docs/integration/simple-integration) por redirección, se mostrará por defecto al usuario la carta de pago de Paylands. Configurando una plantilla personalizada para dicha carta de pago, el comercio podrá modificarla según su imagen de marca.
+
+![Customize Templates](/images/docs/guides/assets/images/template-payment-card-9e153c07cb79bf0c14c68f3ee8b6bdcf.png)
+
+### Carta de tokenización[​](#carta-de-tokenización "Enlace directo al Carta de tokenización")
+
+La plantilla de tokenización muestra por defecto los 3 inputs habituales para pagar con tarjeta de crédito que són: el número de tarjeta, la fecha de caducidad, y el CVV. Se muestran de forma plana y es el comercio quien podrá personalizar la estética, colores y mensajes del HTML a su gusto.
+
+![Customize Templates](/images/docs/guides/assets/images/template-tokenization-card-35bc11902dc002379c5b503d04095c49.png)
+
+### DCC[​](#dcc "Enlace directo al DCC")
+
+Para la tarjeta de pago de tipo [**DCC**](http://localhost:4000/docs/glossary#dcc) podemos personalizar la tarjeta en la cual el usuario puede pagar en la divisa de su tarjeta. Podemos modificar el HTML de la tarjeta y previsualizar la misma en cualquiera de los 3 modos que se puede configurar:
+
+* LOCAL (En la divisa de la Tarjeta del cliente)
+* EXTRANJERA (En la divisa del Punto de Venta)
+* DINÁMICO (Permite elegir al cliente en el momento de pago)
+
+También es posible previsualizar como se verá mostrando o no la información BCE.
+
+![Customize Templates](/images/docs/guides/assets/images/template-dcc-c2dc3130747e0619771eb87ce21a9c0b.png)
+
+## Variables predefinidas[​](#variables-predefinidas "Enlace directo al Variables predefinidas")
+
+Desde el servidor se pasan algunas variables a la plantilla para poder utilizarlas donde sea necesario, como la moneda o el importe. Esto permite construir al comercio plantillas más ricas y dinámicas de cara a sus usuarios. A continuación se detallan estas variables y el tipo de información que contienen.
+
+| Nombre de la variable       | Descripción                                                                                                                   | Ejemplo |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------- |
+| **amount**                  | Importe que se va a cobrar, incluyendo decimales.                                                                             | 1254.33 |
+| **amountInteger**           | Parte entera del importe a cobrar.                                                                                            | 1254    |
+| **amountDecimal**           | Parte decimal del importe a cobrar.                                                                                           | 33      |
+| **currencyCode**            | Código ISO 4217 de la moneda.                                                                                                 | EUR     |
+| **currencySymbol**          | Símbolo de la moneda.                                                                                                         | €       |
+| **language**                | Idioma en base al cual cargará las traducciones.                                                                              | en-US   |
+| **additional**              | Campo additional enviado al generar la orden de pago.                                                                         |         |
+| **is3DS**                   | Valor numérico indicando si la operación se va a realizar mediante 3DS.                                                       | 1 o 0   |
+| **customer**                | Identificador del usuario en el comercio. Este es el valor enviado en el campo customer\_ext\_id al generar la orden de pago. |         |
+| **save\_card\_checkbox**    | HTML pre-construído que renderiza el checkbox para que un usuario indique si quiere guardar su tarjeta para pagos futuros.    |         |
+| **cancel\_payment\_url**    | URL a la cual redirigir al usuario para cancelar el pago.                                                                     |         |
+| **cancel\_payment\_button** | HTML pre-construído que redirige al usuario a la página para cancelar el pago.                                                |         |
+| **environment**             | SANDBOX o PRODUCTION dependiendo del entorno donde se esté realizando el pago.                                                |         |
+
+#### HTML pre-construido de la variable `save_card_checkbox`[​](#html-pre-construido-de-la-variable-save_card_checkbox "Enlace directo al html-pre-construido-de-la-variable-save_card_checkbox")
+
+Al utilizar la variable **save\_card\_checkbox** se mostrará en su ligar el siguiente código HTML.
+
+```
+<div class="form-group">    <div class="input-group">        <input type="hidden" name="is_saved" value="off"/>        <input id="CardPNPIsSaved" name="is_saved" type="checkbox" style="outline:none;vertical-align:middle;margin:-2px 0 0" checked/>        <label id="CardPNPIsSavedLabel" style="user-select:none;" for="CardPNPIsSaved"></label>    </div></div>
+```
+
+#### HTML pre-construido de la variable `cancel_payment_button`[​](#html-pre-construido-de-la-variable-cancel_payment_button "Enlace directo al html-pre-construido-de-la-variable-cancel_payment_button")
+
+Al utilizar la variable **cancel\_payment\_button** se mostrará en su ligar el siguiente código HTML.
+
+```
+<div class="form-group" style="margin-top: 10px;">    <button id="cancelPaymentButton" type="button" class="btn btn-danger btn-md btn-block form-newdata" onclick="window.location.href="https://ws-paylands.paynopain.com/v1/payment/gateway/user-cancel/{token}">        <span id="cancelPaymentButton">Cancelar pago</span>     </button></div>
+```
+
+Estas variables se devuelven dentro del objeto `data`, por lo que la forma de acceder a ellas será de la forma `data.amount`, `data.currencyCode`, etc. El motor de plantillas utilizado es [**Twig**](https://twig.symfony.com/), por lo que para mostrar las variables se utilizan los símbolos `{{ }}`.
+
+Por ejemplo, la siguiente línea: `Finalizar el pago de {{ data.amount }} {{ data.currencySymbol}}`
+
+Generaría: `Finalizar el pago de 127.34 €`
+
+## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+
+Se pueden incluir campos personalizados en la carta de pago (con información que esté en su propio sistema) enviando un JSON en el campo additional de la orden de pago. Los campos de este JSON estarán disponibles en las plantillas de las cartas de pago y se podrán utilizar accediendo al elemento customFields. Ejemplo de uso:
+
+```
+additional = {"nombre": "Juan García", "edad": 28}
+```
+
+En la plantilla se puede acceder a estas variables como en el siguiente ejemplo:
+
+```
+Bienvenido {{data.customFields.nombre}}, felices {{data.customFields.edad}} años.
+```
+
+## Requisitos[​](#requisitos "Enlace directo al Requisitos")
+
+A continuación se mencionan todos los factores que debe cumplir el código HTML para que el funcionamiento sea el correcto. Estos requisitos son de obligado cumplimiento para el correcto funcionamiento de las plantillas.
+
+* A excepción de los SMS, una personalización consta de un único archivo HTML, el cual puede contener el código HTML, CSS y JavaScript necesario para insertar, validar y enviar los detalles de la tarjeta.
+* El código CSS debe incluirse dentro de las etiquetas `<style></style>`.
+* El código JavaScript deberá incluirse dentro de las etiquetas `<script></script>`.
+* Los recursos como imágenes o librerías (jQuery, por ejemplo) deberán cargarse bien mediante una url externa o embebidos en el propio html (base64 en el caso de las imágenes).
+* Revisar el [checklist](#checklist) que deben cumplir las plantillas HTML.
+
+## Checklist[​](#checklist "Enlace directo al Checklist")
+
+A continuación se listan los requisitos que deben cumplir las plantillas HTML.
+
+* El CSS y JavaScript están en el mismo archivo .html, o se cargan desde una url externa.
+
+* El formulario tiene el atributo method="POST"
+
+* El botón de Pagar está dentro del formulario y es de tipo SUBMIT
+
+* El input del titular de la tarjeta tiene el atributo name="cardHolder"
+
+* El input del número de la tarjeta tiene el atributo name="cardPan"
+
+* Fecha de expiración:
+
+  * El campo enviado se llama cardExpireFull
+  * El campo enviado tiene el formato MM/AA o MM/AAAA (mes y año separados por una barra)
+  * Si se necesita mostrar el mes y el año de forma separada (con dos desplegables, por ejemplo), mediante JavaScript se deberá setear un input hidden con el valor correcto que cumpla el formato indicado en el punto anterior
+
+* El input del CVV tiene el atributo name="cvv2"
+
+## Multiidioma[​](#multiidioma "Enlace directo al Multiidioma")
+
+Concretamente la plantilla de carta de pago se puede mostrar en diferentes idiomas pasando la variable `lang` en la queryString de la URL. Los idiomas por defecto soportados y el atributo `lang` que debe enviarse cada uno de ellos son:
+
+| Idioma    | lang  |
+| --------- | ----- |
+| Español   | es    |
+| Inglés    | en    |
+| Alemán    | de    |
+| Francés   | fr    |
+| Portugués | pt    |
+| Catalán   | ca    |
+| Italiano  | it    |
+| Hebreo    | he    |
+| Croata    | hr    |
+| Japonés   | jp    |
+| Holandés  | nl    |
+| Ruso      | ru    |
+| Húngaro   | hu    |
+| Polaco    | pl    |
+| Chino     | zh-cn |
+
+Por tanto, en caso de querer mostrar la carta de pago en alemán, deberá enviarse el idioma con la siguiente URL: `https://api.paylands.com/v1/sandbox/payment/process/TOKEN?lang=de`
+
+Si no se especifica ningún idioma, los textos aparecerán en español. En caso de necesitar añadir un nuevo idioma distinto a los soportados por defecto, ponte en contacto son **[soporte@paylands.com](mailto:soporte@paylands.com)** indicando el idioma en cuestión y las traducciones para los siguientes textos:
+
+* Titular de la tarjeta
+* Solo se admiten letras y espacios. Este campo corresponde con el nombre del titular de la tarjeta de crédito.
+* Número de la tarjeta
+* Caducidad (Mes/Año)
+* Servicio ofrecido por
+* Condiciones y política de privacidad.
+* El CVV (o CVC) es un código de seguridad de 3 dígitos impreso en el reverso de la tarjeta.
+* Número de tarjeta no válidoFecha de caducidad no válida
+* Número de seguridad (CVV) no válido
+* Se esta tramitando la operación...

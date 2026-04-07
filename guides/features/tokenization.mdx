@@ -1,0 +1,26 @@
+---
+title: 'Tokenization'
+description: 'Securely store card details for future use'
+---
+
+# Tokenización
+
+La tokenización permite almacenar los datos de tarjeta de forma segura para realizar pagos futuros sin que el usuario tenga que volver a introducir sus datos (One Click Payment) o para cobros recurrentes.
+
+## Cómo funciona
+Cuando se realiza un pago o se guarda una tarjeta, Paylands devuelve un `card_uuid` (token) que representa esa tarjeta.
+
+## Guardar tarjeta en un pago
+Para guardar una tarjeta durante el proceso de pago, simplemente envía el parámetro `save_card: true` en la solicitud de creación de orden.
+
+```json
+{
+  "amount": 100,
+  "operative": "AUTHORIZATION",
+  "save_card": true,
+  ...
+}
+```
+
+## SDK de Tokenización
+Paylands ofrece un SDK para facilitar la tokenización directa desde el frontend, minimizando el alcance de PCI para el comercio.

@@ -1,0 +1,127 @@
+---
+title: 'Notificación del pago'
+description: 'Recibe notificaciones de pago en tu servidor mediante webhooks'
+---
+
+# Notificación del pago (Webhooks)
+
+Cuando el estado de una orden cambia (pago completado, rechazado, devuelto, etc.), Paylands envía una notificación `POST` al endpoint `url_post` que configuraste al crear la orden. Esto te permite reaccionar al resultado del pago en tu servidor de forma asíncrona.
+
+## Formato del payload
+
+La notificación se envía como `application/json` con la siguiente estructura:
+
+```json
+{
+  "order": {
+    "uuid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+    "status": "SUCCESS",
+    "secured": true,
+    "operative": "AUTHORIZATION",
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:45Z",
+    "amount": 1000,
+    "original_amount": 1000,
+    "currency": "EUR",
+    "description": "Pedido #1234",
+    "customer_ext_id": "user-123",
+    "extra_data": null,
+    "token": "abc123def456...",
+    "service": "SERVICE_UUID",
+    "additional_data": {
+      "signature": "HASH_DE_FIRMA",
+      "card": {
+        "uuid": "card-uuid-aqui",
+        "type": "VISA",
+        "num": "4761XXXXXXXX1011",
+        "expire": "12/34",
+        "holder": "JOHN DOE"
+      },
+      "transaction": {
+        "uuid": "transaction-uuid",
+        "origin": "WEB",
+        "authorization_code": "123456"
+      }
+    }
+  }
+}
+```
+
+## Campos clave del payload
+
+| Campo | Descripción |
+|-------|-------------|
+| `order.uuid` | Identificador único de la orden en Paylands. |
+| `order.status` | Estado final de la orden. Ver [Conceptos → Estados de la Orden](/guides/resources/concepts#estados-de-la-orden). |
+| `order.amount` | Importe final en céntimos. |
+| `order.currency` | Moneda de la transacción (ISO 4217). |
+| `additional_data.signature` | Hash de firma para verificar la autenticidad de la notificación. |
+| `additional_data.card.uuid` | Token de la tarjeta. Úsalo para pagos recurrentes con esta tarjeta. |
+
+## Seguridad de las notificaciones
+
+### Validación por IP
+
+Paylands envía las notificaciones desde un conjunto fijo de IPs. Puedes configurar un whitelist de IPs en tu servidor para aceptar solo notificaciones de esas direcciones.
+
+Contacta con el [equipo de soporte](mailto:soporte@paylands.com) para obtener el listado actualizado de IPs de salida de Paylands.
+
+### Validación por firma (Hash)
+
+Para garantizar la integridad de la notificación, Paylands incluye un campo `signature` en el `additional_data`. Puedes verificarlo usando la siguiente fórmula:
+
+**Algoritmo:**
+
+```
+HASH = MD5(amount + currency + customer_ext_id + order_uuid + TU_LLAVE_SECRETA)
+```
+
+Donde:
+- `amount`: El importe en céntimos (string).
+- `currency`: El código de moneda (p. ej. `EUR`).
+- `customer_ext_id`: El identificador de cliente que enviaste al crear la orden.
+- `order_uuid`: El UUID de la orden (`order.uuid`).
+- `TU_LLAVE_SECRETA`: Tu clave secreta de firma (distinta de la API Key). Disponible en el Backend de Paylands → Desarrolladores.
+
+**Ejemplo en PHP:**
+
+```php
+<?php
+$llave_secreta = 'TU_LLAVE_SECRETA';
+$amount = (string) $order['amount'];
+$currency = $order['currency'];
+$customer_ext_id = $order['customer_ext_id'];
+$order_uuid = $order['uuid'];
+
+$hash_calculado = md5($amount . $currency . $customer_ext_id . $order_uuid . $llave_secreta);
+$hash_recibido = $order['additional_data']['signature'];
+
+if (hash_equals($hash_calculado, $hash_recibido)) {
+    // Notificación válida
+    echo 'OK';
+} else {
+    // Notificación inválida — posible manipulación
+    http_response_code(400);
+}
+```
+
+**Ejemplo en Node.js:**
+
+```javascript
+const crypto = require('crypto');
+
+function validarFirma(order, llaveSecreta) {
+  const { amount, currency, customer_ext_id, uuid, additional_data } = order;
+  const cadena = `${amount}${currency}${customer_ext_id}${uuid}${llaveSecreta}`;
+  const hashCalculado = crypto.createHash('md5').update(cadena).digest('hex');
+  return hashCalculado === additional_data.signature;
+}
+```
+
+## Respuesta esperada
+
+Tu servidor debe responder con un código HTTP `200 OK` para confirmar que la notificación fue recibida correctamente. Si Paylands recibe un código distinto, reintentará la notificación varias veces de forma automática.
+
+<Warning>
+  Nunca uses la notificación del webhook como el único mecanismo de confirmación del pago sin antes validar la firma. Siempre verifica el hash para asegurarte de que la notificación proviene de Paylands.
+</Warning>

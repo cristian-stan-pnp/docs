@@ -1,0 +1,67 @@
+---
+title: 'Servicios de Pago'
+description: 'Conecta Paylands con las principales pasarelas de pago del mercado'
+---
+
+# Servicios de Pago
+
+Paylands permite al comercio conectar múltiples servicios de pago (pasarelas). Un **servicio de pago** es una pasarela de un proveedor específico que Paylands pone a disposición del comercio de forma transparente, con la integración ya resuelta.
+
+Esto permite configurar y gestionar todas tus pasarelas desde un único punto sin necesidad de desarrollar integraciones independientes con cada proveedor.
+
+<Note>
+  Para poder empezar a aceptar pagos es necesario tener configurada al menos una pasarela de pago.
+</Note>
+
+## Servicios de pago disponibles
+
+A continuación se muestra la tabla comparativa de los servicios de pago disponibles en Paylands:
+
+| Servicio | 3DS | Recurrencias | Devoluciones | Retenciones | Abonos | Alternativo | DPAN |
+|----------|-----|-------------|-------------|-------------|--------|-------------|------|
+| **REDSYS** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **CECA** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **PAYLANDS** | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **KLARNA** | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ |
+| **PAYPAL** | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
+| **TRUSTPAYMENTS** | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **MIT** | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **INESPAY** | ✅ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ |
+| **PAYRETAILERS** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| EVOSNAP | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| **DLOCAL** | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| NMI | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| GIROPAY | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ |
+| SOFORT | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ |
+| VIACASH | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ |
+| BITNOVO | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ❌ |
+
+**Leyenda de columnas:**
+
+| Columna | Significado |
+|---------|------------|
+| **3DS** | Soporta autenticación 3D Secure (PSD2). |
+| **Recurrencias** | Permite cobros recurrentes/suscripciones. |
+| **Devoluciones** | Soporta reembolsos totales o parciales. |
+| **Retenciones** | Soporta preautorizaciones (DEFERRED). |
+| **Abonos** | Soporta abonos (Payouts) a tarjeta. |
+| **Alternativo** | Es un método de pago alternativo (APM). |
+| **DPAN** | Soporta Device Primary Account Number (pagos con wallet). |
+
+## Procesador vs. Adquirente
+
+Es importante entender la diferencia entre estos dos roles:
+
+**Procesador de pagos**: Sistema que recepta las autorizaciones y autenticaciones de una transacción, las organiza y valida contra los diferentes bancos o entidades emisoras.
+
+**Adquirente**: Entidad financiera con licencia para la captación, gestión y movimiento de fondos entre una tarjeta de crédito/débito hacia la cuenta bancaria de un comercio. Habitualmente son entidades bancarias.
+
+Los servicios de pago de Paylands siempre pertenecen a un procesador. En algunos casos, el procesador también actúa como adquirente.
+
+## Activación de un servicio de pago
+
+Para solicitar la activación de un servicio concreto en tu cuenta, usa el formulario de solicitud:
+
+[📋 Formulario de solicitud de activación de servicios de pago](https://docs.google.com/forms/d/e/1FAIpQLScKlwENien4gP_iWwSOMTRiGdYCaF9xPju5qS04tcwAMzuQGQ/viewform)
+
+Tras enviar la solicitud, el equipo de Paylands la revisará y solicitará la información adicional necesaria. Una vez configurado, el servicio quedará activo para su uso.

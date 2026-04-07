@@ -1,0 +1,73 @@
+---
+title: "Integración a través de un Componente de React"
+description: "Paylands ofrece un componente de React en TypeScript que facilita la integración del Checkout en aplicaciones web desarrolladas con React. Este componente se encarga de gestionar la comunicación con el servidor de Paylands y de mostrar el checkout."
+---
+
+Para poder utilizar el componente será necesario previamente haber generado una orden en Paylands del lado de servidor. Esta orden deberá contener el uuid del checkout creado previamente. Para más información sobre cómo generar una orden con checkout, consulta la sección [Integración via API](/docs/checkout/checkout-api-integration).
+
+## 1. Instalación[​](#1-instalación "Enlace directo al 1. Instalación")
+
+Para integrar el Checkout de Paylands en tu aplicación de React, instala el paquete `paylands-checkout-react`:
+
+```
+npm i paylands-checkout-react
+```
+
+## 2. Uso[​](#2-uso "Enlace directo al 2. Uso")
+
+### Redirección[​](#redirección "Enlace directo al Redirección")
+
+Importa la función `redirect` y llámala indicando el token para redirigir al usuario al Checkout.
+
+```
+import { redirect } from 'paylands-checkout-react'await redirect({token: '9fdade323e7...'})
+```
+
+### Renderizado[​](#renderizado "Enlace directo al Renderizado")
+
+Importa la función `render` y llámala indicando el ID del elemento donde se renderizará el Checkout y el token.
+
+```
+import { render } from 'paylands-checkout-react'await render('payment-container', {token: '9fdade323e7...'})
+```
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-react-integration#3-el-cliente-completa-el-pago).
+
+### Google Pay[​](#google-pay "Enlace directo al Google Pay")
+
+Importa la función `googlePay` y llámala indicando el ID del elemento donde se renderizará el botón, el token y el idioma.
+
+```
+import { googlePay } from 'paylands-checkout-react'await render('payment-container', {token: '9fdade323e7...'}, language: 'es')
+```
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-react-integration#3-el-cliente-completa-el-pago).
+
+### Apple Pay[​](#apple-pay "Enlace directo al Apple Pay")
+
+Importa la función `applePay` y llámala indicando el ID del elemento donde se renderizará el botón, el token y el idioma.
+
+```
+import { applePay } from 'paylands-checkout-react'await render('payment-container', {token: '9fdade323e7...'}, language: 'es')
+```
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-react-integration#3-el-cliente-completa-el-pago).
+
+## 3. El cliente completa el pago[​](#3-el-cliente-completa-el-pago "Enlace directo al 3. El cliente completa el pago")
+
+Una vez el usuario finalice el pago, se enviará un evento sobre la propia página con alguno de los siguientes valores que deberá ser tratado por el comercio:
+
+| Response |                                                                                                                                                                                                 |
+| -------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| redirect |                                                              URL hacia la que redirigir al usuario con el resultado del pago OK/KO                                                              |
+| render   | Contenido HTML para renderizar en la página.Esto sucede porque se requiere la intervención del usuario de nuevo, generalmente para completar el 3DS. El tamaño mínimo recomendado es de 500x600 |
+| error    |                                                                              Contenido HTML con el error ocurrido.                                                                              |
+
+```
+useEffect(() => {    const handleMessage = (event: MessageEvent) => {      if (event.data.redirect) {        window.location.href = event.data.redirect      } else if (event.data.render) {        document.getElementById('root')!.innerHTML = event.data.render        const submitButton = document.getElementById(          'submitBTN'        ) as HTMLInputElement        if (submitButton) {          submitButton.click()        } else {          const form = document.querySelector('form')          if (form) {            form.submit()          }        }      } else if (event.data.error) {        setError(event.data.error)      }      event.stopImmediatePropagation()    }    window.addEventListener('message', handleMessage, true)    return () => {      window.removeEventListener('message', handleMessage, true)    }  }, [])
+```
+
+> **Nota:** Esto no será necesario si se ha utilizado la función `redirect` del SDK. En este caso, el SDK se encargará de redirigir al cliente a la URL de redirección correspondiente según el resultado de la operación:
+>
+> * Si se ha efectuado el pago correctamente se redirige a la url especificada en el campo `url_ok` de la orden.
+> * En cualquier otro caso se redirige a la url especificada en el campo `url_ko` de la orden.

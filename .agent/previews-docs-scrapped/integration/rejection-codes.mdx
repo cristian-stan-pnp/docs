@@ -1,0 +1,102 @@
+---
+title: "Códigos de rechazo"
+---
+
+## Detalle del código de rechazo[​](#detalle-del-código-de-rechazo "Enlace directo al Detalle del código de rechazo")
+
+Cuando se rechaza una transacción se le asocia un mensaje de error que depende del servicio de pago empleado para llevar a cabo la operación. Este mensaje de error a menudo contiene tanto el código de error como su descripción, y puede variar en el tiempo. Para interpretar el error es recomendable basarse en el objeto `error_details` que contiene la transacción en la notificación del pago.
+
+Este objeto contiene desglosado el código de error y descripción propios del servicio de pago empleado, así como el código de error y descripción oficiales de la marca de la tarjeta (Visa, Mastercard...). Adicionalmente, siempre que sea posible se incluye un mensaje de error unificado que permite identificar rápidamente la causa del error, el cual no varía entre servicios de pago.
+
+Todos los campos son nullables aunque si todos ellos son null, el objeto `error_details` no se incluye en la respuesta (su valor será `null`).
+
+```
+"error_details": {    "error_code": "190",    "error_description": "Denegación del emisor sin especificar motivo",    "error_code_scheme": "05",    "error_description_scheme": "Do not honor",    "error_unified": "UNSPECIFIED_REFUSAL"}
+```
+
+| Campo                      | Descripción                                                          |
+| -------------------------- | -------------------------------------------------------------------- |
+| `error_code`               | Código de error devuelto por la procesadora                          |
+| `error_description`        | Texto descriptivo del `error_code`                                   |
+| `error_code_scheme`        | Código de error devuelto por la marca de la tarjeta                  |
+| `error_description_scheme` | Texto descriptivo asociado al `error_code_scheme`                    |
+| `error_unified`            | Error común a todas las procesadoras asociado al `error_code_scheme` |
+
+## Listado de errores unificado[​](#listado-de-errores-unificado "Enlace directo al Listado de errores unificado")
+
+A continuación se listan todos los errores unificados que puede devolver la API junto con una descripción del motivo detrás de la denegación y el valor del `error_code_scheme` oficiales de Visa y Mastercard.
+
+| Error unificado                      | Descripción                                                                                       | Código oficial                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| ACCOUNT NOT YET ACTIVATED            | La cuenta del usuario todavía no se ha activado o ésta se ha desactivado                          | 72 (Mastercard)                                   |
+| AUTHENTICATION FAILURE               | El usuario no ha podido completar correctamente el 3DS                                            | 1A,Q1 (Visa)                                      |
+| BLOCKED MERCHANT                     | El usuario ha solicitado a su banco que el comercio no pueda iniciar cargos contra su tarjeta     | R1 (Visa)                                         |
+| CARD LOST OR STOLEN                  | El usuario ha reportado que su tarjeta ha sido perdida o robada y no se puede utilizar para pagar | 41,43 (Visa/Mastercard)                           |
+| CARD NOT SUPPORTED BY THE SYSTEM     | La marca de la tarjeta no es aceptada                                                             |                                                   |
+| CARD STILL NOT OPERATIONAL           | La tarjeta todavía no se ha activado                                                              |                                                   |
+| CLOSED ACCOUNT                       | La cuenta bancaria asociada a la tarjeta ha sido dada de baja                                     | 39,46,52,53,78 (Visa) 46,76,77,78,79 (Mastercard) |
+| CRYPTOGRAPHIC ERROR                  | Se ha producido un error de criptografía que impide que continúe el pago                          | 81 (Visa) 88 (Mastercard)                         |
+| CVV FAILURE                          | El CVV (Código de verificación de la tarjeta) que ha introducido el usuario no es correcto        | N7 (Visa)                                         |
+| DECLINED BY ISSUER                   | El banco emisor de la tarjeta ha denegado el pago por cualquier motivo                            | 82 (Mastercard)                                   |
+| DUPLICATED OPERATION                 | Una operación similar ha tenido lugar en un periodo de corto muy breve                            | 94 (Visa/Mastercard)                              |
+| EXCEEDS AMOUNT MAX LIMIT             | El pago ha excedido el límite de saldo del usuario                                                | 61,N4,N8,Z5 (Visa)                                |
+| EXCEEDS WITHDRAWAL FREQUENCY LIMIT   | El pago ha excedido la cantidad máxima de operaciones del usuario                                 | 61 (Visa) 61,65 (Mastercard)                      |
+| EXPIRED CARD                         | La tarjeta ha expirado                                                                            | 54 (Visa/Mastercard)                              |
+| FORMAT ERROR                         | La comunicación ha fallado debido a un error de formato entre las partes                          | 30 (Mastercard)                                   |
+| INSUFFICIENT FUNDS                   | La tarjeta no tiene suficientes fondos                                                            | 51 (Visa/Mastercard)                              |
+| INVALID AMOUNT                       | La tarjeta no admite una operación por el importe indicado                                        | 13,B1 (Visa) 13 (Mastercard)                      |
+| INVALID CARD NUMBER                  | Número de tarjeta incorrecto                                                                      | 14 (Visa/Mastercard)                              |
+| INVALID CURRENCY                     | La tarjeta no admite la moneda utilizada                                                          |                                                   |
+| INVALID EXPIRE DATE                  | La fecha de expiración de la tarjeta es inválida                                                  |                                                   |
+| INVALID ISSUER                       | La tarjeta no está asociada a ningún banco emisor                                                 | 15,21 (Visa) 15 (Mastercard)                      |
+| INVALID MERCHANT                     | El comercio enviado no es válido (posiblemente el tpv ha sido desactivado por el adquirente)      | 03,Z6 (Visa) 03 (Mastercard)                      |
+| INVALID PIN                          | Alguno de los valores de autenticación de la operación (CVV, PIN, TAVV...) es incorrecto          | 55,64,74,82,P5,Q1 (Visa) 55 (Mastercard)          |
+| INVALID SESSION                      | La sesión de pago ha caducado o la operación no ha sido autenticada correctamente                 |                                                   |
+| INVALID TRANSACTION                  | La transacción no puede completarse por cualquier motivo                                          | 12,76 (Visa) 12,84 (Mastercard)                   |
+| INVALID TRANSACTION DATE             | La fecha/hora indicada en la operación no es correcta                                             |                                                   |
+| LAW VIOLATION                        | El banco emisor, tarjeta o comercio impiden completar el pago por cualquier motivo                | 93 (Visa)                                         |
+| NO FINANCIAL IMPACT                  | Se ha producido un error genérico y la operación no se ha procesado                               | 80 (Visa)                                         |
+| NOT ACCEPTED REFUND                  | La operación no se ha podido devolver                                                             |                                                   |
+| PICK UP CARD                         | La tarjeta ha sido deshabilitada por el usuario o ha sido robada                                  | 04,07 (Visa) 04 (Mastercard)                      |
+| PIN REQUIRED                         | PIN\_REQUIRED - Se requiere que el usuario introduzca el PIN                                      | 70,P6 (Visa) 71 (Mastercard)                      |
+| PIN TRIES EXCEEDED                   | En una autenticación 3DS, el usuario ha sobrepasado el máximo de intentos para introducir el PIN  | 75 (Visa/Mastercard)                              |
+| PIN VALIDATION NOT POSSIBLE          | El PIN no ha podido ser validado                                                                  | 86,P6 (Visa) 86,89 (Mastercard)                   |
+| RESTRICTED CARD                      | La tarjeta está restringida                                                                       | 62 (Visa/Mastercard)                              |
+| REVERSED                             | Transacción revertida                                                                             | 79 (Visa)                                         |
+| SECURITY VIOLATION                   | El pago no puede continuar por sospechas de fraude o restricción de la tarjeta                    | 63 (Visa/Mastercard)                              |
+| SUSPECTED FRAUD                      | El pago podría ser fraudulento y ha sido bloqueado                                                | 59 (Visa) 83 (Mastercard)                         |
+| SYSTEM ERROR                         | Un error inesperado del sistema ha impedido que se lleve a cabo el pago                           | 06,28,96,N0,N3,R0,R3,Z3 (Visa) 96 (Mastercard)    |
+| TIMEOUT                              | Un proceso ha tardado demasiado tiempo en responder                                               |                                                   |
+| TRANSACTION NOT ALLOWED FOR CARD     | La tarjeta no tiene permitido llevar a cabo la operación                                          | 57 (Visa) 57,81 (Mastercard)                      |
+| TRANSACTION NOT ALLOWED FOR MERCHANT | El comercio no tiene permitido llevar a cabo la operación                                         | 58 (Visa/Mastercard)                              |
+| TRY AGAIN                            | Un error temporal impide procesar la operación, intentarlo más tarde                              | 19 (Visa)                                         |
+| UNABLE TO ROUTE TRANSACTION          | El banco emisor o switch no están disponibles temporalmente                                       | 25,91,92 (Visa) 91,92 (Mastercard)                |
+| UNSPECIFIED REFUSAL                  | Código de rechazo genérico normalmente empleado cuando la tarjeta no tiene fondos                 | 05 (Visa/Mastercard)                              |
+| CARD FROZEN                          | El usuario ha congelado su tarjeta y no puede operar hasta que la reactive                        |                                                   |
+| CARD CANCELLED                       | El usuario ha cancelado su cuenta y no volverá a operar con ésta de nuevo                         |                                                   |
+
+## Merchant advice code (MAC)[​](#merchant-advice-code-mac "Enlace directo al Merchant advice code (MAC)")
+
+Solo en el caso de tarjetas Mastercard, es posible que el campo `error_code_scheme` contenga dos códigos de error separados por una coma. El segundo valor es el campo MAC (`Merchant Advice Code`) a través del cual la marca nos informa del momento a partir del cual deberíamos intentar volver a cobrar al usuario.
+
+| MAC | Descripción                                                          | Reintento posible |
+| --- | -------------------------------------------------------------------- | ----------------- |
+| 01  | Los datos de la tarjeta han cambiado                                 |                   |
+| 02  | Reintentar más tarde                                                 |                   |
+| 03  | No reintentar                                                        | No                |
+| 04  | Requisitos del token no cumplidos para este tipo de token            |                   |
+| 05  | Valor negociado no aprobado                                          |                   |
+| 21  | Pago cancelado                                                       | No                |
+| 22  | El comerciante no califica para el código de producto                |                   |
+| 24  | Intente nuevamente después de 1 hora (solo para uso de Mastercard)   |                   |
+| 25  | Intente nuevamente después de 24 horas (solo para uso de Mastercard) |                   |
+| 26  | Intente nuevamente después de 2 días (solo para uso de Mastercard)   |                   |
+| 27  | Intente nuevamente después de 4 días (solo para uso de Mastercard)   |                   |
+| 28  | Intente nuevamente después de 6 días (solo para uso de Mastercard)   |                   |
+| 29  | Intente nuevamente después de 8 días (solo para uso de Mastercard)   |                   |
+| 30  | Intente nuevamente después de 10 días (solo para uso de Mastercard)  |                   |
+| 40  | Tarjeta prepaga no recargable para el consumidor                     |                   |
+| 41  | Número de tarjeta virtual de un solo uso para el consumidor          |                   |
+| 43  | Número de tarjeta virtual de uso múltiple para el consumidor         |                   |
+
+Un código MAC de 03 o 21 indica que la tarjeta nunca más volverá a tener un cobro aceptado, por lo que no se debe intentar volver a cobrar la tarjeta. Por parte de la pasarela se bloquearán futuros intentos de cobro en estas tarjetas para evitar multas de las marcas. Cuando se intenta lanzar un pago con una tarjeta bloqueada, el error devuelto será `Card blacklisted`.

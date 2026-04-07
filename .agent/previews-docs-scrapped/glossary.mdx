@@ -1,0 +1,319 @@
+---
+title: "Glosario de términos"
+---
+
+### 3DS 1[​](#3ds-1 "Enlace directo al 3DS 1")
+
+Protocolo para autenticación usando solo OTP.
+
+### 3DS 2[​](#3ds-2 "Enlace directo al 3DS 2")
+
+Protocolo para autenticación SCA.
+
+### Abono en tarjeta[​](#abono-en-tarjeta "Enlace directo al Abono en tarjeta")
+
+Transacción que inyecta fondos en la tarjeta. No parte de ninguna transacción inicial, por lo que, a priori, no hay un importe máximo.
+
+### Adquirente[​](#adquirente "Enlace directo al Adquirente")
+
+Entidad financiera con licencia para la captación, gestión y movimiento de fondos entre una tarjeta de crédito o débito hacia la cuenta bancaria de un comercio. Puede no ser necesariamente un banco.
+
+### API[​](#api "Enlace directo al API")
+
+Application Program Interface. Protocolo de comunicación entre dos programas, permitiendo la integración de servicios o funcionalidades complementarias o diferenciadas.
+
+### API Hub[​](#api-hub "Enlace directo al API Hub")
+
+Servicio de software que unifica diferentes APIs para poder ser servidas desde una única API superior.
+
+### APM[​](#apm "Enlace directo al APM")
+
+Alternative payments methods. Métodos de pago alternativos. ej: Sofort, Bizum, iDeal
+
+### Autenticación[​](#autenticación "Enlace directo al Autenticación")
+
+Proceso para verificar la identidad de un individuo, dispositivo o proceso
+
+### Autenticación delegada[​](#autenticación-delegada "Enlace directo al Autenticación delegada")
+
+Es la capacidad de que un comercio con su PSP y merchant levante un SCA el cual lo envía a otros comercio y este puede usar ese SCA sobre otro PSP y merchant. ej: Booking.com a hotel.
+
+### Auth code[​](#auth-code "Enlace directo al Auth code")
+
+Código generado por las marcas que indica que los fondos están validados y listos para moverse.
+
+### Autorización[​](#autorización "Enlace directo al Autorización")
+
+En una transacción con tarjeta de pago, la autorización ocurre cuando un comerciante recibe la aprobación de la transacción después de que el adquirente valida la transacción con el emisor/procesador.
+
+### AVU / BAU[​](#avu--bau "Enlace directo al AVU / BAU")
+
+Account Value Update / BIN Account Update. Protocolo para actualizar cualquier cambio de los datos de la tarjeta, PAN o fecha de caducidad sin necesidad de volver a pedir los datos al cardholder, se realiza mediante actualización de la relación PAN \<-> Token.
+
+### BedBank[​](#bedbank "Enlace directo al BedBank")
+
+Banco de camas. SIstema centralizado donde se precompran plazas hoteleras para posterior compra y venta en canales de distribución. ej: Melia coloca sus habitaciones y precios en WebBeds y este ofrece esas plazas a agencias de viaje.
+
+### BIN[​](#bin "Enlace directo al BIN")
+
+Los 6 primeros dígitos de una tarjeta.
+
+### Booking Engine[​](#booking-engine "Enlace directo al Booking Engine")
+
+Motor de Reservas. Sistema que usan los hoteles para poder vender en su página web.
+
+### Cámara de compensación[​](#cámara-de-compensación "Enlace directo al Cámara de compensación")
+
+Cámara donde se gestionan los fondos que gestiona el procesador y donde se registran los movimientos determinados por el clearing.
+
+### Card PIN[​](#card-pin "Enlace directo al Card PIN")
+
+Número que permite verificar y autenticar el pago en POSs. Es la clave de 4 o 6 dígitos que marca el cardholder en el teclado físico de un POS o de un cajero electrónico.
+
+### Card Wallet[​](#card-wallet "Enlace directo al Card Wallet")
+
+Capacidad de un PSP para relacionar tokens de tarjetas con un usuario.
+
+### Cardholder[​](#cardholder "Enlace directo al Cardholder")
+
+Portador y propietario de tarjeta
+
+### Cashout[​](#cashout "Enlace directo al Cashout")
+
+Algunos adquirentes cobran por el proceso de liquidación a esto se le llamada cashout.
+
+### Channel Manager[​](#channel-manager "Enlace directo al Channel Manager")
+
+Sistema que usan los hoteles para publicar y gestionar las reservas en los diferentes canales de distribución como Booking.com, Expedia, TUI, etc.
+
+### Chargeback[​](#chargeback "Enlace directo al Chargeback")
+
+Capacidad que tiene el cardholder para solicitar a su emisor una devolución de un pago por razones relacionadas a problemas con el producto o servicio. ej: compro pago pero no me llega el paquete, solicito a mi banco que me devuelva el dinero. Si el pago se hizo de forma NO 3DS la devolución es automática, si se hace con 3DS 1 o 2 el cardholder debe argumentar las razones y presentar pruebas para la correcta devolución de los fondos.
+
+### Checkout[​](#checkout "Enlace directo al Checkout")
+
+Formulario PCI para captura de datos de tarjeta.
+
+### Clearing[​](#clearing "Enlace directo al Clearing")
+
+Cuadre de transacciones bancarias de una red de pagos local o nacional. Proceso por el cual se establece el movimiento de fondos entre las los esquemas de pago y las entidades financieras.
+
+### COF[​](#cof "Enlace directo al COF")
+
+Una operación Credential-On-File (COF) es una transacción en la que el comercio está usando la tarjeta almacenada en Paylands ya que el usuario dio su consentimiento cuando almacenó la tarjeta para que el comercio la utilizase en pagos posteriores. Para ello, cuando la tarjeta se tokeniza por 3DS, las marcas devuelven un identificador del COF, el cual es usado en los futuros cobros a dicha tarjeta en los que no intervenga el usuario. Para más info visitar la [web de Redsys](https://pagosonline.redsys.es/funcionalidades-COF.html#:~:text=Una%20operaci%C3%B3n%20Credential%2DOn%2DFile,en%20esta%20transacci%C3%B3n%20y%20posteriores).
+
+### Comercio / Merchant[​](#comercio--merchant "Enlace directo al Comercio / Merchant")
+
+Nombre que los adquirentes o PSPs dan a una empresa que pide un terminal de pago para cobrar a tarjetas o métodos de pago alternativos tanto de forma física como online
+
+### Credenciales[​](#credenciales "Enlace directo al Credenciales")
+
+Usuario, Pass, encription code, o cualquier dato que permita conectar con en PSP.
+
+### Cuenta fiduciaria o salvaguarda[​](#cuenta-fiduciaria-o-salvaguarda "Enlace directo al Cuenta fiduciaria o salvaguarda")
+
+Cuenta que solo puede ser abierta por entidades con licencia financiera de pagos, adquirencia, remesas o crédito. Estas cuentas impiden que lso fondos cuenten en el balance del comercio y garantiza su custodia ya que ni el comercio ni la entidad de pago o bancaria pueden usarlo para inversiones u otras operaciones financieras que no sean las determinadas para el uso de los fondos. Ej: un marketplace la debe usarla garantizar el pago a sus proveedores y que esos fondos el marketplace no pueda usarlos para pago de costes o operaciones propias del marketplace como puede ser pago de impuestos, nómindas o gastos del comercio.
+
+### Cuenta Omnibus[​](#cuenta-omnibus "Enlace directo al Cuenta Omnibus")
+
+Cuentas que usan los bancos para transferir divisas enrte paises.
+
+### CVV[​](#cvv "Enlace directo al CVV")
+
+Card Verification Value. Número para verificar que la tarjeta es real en procesos de pago ECOM.
+
+### DCC[​](#dcc "Enlace directo al DCC")
+
+Dynamic Currency Conversion. Capacidad el PSP para ofrecer al cardholder pagar en la divisa de su tarjeta.
+
+### Descriptor[​](#descriptor "Enlace directo al Descriptor")
+
+Capacidad de la pasarela de añadir un campo dinámico en la transacción el cual es visible en el apunte de esta en el extracto de movimientos de la tarjeta, también puede enviarse a los archivos de conciliación para facilitar la gestión financiera de los pagos. Con Redsys funciona a su manera ya que usan la descripción del comerico y no el dato dinámico.
+
+### Devolución[​](#devolución "Enlace directo al Devolución")
+
+Transacción de retroseso de los fondos captador por autorización. Pude ser ejecutada por el comercio via PSP o el comercio puedo solicitar a su adquirente que las realice desde su lado.
+
+### ECOM[​](#ecom "Enlace directo al ECOM")
+
+Canal que identifica la transacción como online.
+
+### eCommerce Cart / eCMS[​](#ecommerce-cart--ecms "Enlace directo al eCommerce Cart / eCMS")
+
+Sistema para la creación de tiendas online. ej: Prestashop, Magento, WooCommerce, Shopify, etc.
+
+### Emisor[​](#emisor "Enlace directo al Emisor")
+
+Entidad financiera regulada con permiso para emitir PANs de tarjeta de crédito o débito con licencia de los esquemas de pago.
+
+### Escrow[​](#escrow "Enlace directo al Escrow")
+
+Proceso de pago sobre una cuenta fiduciaria, en este proceso una transacción puede dividirse en 2 o mas partes para gestionar el pago desde un receptor a terceros. Método usado para marketplaces
+
+### Esquemas / Marcas[​](#esquemas--marcas "Enlace directo al Esquemas / Marcas")
+
+Visa, Master, Amex, Dinners, etc.
+
+### Exension[​](#exension "Enlace directo al Exension")
+
+Capacidad que ofrece tanto el adquirente como PSP para evitar la solicitud del SCA, facilitando así el pago y reduciendo los pasos por lo tanto la fricción durante el pago online.
+
+### Keyentry[​](#keyentry "Enlace directo al Keyentry")
+
+Proceso de pago mediante digitación manual de los datos del PAN en un POS.
+
+### Liquidación[​](#liquidación "Enlace directo al Liquidación")
+
+Transferencia de fondos de las transacciones asociadas a un comercio desde la cuenta del adquirente hacia la cuenta del comercio.
+
+### Marketplace[​](#marketplace "Enlace directo al Marketplace")
+
+eCommerce que cobra en nombre de terceros.
+
+### MID / en españa FUC[​](#mid--en-españa-fuc "Enlace directo al MID / en españa FUC")
+
+Merchant ID. Número identificador del comercio. Cada adquirente crea su propio número conjuntamente con el procesador.
+
+### MIT[​](#mit "Enlace directo al MIT")
+
+Merchant Initiated Transaction. Transacción iniciada por el comercio. Nuevo tipo de transacción parte del nuevo protocolo de pago 3DS 2 / SCA.
+
+### MIT "reason" field[​](#mit-reason-field "Enlace directo al MIT \"reason\" field")
+
+Campo utilizado para enviar el flag o marca que indica el tipo de MIT que se envía. ej: noshow para cobro de noshow de un hotel. Incremental, en hoteles cobros de consumo minibar o gastos extras en alquiler de coches, recurrence
+
+### MOTO[​](#moto "Enlace directo al MOTO")
+
+Mail Order - Telephone Order. Proceso de cobro con digitación del PAN de la tarjeta en un POS o via interfaz online de un PSP. ej: Normalmente utilizado por call center de recobro.
+
+### MPI[​](#mpi "Enlace directo al MPI")
+
+Merchant Plug-in. Servicio para la conexión del protocolo de pago 3DS. Pieza propia o de terceros integrada en el PSP previamente validada por el Procesador.
+
+### No show[​](#no-show "Enlace directo al No show")
+
+Quebranto en el cobro de una reserva hotelera generado por el no pago de esta.
+
+### NOUS[​](#nous "Enlace directo al NOUS")
+
+Nombre de las tarjetas que no son del propio banco emisor del adquirente.
+
+### ONUS[​](#onus "Enlace directo al ONUS")
+
+Nombre que le dan a las tarjetas transaccionadas en un PSP o Adquirente que tiene su propio emisor. ej: tarjeta caixa en comercio de caixa via psp de caixa.
+
+### Order[​](#order "Enlace directo al Order")
+
+Petición de pago, dentro de una order pueden existir varias transacciones
+
+### OrderID[​](#orderid "Enlace directo al OrderID")
+
+Identificador único de la transacción
+
+### OTB[​](#otb "Enlace directo al OTB")
+
+Open to Buy. Validación de una tarjeta mediante una trancacción de autorización por valor cero. Método usado principalmente
+
+### OTP[​](#otp "Enlace directo al OTP")
+
+One Time Password. Ese mensaje via SMS con una clave que hay que poner antes de pagar. Usado por el protocolo 3DS 1.0
+
+### PAN[​](#pan "Enlace directo al PAN")
+
+Primary Account Number. De 12 a 16 dígitos que identifican una tarjeta de crédito o débito.
+
+### Payment Wallets[​](#payment-wallets "Enlace directo al Payment Wallets")
+
+Aplicaciones mobiles que asocian una tarjeta o una cuenta bancaria a un usuario para permitir hacer el pago con el teléfono, nfc, email o cualquier identificador del usuario. ej: alipay, apple pay, google pay, wechat pay, paypal
+
+### Payout[​](#payout "Enlace directo al Payout")
+
+Aunque es similar al Cashout este termino es más usado para el pago que se hace desde un wallet hacia un comercio, usado sobre todo por marketplaces.
+
+### PCI DSS[​](#pci-dss "Enlace directo al PCI DSS")
+
+Payment Card Industry Data Security Standard. Protocolo para el tratamiento y securización de datos de tarjeta.
+
+### PMS[​](#pms "Enlace directo al PMS")
+
+Propety Management System. Herramienta para la gestión 360 del funcionamiento de un hotel.
+
+### POS[​](#pos "Enlace directo al POS")
+
+Point of Sale. TPV físico. Datáfono. Hardware para poder cobrar tarjetas presencialmente.
+
+### Preautorización[​](#preautorización "Enlace directo al Preautorización")
+
+Transacción que bloquea una cantidad determinada de fondos de una tarjeta, este bloqueo puede ser sobre el crédito de la tarjeta o sobre el límite operativo en el caso de las de débito.
+
+### Prepayed Card[​](#prepayed-card "Enlace directo al Prepayed Card")
+
+Tarjetas prepago, no son nominativas y se pueden usar tanto para pago en POS como ECOM. Las VCC son prepago de crédito. Las tarjetas de ticket restaurante suelen ser prepago. LAs tarjetas de regalo también.
+
+### Procesador[​](#procesador "Enlace directo al Procesador")
+
+Procesador de pagos donde se realiza el Clearing. Sistema que recepta las autorizaciones y autenticaciones de una transacción las organiza y valida contra los diferentes bancos o entidades emisoras.
+
+### Proxy PCI[​](#proxy-pci "Enlace directo al Proxy PCI")
+
+Servicio que intermedia el envío de datos que incorporen un PAN, el cual es tokenizado y securizado en un entorno PCI parte de la pasarela de pago de PnP. Principalmente usado por proveedores hoteleros como motores de reserva, channel managers o PMS.
+
+### PSP / Gateway[​](#psp--gateway "Enlace directo al PSP / Gateway")
+
+Payment service provider. Pasarela de pago. Servicio informático que permite mostrar un formulario de checkout cumpliendo PCI DSS mas conexión con los esquemas, APMs, Procesador y Adquirentes. Permite la gestión de transacciones de autorización, devolución, tokenización y otras funcionalidades al rededor de la transacción.
+
+### Ramo / MCC[​](#ramo--mcc "Enlace directo al Ramo / MCC")
+
+Merchant Category Code. Número que permite identificar el sector en el que opera un comercio. Es un dato importante ya que dependiendo el sector el comercio puede aceptar cierto tipo de pagos e incluso el riesgo asociado al servicio de adquirencia.
+
+### Reconciliación[​](#reconciliación "Enlace directo al Reconciliación")
+
+Proceso por el cual se correlaciona las cantidades registradas en las transacciones dentro del PSP y las liquidadas en cuenta del comercio.
+
+### Reembolso[​](#reembolso "Enlace directo al Reembolso")
+
+Nueva transacción que inyecta fondos en la tarjeta, a partir de un cobro inicial. El importe máximo que se podrá cargar en la tarjeta es el cobrado inicialmente.
+
+### Riesgos[​](#riesgos "Enlace directo al Riesgos")
+
+Es como se llama al análisis financiero que hace el adquirente previa creación del MID del comercio.
+
+### SCA[​](#sca "Enlace directo al SCA")
+
+Payment Card Industry Data Security Standard. Por lo general, la autenticación ocurre a través del uso de uno o más factores de autenticación, tales como:
+
+* Algo que usted sabe, como una contraseña o frase de acceso.
+* Algo que usted tiene, como un dispositivo token o tarjeta inteligente.
+* Algo que usted es, como un sistema biométrico.
+
+### SEPA[​](#sepa "Enlace directo al SEPA")
+
+Single Euro Payment Area. Protocolo para transferencias bancarias entre IBANs Europeos.
+
+### Split payment[​](#split-payment "Enlace directo al Split payment")
+
+Pago dividido, usado para pagos escrow.
+
+### SWIFT[​](#swift "Enlace directo al SWIFT")
+
+Electronic funds transfer. Protocolo de transferencias bancarias internacionales.
+
+### TID[​](#tid "Enlace directo al TID")
+
+Terminal ID. Terminal de pago. Número de activación del servicio para que el PSP pueda enviar la transacción. Jerarquía: MID > TID
+
+### Token[​](#token "Enlace directo al Token")
+
+Encriptación de los datos de una tarjeta o APM.
+
+### Transacción[​](#transacción "Enlace directo al Transacción")
+
+Registro de la captura de datos de tarjeta y autorización de pago dentro de un PSP.
+
+### VCC[​](#vcc "Enlace directo al VCC")
+
+Virtual Credit Card. Tarjeta de crédito virtual. Tradicionalmente utilizada por las agencias de viaje para pagar a Aerolíneas u Hoteles. Estas tarjetas no son nominativas y no necesitan ser autenticadas ya que funcionan como garantía de pago. Solo pueden ser usadas una vez, para cobro via ECOM PSP, MOTO PSP o Keyentry POS.
+
+### Wallet[​](#wallet "Enlace directo al Wallet")
+
+En el caso de los marketplaces se walletiza a cada "actor", permitiendo registrar los movimientos de pago del marketplace al vendor o pagos extras mediante movimientos wallet 2 wallet

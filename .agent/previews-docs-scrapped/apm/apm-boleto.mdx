@@ -1,0 +1,55 @@
+---
+description: "Boleto es un método de pago alternativo brasileño proporcionado por PAGSMILE que permite a los clientes realizar pagos en varios lugares, incluidos bancos, tiendas de lotería y agentes autorizados. Es una opción popular para personas que no tienen tarjetas de crédito o prefieren no usarlas en línea. Cuando un cliente elige Boleto como método de pago, recibe un comprobante de pago con un código de barras único y un número de referencia. Este recibo se puede imprimir y llevar a una ubicación participante para completar el pago, o el cliente puede usar una aplicación móvil o banca por Internet para escanear el código de barras y pagar electrónicamente."
+---
+
+Hay dos formas de integrarlo: mediante redirección o pago push.
+
+## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) indicando el nombre del usuario, email, número de identificación y código postal para que el usuario no tenga que rellenarlo.
+
+```
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882"    },    "billing_address": {      "address1": "calle",      "city": "",      "state_code": "",      "zip_code": "38082365",      "country": "BRL"    }  }
+```
+
+Como identificador de servicio, debe indicarse el **service\_uuid** del servicio PAGSMILE que tengas activado en tu **Paylands Backend → Administrar → Servicios de Pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Una vez generada la orden, se debe redirigir al usuario a [la pantalla de pago](/reference/#operation/redirection-payment) indicando el token de la orden y en la query, el nombre del APM:
+
+Construimos la URL de redirección reemplazando el **token** por el valor devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=BOLETO
+```
+
+Una vez que el usuario sea redirigido a esta pantalla, podrá ver el comprobante de pago que contiene el código de referencia único y el código de barras de Boleto. Pueden imprimirlo y llevarlo a un lugar de pago físico, o escanear el código de barras con la aplicación móvil de su banco o la banca por Internet para realizar un pago electrónico.
+
+## Integración mediante pago push[​](#integración-mediante-pago-push "Enlace directo al Integración mediante pago push")
+
+Si por el contrario queremos que no sea necesario que el usuario esté presente en el momento del pago, este método de pago puede integrarse mediante un pago push.
+
+Para ello, en primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) **obligatoriamente** indicando el nombre del usuario, email, número de identificación y código postal.
+
+```
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882"    },    "billing_address": {      "address1": "calle",      "city": "",      "state_code": "",      "zip_code": "38082365",      "country": "BRL"    }  }
+```
+
+A continuación, se debe lanzar la petición del [pago push](/reference/#operation/push-payment) indicando el UUID de la orden. La respuesta contendrá el código de banco y un número de código de barras. Estos campos se incluyen dentro de la transacción del pago, en el campo `payment_data`. A continuación se incluye un ejemplo:
+
+```
+"payment_data": {    "barcode": "23793864800029999003380260980157275200633330",    "bank_code": "21890010070215182080679309377384187050000001125"}
+```
+
+Una vez se complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.
+
+## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+
+Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de PAGSMILE.
+
+## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+
+Opcionalmente, dentro del `extra_data` podemos incluir el campo `payment_reason`, que permite indicar una descripción del pago.
+
+```
+  "extra_data": {    "payment": {      "payment_reason": "Payment description"    }  }
+```

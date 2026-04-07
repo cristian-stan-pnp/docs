@@ -1,0 +1,44 @@
+---
+title: 'Wallets'
+description: 'Acepta pagos con Google Pay, Apple Pay y Mastercard Click to Pay'
+---
+
+# Wallets
+
+Paylands soporta los principales monederos digitales (wallets), permitiendo a tus clientes pagar con un solo toque sin necesidad de introducir los datos de su tarjeta manualmente.
+
+## Wallets disponibles
+
+| Wallet | Devoluciones | Recurrencias | Países |
+|--------|-------------|-------------|--------|
+| [Google Pay](/guides/wallets/google-pay) | ✅ | ❌ | Global |
+| [Apple Pay](/guides/wallets/apple-pay) | ✅ | ❌ | Global |
+| [Mastercard Click to Pay](/guides/wallets/click-to-pay) | ✅ | ❌ | Global |
+
+## Integración simple vs. avanzada
+
+Existen dos formas de integrar los wallets con Paylands:
+
+### Integración simple (via Checkout alojado)
+
+Al usar el Checkout de Paylands, los botones de wallet se muestran **automáticamente** si el wallet está activado en la configuración del checkout y el dispositivo del usuario es compatible. No se requiere código adicional.
+
+Esta modalidad solo soporta **pagos web** (no apps nativas).
+
+### Integración avanzada (directa)
+
+Si deseas integrar los botones de wallet directamente en tu propia interfaz (web o app nativa), deberás implementar la integración directa de cada wallet según su documentación oficial y conectarlos con la API de Paylands.
+
+Esta modalidad soporta tanto **web** como **apps nativas** (iOS/Android).
+
+<CardGroup cols={3}>
+  <Card title="Google Pay" icon="google" href="/guides/wallets/google-pay">
+    Integración de Google Pay para web y apps Android.
+  </Card>
+  <Card title="Apple Pay" icon="apple" href="/guides/wallets/apple-pay">
+    Integración de Apple Pay para web y apps iOS.
+  </Card>
+  <Card title="Click to Pay" icon="credit-card" href="/guides/wallets/click-to-pay">
+    Mastercard Click to Pay para pagos rápidos sin fricción.
+  </Card>
+</CardGroup>

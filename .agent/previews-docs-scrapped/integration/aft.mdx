@@ -1,0 +1,138 @@
+---
+title: "Account Funding Transactions (AFT)"
+---
+
+## Descripción general[​](#descripción-general "Enlace directo al Descripción general")
+
+Una **Account Funding Transaction (AFT)** es una operación que permite transferir fondos desde una tarjeta hacia una cuenta bancaria o hacia otra persona. Este tipo de transacción está disponible para tarjetas **Visa** y **Mastercard**, y su disponibilidad depende del **MCC (Merchant Category Code)** del comercio y de la marca de tarjeta.
+
+En Paylands, la lógica que determina si se aplica AFT y de qué tipo se basa en la presencia del campo `aft` y de los datos del usuario en el `extra_data` al [**generar la orden de pago**](/reference/#operation/generate-payment-order) y en las condiciones del comercio.
+
+***
+
+## Tipos de AFT[​](#tipos-de-aft "Enlace directo al Tipos de AFT")
+
+| Tipo                 | Descripción                                                                | Requiere datos del receptor |
+| -------------------- | -------------------------------------------------------------------------- | --------------------------- |
+| `NONE`               | Fuerza que no se realice AFT.                                              | No                          |
+| `ACCOUNT_TO_ACCOUNT` | Transferencia de fondos desde tarjeta hacia una cuenta del propio usuario. | No                          |
+| `PERSON_TO_PERSON`   | Transferencia de fondos hacia otra persona (requiere datos del receptor).  | Sí                          |
+
+Si no se indica el campo `aft`, Paylands puede aplicar AFT de tipo `ACCOUNT_TO_ACCOUNT` automáticamente, siempre que:
+
+* El comercio esté configurado para ello (según su MCC).
+* Se incluyan correctamente los datos del usuario (remitente) en los campos `profile` y `billing_address`.
+
+***
+
+## Estructura de `extra_data.aft`[​](#estructura-de-extra_dataaft "Enlace directo al estructura-de-extra_dataaft")
+
+El campo `aft` se incluye dentro de `extra_data`. Su estructura depende del tipo de AFT que se quiera realizar:
+
+```
+"aft": {  "type": "PERSON_TO_PERSON",  "receiver": {    "first_name": "John",    "last_name": "Doe",    "country": "ESP",    "account_number": "4111111111111111",    "account_type": "CARD_NUMBER"  }}
+```
+
+### Campos del objeto `aft`[​](#campos-del-objeto-aft "Enlace directo al campos-del-objeto-aft")
+
+| Campo      | Tipo   | Obligatorio                         | Descripción                                                   |
+| ---------- | ------ | ----------------------------------- | ------------------------------------------------------------- |
+| `type`     | string | Sí                                  | Tipo de AFT: `NONE`, `ACCOUNT_TO_ACCOUNT`, `PERSON_TO_PERSON` |
+| `receiver` | objeto | Solo si `type` = `PERSON_TO_PERSON` | Datos del destinatario de la transferencia                    |
+
+### Campos del objeto `receiver`[​](#campos-del-objeto-receiver "Enlace directo al campos-del-objeto-receiver")
+
+| Campo            | Tipo   | Obligatorio                      | Descripción                                                                          |
+| ---------------- | ------ | -------------------------------- | ------------------------------------------------------------------------------------ |
+| `first_name`     | string | Sí                               | Nombre del receptor                                                                  |
+| `last_name`      | string | Sí                               | Apellido del receptor                                                                |
+| `country`        | string | Sí                               | País del receptor (ISO 3 letras, ej. `ESP`)                                          |
+| `account_number` | string | Sí                               | Número de cuenta, tarjeta o teléfono del receptor                                    |
+| `account_type`   | string | No                               | Tipo de cuenta: `CARD_NUMBER` (por defecto), `ACCOUNT_NUMBER`, `MOBILE_PHONE_NUMBER` |
+| `state_code`     | string | Solo si el país es `USA` o `CAN` | Código del estado o provincia                                                        |
+
+***
+
+## Datos obligatorios del remitente[​](#datos-obligatorios-del-remitente "Enlace directo al Datos obligatorios del remitente")
+
+Para que una AFT (explícita o implícita) se pueda ejecutar correctamente, deben proporcionarse los siguientes datos dentro de `extra_data`:
+
+### `profile`[​](#profile "Enlace directo al profile")
+
+| Campo        | Obligatorio | Descripción                      |
+| ------------ | ----------- | -------------------------------- |
+| `first_name` | Sí          | Nombre del usuario               |
+| `last_name`  | Sí          | Apellido del usuario             |
+| `birthdate`  | Sí          | Fecha de nacimiento (YYYY-MM-DD) |
+| `email`      | No          | Email del usuario (recomendado)  |
+
+### `billing_address`[​](#billing_address "Enlace directo al billing_address")
+
+| Campo        | Obligatorio                      | Descripción      |
+| ------------ | -------------------------------- | ---------------- |
+| `country`    | Sí                               | País del usuario |
+| `address1`   | Sí                               | Dirección        |
+| `city`       | Sí                               | Ciudad           |
+| `zip_code`   | Sí                               | Código postal    |
+| `state_code` | Solo si el país es `USA` o `CAN` | Código de estado |
+
+***
+
+## Compatibilidad de AFT por marca y MCC[​](#compatibilidad-de-aft-por-marca-y-mcc "Enlace directo al Compatibilidad de AFT por marca y MCC")
+
+La siguiente tabla detalla qué tipos de AFT son compatibles según la marca de tarjeta y el código MCC del comercio:
+
+### Visa[​](#visa "Enlace directo al Visa")
+
+| Tipo de AFT          | MCC compatibles              |
+| -------------------- | ---------------------------- |
+| `ACCOUNT_TO_ACCOUNT` | 4829, 6012, 6051, 6211, 6540 |
+| `PERSON_TO_PERSON`   | 4829                         |
+
+### Mastercard[​](#mastercard "Enlace directo al Mastercard")
+
+| Tipo de AFT          | MCC compatibles                                                        |
+| -------------------- | ---------------------------------------------------------------------- |
+| `ACCOUNT_TO_ACCOUNT` | 4829, 6051, 6211, 6536, 6537, 6540, 7800, 7801, 7802, 7994, 7995, 9406 |
+| `PERSON_TO_PERSON`   | 4829, 6536, 6537, 6538, 6540                                           |
+
+***
+
+## Ejemplos de integración[​](#ejemplos-de-integración "Enlace directo al Ejemplos de integración")
+
+### AFT tipo `ACCOUNT_TO_ACCOUNT` (explicita)[​](#aft-tipo-account_to_account-explicita "Enlace directo al aft-tipo-account_to_account-explicita")
+
+```
+"extra_data": {  "profile": {    "first_name": "Joy",    "last_name": "Cardholder",    "email": "joy@carholder.com",    "birthdate": "1996-06-04"  },  "billing_address": {    "country": "ESP",    "address1": "Avda. del Mar",    "city": "Castellon",    "state_code": "CT",    "zip_code": "12006"  },  "aft": {    "type": "ACCOUNT_TO_ACCOUNT"  }}
+```
+
+### AFT tipo `ACCOUNT_TO_ACCOUNT` (implícita)[​](#aft-tipo-account_to_account-implícita "Enlace directo al aft-tipo-account_to_account-implícita")
+
+```
+"extra_data": {  "profile": {    "first_name": "Joy",    "last_name": "Cardholder",    "email": "joy@carholder.com",    "birthdate": "1996-06-04"  },  "billing_address": {    "country": "ESP",    "address1": "Avda. del Mar",    "city": "Castellon",    "state_code": "CT",    "zip_code": "12006"  }}
+```
+
+### AFT tipo `PERSON_TO_PERSON`[​](#aft-tipo-person_to_person "Enlace directo al aft-tipo-person_to_person")
+
+```
+"extra_data": {  "profile": {    "first_name": "Joy",    "last_name": "Cardholder",    "email": "joy@carholder.com",    "birthdate": "1996-06-04"  },  "billing_address": {    "country": "ESP",    "address1": "Avda. del Mar",    "city": "Castellon",    "state_code": "CT",    "zip_code": "12006"  },  "aft": {    "type": "PERSON_TO_PERSON",    "receiver": {      "first_name": "John",      "last_name": "Doe",      "country": "ESP",      "account_number": "4111111111111111",      "account_type": "CARD_NUMBER"    }  }}
+```
+
+### Forzar que no se realice AFT (`NONE`)[​](#forzar-que-no-se-realice-aft-none "Enlace directo al forzar-que-no-se-realice-aft-none")
+
+```
+"extra_data": {  "aft": {    "type": "NONE"  }}
+```
+
+***
+
+## Servicios que soportan AFT[​](#servicios-que-soportan-aft "Enlace directo al Servicios que soportan AFT")
+
+Los siguientes servicios son compatibles con la funcionalidad de AFT en Paylands:
+
+* Cecabank
+* Paynopain
+* Trustpayments
+* Nuvei
+* Finaro (Credorax)
+* Worldpay

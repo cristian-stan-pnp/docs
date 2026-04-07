@@ -1,0 +1,103 @@
+---
+description: "Bizum es un método de pago alternativo que proporciona REDSYS y exclusivo de España, que permite realizar pagos mediante un número de móvil, sin necesidad de utilizar una tarjeta de crédito."
+---
+
+Usando este método de pago, el usuario será redirigido a la página de pago de Bizum, donde deberá introducir el número de teléfono que esté enlazado a la cuenta desde la cual desea pagar. Este método solo está disponible para servicios de tipo REDSYS y no está activado por defecto, por lo que habrá que solicitar la activación de esta característica al equipo de soporte.
+
+El proceso de integración es [**similar al de la carta de pago por redirección**](/docs/integration/simple-integration), pero en este caso se añadirá el token a esta otra URL base:
+
+```
+/payment/bizum/{token}
+```
+
+Es posible configurar el número de teléfono que aparecerá por defecto en la pantalla de pago de Bizum, enviándolo en el momento de crear la orden:
+
+```
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno"      "phone": {        "number": "655655655",        "prefix": "34"      }    }  }
+```
+
+## Integración[​](#integración "Enlace directo al Integración")
+
+Para hacer hacer un pago Bizum debemos seguir los siguientes pasos:
+
+### 1. Generar la orden de pago en tu servidor[​](#1-generar-la-orden-de-pago-en-tu-servidor "Enlace directo al 1. Generar la orden de pago en tu servidor")
+
+Crea la orden igual que harías para realizar una [**integración simple**](/docs/integration/simple-integration#1-generar-la-orden-de-pago-en-tu-servidor).
+
+La orden Bizum se procesará por un canal seguro, por lo que deberá ser configurada con `secure=true`.
+
+Como identificador de servicio, aporta el **service\_uuid** del servicio de REDSYS específico para los pagos Bizum que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Si aún no tienes el servicio Bizum activado, deberás solicitarnos su activación en **[soporte@paylands.com](mailto:soporte@paylands.com)**.
+
+Así pues generamos la orden con la siguiente petición:
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: Bearer [API_KEY]' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "[SIGNATURE]",  "amount": 100,  "operative": "AUTHORIZATION",  "secure": true,  "customer_ext_id": "test",  "service": "[SERVICE_UUID]",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "source_uuid": null,  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*NombreComercio",  "expires_in": 3600}'
+```
+
+Obteniendo como respuesta:
+
+```
+{  "message":"OK",  "code":200,  "current_time":"2022-04-01T14:19:59+0200",  "order":{    "uuid":"B1E0AFC1-EC7C-4FE2-AB9B-B7DAEB800D36",    "created":"2022-04-01T14:19:59+0200",    "created_from_client_timezone":"2022-04-01T14:19:59+0200",    "amount":100,    "currency":"978",    "paid":false,    "status":"CREATED",    "safe":false,    "refunded":0,    "additional":"",    "service":"REDSYSPSD2",    "service_uuid":"7277A994-1988-49EF-A86A-57CBAB752CE5",    "customer":"test",    "cof_txnid":null,    "transactions":[],    "token":"c814b3ae10078e075f63150a571e59721939f35a14ea7a31ed70287970fc7e5ec212ec087e9128b5e01a642d236a7a582a39d3e3421641c0f41bc276e432c3a7",    "ip":null,    "reference":"50620",    "dynamic_descriptor":"PNP*NombreComercio",    "threeds_data":null  },  "client":{"uuid":"3BF33A39-897E-4FBB-98CA-D1C0C55CA898"}}
+```
+
+### 2. Redirigir al cliente al formulario de pago[​](#2-redirigir-al-cliente-al-formulario-de-pago "Enlace directo al 2. Redirigir al cliente al formulario de pago")
+
+Construimos la URL de redirección a la pasarela de bizum aportando el **token** de la orden devuelta de la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/bizum/{token}
+```
+
+Podemos presentar al usuario un botón de pago con bizum como el siguiente:
+
+```
+<a href="https://api.paylands.com/v1/sandbox/payment/bizum/{token}">  <img src="bizum-logo.png" alt="Bizum Logo" style="width:200px; height:auto;"/></a>
+```
+
+![Bizum button](/images/docs/apm/assets/images/bizum-button-ce312ceb6300f505a9f11fbbd9958ea8.png)
+
+Al pulsar el botón, el usuario será redirigido a la pasarela de Bizum.
+
+![Bizum Form](/images/docs/apm/assets/images/bizum-form-6d44e6e2bbdf890e3cffddb5b84c1b39.png)
+
+### 3. Introducir datos y código de validación[​](#3-introducir-datos-y-código-de-validación "Enlace directo al 3. Introducir datos y código de validación")
+
+Una vez se ha redirigido al usuario a la página de Bizum, necesitará introducir su **número de teléfono** y la **clave secreta** de Bizum. Poco después, recibirá un **SMS con un código** que deberá introducir para finalizar el pago.
+
+A continuación, el usuario será redirigido a la URL OK/KO de vuelta.
+
+### 4. Se notifica al servidor[​](#4-se-notifica-al-servidor "Enlace directo al 4. Se notifica al servidor")
+
+Al poco tiempo, se recibirá la notificación POST del pago, que será similar a un [**pago por webservice**](/reference/#operation/webservice-payment), salvo por los siguientes detalles:
+
+* La clave `source` que contiene los detalles de la tarjeta usada que aparece bajo `order.transactions.[n].source` contendrá el valor `null`.
+
+* Los pagos Bizum soportan tanto autorizaciones `AUTHORIZATION` como operaciones en diferido `DEFERRED` como operativa, pero cuando se usa la operativa `DEFERRED` solo pueden ser confirmadas más tarde. Los pagos Bizum que no se hayan confirmado expirarán dado un tiempo determinado, dependiendo del banco del cliente.
+
+* Desgraciadamente, Bizum no proporciona ninguna información relacionada con el teléfono del cliente, nombre, o ningún otro detalle. El cliente permanece anónimo durante el proceso. Las reglas antifraude relacionadas con las tarjetas no se aplicarán, y no habrá restricciones en pagos considerados como de riesgo por el sistema antifraude, solo los pagos fraudulentos serán bloqueados. Tampoco importa si la orden es segura o no, el flujo de pago será exactamente el mismo.
+
+* Bizum solo puede ser usado por clientes que previamente han activado el servicio en sus cuentas bancarias, y han configurado una clave secreta Bizum. La mayoría de bancos españoles soportan pagos Bizum y se está convirtiendo en un método de pago cada vez más común.
+
+<Info>
+  Bizum debe estar activado en cada terminal, por favor contacta con nosotros para pedir la activación de Bizum en cualquier otro terminal.
+</Info>
+
+## Testing[​](#testing "Enlace directo al Testing")
+
+Para realizar pruebas en entorno sandbox y forzar que la operación sea OK/KO se puede proporcionar los siguientes números cuando se le solicite:
+
+```
+OK: 700000000KO: 600000000
+```
+
+Se debe prestar especial atención al importe que se indique en las pruebas de sandbox. Dicho importe debe estar entre los 0,51€ y 15,00€.
+
+La URL de sandbox para los pagos bizum es la siguiente:
+
+```
+https://api.paylands.com/v1/sandbox/payment/bizum/{token}
+```
+
+Consulta la [**referencia API**](/reference) para conocer más detalles sobre la [**petición de pago BIZUM**](/reference/#operation/bizum-payment).

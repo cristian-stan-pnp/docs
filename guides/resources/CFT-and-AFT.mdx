@@ -1,0 +1,342 @@
+---
+title: "Credit Fund Transfer (CFT) y Account Funding Transactions (AFT)"
+---
+
+# CFT vs AFT
+
+En Paynopain existen dos mecanismos relacionados con transferencias de fondos asociadas a tarjetas:
+
+- **Credit Fund Transfer (CFT)**: el comercio envía dinero a la tarjeta del usuario mediante un abono directo.  
+- **Account Funding Transactions (AFT)**: se usan para mover fondos **desde** una tarjeta (del usuario/remitente) hacia una cuenta bancaria, tarjeta o incluso otra persona (receiver).  
+
+Ambos conceptos conviven en la plataforma, pero cubren **direcciones de flujo y casos de uso diferentes**, y tienen **requisitos técnicos distintos** a nivel de payload y datos KYC.
+
+---
+
+## 1. Visión de alto nivel
+
+### Credit Fund Transfer (CFT)
+
+- **Dirección del dinero**: del comercio → tarjeta del usuario.  
+- **Uso típico**:  
+  - Devolución de saldo a un cliente sin vincularlo a una venta concreta.  
+  - Cashout / payout desde el saldo del comercio hacia tarjetas Visa/Mastercard.
+- **Operativa**:
+  1. Se genera una **orden de pago** (`/payment`) con `operative: "PAYOUT"` y `secure: false`.  
+  2. Se hace el **abono a tarjeta** (`/payment/payout`) indicando:
+     - `order_uuid` de la orden.
+     - `source_uuid` de la tarjeta del usuario (tokenizada en Paynopain).  
+- **Característica importante**:  
+  - La transferencia de fondos es **final**; **no es posible revertir un abono a tarjeta**.  
+
+### Account Funding Transactions (AFT)
+
+- **Dirección del dinero**: desde la tarjeta del usuario →  
+  - una cuenta del propio usuario (**ACCOUNT_TO_ACCOUNT**), o  
+  - otra persona/receptor (**PERSON_TO_PERSON**).  
+- **Uso típico**:
+  - Cargar saldo en una cuenta (wallet, prepago, etc.) usando una tarjeta.
+  - Enviar dinero entre personas usando tarjeta como origen.
+- **Dónde se configura**:
+  - A través del objeto `extra_data.aft` en la **generación de la orden de pago**.  
+- **Dependencias**:
+  - Depende del **MCC del comercio** y de la **marca de tarjeta** para saber si el tipo de AFT está soportado.  
+
+---
+
+## 2. Coincidencias técnicas entre CFT y AFT
+
+Aunque resuelven problemas distintos, comparten varias ideas:
+
+- **Trabajan sobre tarjetas Visa y Mastercard** (compatibilidad siempre condicionada al adquirente, MCC, etc.).  
+- Ambos requieren **datos de perfil del usuario** en `extra_data.profile` (nombre, apellidos, email, etc.), si bien AFT exige más campos (como `birthdate` y dirección completa).  
+- Se apoyan en la misma **infraestructura de órdenes de pago** (`/payment`) y notificación de resultados (`url_post`).
+- La lógica de negocio (si se puede o no realizar la operación) depende de la **configuración del comercio**.
+
+---
+
+## 3. Diferencias clave CFT vs AFT
+
+### 3.1 Dirección del flujo y roles
+
+| Aspecto                      | CFT                                                | AFT                                                                 |
+|-----------------------------|----------------------------------------------------|----------------------------------------------------------------------|
+| Origen de fondos            | Comercio / saldo del comercio                      | Tarjeta del usuario (cardholder)                  |
+| Destino de fondos           | Tarjeta del usuario                                | Cuenta/tarjeta/teléfono de usuario o de otra persona |
+| Operativa principal         | **Abono a tarjeta** (payout)                       | **Funding de cuenta** (account o person-to-person)                  |
+| Rol del usuario             | Receptor de fondos                                 | Remitente (y opcionalmente receptor, si P2P)                        |
+
+### 3.2 Endpoints y campos clave
+
+- **CFT**:
+  - Orden de pago: `POST /payment`
+    - `operative: "PAYOUT"`
+    - `secure: false`  
+    - `extra_data.profile` con datos mínimos del usuario.
+  - Abono a tarjeta: `POST /payment/payout`
+    - `order_uuid`
+    - `source_uuid` (tarjeta destino).  
+
+- **AFT**:
+  - Se configura con el campo `extra_data.aft` al generar la orden de pago.  
+  - No necesita un endpoint específico adicional, pero sí:
+    - `extra_data.profile` (remitente).
+    - `extra_data.billing_address`.
+    - `extra_data.aft` (tipo de AFT y, si aplica, receptor).  
+
+### 3.3 Requisitos de datos del usuario
+
+#### CFT
+
+Para CFT la documentación pide como mínimo:  
+
+- `extra_data.profile.first_name`
+- `extra_data.profile.last_name`
+- `extra_data.profile.email`
+- `extra_data.profile.phone.number`
+- `extra_data.profile.phone.prefix`
+
+No se exige en el ejemplo la dirección postal ni la fecha de nacimiento, aunque pueden ser recomendables a efectos de cumplimiento y scoring.
+
+#### AFT
+
+Para AFT, los datos del remitente son más estrictos:  
+
+- Dentro de `extra_data.profile`:
+  - `first_name` (obligatorio)
+  - `last_name` (obligatorio)
+  - `birthdate` (obligatorio, formato `YYYY-MM-DD`)
+  - `email` (recomendado)  
+- Dentro de `extra_data.billing_address`:
+  - `country` (obligatorio)
+  - `address1` (obligatorio)
+  - `city` (obligatorio)
+  - `zip_code` (obligatorio)
+  - `state_code` (obligatorio solo si el país es `USA` o `CAN`)  
+
+Además, si `type = "PERSON_TO_PERSON"`, hay que informar un `receiver` completo.
+
+---
+
+## 4. Tipos de AFT y estructura de `extra_data.aft`
+
+### 4.1 Tipos de AFT
+
+La documentación define tres tipos:  
+
+- `NONE`: fuerza que no se aplique AFT.
+- `ACCOUNT_TO_ACCOUNT`: la tarjeta del usuario mueve fondos hacia una cuenta del propio usuario (funding de cuenta propia).
+- `PERSON_TO_PERSON`: la tarjeta del usuario envía fondos a otra persona (requiere datos de receptor).
+
+Si no se envía el campo `aft`, Paylands puede aplicar **AFT de tipo `ACCOUNT_TO_ACCOUNT` automáticamente** si:
+
+- El comercio está configurado para ello según su MCC.
+- Se han incluido correctamente los datos del usuario en `profile` y `billing_address`.  
+
+### 4.2 Estructura base de `extra_data.aft`
+
+```json
+"extra_data": {
+  "profile": {
+    "first_name": "Luis",
+    "last_name": "Cliente",
+    "email": "luis@example.com",
+    "birthdate": "1990-01-01"
+  },
+  "billing_address": {
+    "country": "ESP",
+    "address1": "Calle Ejemplo 123",
+    "city": "Castellón",
+    "zip_code": "12001",
+    "state_code": "CT"
+  },
+  "aft": {
+    "type": "PERSON_TO_PERSON",
+    "receiver": {
+      "first_name": "Ana",
+      "last_name": "Receptora",
+      "country": "ESP",
+      "account_number": "4111111111111111",
+      "account_type": "CARD_NUMBER"
+    }
+  }
+}
+
+```
+
+Campos destacados
+
+Dentro de `extra_data.aft` los campos relevantes son:
+
+```json
+"extra_data": {
+  "profile": {
+    "first_name": "Luis",
+    "last_name": "Cliente",
+    "email": "luis@example.com",
+    "birthdate": "1990-01-01"
+  },
+  "billing_address": {
+    "country": "ESP",
+    "address1": "Calle Ejemplo 123",
+    "city": "Castellón",
+    "zip_code": "12001",
+    "state_code": "CT"
+  },
+  "aft": {
+    "type": "PERSON_TO_PERSON",
+    "receiver": {
+      "first_name": "Ana",
+      "last_name": "Receptora",
+      "country": "ESP",
+      "account_number": "4111111111111111",
+      "account_type": "CARD_NUMBER"
+    }
+  }
+}
+```
+
+Campos clave:
+
+- `aft.type` (obligatorio): [NONE, ACCOUNT_TO_ACCOUNT, PERSON_TO_PERSON]
+- `aft.receiver` (obligatorio solo para PERSON_TO_PERSON):
+    - `first_name`
+    - `last_name`
+    - `country` (ISO 3 letras, por ejemplo ESP)
+    - `account_number` (tarjeta, cuenta o número de móvil)
+    - `account_type` (opcional): [CARD_NUMBER, ACCOUNT_NUMBER, MOBILE_PHONE_NUMBER].
+
+# 5. Compatibilidad por marca y MCC (solo AFT)
+
+La disponibilidad de AFT depende de la combinación **marca de tarjeta + MCC del comercio**.
+
+## Visa
+
+- **ACCOUNT_TO_ACCOUNT**: MCC `4829`, `6012`, `6051`, `6211`, `6540`
+- **PERSON_TO_PERSON**: MCC `4829`
+
+## Mastercard
+
+- **ACCOUNT_TO_ACCOUNT**: MCC `6012`, `6051`, `6211`, `6536`, `6537`, `6540`
+- **PERSON_TO_PERSON**: MCC `4829`, `6536`, `6537`, `6538`, `6540`
+
+---
+
+# 6. Flujo técnico de integración
+
+## 6.1 Flujo CFT (abono a tarjeta)
+
+1. **Crear una orden de pago (`POST /payment`)** con operativa `PAYOUT`:
+
+```json
+{
+  "signature": "<firma>",
+  "amount": 1500,
+  "currency": "978",
+  "operative": "PAYOUT",
+  "secure": false,
+  "customer_ext_id": "user-123",
+  "service": "<SERVICE_UUID>",
+  "description": "Payout CFT ejemplo",
+  "url_post": "https://tucomercio.com/notificacion",
+  "extra_data": {
+    "profile": {
+      "first_name": "María",
+      "last_name": "Cliente",
+      "email": "maria@example.com",
+      "phone": {
+        "number": "600000000",
+        "prefix": "34"
+      }
+    }
+  }
+}
+```
+
+2. **Realizar el abono (`POST /payment/payout`)** indicando `order_uuid` y `source_uuid`:
+
+```json
+{
+  "signature": "<firma>",
+  "order_uuid": "<ORDER_UUID>",
+  "source_uuid": "<CARD_UUID>",
+  "customer_ip": "127.0.0.1"
+}
+```
+
+3. Se recibe respuesta inmediata + notificación al `url_post`.
+
+4. Importante: **los abonos CFT no se pueden revertir**.
+
+---
+
+## 6.2 Flujo AFT (funding desde tarjeta)
+
+1. **Crear orden de pago (`POST /payment`)** incluyendo `profile`, `billing_address` y opcionalmente `aft`:
+
+```json
+{
+  "signature": "<firma>",
+  "amount": 2000,
+  "currency": "978",
+  "operative": "PAYMENT",
+  "service": "<SERVICE_UUID>",
+  "description": "Funding de cuenta vía tarjeta",
+  "url_post": "https://tucomercio.com/notificacion",
+  "extra_data": {
+    "profile": {
+      "first_name": "Luis",
+      "last_name": "Cliente",
+      "email": "luis@example.com",
+      "birthdate": "1990-01-01"
+    },
+    "billing_address": {
+      "country": "ESP",
+      "address1": "Calle Ejemplo 123",
+      "city": "Castellón",
+      "zip_code": "12001",
+      "state_code": "CT"
+    },
+    "aft": {
+      "type": "ACCOUNT_TO_ACCOUNT"
+    }
+  }
+}
+```
+
+2. Paylands decide internamente si aplica AFT y qué tipo, según:
+   - Configuración del comercio  
+   - MCC  
+   - Marca de la tarjeta  
+   - `extra_data.aft.type`
+
+3. Se recibe respuesta inmediata + notificación al `url_post`.
+
+---
+
+# 7. Tabla comparativa resumida
+
+| Característica                         | CFT                                                  | AFT                                                                 |
+|----------------------------------------|------------------------------------------------------|----------------------------------------------------------------------|
+| Dirección de fondos                    | Comercio → tarjeta del usuario                       | Tarjeta del usuario → cuenta propia u otra persona                  |
+| Operativa principal                    | `PAYOUT` + `/payment/payout`                         | `PAYMENT` + lógica AFT en `extra_data.aft`                          |
+| Endpoint específico                    | Sí, `POST /payment/payout`                           | No adicional (todo en `/payment`)                                   |
+| Campo clave                            | `operative: "PAYOUT"`, `secure: false`               | `extra_data.aft.type`                                               |
+| Datos mínimos de usuario               | `profile` básico                                     | `profile` + `billing_address` + `receiver` (si aplica)              |
+| Compatibilidad por MCC                 | No detallada                                         | Tabla completa por marca y MCC                                      |
+| Reversibilidad                         | No reversible                                        | Depende del flujo y políticas de reembolso                          |
+| Escenario típico                       | Cashout, devoluciones, payouts                       | Funding de cuentas, P2P, top-ups                                    |
+
+---
+
+# 8. ¿Cuándo usar CFT y cuándo AFT?
+
+## Usa **CFT** cuando:
+- Quieres **enviar dinero a la tarjeta** del usuario.  
+- Necesitas un **cashout directo**.  
+- Quieres un abono inmediato e irreversible.  
+
+## Usa **AFT** cuando:
+- Necesitas **cargar una cuenta** (wallet, monedero, prepago) desde una tarjeta.  
+- Quieres habilitar **transferencias P2P**.  
+- Requieres un flujo condicionado por MCC, marca o reglas de adquirencia.  

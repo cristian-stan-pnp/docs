@@ -1,0 +1,80 @@
+---
+title: "Introducción"
+---
+
+
+Bienvenido a la documentación de Paynopain. Sigue estos pasos para integrar nuestra pasarela de pagos en tu negocio, desde la primera prueba hasta el cobro real.
+
+## Crea tu cuenta de prueba
+
+Antes de empezar, necesitarás acceso a nuestro entorno de Sandbox. Puedes crear tu cuenta de prueba de dos formas:
+
+- **Autoregistro**: Regístrate directamente en [portal.paynopain.com/register](https://portal.paynopain.com/register)
+- **Soporte**: Contacta con nuestro equipo de soporte para obtener tu cuenta de prueba y tus claves de API
+
+### Consigue tus credenciales desde el portal
+
+Si ya tienes una cuenta de Paynopain, puedes obtener tus credenciales desde el portal de Paynopain entrando en el siguiente enlace:
+
+[Portal Paynopain -> Desarrolladores](https://portal.paynopain.com/settings/developers)
+
+![Seccion Desarrolladores en el portal con enlace https://portal.paynopain.com/settings/developers
+ ](/images/es/seccion-desarolladores.png)
+
+## Construye tu integración
+
+Empieza a desarrollar tu integración utilizando tu cuenta de Sandbox. Puedes elegir el método que mejor se adapte a tu modelo de negocio:
+
+<CardGroup cols={2}>
+  <Card title="Pagos Online" icon="globe" href="/guides/accept-payments/web-integration">
+    Acepta pagos en tu sitio web o aplicación móvil utilizando nuestra API (Redirección o Webservice).
+  </Card>
+  <Card title="Pagos Presenciales" icon="store" href="/api-reference/card-present">
+    Soluciones para aceptar pagos en punto de venta (POS) y terminales físicos.
+  </Card>
+  <Card title="Plugins" icon="puzzle-piece" href="/guides/plugins/ecommerce">
+    Conecta tu sistema e-commerce (WooCommerce, PrestaShop, Magento, VTex) sin necesidad de programar.
+  </Card>
+  <Card title="Herramientas No-Code" icon="wand-magic-sparkles" href="/guides/get-started/introduction#herramientas-no-code">
+    Utiliza Enlaces de Pago y terminal virtual (MoTo) para cobrar sin integración técnica compleja.
+  </Card>
+</CardGroup>
+
+
+## Solicita tu cuenta de producción
+
+Una cuenta de producción te permite aceptar pagos reales de tus clientes. Dado que Paynopain es una entidad financiera regulada, debemos realizar una verificación de tu negocio antes de activarte.
+
+Antes de solicitar el paso a producción:
+*   Verifica que tu modelo de negocio cumple con nuestros requisitos.
+*   Asegúrate de haber completado las pruebas en Sandbox satisfactoriamente.
+*   Contacta con nuestro equipo comercial para iniciar el trámite.
+
+## Firma el contrato y actívate
+
+Si tu solicitud es aprobada, te enviaremos el contrato de servicio. Dependiendo de tu integración (especialmente si procesas tarjetas directamente), es posible que necesites completar un cuestionario de seguridad PCI-DSS.
+
+Una vez recibamos el contrato firmado y la documentación necesaria, te daremos acceso a tu **Panel de Producción**.
+
+## Prepárate para cobrar
+
+Para empezar a aceptar pagos reales, debes configurar tu cuenta de producción. **Importante**: Las configuraciones de Sandbox no se copian automáticamente a Producción.
+
+Utiliza esta lista de verificación antes de lanzar:
+*   [ ] Configura tus métodos de pago y el checkout en el panel de producción.
+*   [ ] Actualiza los endpoints en tu aplicación para apuntar a las URLs de producción.
+*   [ ] Realiza una transacción real de prueba (de bajo importe) para verificar el flujo completo.
+
+---
+
+## Herramientas No-Code
+
+Si prefieres no realizar una integración técnica, puedes usar nuestras herramientas directas:
+
+### Enlaces de Pago
+Genera enlaces de pago seguros y envíalos a tus clientes por email, SMS o redes sociales.
+![Enlaces de pago](/images/payment-links.png)
+
+### Pagos MoTo
+Terminal virtual para procesar pagos manuales recibidos por teléfono o correo electrónico.
+![Pagos MoTo](/images/moto-payments.png)

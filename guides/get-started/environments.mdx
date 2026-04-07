@@ -1,0 +1,21 @@
+---
+title: 'Entornos'
+---
+
+En Paylands disponemos de dos entornos diferentes a los que realizar las peticiones: **Sandbox** y **Producción**.
+
+Cada uno de estos entornos debe ser llamado con unos datos diferentes, es decir, el API KEY, los identificadores de servicio, órdenes o tarjeta serán diferentes dependiendo del entorno en el que se realice la llamada.
+
+## Entorno Sandbox
+El entorno de Sandbox es un entorno creado para realizar pruebas del sistema. Este entorno suele ser usado para la integración de la pasarela, y todas las operaciones realizadas en este entorno se realizan a través de los servicios de test, por lo que los pagos realizados a través de este entorno no manejan dinero real.
+
+En este entorno se deben usar unas tarjetas de pruebas concretas, para poder controlar las diferentes respuestas que se pueden recibir (SUCCESS, ERROR...).
+
+**URL Base:**
+`https://api.paylands.com/v1/sandbox/`
+
+## Entorno Producción
+El entorno de Producción es el entorno final del sistema. Todos los pagos realizados en este entorno se gestionan con dinero real. Por tanto, como las operaciones en este entorno ya contactan con el banco emisor de las tarjetas utilizadas, éstas deben ser tarjetas reales.
+
+**URL Base:**
+`https://api.paylands.com/v1/`

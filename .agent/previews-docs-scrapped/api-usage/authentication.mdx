@@ -1,0 +1,28 @@
+---
+title: "Autenticación"
+description: "Las llamadas a la API se deben autenticar mediante tu  en cada petición. Tu  conlleva muchos privilegios por lo que asegúrate de mantenerla en secreto. No compartas tu  ni la expongas nunca en el código del lado del cliente de cualquier sitio web público."
+---
+
+Puedes encontrar tu **API Key** de comercio en tu panel del [Backend de Paylands](https://backend.paylands.com/).
+
+![Backend Auth](/images/docs/api-usage/assets/images/backend-auth1-1edddaa23469e7aba02cdfc91241780d.jpg)
+
+Pulsando en el icono superior derecha se desplegarán tus credenciales.
+
+![Backend Auth Credentials](/images/docs/api-usage/assets/images/backend-auth2-aa7736bea9b7eff21bed4cc6547735ad.jpg)
+
+La autenticación de la API se realiza mediante `HTTP Basic Auth`. Provee tu **API Key** como valor para el campo *username* (nombre de usuario). No es necesario proveer valor para el campo *password* (contraseña). Si se setea la cabecera Basic Auth manualmente (como por ejemplo, al hacer una prueba con curl), la **API Key** debe ir codificada en base64. Si se usa Postman, Insomnia o cualquier otra aplicación similar, estas ya la codifican en base64 automáticamente al enviar la petición.
+
+Si necesitas autenticar via `Bearer authentication` (como por ejemplo, para una petición `cross-origin`), usa el modificador `-H "Authorization: Bearer <API Key>"` en lugar de `-u <API Key>:`.
+
+Por ejemplo, si tu api key es **5d66a96f460f4109b24c2243fb1c43e1**, las siguientes cabeceras serán válidas:
+
+```
+Authorization: Basic NWQ2NmE5NmY0NjBmNDEwOWIyNGMyMjQzZmIxYzQzZTE=Authorization: Bearer 5d66a96f460f4109b24c2243fb1c43e1
+```
+
+Todas las peticiones a la API deben realizarse sobre HTTPS. Las peticiones realizadas sobre HTTP serán denegadas; así como las peticiones sin autenticar.
+
+## Perfiles API key[​](#perfiles-api-key "Enlace directo al Perfiles API key")
+
+La API key tiene asignados varios perfiles que determinan sus permisos. En la Referencia API puedes encontrar información sobre los diferentes [perfiles de la API key y cómo obtenerlos](/reference/#operation/api-key-profiles).

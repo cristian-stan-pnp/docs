@@ -1,0 +1,130 @@
+---
+title: 'Integración via JavaScript SDK'
+description: 'Integra el checkout de Paylands directamente en tu web con el SDK de JavaScript'
+---
+
+# Integración del Checkout via JavaScript SDK
+
+El SDK de JavaScript de Paylands permite incrustar el checkout directamente en tu web sin necesidad de redirigir al usuario a otra página. Es compatible con cualquier framework o web vanilla.
+
+## Instalación
+
+Incluye el script del SDK en tu página HTML, antes del cierre del tag `</body>`:
+
+```html
+<script src="https://checkout.paylands.com/sdk/paylands-checkout-sdk.js"></script>
+```
+
+## Inicialización
+
+Una vez incluido el script, inicializa el SDK con el `token` de la orden, obtenido previamente desde tu servidor:
+
+```javascript
+const checkout = new PaylandsCheckout({
+  token: 'ORDER_TOKEN',
+  environment: 'sandbox', // 'sandbox' | 'production'
+});
+```
+
+## Modos de uso
+
+### Redirección directa
+
+Si simplemente quieres redirigir al usuario a la página de checkout:
+
+```javascript
+checkout.redirect();
+```
+
+### Renderizado en un contenedor
+
+Para mostrar el checkout embebido dentro de un elemento de tu página:
+
+```html
+<div id="paylands-checkout-container"></div>
+```
+
+```javascript
+const checkout = new PaylandsCheckout({
+  token: 'ORDER_TOKEN',
+  environment: 'sandbox',
+  containerId: 'paylands-checkout-container',
+});
+
+checkout.render();
+```
+
+### Botón de Google Pay
+
+Para mostrar únicamente el botón de Google Pay:
+
+```javascript
+checkout.renderGooglePay({
+  containerId: 'google-pay-button',
+});
+```
+
+### Botón de Apple Pay
+
+Para mostrar únicamente el botón de Apple Pay:
+
+```javascript
+checkout.renderApplePay({
+  containerId: 'apple-pay-button',
+});
+```
+
+### Botón de PayPal
+
+```javascript
+checkout.renderPayPal({
+  containerId: 'paypal-button',
+});
+```
+
+### Botón de Revolut Pay
+
+```javascript
+checkout.renderRevolutPay({
+  containerId: 'revolut-pay-button',
+});
+```
+
+## Métodos de pago alternativos (APMs)
+
+Los APMs como Bizum o PIX también están soportados a través del SDK. Al renderizar el checkout completo, estos métodos se mostrarán automáticamente si están activados en el checkout configurado, sin necesidad de configuración adicional en el SDK.
+
+## Eventos
+
+Puedes suscribirte a eventos del checkout para reaccionar al resultado del pago:
+
+```javascript
+const checkout = new PaylandsCheckout({
+  token: 'ORDER_TOKEN',
+  environment: 'sandbox',
+  containerId: 'paylands-checkout-container',
+  onPaymentComplete: (result) => {
+    if (result.status === 'SUCCESS') {
+      console.log('Pago completado:', result.order_uuid);
+      // Redirige al usuario a la página de éxito
+    } else {
+      console.log('Pago fallido:', result.status);
+    }
+  },
+});
+
+checkout.render();
+```
+
+## Referencia de opciones
+
+| Opción | Tipo | Requerido | Descripción |
+|--------|------|-----------|-------------|
+| `token` | string | ✅ | Token de la orden obtenido desde tu servidor. |
+| `environment` | string | ✅ | `sandbox` para pruebas, `production` para pagos reales. |
+| `containerId` | string | No | ID del elemento HTML donde se renderizará el checkout. |
+| `onPaymentComplete` | function | No | Callback invocado al finalizar el pago. Recibe el resultado. |
+
+<Note>
+  El SDK requiere que la orden sea generada previamente desde tu servidor backend. Nunca generes órdenes desde el frontend, ya que expone tu API Key.
+</Note>

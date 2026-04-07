@@ -1,0 +1,10 @@
+---
+title: "Visualizar los datos de tarjeta"
+description: "Para cada tarjeta que se tokenize utilizando el PCI PROXY se puede generar un enlace para mostrar los datos completos de la tarjeta en el navegador. Este enlace debe generarse utilizando el punto final  en la API REST. Este método emitirá una url que será válida durante 120 segundos."
+---
+
+Puede probarlo usted mismo ejecutando esta petición curl:
+
+```
+curl -X POST https://pci-proxy-api.paynopain.com/sandbox/card/A27BEC4A-C3EF-4A45-A6B9-1485BA596625/show -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYmJjZjk4OWQ5MzRlZmFkNTJmZGE1OGRhODBkNTdjOTJkODViOTVlZTY2MDBkZDBkNmVkYmI1ZjQ3MDNkZTk2IiwiYXVkIjoiY3VzdG9tZXIiLCJpYXQiOjE1Njg2OTg1MzR9.0ioFPS5Z67RXHM9OV6ZW8alxisU1SeRNMAZpZchc1vU'
+```

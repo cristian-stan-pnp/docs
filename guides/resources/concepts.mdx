@@ -1,0 +1,91 @@
+---
+title: 'Concepts'
+---
+
+# Conceptos Clave en Paylands
+
+## Entornos
+
+Paylands ofrece dos entornos distintos para realizar peticiones: **Sandbox** y **Producción**. Cada entorno requiere credenciales específicas (API KEY, identificadores de servicio, órdenes o tarjeta), que varían según el entorno.
+
+### Entorno Sandbox
+
+El entorno Sandbox está diseñado para pruebas del sistema. Se utiliza habitualmente para la integración de la pasarela. Todas las operaciones en este entorno se procesan mediante servicios de prueba, por lo que no implican dinero real.
+
+Para simular diversas respuestas (SUCCESS, ERROR, etc.), se deben utilizar tarjetas de prueba específicas.
+
+La URL de este entorno es: `https://api.paylands.com/v1/sandbox/`
+
+### Entorno Producción
+
+El entorno de Producción es el entorno final del sistema. Todos los pagos realizados en este entorno gestionan dinero real. Dado que las operaciones contactan directamente con el banco emisor, deben utilizarse tarjetas reales.
+
+La URL de este entorno es: `https://api.paylands.com/v1/`
+
+## Operativas
+
+Las operativas definen los tipos de pago que se pueden realizar a través de la plataforma.
+
+El tipo de operativa se especifica mediante el atributo `operative` en la llamada de creación de la orden a `/payment`. Una vez configurada la operativa, las acciones posteriores se envían al endpoint correspondiente. Estos endpoints, sus parámetros y toda la información necesaria se encuentran en la sección de Pagos. A continuación, se detallan las acciones permitidas por cada operativa.
+
+### Authorization
+
+Orden de cobro efectiva en el momento de la operación.
+
+| Code          | Description                                                               |
+| :------------ | :------------------------------------------------------------------------ |
+| `AUTHORIZATION` | Realiza un pago sobre la orden creada. La URL es `/payment/direct`         |
+| `REFUND`        | Realiza una devolución total o parcial de un pago. La URL es `/payment/refund` |
+
+### Deferred
+
+Permite el envío de un cargo para su posterior confirmación. No efectúa ninguna comprobación ni cargo inmediato.
+
+| Code          | Description                                                                                             |
+| :------------ | :------------------------------------------------------------------------------------------------------ |
+| `CONFIRMATION`  | Hace efectivo el cargo previamente retenido. La URL es `/payment/confirmation`                          |
+| `CANCELLATION`  | Libera el importe previamente retenido (si aún no ha sido confirmado). La URL es `/payment/cancellation` |
+| `REFUND`        | Realiza una devolución total o parcial tras la confirmación de una retención. La URL es `/payment/refund` |
+
+### Payout
+
+Permite depositar una cantidad de dinero en una tarjeta. Dependiendo del adquirente, podría ser necesario que la tarjeta haya operado previamente en el terminal.
+
+| Code   | Description                                                                 |
+| :----- | :-------------------------------------------------------------------------- |
+| `PAYOUT` | Hace efectivo el abono en tarjeta. La URL es `/payment/payout`              |
+
+### Transfer
+
+Permite realizar una transferencia de dinero a un destino específico.
+
+| Code         | Description                                                                     |
+| :----------- | :------------------------------------------------------------------------------ |
+| `TRANSFER`     | Realiza la transferencia. La URL es `/payment/transfer`                         |
+| `CANCELLATION` | Si es posible, realiza la cancelación de la transferencia. La URL es `/payment/transfer/cancellation` |
+
+## Estados de la Orden
+
+Durante el proceso de pago, las órdenes cambian de estado para reflejar información sobre el pago. Esta información se encuentra en el campo `status` del objeto `order`.
+
+El estado de la Orden puede tener los siguientes valores:
+
+| Valor                       | Descripción                                                                                             |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------ |
+| `BLACKLISTED`               | Operación rechazada por la lista negra.                                                                 |
+| `CANCELLED`                 | Preautorización cancelada por el cliente.                                                               |
+| `CREATED`                   | Orden de pago iniciada.                                                                                 |
+| `EXPIRED`                   | Operación que ha excedido el tiempo de espera de tarjeta.                                               |
+| `FRAUD`                     | Operación rechazada por el sistema antifraude.                                                          |
+| `PARTIALLY_REFUNDED`        | Operación parcialmente devuelta.                                                                        |
+| `PARTIALLY_CONFIRMED`       | Preautorización parcialmente confirmada.                                                                |
+| `PENDING_CONFIRMATION`      | Preautorización con saldo retenido en la cuenta del usuario, a la espera de confirmación.               |
+| `REFUNDED`                  | La operación ha sido devuelta.                                                                          |
+| `SUCCESS`                   | Operación completada correctamente.                                                                     |
+| `REFUSED`                   | Operación rechazada por el banco.                                                                       |
+| `PENDING_PROCESSOR_RESPONSE` | Operación sin 3DS enviada a la procesadora.                                                             |
+| `PENDING_3DS_RESPONSE`      | El usuario está en el proceso 3DS.                                                                      |
+| `PENDING_CARD`              | El usuario está introduciendo su tarjeta en la carta de pago.                                           |
+| `USER_CANCELLED`            | El usuario ha cancelado el pago desde la carta de pago.                                                 |
+| `REDIRECTED_TO_3DS`         | Se intentó realizar el pago, pero por seguridad, el usuario debe autorizarlo manualmente.               |
+| `AUTHENTICATION_REQUIRED`   | El banco ha requerido autenticación para esta operación y está a la espera de que el usuario acceda

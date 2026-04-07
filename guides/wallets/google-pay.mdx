@@ -1,0 +1,74 @@
+---
+title: 'Google Pay'
+description: 'Integra Google Pay en tu checkout para pagos rápidos en Android y web'
+---
+
+# Google Pay
+
+Google Pay es un monedero digital desarrollado por Google que permite a los usuarios realizar pagos de forma rápida y segura en sitios web y aplicaciones Android, sin necesidad de introducir los datos de la tarjeta.
+
+## Requisitos previos
+
+Para usar Google Pay con Paylands necesitas:
+
+1. Una cuenta de comercio en la [Google Pay & Wallet Console](https://pay.google.com/business/console/).
+2. Un **ID de comercio de Google Pay**.
+3. Tener activada una pasarela de pago compatible en tu cuenta de Paylands.
+
+## Registrar tu comercio en Google Pay
+
+<Steps>
+  <Step title="Accede a la consola de Google Pay">
+    Ve a [pay.google.com/business/console](https://pay.google.com/business/console) y regístrate como comercio siguiendo el proceso de verificación.
+  </Step>
+
+  <Step title="Obtén tu ID de Google Pay">
+    Una vez completado el registro, obtendrás un **Google Pay Merchant ID**. Guárdalo, lo necesitarás en el paso siguiente.
+  </Step>
+
+  <Step title="Registra tu dominio web">
+    En la consola de Google Pay, registra el dominio de tu web para que los pagos desde ese dominio queden autorizados. Sin este paso, el botón de Google Pay no se mostrará.
+  </Step>
+</Steps>
+
+## Configurar Google Pay en Paylands
+
+1. Accede al **Backend de Paylands** → **Configuración** → **Pasarelas de pago**.
+2. Edita la pasarela en la que deseas activar Google Pay.
+3. Introduce el **Google Pay Merchant ID** obtenido en el paso anterior.
+4. Contacta con el equipo de soporte de Paylands para completar la activación: [soporte@paylands.com](mailto:soporte@paylands.com).
+
+<Note>
+  Para obtener **tarjetas de prueba** en el entorno Sandbox, únete con tu cuenta de Google al siguiente grupo: [Google Pay Test Mode Stub Data](https://groups.google.com/forum/#!forum/googlepay-test-mode-stub-data).
+</Note>
+
+## Integración directa en Android
+
+Si dispones de una app Android, debes integrar el botón de Google Pay siguiendo la [documentación oficial de Google Pay para Android](https://developers.google.com/pay/api/android/overview).
+
+Cuando el usuario seleccione una tarjeta y confirme el pago, se generará un payload que deberás enviar a la API de Paylands en el endpoint de **pago mediante wallet**.
+
+Al seguir el [tutorial de Google Pay para Android](https://developers.google.com/pay/api/android/guides/tutorial), usa la siguiente configuración en los pasos indicados:
+
+**Paso 2 — Gateway configuration:**
+
+```
+gateway: paynopain
+gatewayMerchantId: BFR+318Qe36w59SkUl2ECMRNJAfeW1e+Mv5r41/598MQjYHdZ0GfNK5CrRfSKYBCFj8eN7Uz5VG9+MgOoOSbXR8=
+```
+
+**Paso 3 — Allowed card networks:**
+
+```
+allowedCardNetworks: MASTERCARD, VISA
+allowedCardAuthMethods: PAN_ONLY, CRYPTOGRAM_3DS
+```
+
+## Integración simple (Checkout alojado)
+
+Si usas el Checkout de Paylands o el SDK de JavaScript, Google Pay se muestra automáticamente sin configuración adicional en el código, siempre que:
+
+- El checkout tenga Google Pay activado en su configuración.
+- El ID de Google Pay esté correctamente configurado en la pasarela.
+- El dominio esté registrado en la Google Pay Console.
+- El dispositivo del usuario sea compatible (Android con tarjeta guardada en Google Wallet).

@@ -1,0 +1,189 @@
+---
+title: "Channels (Servidor)"
+description: "Los canales son una forma flexible de añadir el PCI Proxy como un hombre en el medio entre su software de backend y el software de terceros, como un PMS y un motor de reservas. De esta manera usted puede recibir y enviar de forma segura la información sensible de las tarjetas de crédito."
+---
+
+<Info>
+  Los canales son configurados por su equipo de desarrolladores utilizando nuestra [REST API](https://pci-proxy-api.paynopain.com/docs).
+</Info>
+
+# Atributos
+
+Un canal siempre consta de los siguientes atributos:
+
+| NOMBRE DEL CAMPO | VALORES DISPONIBLES                        | DESCRIPCIÓN                                                                                                              |
+| ---------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| endpoint         |                                            | Endpoint hacia o desde el que se transmite el cuerpo de la petición                                                      |
+| action           | tokenize, detokenize                       | Especifica si los datos de la tarjeta están enmascarados o desenmascarados.                                              |
+| direction        | pull, push                                 | Indica si el cuerpo de la carga útil que debe procesarse se envía al canal o se obtiene del canal.                       |
+| contentType      | json,xml                                   | Formato del cuerpo de la carga útil del que hay que extraer los datos para el proceso de tokenización o destokenización. |
+| encoding         | utf8, ascii, utf16le, ucs2, base64, latin1 | Codificación del cuerpo de la petición                                                                                   |
+| fieldMapping     |                                            | Indica al proxy PCI cómo se van a extraer los datos del cuerpo                                                           |
+
+Un `fieldMapping` consta de los siguientes campos:
+
+| NOMBRE      | DESCRIPCIÓN                                                                                                                                                                                                                                    |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| referencia  | Opcional. Se puede utilizar para asociar los datos de la tarjeta a una referencia de su software. Por ejemplo, un identificador de reserva.                                                                                                    |
+| pan         | Humber de la tarjeta o el token de la tarjeta.                                                                                                                                                                                                 |
+| cardHolder  | Nombre del titular de la tarjeta.                                                                                                                                                                                                              |
+| expiry      | Fecha de caducidad de la tarjeta. Los formatos válidos son MM-YYYY, MM-YY, YYYY-MM, YY-MM, MM/YYYY, YYYY/MM, MM/YY, YY/MM, MMYY. Si la fecha de caducidad está dividida en dos campos separados, utilice en su lugar expiryMonth y expiryYear. |
+| expiryMonth | Se utiliza si la fecha de caducidad de la tarjeta está dividida en dos campos.                                                                                                                                                                 |
+| expiryYear  | Se utiliza si la fecha de caducidad de la tarjeta está dividida en dos campos.                                                                                                                                                                 |
+| cardCVV     | Número CVV de la tarjeta                                                                                                                                                                                                                       |
+
+El mapeo de campos se especifica como atributos XPATH o JSONPATH dependiendo del contentType del cuerpo. Para comprender mejor estos lenguajes de consulta, visite los recursos [XPATH](https://www.w3schools.com/xml/xml_xpath.asp) y [JSONPATH](https://goessner.net/articles/JsonPath/index.html#e2).
+
+<Info>
+  Para probar sus expresiones XPATH recomendamos esta [Herramienta de prueba XPATH en línea](https://www.freeformatter.com/xpath-tester.html). Para probar sus expresiones JSONPATH recomendamos esta [Herramienta de prueba JSONPATH en línea](https://jsonpath.com/).
+</Info>
+
+# Cuándo usar cada configuración de canal
+
+La principal diferencia entre las configuraciones de los canales son los campos **dirección** y **acción**. Para que quede más claro, veamos algunos escenarios del mundo real:
+
+## PUSH + TOKENIZACIÓN[​](#push--tokenización "Enlace directo al PUSH + TOKENIZACIÓN")
+
+![PUSH + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_tokenization.png)
+
+Usted es un PMS y un channel mannager envía nuevas reservas a su software de backend (por ejemplo: SOAP API). Estas reservas incluyen datos sensibles de tarjetas de pago que no desea almacenar directamente en su base de datos, sino delegarlos en la bóveda segura PCI de PROXY.
+
+En este caso tendría que crear el channel de tipo **PUSH + TOKENIZATION**. En el campo *endpoint* añadirá su punto de entrada de la API SOAP (por ejemplo: `http://somehost.com/xmlsoapinterface`).
+
+Una vez que haya creado el channel utilizando la API REST de PROXY PCI, puede actualizar la configuración del channel manager y sustituir su endpoint por el endpoint de invocación del channel de proxy pci (p. ej: `https://pci-proxy-api.paynopain.com/production/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke`).
+
+De este modo, el channel manager invocará a PROXY PCI, que hará su magia y finalmente reenviará las reservas a su endpoint configurado, habiendo sustituido todos los panes de la tarjeta por una versión de token de la misma. Este token puede ser almacenado por usted y utilizarlo para emitir un pago o reenviarlo a otro tercero.
+
+## PULL + TOKENIZACIÓN[​](#pull--tokenización "Enlace directo al PULL + TOKENIZACIÓN")
+
+![PULL + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_tokenization.png)
+
+Usted es un PMS, pero todavía necesita las reservas de un channel mannager. Pero en este caso el channel manager no le envía los datos. Usted es el que inicia una solicitud al channel manager y luego el channel manager responde con las últimas reservas.
+
+En este caso usted necesita un channel de tipo **PULL + TOKENIZATION** donde el atributo endpoint del channel es el endpoint API del channel manager. Usted puede entonces iniciar su solicitud al endpoint invocación del channel, entonces el PROXY PCI obtendrá las nuevas reservas del endpoint de la API del channel manager, hará su magia, y responderá con las nuevas reservas.
+
+<Info>
+  El método de invocación del canal PROXY PCI reenvía todas las QUERY y HTTP HEADERS al punto final configurado.
+</Info>
+
+## PUSH + DETOKENIZATION[​](#push--detokenization "Enlace directo al PUSH + DETOKENIZATION")
+
+![PUSH + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_detokenization.png)
+
+En este caso queremos enviar los datos recogidos de nuestra tarjeta pan a un PAYMENT GATEWAY de terceros para procesar el pago. El PAYMENT GATEWAY ofrece un endpoint para esto donde hay que enviar los datos de la tarjeta en su formato JSON especificado. En este escenario necesitaremos un channel de tipo **PUSH + DETOKENIZATION**. El endpoint del channel será el endpoint de la API PAYMENT GATEWAY. USted enviará los detalles de la tarjeta, excepto el pan, al endpoint de invocación del channel PROXY PCI y el PROXY PCI reemplazará el token de la tarjeta con el pan real de la tarjeta.
+
+## PULL + DETOKENIZATION[​](#pull--detokenization "Enlace directo al PULL + DETOKENIZATION")
+
+![PULL + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_detokenization.png)
+
+En este caso de uso final usted es un channel manager y ha recogido los detalles de la tarjeta de un futuro huésped utilizando la biblioteca del lado del cliente javascipt. Así que ahora un sistema PMS compatible con PCI quiere descargar los detalles completos de la tarjeta de su channel manager. En este caso, simplemente configuraría un channel de tipo **PULL + DETOKENIZATION**. En el atributo de endpoint especificará su endpoint de API y proporcionará el endpoint de invocación PROXY PCI resultante al sistema PMS, que iniciará la solicitud. Nosotros reenviaremos la solicitud a su API y usted responderá con la reserva. Reemplazaremos el token de la tarjeta con el pan real y responderemos al PMS.
+
+<Warning>
+  Cuando se utiliza la acción DETOKENIZATION, el PROXY PCI sólo reemplazará el token y el cvv de la tarjeta por sus valores reales. Todos los demás campos tienen que ser proporcionados en el payload tal y como son. Puede almacenar con seguridad la fecha de caducidad y el titular de la tarjeta por sí mismo.
+
+  El CVV sólo será reemplazado si existe en el sistema de Paylands. Es decir, si la tarjeta se ha utilizado en un pago o se han consultado sus detalles (incluyendo el CVV) el CVV se ha consumido y, por requisito PCI, éste es eliminado del sistema y, por tanto, no se reemplazará en el payload de entrada.
+</Warning>
+
+# Ejemplos
+
+Para su mejor comprensión hemos preparado algunos channels para que los invoque. Hay un endpoint de tokenización JSON PUSH y un ejemplo de destokenización XML PUSH para que lo pueda probar.
+
+## Ejemplo JSON[​](#ejemplo-json "Enlace directo al Ejemplo JSON")
+
+JSON example
+
+```
+{  "bookings": [    {      "id": "BK-213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4442330588722461",          "cvv": "123",          "expiry": "12/21",          "holder": "John Doe"        }      }    },    {      "id": "BK-3213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4701731341611394",          "expiry": "06-2025",          "holder": "Patma Patill"        }      }    }  ]}
+```
+
+## MAPEO DE CAMPOS[​](#mapeo-de-campos "Enlace directo al MAPEO DE CAMPOS")
+
+| NOMBRE DEL CAMPO | VALOR                                     |
+| ---------------- | ----------------------------------------- |
+| reference        | $.bookings\[\*].id                        |
+| cardHolder       | $.bookings\[\*].payment\_data.card.holder |
+| expiry           | $.bookings\[\*].payment\_data.card.expiry |
+| pan              | $.bookings\[\*].payment\_data.card.pan    |
+| cardCVV          | $.bookings\[\*].payment\_data.card.cvv    |
+
+## EJEMPLO DE CANAL EN FUNCIONAMIENTO[​](#ejemplo-de-canal-en-funcionamiento "Enlace directo al EJEMPLO DE CANAL EN FUNCIONAMIENTO")
+
+Hemos configurado un canal con este mapeo de campos exacto. Esta es la configuración exacta del canal:
+
+```
+{  "action": "tokenize",  "direction": "push",  "endpoint": "https://pciproxypnp.free.beeceptor.com/push/json/tokenize",  "contentType": "json",  "fieldMapping": {    "reference": "$.bookings[*].id",    "cardHolder": "$.bookings[*].payment_data.card.holder",    "expiry": "$.bookings[*].payment_data.card.expiry",    "pan": "$.bookings[*].payment_data.card.pan",    "cardCVV": "$.bookings[*].payment_data.card.cvv"  },  "encoding": "utf8"}
+```
+
+Esto significa que si se invoca, el *body* transmitido será analizado y los campos mapeados serán extraídos y guardados. A continuación, se sustituye el PAN por una versión token del mismo. Finalmente, el nuevo *body* se reenvía al endpoint proporcionado, incluyendo todas las cabeceras y parámetros de consulta originales que se enviaron al endpoint del channel.
+
+Vaya y visite [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) y deje la página abierta. A continuación, emite el siguiente comando `curl`:
+
+```
+curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke \-H 'Content-Type: application/json' \-H 'SomeCustomeHeader: SayHello!' \--data '{"bookings":[{"id":"BK-213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4442330588722461","cvv":"222","expiry":"12/28","holder":"John Doe"}}},{"id":"BK-3213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4701731341611394","cvv":"333", "expiry":"06-2025","holder":"Patma Patill"}}}]}'
+```
+
+Después de ejecutar el comando deberías ver la petición en la consola de beeceptor. Siéntase libre de inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.
+
+## Ejemplo de XML[​](#ejemplo-de-xml "Enlace directo al Ejemplo de XML")
+
+XML example
+
+```
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05">    <SOAP-ENV:Header>        <wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1">            <wsse:UsernameToken>                <wsse:Username>::someUsername</wsse:Username>                <wsse:Password>::somePassword::</wsse:Password>            </wsse:UsernameToken>        </wsse:Security>    </SOAP-ENV:Header>    <SOAP-ENV:Body>        <ota:OTA_HotelResNotifRQ>            <ota:HotelReservations>                <ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit">                    <ota:UniqueID ID="M5304934-86503" Type="14"/>                    <ota:ResGlobalInfo>                        <ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/>                        <ota:Guarantee>                            <ota:GuaranteesAccepted>                                <ota:GuaranteeAccepted>                                    <ota:PaymentCard CardCode="335" CardCVV="123" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022">                                        <ota:CardHolderName>John Doe</ota:CardHolderName>                                    </ota:PaymentCard>                                </ota:GuaranteeAccepted>                            </ota:GuaranteesAccepted>                        </ota:Guarantee>                    </ota:ResGlobalInfo>                </ota:HotelReservation>            </ota:HotelReservations>        </ota:OTA_HotelResNotifRQ>    </SOAP-ENV:Body></SOAP-ENV:Envelope>
+```
+
+<Info>
+  Este payload fue parcialmente extraído del gestor de canales de [Siteminder](https://www.siteminder.com/).
+</Info>
+
+### Namespaces[​](#namespaces "Enlace directo al Namespaces")
+
+<Warning>
+  Entender cómo funcionan xpath y namespaces es crucial para el mapeo de campos XML.
+</Warning>
+
+**Espacios de nombres de prefijos**
+
+Un espacio de nombres está compuesto por un nombre y una especificación URI. El ámbito de la correspondencia prefijo-espacio de nombres es el del elemento en el que se produce la declaración del espacio de nombres, así como el de todos sus hijos.
+
+```
+<bk:bookstore xmlns:bk="urn:xmlns:25hoursaday-com:bookstore"> <bk:book>    <bk:title>Lord of the Rings</bk:title>    <bk:author>J.R.R. Tolkien</bk:author>    <inv:inventory status="in-stock" isbn="0345340426"        xmlns:inv="urn:xmlns:25hoursaday-com:inventory-tracking" /> </bk:book></bk:bookstore>
+```
+
+Ejemplo: `//bk:author`
+
+**Espacios de nombres no declarados**
+
+Si un elemento tiene el espacio de nombres en blanco (xmlns="") entonces es un espacio de nombres no declarado y cualquier elemento hijo sin un prefijo de espacio de nombres está asociado a ese espacio de nombres no declarado.
+
+```
+<bookstore xmlns="urn:xmlns:25hoursaday-com:bookstore"> <book xmlns="">    <title>Lord of the Rings</title>    <author>J.R.R. Tolkien</author>    <inv:inventory status="in-stock" isbn="0345340426"        xmlns:inv="urn:xmlns:25hoursaday-com:inventory-tracking" /> </book></bookstore>
+```
+
+Ejemplo: `//title`
+
+### Mapeo de campos[​](#mapeo-de-campos-1 "Enlace directo al Mapeo de campos")
+
+| NOMBRE DEL CAMPO | VALOR                         |
+| ---------------- | ----------------------------- |
+| referencia       | //ota:UniqueID/@ID            |
+| cardHolder       | //ota:CardHolderName          |
+| caducidad        | //ota:PaymentCard/@ExpireDate |
+| pan              | //ota:PaymentCard/@CardNumber |
+| cardCVV          | //ota:PaymentCard/@CardCVV    |
+
+Hemos configurado un canal con este mapeo de campos exacto. Esta es la configuración exacta del canal:
+
+```
+{    "action": "detokenize",    "direction": "push",    "endpoint": "https://pciproxypnp.free.beeceptor.com/push/xml/detokenize",    "contentType": "xml",    "fieldMapping": {        "reference": "//ota:UniqueID/@ID",        "cardHolder": "//ota:CardHolderName",        "expiry": "//ota:PaymentCard/@ExpireDate",        "pan": "//ota:PaymentCard/@CardNumber",        "cardCVV": "//ota:PaymentCard/@CardCVV"    },    "encoding": "utf8"}
+```
+
+Esto significa que si se invoca, el cuerpo transmitido será analizado y los campos mapeados serán extraídos y guardados. A continuación, se sustituye el PAN por una versión token del mismo. Finalmente, el nuevo cuerpo se reenvía al endpoint proporcionado, incluyendo todas las cabeceras y parámetros de consulta originales que se enviaron al endpoint del channel.
+
+Sigue adelante y visita [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) y deja la página abierta. A continuación, emite el siguiente comando curl:
+
+```
+curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/da3e2c5b-8e3d-44f3-a56e-0491b949d7f7/invoke \-H 'Content-Type: application/xml' \-H 'SomeCustomeHeader: SayHello!' \--data '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05"><SOAP-ENV:Header><wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1"><wsse:UsernameToken><wsse:Username>::someUsername</wsse:Username><wsse:Password>::somePassword::</wsse:Password></wsse:UsernameToken></wsse:Security></SOAP-ENV:Header><SOAP-ENV:Body><ota:OTA_HotelResNotifRQ><ota:HotelReservations><ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit"><ota:UniqueID ID="M5304934-86503" Type="14"/><ota:ResGlobalInfo><ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/><ota:Guarantee><ota:GuaranteesAccepted><ota:GuaranteeAccepted><ota:PaymentCard CardCode="335" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022"><ota:CardHolderName>John Doe</ota:CardHolderName></ota:PaymentCard></ota:GuaranteeAccepted></ota:GuaranteesAccepted></ota:Guarantee></ota:ResGlobalInfo></ota:HotelReservation></ota:HotelReservations></ota:OTA_HotelResNotifRQ></SOAP-ENV:Body></SOAP-ENV:Envelope>'
+```
+
+Después de ejecutar el comando debería ver la solicitud en la consola de beeceptor. No dude en inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.

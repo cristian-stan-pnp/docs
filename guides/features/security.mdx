@@ -1,0 +1,21 @@
+---
+title: 'Security'
+description: '3D Secure and fraud prevention'
+---
+
+# Seguridad y 3D Secure
+
+Paylands cumple con los más altos estándares de seguridad (PCI-DSS Level 1) y soporta la normativa PSD2 mediante 3D Secure (3DS).
+
+## 3D Secure (3DS)
+El protocolo 3DS añade una capa de seguridad adicional autenticando al titular de la tarjeta con su banco.
+
+### Flujo 3DS
+1. Al iniciar un pago, Paylands detecta si la tarjeta requiere autenticación segura.
+2. Si es necesario, la API devuelve una URL de redirección.
+3. El comercio redirige al usuario a esa URL.
+4. El usuario se autentica con su banco (SMS, App, etc.).
+5. El usuario es redirigido de vuelta al comercio con el resultado.
+
+## Prevención de Fraude
+Paylands incluye herramientas de prevención de fraude como reglas de bloqueo por IP, país, importe, y velocidad de transacciones.

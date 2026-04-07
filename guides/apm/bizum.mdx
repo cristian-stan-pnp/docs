@@ -1,0 +1,81 @@
+---
+title: 'Bizum'
+description: 'Acepta pagos con Bizum en España a través de la API de Paylands'
+---
+
+# Bizum
+
+Bizum es un método de pago alternativo exclusivo de España proporcionado por **Redsys**, que permite a los clientes pagar de forma segura utilizando su número de teléfono móvil y un PIN de validación.
+
+## Características
+
+- Exclusivo para clientes con cuenta bancaria española que tengan Bizum activado.
+- El cliente permanece anónimo: Bizum no proporciona información sobre el teléfono, nombre ni otros datos del cliente.
+- Las reglas antifraude de tarjeta no se aplican a pagos Bizum.
+- El flujo de pago es el mismo independientemente de si la orden es segura o no.
+- Soporta la operativa `DEFERRED` (preautorización), aunque las confirmaciones diferidas expirarán pasado un tiempo determinado por el banco del cliente.
+
+<Note>
+  Bizum debe estar activado en cada terminal. Contacta con el equipo de Paylands para solicitar la activación: [soporte@paylands.com](mailto:soporte@paylands.com).
+</Note>
+
+## Integración
+
+### 1. Generar la orden de pago en tu servidor
+
+Realiza una petición `POST` al endpoint de pago de Paylands incluyendo la configuración de Bizum en el campo `extra_data`:
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data '{
+    "signature": "YOUR_SIGNATURE",
+    "amount": 1000,
+    "operative": "AUTHORIZATION",
+    "customer_ext_id": "user-123",
+    "service": "SERVICE_UUID",
+    "extra_data": {
+        "terminal": "001",
+        "service": "BIZUM"
+    },
+    "url_post": "https://tu-web.com/webhook",
+    "url_ok": "https://tu-web.com/gracias",
+    "url_ko": "https://tu-web.com/error"
+}'
+```
+
+### 2. Redirigir al cliente al formulario de Bizum
+
+Con el `token` obtenido en la respuesta, redirige al cliente a la URL de pago de Bizum:
+
+**Producción:**
+```
+https://api.paylands.com/v1/payment/bizum/{TOKEN}
+```
+
+**Sandbox:**
+```
+https://api.paylands.com/v1/sandbox/payment/bizum/{TOKEN}
+```
+
+### 3. El cliente introduce su teléfono y PIN
+
+El cliente verá el formulario de pago de Redsys donde deberá introducir su número de teléfono Bizum y el código de validación (clave Bizum).
+
+### 4. Notificación al servidor
+
+Una vez finalizado el pago, Paylands notifica a tu `url_post` con el resultado de la operación. Los pagos Bizum suelen confirmarse de forma inmediata.
+
+## Testing en Sandbox
+
+Para probar en entorno Sandbox y forzar respuestas OK o KO, usa los siguientes números de teléfono cuando se soliciten:
+
+| Resultado | Número de teléfono |
+|-----------|-------------------|
+| ✅ Pago OK | `700000000` |
+| ❌ Pago KO | `600000000` |
+
+<Warning>
+  En Sandbox, el **importe de la orden debe estar entre 0,51€ y 15,00€** (51 y 1500 en céntimos). Importes fuera de este rango serán rechazados.
+</Warning>

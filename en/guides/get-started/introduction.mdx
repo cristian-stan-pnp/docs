@@ -1,0 +1,80 @@
+---
+title: "Introduction"
+---
+
+
+Welcome to the Paynopain documentation. Follow these steps to integrate our payment gateway into your business, from the first test to the actual collection.
+
+## Create your test account
+
+Before you start, you will need access to our Sandbox environment. You can create your test account in two ways:
+
+- **Self-registration**: Register directly at [portal.paynopain.com/register](https://portal.paynopain.com/register)
+- **Support**: Contact our support team to get your test account and API keys
+
+### Get your credentials from the portal
+
+If you already have a Paynopain account, you can obtain your credentials from the Paynopain portal by following this link:
+
+[Paynopain Portal -> Developers](https://portal.paynopain.com/settings/developers)
+
+![Developers section in the portal with link https://portal.paynopain.com/settings/developers
+ ](/images/es/seccion-desarolladores.png)
+
+## Build your integration
+
+Start developing your integration using your Sandbox account. You can choose the method that best suits your business model:
+
+<CardGroup cols={2}>
+  <Card title="Online Payments" icon="globe" href="/guides/accept-payments/web-integration">
+    Accept payments on your website or mobile app using our API (Redirect or Webservice).
+  </Card>
+  <Card title="In-Person Payments" icon="store" href="/api-reference/card-present">
+    Solutions for accepting payments at point of sale (POS) and physical terminals.
+  </Card>
+  <Card title="Plugins" icon="puzzle-piece" href="/guides/plugins/ecommerce">
+    Connect your e-commerce system (WooCommerce, PrestaShop, Magento, VTex) without programming.
+  </Card>
+  <Card title="No-Code Tools" icon="wand-magic-sparkles" href="/guides/get-started/introduction#no-code-tools">
+    Use Payment Links and virtual terminal (MoTo) to collect payments without complex technical integration.
+  </Card>
+</CardGroup>
+
+
+## Request your production account
+
+A production account allows you to accept real payments from your customers. Since Paynopain is a regulated financial entity, we must verify your business before activating you.
+
+Before requesting the move to production:
+*   Verify that your business model meets our requirements.
+*   Make sure you have completed the Sandbox tests satisfactorily.
+*   Contact our sales team to start the process.
+
+## Sign the contract and get activated
+
+If your application is approved, we will send you the service contract. Depending on your integration (especially if you process cards directly), you may need to complete a PCI-DSS security questionnaire.
+
+Once we receive the signed contract and the necessary documentation, we will give you access to your **Production Dashboard**.
+
+## Get ready to collect
+
+To start accepting real payments, you must configure your production account. **Important**: Sandbox configurations are not automatically copied to Production.
+
+Use this checklist before launching:
+*   [ ] Configure your payment methods and checkout in the production dashboard.
+*   [ ] Update the endpoints in your application to point to the production URLs.
+*   [ ] Perform a real test transaction (of low amount) to verify the complete flow.
+
+---
+
+## No-Code Tools
+
+If you prefer not to perform a technical integration, you can use our direct tools:
+
+### Payment Links
+Generate secure payment links and send them to your customers via email, SMS, or social networks.
+![Payment Links](/images/payment-links.png)
+
+### MoTo Payments
+Virtual terminal to process manual payments received by phone or email.
+![MoTo Payments](/images/moto-payments.png)

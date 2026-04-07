@@ -1,0 +1,19 @@
+---
+title: 'Subscriptions'
+description: 'Manage recurring payments and plans'
+---
+
+# Suscripciones
+
+El módulo de suscripciones permite gestionar cobros recurrentes de forma automatizada.
+
+## Conceptos Clave
+- **Plan**: Define la frecuencia, importe y duración de la suscripción (ej. "Mensual Premium 10€").
+- **Suscripción**: La asociación de un cliente (y su tarjeta tokenizada) a un Plan.
+
+## Flujo de trabajo
+1. Crear un **Plan** a través de la API o el Panel.
+2. Tokenizar la tarjeta del cliente.
+3. Crear una **Suscripción** asociando el cliente al Plan.
+
+Paylands se encargará de ejecutar los cobros automáticamente según la configuración del Plan.

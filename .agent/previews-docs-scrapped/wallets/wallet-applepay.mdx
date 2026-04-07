@@ -1,0 +1,168 @@
+---
+title: "Apple Pay"
+description: "Paylands permite a tu comercio ofrecer  como método de pago para obtener de forma segura los datos de la tarjeta del cliente y procesar la transacción."
+---
+
+Existen **dos modalidades** de integración con Paylands: • **Integración Web** (recomendada para la mayoría de comercios) • **Integración In-App** (para apps móviles o integraciones avanzadas)
+
+## Modalidades de integración[​](#modalidades-de-integración "Enlace directo al Modalidades de integración")
+
+### 1. Integración Web[​](#1-integración-web "Enlace directo al 1. Integración Web")
+
+Es la opción más sencilla y rápida de implementar.
+
+En esta modalidad:
+
+* Configuras el botón de Apple Pay en tu checkout.
+
+* Paylands gestiona todo el flujo de pago:
+
+  * Validación del merchant
+  * Solicitud de autorización
+  * Procesamiento y captura del pago
+
+Es compatible con dispositivos y navegadores que soporten Apple Pay (Safari en iOS y macOS).
+
+**Pasos de configuración**
+
+```
+1. Accede al panel de Paylands.2. Ve a Configuración → Métodos Alternativos → Apple Pay.3. Configura los dominios donde se mostrará el botón.    -   El dominio **api.paylands.com** ya está configurado por defecto.    -   Si utilizas el checkout alojado de Paylands, no necesitas añadir ningún dominio adicional.    -   Si deseas mostrar el botón directamente en tu sitio web, deberás:        -   Añadir tu dominio.        -   Descargar el fichero de verificación de Apple desde el panel.        -   Publicarlo en la ruta indicada por Apple en tu servidor.4. Configura el tipo y estilo del botón según tus necesidades.
+```
+
+![Apple Pay Web Integration](/images/docs/wallets/assets/images/web-es-00e8aa18a5ce9ef3f1bd0d069de5bd5d.png)
+
+Una vez configurado, los clientes podrán pagar con Apple Pay a través de tu checkout o sitio web.
+
+### 2. Integración In-App (o integración propia)[​](#2-integración-in-app-o-integración-propia "Enlace directo al 2. Integración In-App (o integración propia)")
+
+Pensada para:
+
+```
+- Aplicaciones móviles iOS.- Comercios que desean controlar completamente su integración con Apple Pay.
+```
+
+⚠️ Requisitos previos:
+
+```
+- Cuenta activa en el [Apple Developer Program](https://developer.apple.com/programs/).- **Merchant ID** configurado en Apple.- Aplicación preparada para usar Apple Pay.
+```
+
+**Flujo técnico**
+
+En este modelo:
+
+```
+1. Tu aplicación solicita la autorización del pago directamente a Apple Pay.2. Apple devuelve un payment token cifrado.3. Tu backend envía ese token a Paylands.4. Paylands procesa la operación y devuelve el resultado de la transacción.
+```
+
+**Pasos de configuración**
+
+```
+1. Desde el panel de Paylands:    - Accede a Configuración → Métodos Alternativos → Apple Pay.    - Descarga el certificado CSR proporcionado.2. En el portal de desarrolladores de Apple:    - Crea un certificado de Apple Pay utilizando el CSR descargado.    - Asócialo a tu Merchant ID.3. Descarga el certificado generado por Apple.4. Sube el certificado al panel de Paylands.5. Introduce tu Merchant ID en el panel de configuración.6. Implementa la lógica en tu app siguiendo la documentación oficial de Apple para:    - Configurar capacidades de Apple Pay.    - Gestionar el PKPaymentAuthorizationController.    - Enviar el token de pago a tu backend.
+```
+
+![Apple Pay In-App Integration](/images/docs/wallets/assets/images/app-es-b91ce75baac7c95a8a5105cf78d001f2.png)
+
+**¿Qué integración debo elegir?**
+
+| Caso                                 | Recomendación      |
+| ------------------------------------ | ------------------ |
+| Uso del checkout de Paylands         | Integración Web    |
+| Web propia                           | Integración Web    |
+| App iOS nativa                       | Integración In-App |
+| Necesidad de control total del flujo | Integración In-App |
+
+**Consideraciones importantes**
+
+* Apple Pay solo estará disponible en dispositivos y navegadores compatibles.
+* El dominio debe estar correctamente verificado para mostrar el botón.
+* El certificado tiene fecha de caducidad y debe renovarse antes de su expiración.
+* En integración In-App, la responsabilidad de solicitar el token a Apple recae en la aplicación del comercio.
+
+## Errores comunes y resolución de problemas[​](#errores-comunes-y-resolución-de-problemas "Enlace directo al Errores comunes y resolución de problemas")
+
+A continuación se detallan los problemas más habituales al integrar Apple Pay con Paylands y cómo solucionarlos.
+
+### 1. El botón de Apple Pay no se muestra[​](#1-el-botón-de-apple-pay-no-se-muestra "Enlace directo al 1. El botón de Apple Pay no se muestra")
+
+**Posibles causas**
+
+* El dispositivo no es compatible con Apple Pay.
+* El navegador no es Safari.
+* El usuario no tiene tarjetas configuradas en Apple Pay.
+* El dominio no está verificado correctamente.
+
+**Cómo solucionarlo**
+
+* Verificar que el usuario utiliza Safari en iOS o macOS.
+* Confirmar que Apple Pay está configurado en el dispositivo.
+* Revisar que el dominio esté añadido en el panel de Paylands.
+* Confirmar que el fichero de verificación de dominio esté publicado correctamente.
+
+### 2. Error de validación de dominio[​](#2-error-de-validación-de-dominio "Enlace directo al 2. Error de validación de dominio")
+
+**Síntoma**
+
+Apple no valida el dominio y el merchant validation falla.
+
+**Posibles causas**
+
+* El fichero de verificación no está en la ruta correcta.
+* El dominio no coincide exactamente (incluyendo subdominios).
+* El servidor no permite acceso público al fichero.
+* Certificado SSL inválido o no confiable.
+
+**Cómo solucionarlo**
+
+* Confirmar que el fichero esté accesible en: `https://<tu-dominio>/.well-known/apple-developer-merchantid-domain-association`
+* Verificar que el dominio configurado en Paylands coincide exactamente con el dominio público.
+* Comprobar que el certificado SSL es válido y no está caducado.
+* Validar que no existan redirecciones que impidan la verificación.
+
+### 3. Error con el certificado de Apple Pay (In-App)[​](#3-error-con-el-certificado-de-apple-pay-in-app "Enlace directo al 3. Error con el certificado de Apple Pay (In-App)")
+
+**Síntoma**
+
+El procesamiento del pago falla tras enviar el token a Paylands.
+
+**Posibles causas**
+
+* El certificado subido en Paylands no corresponde al Merchant ID configurado.
+* El certificado está caducado.
+* El CSR utilizado no es el proporcionado por Paylands.
+
+**Cómo solucionarlo**
+
+* Regenerar el certificado desde el portal de desarrolladores de Apple utilizando el CSR descargado del panel de Paylands.
+* Confirmar que el certificado activo corresponde al Merchant ID correcto.
+* Verificar la fecha de expiración.
+
+### 4. El pago es rechazado tras recibir el token[​](#4-el-pago-es-rechazado-tras-recibir-el-token "Enlace directo al 4. El pago es rechazado tras recibir el token")
+
+**Posibles causas**
+
+* Token mal formateado al enviarlo a Paylands.
+* El backend no está enviando el campo correcto en la petición.
+* El importe o moneda no coinciden con lo mostrado en Apple Pay.
+* Restricciones del emisor de la tarjeta.
+
+**Cómo solucionarlo**
+
+* Confirmar que se envía el paymentData completo recibido de Apple.
+* Verificar que el importe enviado a Paylands coincide exactamente con el autorizado en Apple Pay.
+* Revisar los logs de respuesta de Paylands para identificar el código de error.
+* En caso de rechazo bancario, tratarlo como una denegación estándar de tarjeta.
+
+### 5. Apple Pay funciona en checkout alojado pero no en web propia[​](#5-apple-pay-funciona-en-checkout-alojado-pero-no-en-web-propia "Enlace directo al 5. Apple Pay funciona en checkout alojado pero no en web propia")
+
+**Posibles causas**
+
+* El dominio adicional no está registrado.
+* No se ha realizado la validación de dominio.
+* Problemas de CORS o configuración del servidor.
+
+**Cómo solucionarlo**
+
+* Añadir el dominio en el panel de Paylands.
+* Subir correctamente el fichero de verificación.
+* Confirmar que el servidor permite acceso HTTPS sin bloqueos.

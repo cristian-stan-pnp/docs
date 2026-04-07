@@ -1,0 +1,56 @@
+---
+title: "Notificación del pago"
+---
+
+### Ejemplo de la notificación recibida:[​](#ejemplo-de-la--notificación-recibida "Enlace directo al Ejemplo de la  notificación recibida:")
+
+```
+{    "message": "OK",    "code": 200,    "current_time": "2022-11-16T11:16:33+0100",    "order": {        "uuid": "D16004FF-3421-409C-ADFC-DA2618D36135",        "created": "2022-11-16T11:11:03+0100",        "updated": "2022-11-16T11:11:03+0100",        "created_from_client_timezone": "2022-11-16T12:11:03+0200",        "amount": 1050,        "currency": "978",        "paid": true,        "status": "SUCCESS",        "safe": true,        "refunded": 0,        "additional": "227610373340",        "service": "CREDORAX",        "service_uuid": "B1F13B01-BA97-491C-BBDE-1C18988BD229",        "customer": "user42",        "cof_txnid": "202232016000606",        "transactions": [            {                "uuid": "2343BE77-1383-491E-8D95-5E00F0D35FAA",                "created": "2022-11-16T11:11:15+0100",                "updated": "2022-11-16T11:11:15+0100",                "created_from_client_timezone": "2022-11-16T12:11:15+0200",                "operative": "AUTHORIZATION",                "amount": 1050,                "authorization": "651979",                "processor_id": "XZZ01d4d229b0d5dB40RPKQCOSFNBGBH",                "status": "SUCCESS",                "error": "NONE",                "source": {                    "object": "CARD",                    "uuid": "F1E73ECB-D88C-4C57-919E-102F0E822416",                    "type": "CREDIT",                    "token": "95d37eaa18762d7d8c7b4ef098c4dd1e55450f21a9efaea27466d42da183b21b6cf3d0d8b74001b17ee3ba7d23e1daba7dda9b54a37979f3bb7cebc6e18ee7fe",                    "brand": "VISA",                    "country": "MT",                    "holder": "Miguel C",                    "bin": 401881,                    "last4": "0036",                    "is_saved": true,                    "expire_month": "12",                    "expire_year": "34",                    "additional": null,                    "bank": "BANK OF VALLETTA P.L.C",                    "prepaid": false,                    "validation_date": "2022-11-16 11:12:02",                    "creation_date": "2022-11-16 11:11:51",                    "brand_description": null,                    "origin": "PAYMENT_CARD",                    "cof": {                        "is_available": true                    }                },                "antifraud": null,                "device": {                    "fingerprint": "495973560",                    "user_agent": "Mozilla\/5.0 (X11; Linux x86_64; rv:106.0) Gecko\/20100101 Firefox\/106.0"                },                "error_details": null,                "bizum": {                    "account": "ES51XXXXXXXXXXXXXXXX0001",                    "phone_number": "346XXXXX306"                }            }        ],        "token": null,        "ip": "127.0.0.1",        "reference": null,        "dynamic_descriptor": null,        "threeds_data": {            "version": "2.1",            "flow": "FRICTIONLESS",            "sca_requested": false,            "status": "Y",            "eci": "06",            "exemption": null        },        "dcc": {            "fee": "3.00 %",            "change": 0.099415,            "mode": "LOCAL",            "selection": "CARD",            "card_currency": "NOK",            "merchant_currency": "EUR",            "ecb_change": null        }    },    "client": {        "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"    },    "extra_data": {        "halcash": {            "sender_name": "sender",            "secret_key": "1234",            "expiry_date": "2022-11-11"        }    },    "validation_hash": "8fe27963c7dd6c134dfd09fca6e544942acf89a57c8488c6437ca9c355397250"}
+```
+
+**NOTAS:**
+
+* El campo `order.dcc` de la notificación sólo se incluirá en transacciones con DCC.
+* El campo `transaction.bizum` de la notificación sólo se incluirá en pagos con Bizum.
+
+Para comprobar que las notificaciones que se reciben a la url\_post provienen de Paylands existen varias formas de proceder.
+
+## Whitelist IPs de Paylands[​](#whitelist-ips-de-paylands "Enlace directo al Whitelist IPs de Paylands")
+
+En primer lugar, se puede introducir en una whitelist las IPs procedentes de los sistemas de Paylands. Esta es una de las soluciones más comunes y sencillas.
+
+Para ello ha de ponerse en contacto con *[soporte@paylands.com](mailto:soporte@paylands.com)* para que les faciliten las IPs.
+
+## Validación mediante el hash de la notificación[​](#validación-mediante-el-hash-de-la-notificación "Enlace directo al Validación mediante el hash de la notificación")
+
+La otra forma que existe de comprobar que no se está interceptando la comunicación entre Paylands y el comercio es comprobando el hash de validación. Una vez procesada la petición a Paylands, se devolverá una respuesta tipo json como la que aparece a continuación.
+
+El campo `extra_data` solo aparecerá si en la petición inicial enviada por el comercio, se indicó este campo.
+
+```
+{    "message": "OK",    "code": 200,    "current_time": "2023-04-05T17:39:56+0200",    "order": {        "uuid": "E89DFBF6-23D3-4D78-BC98-06936F38D85F",        "created": "2022-12-30T12:21:32+0100",        "created_from_client_timezone": "2022-12-30T12:21:32+0100",        "amount": 10,        "currency": "978",        "paid": true,        "status": "SUCCESS",        "safe": false,        "refunded": 0,        "additional": null,        "service": "CREDORAX",        "service_uuid": "E6C5D97A-BDE8-45E0-904C-60EDEFDEC16D",        "customer": "test2222",        "cof_txnid": null,        "transactions": [            {                "uuid": "7DD3AE71-A758-416C-B813-D3EE936500F3",                "created": "2022-12-30T12:21:32+0100",                "created_from_client_timezone": "2022-12-30T12:21:32+0100",                "operative": "AUTHORIZATION",                "amount": 10,                "authorization": "202046",                "processor_id": "XZZ01f0a9404ffbb7B95LCGT274ERFW7",                "status": "SUCCESS",                "error": "NONE",                "source": {                    "object": "CARD",                    "uuid": "80C55ED9-3D72-4636-8AC7-27898AAD36B3",                    "type": "CREDIT",                    "token": "d3879e8cf246d2a9fbd0db46e013329a4772127a8634ea9b5fcb86ec1b9b29c888d60912fc96ff8320673d0570620967c959cb6d6671ce9145315a8b664c7ea4",                    "brand": "VISA",                    "country": "MT",                    "holder": "Miguel C",                    "bin": 401881,                    "last4": "0011",                    "is_saved": false,                    "expire_month": "12",                    "expire_year": "34",                    "additional": null,                    "bank": "Bank of Valletta p.l.c",                    "prepaid": null,                    "validation_date": "2022-12-30 12:22:18",                    "creation_date": "2022-12-30 12:21:58",                    "brand_description": "Visa Classic",                    "origin": "KEYENTRY",                    "cof": {                        "is_available": false                    }                },                "antifraud": null,                "device": {                    "fingerprint": "2032183838",                    "user_agent": "Mozilla\/5.0 (X11; Linux x86_64; rv:108.0) Gecko\/20100101 Firefox\/108.0"                },                "error_details": null            }        ],        "token": null,        "ip": "127.0.0.1",        "reference": null,        "dynamic_descriptor": null,        "threeds_data": null    },    "client": {        "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"    },    "validation_hash": "eae6e4c9d3dcb27067041aac25e15044909bc5a96830387332c62885cb6324b8"}
+```
+
+Una vez obtenemos el json que devuelve la notificación, debemos calcular el hash usando nuestra signature.
+
+Primero, debemos obtener los campos `order`, `client` y `extra_data` provenientes de la notificación y almacenarlos en un array. Tras esto, pasaremos el array a json y usaremos el SHA 256 y nuestra signature para calcular el hash.
+
+Como ya hemos mencionado antes, el campo `extra_data` puede no aparecer si este no se mandó en la petición inicial enviada por el comercio.
+
+```
+<?php$jsonObject = json_decode($response);$array['order'] = $jsonObject->order;$array['client'] = $jsonObject->client;$array['extra_data'] = $jsonObject->extra_data;$data = json_encode($array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);$signature ='341f7de8e6fc49da8d8736473af6b03a';$validationHash = hash('sha256', $data . $signature);
+```
+
+El `$validationHash` que se obtiene debe ser idéntico al recibido en la notificación de Paylands. Se puede utilizar el ejemplo anterior para las pruebas necesarias, puesto que se trata de un caso real.
+
+## Notificaciones de órdenes expiradas[​](#notificaciones-de-órdenes-expiradas "Enlace directo al Notificaciones de órdenes expiradas")
+
+Paylands posee la capacidad de notificar las órdenes que hayan expirado. Para habilitar esta opción debe ponerse en contacto con *[soporte@paylands.com](mailto:soporte@paylands.com)* y pedir que le habiliten `Notificar órdenes expiradas`.
+
+Tras la habilitación de esta característica, cada vez que Paylands marque una orden como expirada, se le enviará una notificación al comercio en la url especificada en el campo `url_post` junto con el objeto `order` actualizado:
+
+```
+{    "message": "OK",    "code": 200,    "current_time": "2023-04-05T17:39:56+0200",    "order": {        "uuid": "E89DFBF6-23D3-4D78-BC98-06936F38D85F",        "created": "2022-12-30T12:21:32+0100",        "created_from_client_timezone": "2022-12-30T12:21:32+0100",        "amount": 10,        "currency": "978",        "paid": false,        "status": "EXPIRED",        "safe": false,        "refunded": 0,        "additional": null,        "service": "CREDORAX",        "service_uuid": "E6C5D97A-BDE8-45E0-904C-60EDEFDEC16D",        "customer": "test2222",        "cof_txnid": null,        "transactions": [            {                "uuid": "7DD3AE71-A758-416C-B813-D3EE936500F3",                "created": "2022-12-30T12:21:32+0100",                "created_from_client_timezone": "2022-12-30T12:21:32+0100",                "operative": "AUTHORIZATION",                "amount": 10,                "authorization": "",                "processor_id": null,                "status": "CREATED",                "error": "NONE",                "source": null,                "antifraud": null,                "device": null,                "error_details": null            }        ],        "token": null,        "ip": "127.0.0.1",        "reference": null,        "dynamic_descriptor": null,        "threeds_data": null    },    "client": {        "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"    },    "validation_hash": "eae6e4c9d3dcb27067041aac25e15044909bc5a96830387332c62885cb6324b8"}
+```
+
+En la Referencia API puedes consultar la especificación completa para [Generar orden de pago](/reference/#operation/generate-payment-order).

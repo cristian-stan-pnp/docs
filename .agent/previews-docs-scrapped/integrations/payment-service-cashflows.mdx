@@ -1,0 +1,141 @@
+---
+title: "Cashflows"
+---
+
+## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+
+Los pagos exitosos en Sandbox deben tener un importe de al menos 3000€, lo que supone un importe de 300000.
+
+La API soporta devolver códigos de error concretos iguales al importe de la operación cuando se utiliza la siguiente tarjeta: `5555555500024444 12/34 987`. Puede encontrarse más información [aquí](https://docs.gateway.clearhaus.com/#test-card-numbers).
+
+| Resultado | Tarjeta                    |
+| --------- | -------------------------- |
+| OK        | 4111111111111111 12/34 123 |
+| KO        | 4200000000000000 12/34 123 |
+
+## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+
+Los códigos de error en Cashflows siguen la siguiente estructura:
+
+```
+Categoría del error x Codigo identificativo
+```
+
+Por ejemplo:
+
+```
+Vx01
+```
+
+La letra indica la categoría del error:
+
+* `V` significa error de validación.
+* `D` y `R` significan rechazo.
+* `B` significa bloqueo.
+* `C` significa que el propio usuario ha cancelado el pago.
+* `S` significa error del sistema.
+
+El valor de `x` es un dígito de uso interno de Cashflows que se reemplaza por un número entre 0 y 9. Su valor no cambia el significado del error.
+
+El mensaje de error completo tiene la siguiente forma:
+
+```
+Mensaje Código
+```
+
+Por ejemplo:
+
+```
+Non-specific decline [D101]
+```
+
+| Código | Mensaje                                                         |
+| ------ | --------------------------------------------------------------- |
+| Vx01   | Invalid merchant details                                        |
+| Vx02   | Invalid expiry date                                             |
+| Vx03   | Invalid start date                                              |
+| Vx04   | Invalid issue number                                            |
+| Vx05   | Invalid CVV                                                     |
+| Vx06   | Invalid card number                                             |
+| Vx07   | Card holder name not set                                        |
+| Vx08   | Insufficient address details                                    |
+| Vx09   | Invalid country code                                            |
+| Vx10   | Invalid cart ID                                                 |
+| Vx11   | Invalid email address                                           |
+| Vx12   | Invalid phone number                                            |
+| Vx13   | Invalid amount                                                  |
+| Vx14   | Invalid currency code                                           |
+| Vx15   | Invalid customer IP                                             |
+| Vx16   | Original trans not found                                        |
+| Vx17   | Invalid merchant IP                                             |
+| Vx18   | Unknown transaction type                                        |
+| Vx19   | Card number changed                                             |
+| Vx20   | Currency changed                                                |
+| Vx21   | Original trans ref required                                     |
+| Vx22   | Amount exceeds original                                         |
+| Vx23   | Cannot refund this type of transaction                          |
+| Vx24   | Amount changed                                                  |
+| Vx25   | User account details required                                   |
+| Vx26   | Invalid request                                                 |
+| Vx27   | Original trans not pre-auth                                     |
+| Vx28   | Transaction mode changed                                        |
+| Vx29   | Card/Currency combination not supported                         |
+| Vx30   | Unknown card type                                               |
+| Vx31   | Issue number required                                           |
+| Vx32   | Issue number not required                                       |
+| Vx33   | Duplicate transaction                                           |
+| Vx34   | Unable to void transaction                                      |
+| Vx35   | Original trans was not authorised                               |
+| Vx36   | Invalid PIN                                                     |
+| Vx37   | Unknown transaction class                                       |
+| Vx38   | Original transaction type does not match                        |
+| Vx39   | Card expired                                                    |
+| Vx40   | CVV Required                                                    |
+| Vx41   | Original transaction already settled                            |
+| Vx42   | Original transaction already cancelled                          |
+| Vx43   | This card does not support the required transaction type        |
+| Vx44   | Transaction details do not match original                       |
+| Vx52   | 3DS Not Enabled                                                 |
+| Vx53   | 3DS Data Invalid                                                |
+| Vx54   | Concurrent authorisations                                       |
+| Vx55   | Invalid Funds Recipient Date (MCC 6012, 6051 or 7299 Merchants) |
+| Vx56   | Terminal mismatch                                               |
+| Vx57   | Transaction not allowed on this card                            |
+| Vx58   | Original transaction requires 3DS attempt/auth                  |
+| Vx59   | ECOM transactions require 3DS attempt/auth                      |
+| Vx60   | Verify for Amex card not supported                              |
+| Vx61   | Recurrence Flag usage invalid                                   |
+| Vx62   | Initial Sale/Verify ARN missing for subsequent sale             |
+| Vx63   | Initial Sale/Verify for subsequent sale not approved            |
+| Vx64   | Initial transaction on card expired                             |
+| Dx01   | Non-specific decline                                            |
+| Dx02   | Declined due to funds (insufficient/limit exceeded)             |
+| Dx03   | Retain card response                                            |
+| Dx05   | On our blacklist                                                |
+| Dx07   | Live/test mismatch                                              |
+| Dx08   | Refund: Insufficient merchant funds in account                  |
+| Dx10   | Card authorisation attempt limit reached                        |
+| Dx11   | Monthly Scheme Decline Rate limit reached                       |
+| Dx40   | Continuous Authority cancelled for the transaction              |
+| Dx41   | Continuous Authorities cancelled for the merchant               |
+| Dx43   | Continuous Authorities cancelled for the card                   |
+| Dx44   | Function not supported                                          |
+| Dx45   | Incorrect CVV                                                   |
+| Dx46   | Incorrect Start Date                                            |
+| Dx48   | Invalid Currency Code                                           |
+| Dx47   | Card Number Changed                                             |
+| Dx90   | Pre-authorisation anti-fraud block                              |
+| Dx91   | Post-authorisation anti-fraud block                             |
+| Rx01   | Referral                                                        |
+| Ex01   | Transaction error                                               |
+| Cx01   | Transaction cancelled                                           |
+| Cx02   | Transaction expired                                             |
+| Sx00   | Invalid transaction request                                     |
+| Sx01   | Connection failure                                              |
+| Sx02   | Invalid response                                                |
+| Sx03   | Response timeout                                                |
+| Sx04   | Server error                                                    |
+| Sx05   | Server error                                                    |
+| Sx06   | No response from issuer                                         |
+| Sx07   | Service not available                                           |
+| Sx99   | Unknown Error                                                   |

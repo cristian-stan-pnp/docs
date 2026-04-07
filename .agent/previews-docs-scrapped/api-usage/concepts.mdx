@@ -1,0 +1,121 @@
+---
+title: "Conceptos Paylands"
+---
+
+## Entornos[​](#entornos "Enlace directo al Entornos")
+
+En Paylands disponemos de dos entornos diferentes a los que realizar las peticiones: **Sandbox** y **Producción**. Cada uno de estos entornos debe ser llamado con unos datos diferentes, es decir, el **API KEY**, los **identificadores de servicio, órdenes o tarjeta** serán diferentes dependiendo del entorno en el que se realice la llamada.
+
+### Entorno Sandbox[​](#sandbox-env "Enlace directo al Entorno Sandbox")
+
+El entorno de **Sandbox** es un entorno creado para realizar pruebas del sistema. Este entorno suele ser usado para la integración de la pasarela, y todas las operaciones realizadas en este entorno se realizan a través de los servicios de test, por lo que **los pagos realizados a través de este entorno no manejan dinero real**.
+
+En este entorno se deben usar unas tarjetas de pruebas concretas, para poder controlar las diferentes respuestas que se pueden recibir (SUCCESS, ERROR...)
+
+La URL de este entorno es: **https\://api.paylands.com/v1/sandbox/**
+
+### Entorno Producción[​](#production-env "Enlace directo al Entorno Producción")
+
+El entorno de **Producción** es el entorno final del sistema. Todos los pagos realizados en este entorno se gestionan con dinero real. Por tanto, como las operaciones en este entorno ya contactan con el banco emisor de las tarjetas utilizadas, éstas deben ser tarjetas reales.
+
+La URL de este entorno es: **https\://api.paylands.com/v1/**
+
+## Operativas[​](#operativas "Enlace directo al Operativas")
+
+Las operativas indican los tipos de pago que se pueden realizar a través de la plataforma.
+
+El tipo de operativa se especifica mediante el atributo `operative` en la llamada de [creación de la orden](/reference/#operation/generate-payment-order) a `/payment`. Una vez configurada la operativa de la orden, para realizar las acciones posteriores habrá que enviar la petición al correspondiente endpoint. Estos endpoints, los parámetros que reciben y toda la información necesaria se puede encontrar en la [sección de Pagos](/docs/integration/simple-integration). A continuación indicamos las acciones que permite realizar cada operativa.
+
+### Authorization[​](#authorization "Enlace directo al Authorization")
+
+Orden de cobro efectiva en el momento de la operación.
+
+| Code          | Description                                                                                                |
+| ------------- | ---------------------------------------------------------------------------------------------------------- |
+| AUTHORIZATION | Realiza un [pago sobre la orden creada](/docs/integration/simple-integration). La URL es `/payment/direct` |
+| REFUND        | Realiza una devolución total o parcial de un pago. La URL es `/payment/refund`                             |
+
+### Partial Authorization[​](#partial-authorization "Enlace directo al Partial Authorization")
+
+Orden de cobro que permite capturar **un importe inferior al solicitado** cuando la tarjeta del cliente no dispone de fondos suficientes.
+
+Si se aprueba una autorización parcial, el sistema cobrará **el máximo importe disponible** en la tarjeta en lugar de rechazar la operación.
+
+> ⚠️ Usa esta opción solo si tu flujo de negocio contempla cómo gestionar el importe restante, ya sea mediante otro método de pago o un nuevo intento de cobro.
+
+| Code                   | Description                                                                                        |
+| ---------------------- | -------------------------------------------------------------------------------------------------- |
+| PARTIAL\_AUTHORIZATION | Realiza un pago sobre la orden creada permitiendo una captura parcial. Endpoint: `/payment/direct` |
+| REFUND                 | Realiza una devolución total o parcial de un pago. Endpoint: `/payment/refund`                     |
+
+Para más detalles, consulta la guía de [Autorización parcial](/docs/integration/partial-authorization).
+
+### Deferred[​](#deferred "Enlace directo al Deferred")
+
+Permite el envío de un cargo para su posterior confirmación. No efectúa ninguna comprobación ni cargo.
+
+| Code         | Description                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------------ |
+| CONFIRMATION | Hace efectivo el cargo previamente retenido. La URL es `/payment/confirmation`                               |
+| CANCELLATION | Libera el importe previamente retenido (si todavía no ha sido confirmado). La URL es `/payment/cancellation` |
+| REFUND       | Realiza una devolución total o parcial tras una confirmación de una retención. La URL es `/payment/refund`   |
+
+### Payout[​](#payout "Enlace directo al Payout")
+
+Permite depositar una cantidad de dinero a una tarjeta. Dependiendo del adquirente, es posible que sea necesario que la tarjeta haya operado previamente en el terminal.
+
+| Code   | Description                                                                               |
+| ------ | ----------------------------------------------------------------------------------------- |
+| PAYOUT | Hace efectivo el abono en tarjeta. La URL donde realizar la petición es `/payment/payout` |
+
+### Transfer[​](#transfer "Enlace directo al Transfer")
+
+Permite realizar una transferencia de dinero a un destino específico.
+
+| Code         | Description                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------------- |
+| TRANSFER     | Realiza la transferencia. La URL es `/payment/transfer`                                               |
+| CANCELLATION | Si es posible, realiza la cancelación de la transferencia. La URL es `/payment/transfer/cancellation` |
+
+## Estados de la orden[​](#estados-de-la-orden "Enlace directo al Estados de la orden")
+
+Durante el proceso de pago, las órdenes cambian de estado para reflejar información sobre el pago, esa información se encuentra en el campo *status* del objeto *order*.
+
+El estado de la Orden puede tener los siguientes valores:
+
+| Valor                        | Descripción                                                                                                                                   |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| BLACKLISTED                  | Operación rechazada por la lista negra                                                                                                        |
+| CANCELLED                    | Preautorización cancelada por el cliente                                                                                                      |
+| CREATED                      | Orden de pago iniciada                                                                                                                        |
+| EXPIRED                      | Operación que ha estado demasiado tiempo en espera de tarjeta                                                                                 |
+| FRAUD                        | Operación rechazada por el sistema antifraude                                                                                                 |
+| PARTIALLY\_REFUNDED          | Operación parcialmente devuelta                                                                                                               |
+| PARTIALLY\_CONFIRMED         | Preautorización parcialmente confirmada                                                                                                       |
+| PENDING\_CONFIRMATION        | Preautorización que ha realizado la retención del saldo en la cuenta del usuario y está a la espera de que el cliente confirme la retención   |
+| REFUNDED                     | La operación ha sido devuelta                                                                                                                 |
+| SUCCESS                      | Operación completada correctamente                                                                                                            |
+| REFUSED                      | Operación rechazada por el banco                                                                                                              |
+| PENDING\_PROCESSOR\_RESPONSE | Operación sin 3DS que ha sido enviada a la procesadora                                                                                        |
+| PENDING\_3DS\_RESPONSE       | El usuario está en el 3DS                                                                                                                     |
+| PENDING\_CARD                | El usuario está en la carta de pago introduciendo su tarjeta                                                                                  |
+| USER\_CANCELLED              | El usuario ha cancelado el pago desde la carta de pago                                                                                        |
+| REDIRECTED\_TO\_3DS          | Se ha intentado realizar el pago pero por motivos de seguridad el usuario debe autorizarlo manualmente                                        |
+| AUTHENTICATION\_REQUIRED     | El banco ha requerido autenticación en esta operación y está a la espera de que el usuario acceda al 3DS                                      |
+| PENDING\_PAYMENT             | El usuario ha proporcionado todos los datos necesarios para llevar a cabo el pago, y está pendiente de confirmación por el proveedor del pago |
+| THREEDS\_EXPIRED             | La operación ha llegado al 3DS pero el usuario ha abandonado el proceso, por lo que no se ha autenticado                                      |
+
+## Estados de la transacción[​](#estados-de-la-transacción "Enlace directo al Estados de la transacción")
+
+Al igual que las órdenes, las transacciones también reflejan la información del estado de la transacción en el campo *status* del objeto *transaction*.
+
+Estos son los valores que puedes encontrar en una Transacción:
+
+| Valor     | Descripción                                                                                                                 |
+| --------- | --------------------------------------------------------------------------------------------------------------------------- |
+| CREATED   | Cuando todavía no hemos recibido la respuesta del adquirente con el resultado final de la operación                         |
+| SUCCESS   | La operación ha llegado a la procesadora y ha finalizado correctamente                                                      |
+| REFUSED   | La operación ha llegado a la procesadora pero ha finalizado incorrectamente (tarjeta incorrecta, fondos insuficientes, etc) |
+| ERROR     | No se ha podido completar la operación por un error de configuración del servicio                                           |
+| PENDING   | Cuando la transacción está pendiente de ser validada por la procesadora                                                     |
+| CANCELLED | Cuando la procesadora ha rechazado la transacción.                                                                          |

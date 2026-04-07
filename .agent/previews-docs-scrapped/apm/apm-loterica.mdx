@@ -1,0 +1,55 @@
+---
+description: "Loterica es un método de pago alternativo brasileño que permite a los clientes realizar pagos en tiendas de lotería. Este método es popular entre quienes prefieren no utilizar tarjetas de crédito o desean una forma más sencilla de pagar sin transacciones en línea. Cuando un cliente elige Loterica como método de pago, recibe un comprobante de pago que contiene un código de barras único y un número de referencia. El recibo se puede imprimir y llevar a un local de lotería para completar el pago, o el cliente puede usar una aplicación móvil compatible para escanear el código de barras y pagar electrónicamente."
+---
+
+Hay dos formas de integrarlo: mediante redirección o pago push.
+
+## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) indicando el nombre del usuario, email, número de identificación y número de teléfono para que el usuario no tenga que rellenarlo.
+
+```
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882"    },    "phone": {       "number": "700000000",       "prefix": "351"    }  }
+```
+
+Como identificador de servicio, debe indicarse el **service\_uuid** del servicio PAGSMILE que tengas activado en tu **Paylands Backend → Administrar → Servicios de Pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Una vez generada la orden, se debe redirigir al usuario a [la pantalla de pago](/reference/#operation/redirection-payment) indicando el token de la orden y en la query, el nombre del APM:
+
+Construimos la URL de redirección reemplazando el **token** por el valor devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=LOTERICA
+```
+
+Una vez que el usuario sea redirigido a esta pantalla, podrá ver el comprobante de pago que contiene el código de referencia único y el código de barras de Loterica. Pueden imprimir el comprobante o copiar el número del banco y llevarlo a una tienda de lotería, o utilizar una aplicación móvil compatible para escanear el código de barras y completar el pago electrónicamente.
+
+## Integración mediante pago push[​](#integración-mediante-pago-push "Enlace directo al Integración mediante pago push")
+
+Si por el contrario queremos que no sea necesario que el usuario esté presente en el momento del pago, este método de pago puede integrarse mediante un pago push.
+
+Para ello, en primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) **obligatoriamente** indicando el nombre del usuario, email, número de identificación y número de teléfono.
+
+```
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882",      "phone": {          "number": "700000000",          "prefix": "351"      }    },  }
+```
+
+A continuación, se debe lanzar la petición del [pago push](/reference/#operation/push-payment) indicando el UUID de la orden. La respuesta contendrá el número identificador de banco y un número de código de barras. Estos campos se incluyen dentro de la transacción del pago, en el campo `payment_data`. A continuación se incluye un ejemplo:
+
+```
+"payment_data": {    "bank_no": "10850221",    "barcode": "10499647359216218774123156548721787200000011649"}
+```
+
+Una vez se complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.
+
+## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+
+Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de PAGSMILE.
+
+## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+
+Opcionalmente, dentro del `extra_data` podemos incluir el campo `payment_reason`, que permite indicar una descripción del pago.
+
+```
+  "extra_data": {    "payment": {      "payment_reason": "Payment description"    }  }
+```

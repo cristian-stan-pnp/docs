@@ -1,0 +1,154 @@
+---
+title: "CredibanCo"
+---
+
+## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+
+La estructura del error tiene la siguiente forma:
+
+```
+Código
+```
+
+Por ejemplo:
+
+```
+51
+```
+
+| Código | COD\_B24 | Descripcion                                         | Intentos x día | Días Bloqueo |
+| ------ | -------- | --------------------------------------------------- | -------------- | ------------ |
+| 00     | 000      | Aprobada                                            | NULL           | NULL         |
+| 01     | 088      | Negada, comuniquese con su entidad                  | 1              | 1            |
+| 02     | 101      | Negada, comuniquese con su entidad                  | NULL           | NULL         |
+| 03     | 150      | Negada, comercio inválido                           | NULL           | NULL         |
+| 04     | 909      | Negada, retener tarjeta                             | 1              | 999          |
+| 05     | 050      | Negada, puede ser tarjeta bloqueada o timeout       | 2              | 1            |
+| 06     | 100      | Negada, no se pudo procesar la transacción          | 1              | 1            |
+| 07     | 909      | Negada, retener tarjeta                             | 1              | 999          |
+| 08     | 003      | Aprobada, solicitar más información                 | NULL           | NULL         |
+| 09     | 078      | Negada, transacción duplicada                       | NULL           | NULL         |
+| 11     | 006      | Aprobada, vip                                       | NULL           | NULL         |
+| 12     | 055      | Negada, transacción inválida                        | NULL           | NULL         |
+| 13     | 205      | Negada, monto inválido                              | NULL           | NULL         |
+| 14     | 058      | Negada, estado de la tarjeta inválido               | 1              | 1            |
+| 15     | 070      | Negada, la institución no está en el IDF            | NULL           | NULL         |
+| 16     | 016      | Negada, Numero cuotas invalidas                     | NULL           | NULL         |
+| 17     | 017      | Negada IAC inválido                                 | NULL           | NULL         |
+| 30     | 069      | Negada, error en edición de mensaje                 | NULL           | NULL         |
+| 31     | 053      | Negada, el emisor no es soportado por el Sistema    | NULL           | NULL         |
+| 33     | 901      | Negada, tarjeta vencida con orden de retención      | 1              | 999          |
+| 34     | 909      | Negada, retener/capturar                            | 1              | 999          |
+| 35     | 909      | Negada, retener/capturar                            | 1              | 999          |
+| 36     | 902      | Negada, retener tarjeta                             | 1              | 999          |
+| 37     | 909      | Negada, tarjeta bloqueada retener/capturar          | 1              | 999          |
+| 38     | 900      | Negada, número de intentos del PIN excedidos        | NULL           | NULL         |
+| 39     | 050      | Negada, puede ser tarjeta bloqueada o timeout       | 1              | 1            |
+| 41     | 057      | Negada, tarjeta robada o extraviada                 | 1              | 999          |
+| 43     | 903      | Negada, estado en archivo de tarjetahabientes (CAF  | 1              | 999          |
+| 51     | 076      | Negada, no hay fondos suficientes                   | NULL           | NULL         |
+| 54     | 051      | Negada, tarjeta vencida0                            | 2              | 7            |
+| 55     | 201      | Negada, PIN inválido                                | NULL           | NULL         |
+| 56     | 206      | Negada, no se encontro CAF                          | 1              | 1            |
+| 57     | 056      | Negada, transacción no permitida a esta tarjeta     | NULL           | NULL         |
+| 58     | 055      | Negada, transacción Inválida                        | NULL           | NULL         |
+| 61     | 095      | Negada, excede el monto máximo                      | 1              | 1            |
+| 62     | 059      | Negada, tarjeta restringida                         | 1              | 1            |
+| 65     | 082      | Negada, límite de usos por período excedido         | NULL           | NULL         |
+| 68     | 113      | Negada, TIMEOUT                                     | NULL           | NULL         |
+| 70     | 070      | Negada, tarjeta vencida                             | NULL           | NULL         |
+| 71     | 071      | Negada, El tipo de cuenta no corresponde            | NULL           | NULL         |
+| 75     | 052      | Negada, número de intentos de PIN excedidos         | NULL           | NULL         |
+| 76     | 002      | Aprobada, (Privado)                                 | NULL           | NULL         |
+| 77     | 004      | Aprobada, pendiente identificación (firma del comp) | NULL           | NULL         |
+| 78     | 005      | Aprobada a ciegas                                   | NULL           | NULL         |
+| 79     | 007      | Aprobada, transacción administrativa                | NULL           | NULL         |
+| 80     | 008      | Aprobada por boletín de seguridad                   | NULL           | NULL         |
+| 81     | 009      | Aprobada por el establecimiento                     | NULL           | NULL         |
+| 82     | 054      | Negada, no hay módulo de seguridad                  | NULL           | NULL         |
+| 83     | 060      | Negada, no hay cuenta para la tarjeta               | 1              | 1            |
+| 84     | 061      | Negada, no existe el archivo de saldos PBF          | NULL           | NULL         |
+| 85     | 062      | Negada, error en actualización de archivo de saldo  | NULL           | NULL         |
+| 86     | 063      | Negada, tipo de autorización errado                 | NULL           | NULL         |
+| 87     | 064      | Negada, track 2 errado                              | NULL           | NULL         |
+| 88     | 068      | Negada, error en log de transacciones PTLF          | NULL           | NULL         |
+| 89     | 073      | Negada, inválida la ruta de servicio                | NULL           | NULL         |
+| 90     | 074      | Negada, no es posible autorizar                     | NULL           | NULL         |
+| 91     | 074      | Negada, no es posible autorizar                     | NULL           | NULL         |
+| 92     | 050      | Negada, puede ser tarjeta bloqueada o timeout       | 1              | 1            |
+| 93     | 964      | Negada, no es posible autorizar                     | NULL           | NULL         |
+| 94     | 078      | Negada, transacción duplicada                       | NULL           | NULL         |
+| 96     | 100      | Negada, no se pudo procesar la transacción          | 1              | 1            |
+| 97     | 254      | Negada, Número de documento inválido                | NULL           | NULL         |
+| 98     | 255      | Negada, CVV2 inválido                               | 4              | 1            |
+| 99     | 999      | Error de comunicaciones                             | NULL           | NULL         |
+| B1     | 130      | Numero de Factura invalida                          | NULL           | NULL         |
+| B2     | 131      | Factura vencida                                     | NULL           | NULL         |
+| B3     | 132      | Factura pagada                                      | NULL           | NULL         |
+| F1     | 0F1      | Filtro por Comercio                                 | NULL           | NULL         |
+| F2     | 0F2      | FILTRO POR AGENCIA                                  | NULL           | NULL         |
+| F3     | F3       | Bin no permitido para esta aerolínea                | NULL           | NULL         |
+| N0     | 074      | Negada, no es posible autorizar                     | NULL           | NULL         |
+| N1     | 075      | Negada, longitud del número de la tarjeta PAN invá  | NULL           | NULL         |
+| N2     | 077      | Negada, se llenó el archivo de preautorizaciones    | NULL           | NULL         |
+| N3     | 079      | Negada, límite de retiros en línea excedido         | NULL           | NULL         |
+| N4     | 080      | Negada, límite de retiros fuera de línea excedido   | NULL           | NULL         |
+| N5     | 081      | Negada, límite de crédito por retiro excedido       | NULL           | NULL         |
+| N6     | 083      | Negada, límite de retiros de crédito excedido       | NULL           | NULL         |
+| N7     | 084      | Negada, customer selected negative file reason      | NULL           | NULL         |
+| N8     | 086      | Negada, excede límite de piso                       | NULL           | NULL         |
+| N9     | 087      | Negada, maximum number of refund credit             | NULL           | NULL         |
+| O0     | 090      | Negada, referral file full                          | NULL           | NULL         |
+| O1     | 091      | Negada, NEG file problem                            | NULL           | NULL         |
+| O2     | 092      | Negada, advances less than minimum                  | NULL           | NULL         |
+| O3     | 093      | Negada, delinquent                                  | NULL           | NULL         |
+| O4     | 094      | Negada, over limit table                            | NULL NULL      |              |
+| O5     | 096      | Negada, PIN required                                | NULL           | NULL         |
+| O6     | 097      | Negada, mod 10 check                                | NULL           | NULL         |
+| O7     | 098      | Negada, force post                                  | NULL           | NULL         |
+| O8     | 099      | Negada, bad PBF                                     | NULL           | NULL         |
+| O9     | 103      | Negada, NEG file problem                            | NULL           | NULL         |
+| P0     | 104      | Negada, CAF problem                                 | NULL           | NULL         |
+| P1     | 107      | Negada, over daily limit                            | 1              | 5            |
+| P2     | 108      | Negada, CAPF not found                              | NULL           | NULL         |
+| P3     | 109      | Negada, advance less than minimum                   | NULL           | NULL         |
+| P4     | 110      | Negada, number times used                           | NULL           | NULL         |
+| P5     | 111      | Negada, delinquent                                  | NULL           | NULL         |
+| P6     | 112      | Negada, over limit table                            | NULL           | NULL         |
+| P7     | 202      | Negada, advance less than minimum                   | NULL           | NULL         |
+| P8     | 203      | Negada, administrative card needed                  | NULL           | NULL         |
+| P9     | 204      | Negada, enter lesser amount                         | NULL           | NULL         |
+| Q0     | 207      | Negada, invalid transaction date                    | NULL           | NULL         |
+| Q1     | 208      | Negada, Fecha de vencimiento invalida               | NULL           | NULL         |
+| Q2     | 209      | Negada, invalid transaction code                    | NULL           | NULL         |
+| Q3     | 904      | Negada, valor del avance menor que el mínimo        | 1              | 99           |
+| Q4     | 905      | Negada, excedido el número de usos por período      | NULL           | NULL         |
+| Q5     | 906      | Negada, delinquent                                  | 1              | 1            |
+| Q6     | 907      | Negada, tabla de límites excedida                   | 1              | 99           |
+| Q7     | 908      | Negada, el valor excede al máximo                   | NULL           | NULL         |
+| Q8     | 950      | Negada, no se encuentra la tarjeta administrativa   | NULL           | NULL         |
+| Q9     | 951      | Negada, la tarjeta administrativa no está permitida | NULL           | NULL         |
+| R0     | 952      | Negada, transacción administrativa aprobada/en ven  | NULL           | NULL         |
+| R1     | 953      | Negada, transacción administrativa aprobada / fuer  | NULL           | NULL         |
+| R2     | 954      | Negada, transacción administrativa aprobada         | NULL           | NULL         |
+| R3     | 955      | Negada, la transacción Chargeback es aprobada       | NULL           | NULL         |
+| R4     | 956      | Negada, devolución/archivo de usuario actualizado   | NULL           | NULL         |
+| R5     | 957      | Negada, devolución/número de prefijo incorrecto     | NULL           | NULL         |
+| R6     | 958      | Negada, devolución/código de respuesta incorrecto   | NULL           | NULL         |
+| R7     | 959      | Negada, transacción administrativa no soportada     | NULL           | NULL         |
+| R8     | 072      | Negada, la tarjeta está en el archivo de negativos  | NULL           | NULL         |
+| S4     | 115      | Negada, PTLF full                                   | NULL           | NULL         |
+| S5     | 960      | Negada, devolución/aprobada, archivo del cliente n  | NULL           | NULL         |
+| S6     | 961      | Negada, devolución aprobada, archivo del cliente n  | NULL           | NULL         |
+| S7     | 962      | Negada, devolución aceptada, destino incorrecto     | NULL           | NULL         |
+| S8     | 121      | Negada, ADMIN file problem                          | NULL           | NULL         |
+| S9     | 122      | Negada, unable to validate PIN; security module is  | NULL           | NULL         |
+| T1     | 066      | Negada, tarjeta de crédito inválida                 | NULL           | NULL         |
+| T2     | 067      | Negada, fecha de transacción inválida               | NULL           | NULL         |
+| T3     | 105      | Negada, card not supported                          | 2              | 1            |
+| T4     | 106      | Negada, amount over maximum                         | NULL           | NULL         |
+| T5     | 089      | Negada, CAF status = 0 or 9                         | 1              | 1            |
+| T6     | 120      | Negada, Bad UAF                                     | NULL           | NULL         |
+| T7     | 251      | Negada, límite diario excedido en el Cash back      | NULL           | NULL         |
+| T8     | 963      | Negada, el enlace esta caido                        | NULL           | NULL         |
+| TO     | \_TO     | Negada, time out                                    | NULL           | NULL         |

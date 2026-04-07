@@ -1,0 +1,183 @@
+---
+title: "Suscripciones"
+description: "Paylands ofrece la posibilidad de realizar pagos recurrentes mediante suscripciones."
+---
+
+En la siguiente guía vamos mostrar paso a paso **como configurar e integrar los pagos recurrentes de un servicio de streaming** en los que tendremos un *plan mensual* que se cobrará mes a mes y también un *plan anual* que se cobrará cada año.
+
+## Configuración[​](#configuración "Enlace directo al Configuración")
+
+### 1. Crear compañia[​](#1-crear-compañia "Enlace directo al 1. Crear compañia")
+
+El primer paso será crear nuestra compañia en Paylands. Esto solo es necesario realizarlo la primera vez que configuramos el sistema de suscripciones. Podemos hacerlo fácilmente desde el **Backend de Paylands → Herramientas de Pago → [Suscripciones](https://backend.paylands.com/subscriptions)** donde aparecerá un botón para crear la compañia.
+
+<Info>
+  Este paso podemos realizarlo también desde el API utilizando el método [**Crear compañia**](/reference/#operation/create-company).
+</Info>
+
+### 2. Crear productos[​](#2-crear-productos "Enlace directo al 2. Crear productos")
+
+A continuación deberemos registrar los productos que deseemos ofrecer pulsando el botón de **Nuevo Producto**.
+
+![New Product](/images/docs/guides/assets/images/subs-new-product-f8d2342af622628e9ec39daf0372921d.jpg)
+
+En el ejemplo que estamos realizando de plataforma de servicio de streaming bastaría con crear un único producto llamado **Servicio de Streaming**.
+
+Introducimos un `ID Externo` para identificar de forma única a un producto y de forma opcional una `URL de notificación` que recibirá una notificación HTTP cuando el pago cambie de estado. El `Entorno` viene autoseleccionado según el entorno del Backend sobre el que estemos trabajando.
+
+![New Product Form](/images/docs/guides/assets/images/subs-new-product-form-37b9c4e796f9336d56601b914dcfa09a.jpg)
+
+<Info>
+  Este paso podemos realizarlo también desde el API utilizando el método [**Crear producto**](/reference/#operation/create-product).
+</Info>
+
+### 3. Crear planes[​](#3-crear-planes "Enlace directo al 3. Crear planes")
+
+Una vez tenemos el producto creado, pulsando el botón **Nuevo Plan** podremos crear los planes que deseamos para el producto en cuestión. Para nuestro ejemplo crearemos 2 planes: **Mensual y Anual**.
+
+![New Plan](/images/docs/guides/assets/images/subs-new-plan-6f2ff94757cfda3cb1f6dbfde4d2e270.jpg)
+
+Empezaremos creando el plan **Mensual** rellenando el formulario con los siguientes campos:
+
+* **Nombre**. Introducimos como nombre de plan `Mensual`.
+* **ID Externo**. Elegimos como identificador de plan `MENSUAL`.
+* **Intervalo**. Como queremos cobrar mes a mes, elegiremos como intervalo `1`.
+* **Tipo de intervalo**. El desplegable nos da las opciones de Diario, Semanal, Mensual y Anual. En nuestro caso elegiremos `Mensual`.
+* **Importe**. El precio de este plan será de 10€. Como debemos introducir el valor en céntimos escribiremos `1000`.
+* **Prueba disponible**. Marcaremos esta opción para dar al usuario un periodo de prueba.
+* **Intervalo de prueba**. Daremos 1 mes de prueba para este plan por lo que introduciremos como valor `1`.
+* **Tipo de intervalo de prueba**. Seleccionaremos como tipo de intervalo de prueba `Mensual`.
+
+![New Plan Form 1](/images/docs/guides/assets/images/subs-new-plan-form-1-283b8f94c51989bd60f2b3a225d7f2e8.jpg)
+
+Seguidamente crearemos el plan **Anual** rellenando el formulario con los siguientes campos:
+
+* **Nombre**. Introducimos como nombre de plan `Anual`.
+* **ID Externo**. Elegimos como identificador de plan `ANUAL`.
+* **Intervalo**. Como queremos cobrar año a año, elegiremos como intervalo `1`.
+* **Tipo de intervalo**. El desplegable nos da las opciones de Diario, Semanal, Mensual y Anual. En nuestro caso elegiremos `Anual`.
+* **Importe**. El precio de este plan será de 100€. Como debemos introducir el valor en céntimos escribiremos `10000`.
+* **Prueba disponible**. Para el plan anual de este ejemplo no marcaremos periodo de prueba.
+
+![New Plan Form 2](/images/docs/guides/assets/images/subs-new-plan-form-2-9ce170d3bd9ae82b42f1ab35d445f66f.jpg)
+
+Con ambos planes creados, nuestra suscripción quedaría configurada tal que así.
+
+![New Plan List](/images/docs/guides/assets/images/subs-plan-list-7f76a6ec542af64e010dfbd97a944b41.jpg)
+
+<Info>
+  Es posible crear los planes desde el API utilizando el método [**Crear plan**](/reference/#operation/create-plan).
+</Info>
+
+## Integración[​](#integración "Enlace directo al Integración")
+
+Una vez tenemos la [compañia](#1-crear-compa%C3%B1ia), los [productos](#2-crear-productos) y los [planes](#3-crear-planes) configurados ya estamos listos para empezar a registrar las suscripciones de nuestros clientes. Si lo deseamos podemos dar de alta suscripciones de forma manual desde el Backend con la opción **Suscribir a un cliente manualmente**.
+
+![New Sub Manually](/images/docs/guides/assets/images/subs-new-client-muanually-9f10c0eed54d0d595ab3e3b1c5856504.jpg)
+
+Aunque la forma habitual será habilitar en nuestra web de comercio toda la lógica de registro de nuevos clientes y sus suscripciones mediante llamadas a nuestra [API](/reference/#tag/Subscripciones). A continuación veremos para nuestro ejemplo de *Servicio de Streaming* como hacerlo.
+
+### 1. Listar planes de un producto[​](#1-listar-planes-de-un-producto "Enlace directo al 1. Listar planes de un producto")
+
+El primer paso será listar en nuestra web de comercio los distintos planes que disponemos para nuestro producto de *Servicio de Streaming*. Para ello podemos realizar una llamada al método de [**Listar planes**](/reference/#operation/list-plans) que nos listará todos los planes que tengamos creados.
+
+Tan solo debemos pasar como parámetro en la URL de la llamada el `product` que se corresponde con el external\_id del producto que hemos creado. En nuestro ejemplo es `SERSTR`.
+
+```
+curl --request GET 'https://api.paylands.com/v1/sandbox/subscriptions/list-plans/?product=SERSTR' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",}'
+```
+
+En la respuesta tendremos los detalles de los planes para a continuación presentarlos en nuestra web de comercio.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2022-02-03T16:37:02+0100",  "plans": [{    "amount": 1000,    "created_at": "2022-02-03 16:05:24",    "external_id": "MENSUAL",    "interval": 1,    "interval_type": "MONTHLY",    "interval_offset": 1,    "interval_offset_type": "MONTHLY",    "name": "Mensual",    "trial_available": true,    "updated_at": "2022-02-03 16:05:24",    "product": {      "created_at": "2022-02-03 16:05:18",      "external_id": "SERSTR",      "name": "Servicio de Streaming",      "notification_url": "https://yourdomain.com/subscriptions/notify",      "sandbox": true,      "updated_at": "2022-02-03 16:05:18"    }  },  {    "amount": 10000,    "created_at": "2022-02-03 16:05:24",    "external_id": "ANUAL",    "interval": 1,    "interval_type": "ANNUAL",    "interval_offset": null,    "interval_offset_type": null,    "name": "Anual",    "trial_available": false,    "updated_at": "2022-02-03 16:05:24",    "product": {      "created_at": "2022-02-03 16:05:18",      "external_id": "SERSTR",      "name": "Servicio de Streaming",      "notification_url": "https://yourdomain.com/subscriptions/notify",      "sandbox": true,      "updated_at": "2022-02-03 16:05:18"    }  }]}
+```
+
+También es posible obtener la información de los planes de forma individual mediante el método de [**Obtener plan**](/reference/#operation/get-plan). Si optamos por esta opción, lanzaremos 2 peticiones a este método indicando como `plan_external_id` una vez `MENSUAL` y la otra petición `ANUAL`.
+
+```
+curl --request GET 'https://api.paylands.com/v1/sandbox/subscriptions/plan/{plan_external_id}' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "plan_external_id": "MENSUAL"}'
+```
+
+Con esta información podemos presentar los planes en la web del comercio de la siguiente manera:
+
+![Web Plans](/images/docs/guides/assets/images/subs-web-plans-8bfa7dfc2a7252e4bff12aff6a0b6338.jpg)
+
+### 2. Suscribir a un cliente[​](#2-suscribir-a-un-cliente "Enlace directo al 2. Suscribir a un cliente")
+
+Cuando un cliente pulse sobre el botón de compra de cualquiera de los planes, deberemos mostrarle un formulario solicitándole sus datos. Estos datos deberemos guardarlos en nuestra base de datos del comercio y a continuación daremos de alta la suscripción para este cliente con el método [**Suscribir a un cliente**](/reference/#operation/subscribe-client).
+
+Para suscribir un cliente a un plan, será necesario informar el ID externo del cliente en `customer` y el ID externo del plan en `plan`, entre otros parámetros. Un identificador externo habitual para el cliente es utilizar el `NIF` o también el `ID` de nuestra base de datos.
+
+En la llamada podemos informar los siguientes parámetros:
+
+* **customer**. ID externo del cliente que deseamos suscribir.
+
+* **plan**. ID externo del plan al que queremos realizar la suscripción.
+
+* **additional\_data**. Bloque de datos con información adicional de la suscripción.
+
+  * **additional**. Campo libre que el comercio puede utilizar para almacenar información que considere oportuna.
+  * **customer\_ext\_id**. ID externo del cliente que deseamos suscribir. Debemos introducirlo también en este campo.
+  * **operative**. Tipo de operativa `AUTHORIZATION`.
+  * **service**. UUID de servicio.
+  * **source\_uuid**. UUID de la tarjeta que previamente debemos haber guardado. Consulta nuestra guía de [**Guardado y uso de tarjetas**](/docs/guides/guide-cards).
+  * **url\_post**. URL de nuestro servidor de comercio a la cual Paylands notificará con el resultado de esta llamada.
+
+* **initial\_date**. Fecha desde la cual empezará a contabilizar la suscripción.
+
+* **payment\_attempts\_limit**. Límite de intentos de pago permitidos.
+
+* **total\_payment\_number**. Número máximo de pagos que se llevarán a cabo de forma exitosa antes de cancelar la subscripción. Si queremos que la suscripción caduque en 12 meses, introduciríamos el valor 12. En nuestro ejemplo no queremos que caduque y lo dejaremos vacío.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/subscriptions/subscription' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "customer": "ES41749999P",  "plan": "MENSUAL",  "additional_data": {    "additional": "Datos extra",    "customer_ext_id": "ES41749999P",    "operative": "AUTHORIZATION",    "service": "60A1F4C0-CC58-47A9-A0B9-868F9EF29045",    "source_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",    "url_post": "https://yourdomain.com/subscriptions/notify"  },  "initial_date": "2022-02-05T10:34:12.640Z",  "payment_attempts_limit": 3,  "total_payment_number": null,}'
+```
+
+<Info>
+  Si el plan al cual queremos realizar la suscripción tiene el parámetro `trial_available` a false, se realizará un cobro inmediatamente tras suscribir al cliente. En nuestro ejemplo el plan ANUAL no tendría el período de prueba, por lo que se ejecutaría el cobro inmediatamente.
+</Info>
+
+En la respuesta tendremos el resultado de la operación. El identificador de la suscripción nos vendrá en el parámetro `subscription` y el estado de la misma en `status`.
+
+```
+{  "amount": 1,  "attempt": 1,  "company": "FF255421-F4B7-47E9-9816-949F5F03DE6F",  "currency": "978",  "customer": "customer_external_id",  "payment_date": "2022-02-05T10:34:12.640Z",  "payment_id": "5dfa00a4229c1a127749ae9e",  "payment_number": 1,  "plan": "plan_external_id",  "product": "product_external_id",  "status": "PAID",  "subscription": "5dfa00a4229c1a127749ae9d"}
+```
+
+<Info>
+  Si alguno de los parámetros (UUID de servicio o tarjeta, por ejemplo) es incorrecto la subscripción se registrará pero el pago no podrá realizarse. En este caso el status será `FAILED_NOTIFICATION`.
+</Info>
+
+### 3. Obtener una subscripción[​](#3-obtener-una-subscripción "Enlace directo al 3. Obtener una subscripción")
+
+Una vez tenemos a un cliente suscrito, puede interesarnos mostrarle el estado de su suscripción dentro de la sección *Mi cuenta → Mi suscripción* de la web del comercio. Para ello, podemos recuperar la información de la suscripción haciendo una llamada al método [**Obtener una suscripción**](/reference/#operation/get-subscription) indicando el ID de la suscripción `subscription_id`.
+
+```
+curl --request GET 'https://api.paylands.com/v1/sandbox/subscriptions/subscription/{subscription_id}' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \
+```
+
+Con esta llamada, obtendremos toda la información de la suscripción, incluídos los pagos realizados.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2022-02-05T16:51:27+0100",  "subscription": {    "active": true,    "additional_data": "{\"operative\":\"AUTHORIZATION\",\"source_uuid\":\"92766871-ABDD-405C-B436-A6F179FD81B3\",\"customer_ext_id\":\"test\",\"service\":\"C8C482B2-6846-4FA9-A813-1800610996A2\",\"url_post\":\"https:\\/\\/en26526quut1w.x.pipedream.net\"}",    "created_at": "2022-02-05 16:11:16",    "first_charge_date": "2022-02-05",    "id": "5e6116949d3a0c6b2e56826b",    "next_charge_date": "2020-04-05",    "payment_attempts_limit": 3,    "status": "CREATED",    "total_payment_charged": 1,    "total_payment_number": 3,    "updated_at": "2022-02-05 16:11:18",    "payments": [      {        "amount": 1000,        "attempt": 1,        "created_at": "2022-02-05 16:11:16",        "id": "5e6116949d3a0c6b2e56826c",        "payment_date": "2022-02-05",        "payment_details": "{\"order_uuid\":\"8B5BEB82-0CCA-47B7-A82C-FCEC6D8116B9\",\"source_uuid\":\"92766871-ABDD-405C-B436-A6F179FD81B3\",\"transaction_uuid\":\"7E531738-5A56-4319-925A-F97CD96E14D3\"}",        "payment_number": 1,        "status": "PAID",        "updated_at": "2022-02-05 16:11:18"      },      {        "amount": 1000,        "attempt": 1,        "created_at": "2022-01-05 16:11:18",        "id": "5e6116969d3a0c6b2e56826d",        "payment_date": "2022-02-05",        "payment_details": null,        "payment_number": 2,        "status": "CREATED",        "updated_at": "2022-02-05 16:11:18"      }    ],    "plan": {      "amount": 1000,      "created_at": "2022-01-05 16:05:24",      "external_id": "plan",      "interval": 1,      "interval_offset": 1,      "interval_offset_type": "MONTHLY",      "interval_type": "MONTHLY",      "name": "Mensual",      "trial_available": false,      "updated_at": "2022-01-05 16:05:24",      "product": {        "created_at": "2022-01-05 16:05:18",        "external_id": "SERSTR",        "name": "Servicio de Streaming",        "notification_url": "https://en26526quut1w.x.pipedream.net",        "sandbox": true,        "updated_at": "2022-01-05 16:05:18"      }    }  }}
+```
+
+Con esta información podemos presentar una pantalla al usuario como la que se muestra a continuación.
+
+![My Sub](/images/docs/guides/assets/images/subs-my-sub-e9b889e3d4fd92badf1ef7c8bf071df7.jpg)
+
+### 4. Cancelar una subscripción[​](#4-cancelar-una-subscripción "Enlace directo al 4. Cancelar una subscripción")
+
+Si queremos ofrecerle al cliente la posibilidad de cancelar su suscripción desde la web del comercio, podemos poner una opción para ello al lado de la información de su suscripción.
+
+Este enlace deberá realizar una llamada al método [**Cancelar una suscripción**](/reference/#operation/cancel-subscription) indicando el ID de la suscripción `subscription_id`.
+
+```
+curl --request DELETE 'https://api.paylands.com/v1/sandbox/subscriptions/subscription/{subscription_id}' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b"}'
+```
+
+La respuesta nos devolverá el valor `deleted` a 1 si la suscripción se ha eliminado correctamente.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2022-02-08T17:40:46+0100",  "deleted": 1}
+```

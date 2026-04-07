@@ -1,0 +1,12 @@
+---
+title: "Lanzar cobros o autorizaciones"
+description: "Como se mencionó en la introducción, el PROXY PCI viene con una pasarela de procesamiento de pagos incorporada. Esto significa que cada vez que usted tokeniza una tarjeta en el PROXY, el token obtenido puede ser utilizado para emitir un pago."
+---
+
+Para emitir un cargo a una tarjeta guardada, primero tiene que generar una orden de pago. Esto se hace utilizando [el método de generación de órdenes](https://docs.paylands.com/reference/#operation/generate-payment-order). Tiene que utilizar el token de la tarjeta obtenido durante el proceso de tokenización y enviarlo como valor del campo `source_uuid`. Después de esto, puedes [redirigir al usuario a un formulario de pago](https://docs.paylands.com/reference/#operation/redirection-payment) o [utilizar el servicio web directamente](https://docs.paylands.com/reference/#operation/webservice-payment).
+
+<Info>
+  Por favor, consulte la documentación completa del PAYMENT GATEWAY: [https://docs.paylands.com](https://docs.paylands.com)
+</Info>
+
+Para más información y precios, póngase en contacto con [soporte@paylands.com](mailto:soporte@paylands.com).

@@ -1,0 +1,346 @@
+---
+title: "Integración vía SDK de JavaScript (Vanilla)"
+description: "Nuestro SDK en JavaScript (sin frameworks) permite integrar el checkout de forma sencilla y segura en tu página web. Este SDK se encarga de renderizar la interfaz y gestionar toda la comunicación con Paylands para procesar las transacciones."
+---
+
+El SDK utiliza una biblioteca del lado del cliente en JavaScript que se puede integrar fácilmente en tu página de pago.
+
+Esta biblioteca se encarga de renderizar la interfaz de usuario y de gestionar la comunicación necesaria con Paylands para ejecutar cualquier tipo de transacción de manera fluida.
+
+Para poder utilizar el SDK será necesario previamente haber generado una orden de pago en Paylands. Esta orden deberá contener el uuid del checkout creado previamente. Para más información sobre cómo generar una orden con checkout, consulta la sección [Integración via API](/docs/checkout/checkout-api-integration).
+
+Puedes probar su funcionamiento en nuestro [playground](https://playground.paynopain.com/).
+
+## 1. Incluir el SDK en tu web[​](#1-incluir-el-sdk-en-tu-web "Enlace directo al 1. Incluir el SDK en tu web")
+
+En nuestra página, cargaremos el script del checkout SDK de Paylands.
+
+```
+<script async src="https://ws-paylands.paynopain.com/assets/checkout/paylands-checkout-sdk.js"></script>
+```
+
+Y a continuación inicializaremos el SDK indicando el token generado en la orden de pago.
+
+```
+const paylandsCheckout = await PaylandsCheckout.create({token: '9fdade323e7...'});
+```
+
+| Request     |             |                                                                                                                                                                                |
+| ----------- | :---------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| token       | Obligatorio |                                                                       Token generado en la orden de pago.                                                                      |
+| environment |   Opcional  |                                Entorno en el que se va a utilizar el SDK. Valores posibles: 'SANDBOX' o 'PRODUCTION'. Por defecto 'PRODUCTION'.                                |
+| language    |   Opcional  | Lenguaje en el que se va a mostrar el checkout. Valores posibles: 'es', 'en', 'fr', 'it', 'de', 'pt', 'nl', 'pl', 'ca', 'hr', 'he', 'jp', 'ru', 'hu' o 'ro'. Por defecto 'es'. |
+
+Esto devolverá una instancia de PaylandsCheckout que se puede utilizar para interactuar con el SDK.
+
+## 2. Funciones del SDK[​](#2-funciones-del-sdk "Enlace directo al 2. Funciones del SDK")
+
+### Redirección[​](#redirección "Enlace directo al Redirección")
+
+Para redirigir al usuario al checkout, simplemente llama a la función `redirect`.
+
+```
+await paylandsCheckout.redirect();
+```
+
+### Renderizado[​](#renderizado "Enlace directo al Renderizado")
+
+Para renderizar el checkout en un contenedor específico, llama a la función `render`.
+
+```
+await paylandsCheckout.render('renderContainer');
+```
+
+| Request   |             |                                                         |
+| --------- | :---------: | :-----------------------------------------------------: |
+| container | Obligatorio | ID del contenedor en el que se renderizará el checkout. |
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-sdk-integration#3-el-cliente-completa-el-pago).
+
+### Formulario de tarjeta[​](#formulario-de-tarjeta "Enlace directo al Formulario de tarjeta")
+
+Para renderizar un formulario de tarjeta personalizable en un contenedor específico, llama a la función `card`.
+
+```
+await paylandsCheckout.card({    container: 'renderContainer',    form: { ... },    customization: { ... }});
+```
+
+| Request                |             |                                                          |
+| ---------------------- | :---------: | :------------------------------------------------------: |
+| container              | Obligatorio | ID del contenedor en el que se renderizará el formulario |
+| form (Object)          | Obligatorio |               Configuración del formulario               |
+| customization (Object) | Obligatorio |              Personalización del formulario              |
+
+| form (Object) |          |                                                        |
+| ------------- | :------: | :----------------------------------------------------: |
+| holderLabel   | Opcional |      Label del input del propietario de la tarjeta     |
+| holderError   | Opcional |        Error a mostrar si el valor es incorrecto       |
+| panLabel      | Opcional |          Label del input del PAN de la tarjeta         |
+| panError      | Opcional |        Error a mostrar si el valor es incorrecto       |
+| expiryLabel   | Opcional | Label del input de la fecha de caducidad de la tarjeta |
+| expiryError   | Opcional |        Error a mostrar si el valor es incorrecto       |
+| cvvLabel      | Opcional |          Label del input del CVV de la tarjeta         |
+| cvvError      | Opcional |        Error a mostrar si el valor es incorrecto       |
+
+| customization (Object) |          |                                                                                                                   |
+| ---------------------- | :------: | :---------------------------------------------------------------------------------------------------------------: |
+| font                   | Opcional |                                                  Fuente de texto                                                  |
+| primaryColor           | Opcional |                                                  Color del botón                                                  |
+| textColor              | Opcional |                                                  Color del texto                                                  |
+| backgroundColor        | Opcional |                                                  Color del fondo                                                  |
+| errorColor             | Opcional |                                              Color del texto de error                                             |
+| borderColor            | Opcional |                                           Color del borde de los inputs                                           |
+| borderRadius           | Opcional |                                           Radio del borde de los inputs                                           |
+| padding                | Opcional |                                                     Espaciado                                                     |
+| inputTextSize          | Opcional |                                             Tamaño del texto del input                                            |
+| labelTextSize          | Opcional |                                             Tamaño del texto del label                                            |
+| iconSize               | Opcional |                                                Tamaño de los iconos                                               |
+| iconColor              | Opcional |                                                Color de los iconos                                                |
+| buttonText             | Opcional | Contenido del botón. Obligatorio si queremos que el SDK se encargue de mostrar el botón de submit del formulario. |
+| buttonTextSize         | Opcional |                                             Tamaño del texto del botón                                            |
+
+**¿Cómo validar el formulario?**
+
+El formulario tiene su propia validación la cual comunica mediante el evento `card_valid`.
+
+```
+window.addEventListener('message', event => {    if (event.data.card_valid === true) {        console.log('El formulario es válido');    }    if (event.data.card_valid === false) {        console.log('El formulario contiene errores');    }});
+```
+
+**¿Cómo hacer submit?**
+
+Enviar un evento `pay` con el valor `card`. Esto no será necesario si se ha personalizado el botón de envío del formulario, en cuyo caso el propio SDK se encargará de enviar el evento al hacer click en dicho botón.
+
+```
+button.addEventListener("click", () => window.postMessage({ pay: "card" }));
+```
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-sdk-integration#3-el-cliente-completa-el-pago).
+
+### Botón de Google Pay[​](#botón-de-google-pay "Enlace directo al Botón de Google Pay")
+
+Para renderizar un botón de Google Pay en un contenedor específico, llama a la función `google_pay`. Es necesario que el comercio tenga habilitado Google Pay en su cuenta de Paylands. Para más información, consulta la sección [Google Pay](/docs/wallets/wallet-googlepay).
+
+```
+await paylandsCheckout.google_pay('renderContainer');
+```
+
+| Request   |             |                                                                   |
+| --------- | :---------: | :---------------------------------------------------------------: |
+| container | Obligatorio | ID del contenedor en el que se renderizará el botón de Google Pay |
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-sdk-integration#3-el-cliente-completa-el-pago).
+
+### Botón de Apple Pay[​](#botón-de-apple-pay "Enlace directo al Botón de Apple Pay")
+
+Para renderizar un botón de Apple Pay en un contenedor específico, llama a la función `apple_pay`. Es necesario que el comercio tenga habilitado Apple Pay en su cuenta de Paylands. Para más información, consulta la sección [Apple Pay](/docs/wallets/wallet-applepay).
+
+```
+await paylandsCheckout.apple_pay('renderContainer');
+```
+
+| Request   |             |                                                                  |
+| --------- | :---------: | :--------------------------------------------------------------: |
+| container | Obligatorio | ID del contenedor en el que se renderizará el botón de Apple Pay |
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-sdk-integration#3-el-cliente-completa-el-pago).
+
+### Botón de PayPal[​](#botón-de-paypal "Enlace directo al Botón de PayPal")
+
+Para renderizar un botón de PayPal en un contenedor específico, llama a la función `payPal`. Es necesario que el comercio tenga habilitado PayPal en su cuenta de Paylands. |
+
+```
+await paylandsCheckout.payPal({    container: 'renderContainer',    form: { ... },    customization: { ... }});
+```
+
+| Request                |             |                                                               |
+| ---------------------- | :---------: | :-----------------------------------------------------------: |
+| container              | Obligatorio | ID del contenedor en el que se renderizará el botón de PayPal |
+| form (Object)          | Obligatorio |                    Configuración del botón                    |
+| customization (Object) | Obligatorio |                   Personalización del botón                   |
+
+| form (Object)    |          |                                       |
+| ---------------- | :------: | :-----------------------------------: |
+| prefilledAddress | Opcional | Dirección del usuario si la conocemos |
+| prefilledCountry | Opcional |    País del usuario si lo conocemos   |
+
+| customization (Object) |          |                                                                                                                                      |
+| ---------------------- | :------: | :----------------------------------------------------------------------------------------------------------------------------------: |
+| layout                 | Opcional |       [https://developer.paypal.com/sdk/js/reference/#link-layout](https://developer.paypal.com/sdk/js/reference/#link-layout)       |
+| color                  | Opcional |        [https://developer.paypal.com/sdk/js/reference/#link-color](https://developer.paypal.com/sdk/js/reference/#link-color)        |
+| label                  | Opcional |        [https://developer.paypal.com/sdk/js/reference/#link-label](https://developer.paypal.com/sdk/js/reference/#link-label)        |
+| borderRadius           | Opcional | [https://developer.paypal.com/sdk/js/reference/#link-borderradius](https://developer.paypal.com/sdk/js/reference/#link-borderradius) |
+| addPaylaterButton      | Opcional |                                         Añade un botón de PayLater debajo del botón de PayPal                                        |
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-sdk-integration#3-el-cliente-completa-el-pago).
+
+### Revolut Pay button[​](#revolut-pay-button "Enlace directo al Revolut Pay button")
+
+Para renderizar un botón de Revolut Pay en un contenedor específico, llama a la función `revolut_pay`.
+
+```
+await paylandsCheckout.revolut_pay({    container: 'renderContainer',    form: { ... },    customization: { ... }});
+```
+
+| Request                |             |                                                               |
+| ---------------------- | :---------: | :-----------------------------------------------------------: |
+| container              | Obligatorio | ID del contenedor en el que se renderizará el botón de PayPal |
+| form (Object)          | Obligatorio |                    Configuración del botón                    |
+| customization (Object) | Obligatorio |                   Personalización del botón                   |
+
+| form (Object)     |          |                                |
+| ----------------- | :------: | :----------------------------: |
+| prefilledName     | Opcional |       Nombre del usuario       |
+| prefilledLastName | Opcional |      Apellido del usuario      |
+| prefilledEmail    | Opcional |        Email del usuario       |
+| prefilledPrefix   | Opcional | Prefijo telefónico del usuario |
+| prefilledPhone    | Opcional | Número de teléfono del usuario |
+| prefilledCountry  | Opcional |        País del usuario        |
+| prefilledZipCode  | Opcional |    Código postal del usuario   |
+| prefilledCity     | Opcional |       Ciudad del usuario       |
+| prefilledAddress  | Opcional |      Dirección del usuario     |
+
+| customization (Object) |          |                                                                              |                                        |
+| ---------------------- | :------: | :--------------------------------------------------------------------------: | :------------------------------------: |
+| height                 | Opcional |                  Altura CSS del botón (por ejemplo, '48px').                 |                 string                 |
+| size                   | Opcional | large para un botón de ancho completo, small para un botón de tamaño inline. |            'large' / 'small'           |
+| radius                 | Opcional |                         El radio de borde del botón.                         |  'none' / 'small' / 'large' / 'round'  |
+| variant                | Opcional |                          El tema de color del botón.                         |   'dark' / 'light' / 'light-outlined'  |
+| action                 | Opcional |          El texto de llamada a la acción que se muestra en el botón.         | 'donate' / 'pay' / 'subscribe' / 'buy' |
+| cashback               | Opcional |       Si es true, puede mostrar información de recompensas en el botón.      |                 boolean                |
+| cashbackCurrency       | Opcional |          Código de moneda de 3 letras para el texto de recompensas.          |                 string                 |
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-sdk-integration#3-el-cliente-completa-el-pago).
+
+### Metodos de pago alternativos[​](#metodos-de-pago-alternativos "Enlace directo al Metodos de pago alternativos")
+
+Para renderizar un metodo de pago alternativo en un contenedor específico, llama a la función `<NOMBRE DEL METODO DE PAGO>`. Actualmente los métodos de pago alternativos disponibles son:
+
+* bizum
+* boleto
+* cofidis
+* efecty
+* loterica
+* mbway
+* multibanco
+* pago\_facil
+* payshop
+* pse
+* safetypay
+* pix
+* picpay
+* mach
+* khipu
+* klap
+* servipag
+* flowpay
+* spei
+* webpay
+
+```
+await paylandsCheckout.bizum({    container: 'renderContainer',    form: { ... },    customization: { ... }});
+```
+
+> **Nota:** Para saber que campos de formulario son obligatorios para un método de pago en concreto, consulta su sección en la documentación.
+
+| Request                |             |                                                          |
+| ---------------------- | :---------: | :------------------------------------------------------: |
+| container              | Obligatorio | ID del contenedor en el que se renderizará el formulario |
+| form (Object)          | Obligatorio |               Configuración del formulario               |
+| customization (Object) | Obligatorio |              Personalización del formulario              |
+
+| form (Object)                         |          |                                                      |
+| ------------------------------------- | :------: | :--------------------------------------------------: |
+| nameLabel                             | Opcional |              Label del input del nombre              |
+| nameError                             | Opcional |       Error a mostrar si el valor es incorrecto      |
+| lastNameLabel                         | Opcional |             Label del input del apellido             |
+| lastNameError                         | Opcional |       Error a mostrar si el valor es incorrecto      |
+| emailLabel                            | Opcional |               Label del input del email              |
+| emailError                            | Opcional |       Error a mostrar si el valor es incorrecto      |
+| prefixLabel                           | Opcional |        Label del input del prefijo telefónico        |
+| prefixError                           | Opcional |       Error a mostrar si el valor es incorrecto      |
+| phoneLabel                            | Opcional |         Label del input del número telefónico        |
+| phoneError                            | Opcional |       Error a mostrar si el valor es incorrecto      |
+| documentIdentificationNumberLabel     | Opcional | Label del input de número de identificación personal |
+| documentIdentificationNumberError     | Opcional |       Error a mostrar si el valor es incorrecto      |
+| birthdateLabel                        | Opcional |       Label del input de la fecha de nacimiento      |
+| birthdateError                        | Opcional |       Error a mostrar si el valor es incorrecto      |
+| addressLabel                          | Opcional |            Label del input de la dirección           |
+| addressError                          | Opcional |       Error a mostrar si el valor es incorrecto      |
+| zipCodeLabel                          | Opcional |           Label del input del código postal          |
+| zipCodeError                          | Opcional |       Error a mostrar si el valor es incorrecto      |
+| cityLabel                             | Opcional |             Label del input de la ciudad             |
+| cityError                             | Opcional |       Error a mostrar si el valor es incorrecto      |
+| countryLabel                          | Opcional |               Label del input del país               |
+| countryError                          | Opcional |       Error a mostrar si el valor es incorrecto      |
+| prefilledName                         | Opcional |          Nombre del usuario si lo conocemos          |
+| prefilledLastName                     | Opcional |         Apellido del usuario si lo conocemos         |
+| prefilledEmail                        | Opcional |           Email del usuario si lo conocemos          |
+| prefilledPrefix                       | Opcional |          Prefijo del usuario si lo conocemos         |
+| prefilledPhone                        | Opcional |          Número del usuario si lo conocemos          |
+| prefilledDocumentIdentificationNumber | Opcional |   Numero de identificación personal si lo conocemos  |
+| prefilledBirthdate                    | Opcional |    Fecha de nacimiento del usuario si la conocemos   |
+| prefilledAddress                      | Opcional |         Dirección del usuario si la conocemos        |
+| prefilledZipCode                      | Opcional |       Código postal del usuario si lo conocemos      |
+| prefilledCity                         | Opcional |          Ciudad del usuario si la conocemos          |
+| prefilledCountry                      | Opcional |           País del usuario si lo conocemos           |
+
+| customization (Object) |          |                                                                                                                   |
+| ---------------------- | :------: | :---------------------------------------------------------------------------------------------------------------: |
+| font                   | Opcional |                                                  Fuente de texto                                                  |
+| primaryColor           | Opcional |                                                  Color del botón                                                  |
+| textColor              | Opcional |                                                  Color del texto                                                  |
+| backgroundColor        | Opcional |                                                  Color del fondo                                                  |
+| errorColor             | Opcional |                                              Color del texto de error                                             |
+| borderColor            | Opcional |                                           Color del borde de los inputs                                           |
+| borderRadius           | Opcional |                                           Radio del borde de los inputs                                           |
+| padding                | Opcional |                                                     Espaciado                                                     |
+| inputTextSize          | Opcional |                                             Tamaño del texto del input                                            |
+| labelTextSize          | Opcional |                                             Tamaño del texto del label                                            |
+| iconSize               | Opcional |                                                Tamaño de los iconos                                               |
+| iconColor              | Opcional |                                                Color de los iconos                                                |
+| buttonText             | Opcional | Contenido del botón. Obligatorio si queremos que el SDK se encargue de mostrar el botón de submit del formulario. |
+| buttonTextSize         | Opcional |                                             Tamaño del texto del botón                                            |
+
+**¿Cómo validar el formulario?**
+
+El formulario tiene su propia validación la cual comunica mediante el evento `<METODO DE PAGO>_valid`.
+
+```
+window.addEventListener('message', event => {    if (event.data.bizum_valid === true) {        console.log('El formulario es válido');    }    if (event.data.bizum_valid === false) {        console.log('El formulario contiene errores');    }});
+```
+
+**¿Cómo hacer submit?**
+
+Enviar un evento `pay` con el valor `<METODO DE PAGO>`. Esto no será necesario si se ha personalizado el botón de envío del formulario, en cuyo caso el propio SDK se encargará de enviar el evento al hacer click en dicho botón.
+
+```
+button.addEventListener("click", () => window.postMessage({ pay: "bizum" }));
+```
+
+> **Nota:** Para completar el pago, no olvides el [paso 3](/docs/checkout/checkout-sdk-integration#3-el-cliente-completa-el-pago).
+
+## 3. El cliente completa el pago[​](#3-el-cliente-completa-el-pago "Enlace directo al 3. El cliente completa el pago")
+
+Una vez el usuario finalice el pago, se enviará un evento sobre la propia página con alguno de los siguientes valores que deberá ser tratado por el comercio:
+
+| Response |                                                                                                                                                                                                 |
+| -------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| redirect |                                                              URL hacia la que redirigir al usuario con el resultado del pago OK/KO                                                              |
+| render   | Contenido HTML para renderizar en la página.Esto sucede porque se requiere la intervención del usuario de nuevo, generalmente para completar el 3DS. El tamaño mínimo recomendado es de 500x600 |
+| error    |                                                                              Contenido HTML con el error ocurrido.                                                                              |
+
+```
+window.addEventListener('message', event => {    if (event.data.redirect) {        window.location.href = event.data.redirect;    } else if (event.data.render) {        const container = document.getElementById('renderContainer');        if (container) {          container.innerHTML = event.data.render;        }        const submitButton = document.getElementById('submitBTN');        if (submitButton) {          submitButton.click()        } else {          const form = document.querySelector('form')          if (form) {            form.submit()          }        }    } else if (event.data.error) {        const container = document.getElementById('renderContainer');        if (container) {          container.innerHTML = event.data.error;        }    }
+```
+
+> **Nota:** Esto no será necesario si se ha utilizado la función `redirect` del SDK. En este caso, el SDK se encargará de redirigir al cliente a la URL de redirección correspondiente según el resultado de la operación:
+>
+> * Si se ha efectuado el pago correctamente se redirige a la url especificada en el campo `url_ok` de la orden.
+> * En cualquier otro caso se redirige a la url especificada en el campo `url_ko` de la orden.
+
+## 4. Ejemplo de uso[​](#4-ejemplo-de-uso "Enlace directo al 4. Ejemplo de uso")
+
+```
+<!DOCTYPE html><html lang="es"><head>  <meta charset="UTF-8">  <title>Ejemplo de checkout por SDK</title></head><body>  <div id="payment-container" style="max-width: 400px;"></div>  <script>    const script = document.createElement('script');    script.src = 'https://api.paylands.com/assets/checkout/paylands-checkout-sdk.js';    script.onload = async () => {      const paylandsCheckout = await PaylandsCheckout.create({        token: TOKEN_DE_LA_ORDEN, // Reemplaza con el token de la orden generado en tu backend        environment: 'SANDBOX', // Cambia a 'PRODUCTION' para el entorno de producción      });      await paylandsCheckout.render('payment-container'); // Consulta la documentación para más opciones de pago      window.addEventListener('message', event => {        if (event.data.redirect) {            window.location.href = event.data.redirect;        } else if (event.data.render) {            const container = document.getElementById('payment-container');            if (container) {              container.innerHTML = event.data.render;            }            const submitButton = document.getElementById('submitBTN');            if (submitButton) {              submitButton.click()            } else {              const form = document.querySelector('form')              if (form) {                form.submit()              }            }        } else if (event.data.error) {            const container = document.getElementById('payment-container');            if (container) {              container.innerHTML = event.data.error;            }        }      });    };    script.onerror = () => {      console.error('Error al cargar el SDK de Paylands');    };    document.head.appendChild(script);  </script></body></html>
+```

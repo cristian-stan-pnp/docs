@@ -1,0 +1,95 @@
+---
+title: "Cybersource"
+---
+
+## Datos extra requeridos[​](#datos-extra-requeridos "Enlace directo al Datos extra requeridos")
+
+Cybersource espera recibir la siguiente información obligatoriamente en el campo `extra_data` al crear la orden:
+
+* Nombre y apellidos
+* Email
+* Dirección
+
+Estos campos pueden aportarse con la siguiente estructura en `extra_data`:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com"    },    "address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }}
+```
+
+También hay campos opcionales que se recomiendan para los pagos en el apartado de profile:
+
+* Tipo de documento de identificación, con estos valores válidos: NATIONAL\_IDENTITY\_DOCUMENT, VALID\_PASSPORT
+* Número de documento de identificación
+
+Estos campos pueden aportarse con la siguiente estructura en `extra_data`:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_type": "NATIONAL_IDENTITY_DOCUMENT",        "document_identification_number": "77477416F"    },    "address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }}
+```
+
+## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+
+Las tarjetas de prueba son las siguientes. En general, la fecha de caducidad y CVV no importan siempre y cuando la fecha sea posterior a la fecha actual, y el CVV tenga 3 cifras.
+
+| Resultado | Tarjeta                    | Notas                                         |
+| --------- | -------------------------- | --------------------------------------------- |
+| OK        | 4622943127013705 12/34 123 |                                               |
+| KO        | 4622943127013705 12/34 123 | El amount debe ser >= 1000000 (10.000,00 DOP) |
+
+## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+
+Los códigos de error en Cybersource siguen la siguiente estructura:
+
+```
+Status - Motivo
+```
+
+Por ejemplo:
+
+```
+DECLINED - INSUFFICIENT_FUND
+```
+
+| Status                      | Motivo                              |
+| --------------------------- | ----------------------------------- |
+| AUTHORIZED                  | N/A                                 |
+| PARTIAL\_AUTHORIZED         | N/A                                 |
+| AUTHORIZED\_PENDING\_REVIEW | AVS\_FAILED                         |
+| AUTHORIZED\_PENDING\_REVIEW | CONTACT\_PROCESSOR                  |
+| DECLINED                    | EXPIRED\_CARD                       |
+| DECLINED                    | PROCESSOR\_DECLINED                 |
+| DECLINED                    | PROCESSOR\_ERROR                    |
+| DECLINED                    | INSUFFICIENT\_FUND                  |
+| DECLINED                    | STOLEN\_LOST\_CARD                  |
+| DECLINED                    | ISSUER\_UNAVAILABLE                 |
+| DECLINED                    | UNAUTHORIZED\_CARD                  |
+| DECLINED                    | CVN\_NOT\_MATCH                     |
+| DECLINED                    | EXCEEDS\_CREDIT\_LIMIT              |
+| DECLINED                    | INVALID\_CVN                        |
+| DECLINED                    | DECLINED\_CHECK                     |
+| DECLINED                    | BLACKLISTED\_CUSTOMER               |
+| DECLINED                    | SUSPENDED\_ACCOUNT                  |
+| DECLINED                    | PAYMENT\_REFUSED                    |
+| AUTHORIZED\_PENDING\_REVIEW | CV\_FAILED                          |
+| DECLINED                    | INVALID\_ACCOUNT                    |
+| DECLINED                    | GENERAL\_DECLINE                    |
+| INVALID\_REQUEST            | INVALID\_MERCHANT\_CONFIGURATION    |
+| DECLINED                    | BOLETO\_DECLINED                    |
+| SERVER\_ERROR               | PROCESSOR\_TIMEOUT                  |
+| DECLINED                    | DEBIT\_CARD\_USAGE\_LIMIT\_EXCEEDED |
+| AUTHORIZED\_RISK\_DECLINED  | SCORE\_EXCEEDS\_THRESHOLD           |
+| PENDING\_AUTHENTICATION     | CONSUMER\_AUTHENTICATION\_REQUIRED  |
+| DECLINED                    | CONSUMER\_AUTHENTICATION\_FAILED    |
+| AUTHORIZED\_PENDING\_REVIEW | DECISION\_PROFILE\_REVIEW           |
+| AUTHORIZED\_RISK\_DECLINED  | DECISION\_PROFILE\_REJECT           |
+| INVALID\_REQUEST            | MISSING\_FIELD                      |
+| INVALID\_REQUEST            | INVALID\_DATA                       |
+| INVALID\_REQUEST            | DUPLICATE\_REQUEST                  |
+| INVALID\_REQUEST            | CARD\_TYPE\_NOT\_ACCEPTED           |
+| INVALID\_REQUEST            | PROCESSOR\_UNAVAILABLE              |
+| INVALID\_REQUEST            | INVALID\_AMOUNT                     |
+| INVALID\_REQUEST            | INVALID\_CARD\_TYPE                 |
+| SERVER\_ERROR               | SYSTEM\_ERROR                       |
+| SERVER\_ERROR               | SERVER\_TIMEOUT                     |
+| SERVER\_ERROR               | SERVICE\_TIMEOUT                    |
+| SERVER\_ERROR               | INVALID\_OR\_MISSING\_CONFIG        |

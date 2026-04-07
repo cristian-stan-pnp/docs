@@ -1,0 +1,93 @@
+---
+title: 'Apple Pay'
+description: 'Integra Apple Pay en tu web o app iOS con Paylands'
+---
+
+# Apple Pay
+
+Apple Pay permite realizar pagos de forma segura y sencilla en sitios web y aplicaciones nativas de iOS, usando las tarjetas guardadas en el Wallet de Apple del usuario.
+
+## Modalidades de integración
+
+### Integración Web (recomendada)
+
+Esta modalidad es la más sencilla. Paylands gestiona toda la comunicación con Apple, lo que simplifica significativamente la integración. Es compatible con el Checkout alojado de Paylands y con la integración directa del botón en tu propia web.
+
+**Pasos de configuración:**
+
+<Steps>
+  <Step title="Accede al Backend de Paylands">
+    Ve a **Backend de Paylands** → **Configuración** → **Pasarelas de pago** y edita la pasarela deseada.
+  </Step>
+
+  <Step title="Activa Apple Pay">
+    Activa la opción de Apple Pay en la configuración de la pasarela.
+  </Step>
+
+  <Step title="Descarga el archivo de verificación de dominio">
+    Paylands te proporcionará un archivo de verificación de dominio. Descárgalo.
+  </Step>
+
+  <Step title="Sube el archivo a tu servidor">
+    El archivo debe estar accesible públicamente en tu servidor en la ruta exacta:
+
+    ```
+    https://tu-dominio.com/.well-known/apple-developer-merchantid-domain-association
+    ```
+
+    Asegúrate de que el servidor sirva el archivo sin extensión y sin redireccionamientos.
+  </Step>
+
+  <Step title="Valida el dominio en Paylands">
+    Una vez el archivo esté accesible, vuelve al Backend de Paylands y pulsa en **"Validar dominio"**.
+  </Step>
+</Steps>
+
+### Integración In-App (control total)
+
+Si deseas integrar Apple Pay en una app nativa de iOS o necesitas control total sobre el proceso de pago, deberás:
+
+1. Crear tus propios certificados de Apple Pay en el [portal de desarrolladores de Apple](https://developer.apple.com).
+2. Subir los certificados al Backend de Paylands.
+3. Implementar el flujo de Apple Pay en tu app usando el framework `PassKit`.
+
+## ¿Qué integración elegir?
+
+| Caso de uso | Integración recomendada |
+|-------------|------------------------|
+| Usar el Checkout alojado de Paylands | Web |
+| Web propia con botón de Apple Pay | Web |
+| App iOS nativa | In-App |
+| Control total del flujo de pago | In-App |
+
+## Consideraciones importantes
+
+- Apple Pay **solo está disponible** en dispositivos Apple compatibles y en el navegador **Safari** (iOS y macOS).
+- El usuario debe tener al menos una tarjeta configurada en su Wallet de Apple.
+- En entorno Sandbox, usa el **Simulador de Apple Pay** disponible en Xcode o las tarjetas de prueba del Apple Developer Program.
+
+## Resolución de problemas frecuentes
+
+<AccordionGroup>
+  <Accordion title="El botón de Apple Pay no se muestra">
+    - Verifica que el dispositivo y el navegador son compatibles (Safari en iOS/macOS).
+    - Confirma que el dominio está correctamente validado y que el archivo de asociación es accesible públicamente.
+    - Comprueba que Apple Pay está activado en la configuración de la pasarela en el Backend de Paylands.
+  </Accordion>
+
+  <Accordion title="Error de validación de dominio">
+    - Verifica que el archivo `apple-developer-merchantid-domain-association` no tiene extensiones extra (`.txt`, `.json`, etc.).
+    - Asegúrate de que el servidor no bloquea el acceso a la carpeta `.well-known/`.
+    - Comprueba que no hay redireccionamientos (301/302) en esa ruta.
+  </Accordion>
+
+  <Accordion title="Error con el certificado (In-App)">
+    - Confirma que los certificados subidos a Paylands coinciden con el Merchant ID configurado en tu app.
+    - Verifica que el certificado no ha caducado en el portal de desarrolladores de Apple.
+  </Accordion>
+
+  <Accordion title="El pago es rechazado tras recibir el token">
+    - Asegúrate de que estás enviando el token de Apple Pay en el formato JSON correcto al endpoint de pago mediante wallet de Paylands.
+    - Verifica que el entorno seleccionado (Sandbox/Producción) coincide con el token generado.
+  </Accordion>
+</AccordionGroup>

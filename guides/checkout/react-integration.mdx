@@ -1,0 +1,122 @@
+---
+title: 'Integración via React Component'
+description: 'Usa el componente oficial de React para integrar el checkout de Paylands'
+---
+
+# Integración del Checkout via React Component
+
+Paylands ofrece un componente oficial de React para integrar el checkout de forma nativa en proyectos basados en React o Next.js.
+
+## Instalación
+
+Instala el paquete desde npm:
+
+```bash
+npm install @paylands/react-checkout
+# o con yarn
+yarn add @paylands/react-checkout
+# o con pnpm
+pnpm add @paylands/react-checkout
+```
+
+## Uso básico
+
+Importa el componente `PaylandsCheckout` y úsalo en tu JSX pasando el token de la orden:
+
+```tsx
+import { PaylandsCheckout } from '@paylands/react-checkout';
+
+export function PaginaDePago({ orderToken }: { orderToken: string }) {
+  return (
+    <PaylandsCheckout
+      token={orderToken}
+      environment="sandbox"
+      onPaymentComplete={(result) => {
+        if (result.status === 'SUCCESS') {
+          console.log('Pago completado:', result.order_uuid);
+        }
+      }}
+    />
+  );
+}
+```
+
+## Props del componente
+
+| Prop | Tipo | Requerido | Descripción |
+|------|------|-----------|-------------|
+| `token` | `string` | ✅ | Token de la orden generada en tu servidor. |
+| `environment` | `'sandbox' \| 'production'` | ✅ | Entorno de ejecución. |
+| `onPaymentComplete` | `(result: PaymentResult) => void` | No | Callback ejecutado al finalizar el pago. |
+| `className` | `string` | No | Clase CSS aplicada al contenedor del checkout. |
+| `style` | `React.CSSProperties` | No | Estilos inline aplicados al contenedor. |
+
+## Tipo `PaymentResult`
+
+```typescript
+interface PaymentResult {
+  status: 'SUCCESS' | 'REFUSED' | 'ERROR' | 'USER_CANCELLED';
+  order_uuid: string;
+  amount: number;
+  currency: string;
+}
+```
+
+## Ejemplo con Next.js (App Router)
+
+```tsx
+// app/pago/page.tsx
+import { PaylandsCheckout } from '@paylands/react-checkout';
+
+async function getOrderToken(amount: number): Promise<string> {
+  // Esta llamada debe hacerse desde el servidor
+  const res = await fetch('https://api.paylands.com/v1/sandbox/payment', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.PAYLANDS_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      amount,
+      operative: 'AUTHORIZATION',
+      service: process.env.PAYLANDS_SERVICE_UUID,
+      checkout: process.env.PAYLANDS_CHECKOUT_UUID,
+      customer_ext_id: 'user-123',
+    }),
+  });
+  const data = await res.json();
+  return data.order.token;
+}
+
+export default async function PaginaDePago() {
+  const token = await getOrderToken(1000); // 10,00€
+
+  return (
+    <main>
+      <h1>Completa tu pago</h1>
+      <PaylandsCheckout
+        token={token}
+        environment="sandbox"
+        onPaymentComplete={(result) => {
+          'use client';
+          if (result.status === 'SUCCESS') {
+            window.location.href = '/gracias';
+          }
+        }}
+      />
+    </main>
+  );
+}
+```
+
+<Warning>
+  El token de la orden **siempre debe generarse en el servidor** (Server Component, API route, o SSR). Nunca expongas tu API Key en el código del cliente.
+</Warning>
+
+## Compatibilidad
+
+| Entorno | Versión mínima |
+|---------|---------------|
+| React | 17+ |
+| Next.js | 13+ (App Router y Pages Router) |
+| Node.js | 18+ |

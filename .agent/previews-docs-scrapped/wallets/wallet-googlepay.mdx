@@ -1,0 +1,89 @@
+---
+title: "Google Pay"
+---
+
+## Introducción[​](#introducción "Enlace directo al Introducción")
+
+Paylands ofrece la posibilidad de que tu comercio ofrezca Google Pay como forma de obtener los datos de tarjeta de un cliente. Independientemente de la forma en la que lo vayas a ofrecer, es necesario que primero te registres como comercio en Google Pay para obtener tu propio ID de comercio que más tarde se asociará a tu cuenta de Paylands.
+
+La forma más sencilla de integrarlo es a través de la carta de pago, donde además de la posibilidad de que el usuario introduzca los datos de su tarjeta manualmente, se incluye el botón de Google Pay para que el usuario pueda elegir cómo introducir su tarjeta. Alternativamente, también puede integrarse en tu aplicación web o móvil. En la sección de [**integración directa**](#integraci%C3%B3n-directa) se proporciona más información.
+
+A continuación se muestra un ejemplo de cómo Google Pay se integra en la carta de pago cuando se muestra exclusivamente como forma de pago, o junto con el resto del formulario:
+
+![Google pay exclusivo](/images/docs/wallets/assets/images/gpay-payment-card-exclusive-5529c7a121f09007a4e749e2d0297910.png) ![Google pay opcional](/images/docs/wallets/assets/images/gpay-payment-card-b17f2cb8cecb4d1eecfdbbb4732c07e5.png)
+
+## Registrar tu comercio en Google Pay[​](#registrar-tu-comercio-en-google-pay "Enlace directo al Registrar tu comercio en Google Pay")
+
+Si ya has realizado este paso, puedes saltar a la sección de [**Configurar Google Pay en Paylands**](#configurar-google-pay-en-paylands). Si tienes dudas puedes consultar también la [**Guía de configuración oficial de Google Pay for Business**](https://support.google.com/pay/business/answer/7530745?hl=en).
+
+### 1. Acceso a la consola de negocio[​](#1-acceso-a-la-consola-de-negocio "Enlace directo al 1. Acceso a la consola de negocio")
+
+El primer paso será registrarnos en la [**Consola de negocio de Google Pay**](https://pay.google.com/business/console/). Aquí deberemos indicar el nombre del comercio, nuestro país y aceptar los términos y la política de privacidad de Google.
+
+![Google Pay Step1](/images/docs/wallets/assets/images/wallet-googlepay-1-d20aaf655d769c8ddc3099ca41ae80b4.png)
+
+### 2. ID de Google Pay[​](#2-id-de-google-pay "Enlace directo al 2. ID de Google Pay")
+
+Una vez dentro arriba a la derecha podremos encontrar nuestro ID de Google Pay. Este indentificador nos hará falta para configurarlo en el panel de Paylands.
+
+![Google Pay Step2](data:image/png;base64,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)
+
+### 3. Registrar la web[​](#3-registrar-la-web "Enlace directo al 3. Registrar la web")
+
+Como último paso deberemos registrar la web del comercio. Para ellos nos dirigimos al menú **API de Google Pay** y pulsamos el botón **Empezar**.
+
+![Google Pay Step5](/images/docs/wallets/assets/images/wallet-googlepay-5-368f1f0acd7bea8a73e76b33fb6fbfa5.png)
+
+Aparecerá una ventana emergente con los términos del servicio que deberemos aceptar y pulsamos el botón **Continuar**.
+
+![Google Pay Step6](/images/docs/wallets/assets/images/wallet-googlepay-6-820855c84966f8c952a456738aaeef1f.png)
+
+Una vez aceptados los términos accederemos a la página de configuración del API de Google Pay. En esta sección debemos hacer scroll hacia abajo hasta que encontremos un bloque donde dar de alta nuestro comercio.
+
+![Google Pay Step7](/images/docs/wallets/assets/images/wallet-googlepay-7-005299de25029b8648222b3bd680f716.png)
+
+Pulsamos la opción de **Add website** y nos aparecerá el siguiente formulario que deberemos rellenar indicando la URL *api.paylands.com*, el tipo de integración y fotos que se mostrarán en el flujo de compra.
+
+<Note>
+  Como tipo de integración debemos indicar **Pasarela**.
+</Note>
+
+![Google Pay Step8](/images/docs/wallets/assets/images/wallet-googlepay-8-9226bc7132160e0aabab71995162aba6.png)
+
+Una vez que Google apruebe la web, desde Paylands os pediremos unas credenciales que genera Google y podremos probar la wallet Google Pay en producción.
+
+## Configurar Google Pay en Paylands[​](#configurar-google-pay-en-paylands "Enlace directo al Configurar Google Pay en Paylands")
+
+Para configurar Google Pay debes seguir los siguientes pasos:
+
+1. [**Registra tu comercio en Google Pay**](#registrar-tu-comercio-en-google-pay) y guarda tu id de comercio.
+
+2. Dirígete a tu perfil de cliente en el panel de Paylands y accede a la pestaña **Métodos de pago alternativos**.
+
+3. Introduce tu id de comercio, un nombre con el que identificar a tu comercio en Paylands, el host del sitio web desde donde se inicia el proceso de pago y el código de país.
+
+![Configuración métodos de pago alternativos](/images/docs/wallets/assets/images/apm_gp_ES-ab6cf68ae7c3426a2cb4d355ed885aaf.png)
+
+4. Ponte en contacto con el soporte de Paylands para utilizar Google Pay en cualquiera de sus modalidades.
+
+5. Para obtener tarjetas de prueba en SANDBOX, únete con tu usuario al siguiente [**grupo de Google**](https://groups.google.com/forum/#!forum/googlepay-test-mode-stub-data).
+
+## Integración directa[​](#integración-directa "Enlace directo al Integración directa")
+
+### Integración con Android[​](#integración-con-android "Enlace directo al Integración con Android")
+
+Si dispones de una app para Android, debes cargar el botón de Google Pay en la pantalla del pago. [**La documentación de Google Pay para Android**](https://developers.google.com/pay/api/android/overview) contiene toda la información que necesitas para integrarlo. Una vez el usuario confirme la tarjeta con la que va a pagar, se lanzará un evento cuyo **payload** se debe proporcionar a nuestra API en el endpoint de [**pago mediante wallet**](/reference/#operation/wallet-payment) para que se proceda con el pago.
+
+En algunos de los pasos del [**tutorial**](https://developers.google.com/pay/api/android/guides/tutorial) es necesario especificar la siguiente configuración:
+
+**Paso 2**
+
+```
+gateway: paynopaingatewayMerchantId: BFR+318Qe36w59SkUl2ECMRNJAfeW1e+Mv5r41/598MQjYHdZ0GfNK5CrRfSKYBCFj8eN7Uz5VG9+MgOoOSbXR8=
+```
+
+**Paso 3**
+
+```
+allowedCardNetworks: MASTERCARD, VISAallowedCardAuthMethods: PAN_ONLY, CRYPTOGRAM_3DS
+```

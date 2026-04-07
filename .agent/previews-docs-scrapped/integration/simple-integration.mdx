@@ -1,0 +1,73 @@
+---
+title: "Integración simple"
+description: "La  de Paylands es la forma más sencilla y segura para cobrar los pagos a tus clientes. Se les muestra una pantalla con un formulario para que introduzcan sus datos de tarjeta. Esto se puede realizar mediante una redirección o mostrándole el formulario embebido en un  de tu web."
+---
+
+![Payment Card](/images/docs/integration/img/payment-cardV2.png)
+
+Este método te permitirá construir fácilmente una experiencia de pago única:
+
+* **Diseñada para eliminar la fricción**: Validación de tarjetas en tiempo real con mensajes de error incorporados.
+* **Preparada para dispositivos móviles**: Diseño totalmente responsivo.
+* **Múltiples métodos de pago**: Admite múltiples métodos de pago.
+* **3D Secure**: Admite 3D Secure. Proceso de verificación de SCA.
+* **Fraude y cumplimiento**: Cumplimiento de PCI simplificado y listo para SCA.
+* **Internacional**: Admite 14 idiomas.
+* **Personalización y marca**: Logotipo, botones y color de fondo personalizables.
+
+Puedes personalizar la apariencia de la carta de pago en el **Backend de Paylands → Personalización → [Plantillas](https://backend.paylands.com/templates)**. Al pulsar el botón *crear nueva*, podrás seleccionar la plantilla de tipo *Carta de pago* donde te permitirá modificar totalmente la estética del formulario de checkout. Si lo deseas puedes consultar nuestra [**Guía de como personalizar la carta de pago**](/docs/guides/guide-customize-templates)
+
+## Integración[​](#integración "Enlace directo al Integración")
+
+### 1. Generar la orden de pago en tu servidor[​](#1-generar-la-orden-de-pago-en-tu-servidor "Enlace directo al 1. Generar la orden de pago en tu servidor")
+
+El comercio debe enviar las características del pago al endpoint `/payment` (importe, servicio, urls, ...) para generar la orden. Paylands devuelve un objeto order junto con un TOKEN de orden que se utilizará para redirigir a la carta de pago para finalizar el pago.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 100,  "operative": "AUTHORIZATION",  "secure": false,  "customer_ext_id": "test",  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",  "source_uuid": null,  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*NombreComercio",  "expires_in": 3600}'
+```
+
+En la Referencia API puedes consultar la especificación completa para [Generar orden de pago](/reference/#operation/generate-payment-order).
+
+### 2. Redirigir al cliente al formulario de carta de pago[​](#2-redirigir-al-cliente-al-formulario-de-carta-de-pago "Enlace directo al 2. Redirigir al cliente al formulario de carta de pago")
+
+En la respuesta de la anterior llamada a `/payment` tenemos el TOKEN que necesitamos para redirigir al usuario al formulario de carta de pago.
+
+```
+{    "message": "OK",    "code": 200,    "current_time": "2023-01-23T15:03:14+0100",    "order": {        "uuid": "BD2E0C35-E891-4CF7-8F95-7D044560D372",        "created": "2023-01-23T15:03:14+0100",        "created_from_client_timezone": "2023-01-23T15:03:14+0100",        "amount": 1,        "currency": "978",        "paid": false,        "status": "CREATED",        "safe": true,        "refunded": 0,        "additional": "",        "service": "REDSYSPSD2",        "service_uuid": "F9D76AE8-DDBB-4F17-8074-C2DABEE0A919",        "customer": "008fc337-6f63-499c-bfff-dae376bd4e8a",        "cof_txnid": null,        "transactions": [],        "token": "1f663c102b3f9c3c2e7085f519c7462a6440868fe9337ea829b826ae4f8550d1065e35f7e8b6152885ccba9ce7a96ef8c10851746456a3e1830999ab14f771b0",        "ip": null,        "urls": {            "payment_card": "https:\/\/api.paylands.com\/v1\/sandbox\/payment\/process\/1f663c102b3f9c3c2e7085f519c7462a6440868fe9337ea829b826ae4f8550d1065e35f7e8b6152885ccba9ce7a96ef8c10851746456a3e1830999ab14f771b0",            "bizum": "https:\/\/api.paylands.com\/v1\/sandbox\/payment\/bizum\/1f663c102b3f9c3c2e7085f519c7462a6440868fe9337ea829b826ae4f8550d1065e35f7e8b6152885ccba9ce7a96ef8c10851746456a3e1830999ab14f771b0",            "3ds_tokenized": "htts:\/\/api.paylands.com\/v1\/sandbox\/payment\/tokenized\/1f663c102b3f9c3c2e7085f519c7462a6440868fe9337ea829b826ae4f8550d1065e35f7e8b6152885ccba9ce7a96ef8c10851746456a3e1830999ab14f771b0"        },        "reference": null,        "dynamic_descriptor": null,        "threeds_data": null    },    "client": {        "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"    }}
+```
+
+La URL de la carta de pago a la que deberá redirigir el comercio es `/payment/process/{TOKEN}` quedando tal que así:
+
+```
+https://api.paylands.com/v1/payment/process/dd27da7cc018f5daf85d426e2d72bb3207173a057ac0f5164a8bec9dd2286d1f64e25eb50ec68e7c37d4bf54236a014e7f2aa65834b42678bde5d882b2217fd0
+```
+
+El comercio podrá simplemente redirigir la navegación a esta URL o embeber en un iframe la URL para simular que la navegación continua en su web.
+
+```
+<iframe id="paylands"    title="Paylands"    width="600"    height="800"    src="https://api.paylands.com/v1/payment/process/dd27da7cc018f5daf85d426e2d72bb3207173a057ac0f5164a8bec9dd2286d1f64e25eb50ec68e7c37d4bf54236a014e7f2aa65834b42678bde5d882b2217fd0"></iframe>
+```
+
+### 3. El cliente completa el pago y se notifica a tu servidor[​](#3-el-cliente-completa-el-pago-y-se-notifica-a-tu-servidor "Enlace directo al 3. El cliente completa el pago y se notifica a tu servidor")
+
+El cliente ingresa la información de la tarjeta de crédito (y otra información de pago según el método de pago seleccionado) y pasa por el proceso de verificación segura 3D (es redirigido a la página proporcionada por el banco emisor de la tarjeta de crédito para la confirmación de la transacción) si es necesario.
+
+Seguidamente Paylands recibe los datos, los procesa y emite una notificación al comercio en la url especificada en el campo `url_post` junto con el objeto `order` actualizado con el resultado de la operación.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:24:26+0100",  "order": {    "uuid": "495BEE1F-7D00-4E4B-9511-F1665118932F",    "created": "2021-12-28T13:24:22+0100",    "created_from_client_timezone": "2021-12-28T14:24:22+0200",    "amount": 100,    "currency": "978",    "paid": true,    "status": "SUCCESS",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": null,    "transactions": [      {        "uuid": "595E1818-A4E3-4A16-92A5-1DC6988162CC",        "created": "2021-12-28T13:24:22+0100",        "created_from_client_timezone": "2021-12-28T14:24:22+0200",        "operative": "AUTHORIZATION",        "amount": 100,        "authorization": "810551",        "processor_id": "XZZ7281d1a563df2A6ADSYOOMDF6FGPP",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "6C5D535E-1B5B-4665-8A32-08ADF2A680B7",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Jose",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "12",          "expire_year": "21",          "additional": "Card additional",          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:24:25",          "creation_date": "2021-12-28 13:24:21",          "brand_description": null,          "origin": "PAYMENT_CARD",          "cof": {            "is_available": true          }        },        "antifraud": null,        "device": null,        "error_details":null      }    ],    "token": "dd27da7cc018f5daf85d426e2d72bb3207173a057ac0f5164a8bec9dd2286d1f64e25eb50ec68e7c37d4bf54236a014e7f2aa65834b42678bde5d882b2217fd0",    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  },  "validation_hash" : "2db16932777640d5a9d2aa60b5308a70aba29a3a4ee410d103f0b8a3b7e0cc5f",}
+```
+
+En la orden procesada, dentro de la transacción se incluye un objeto **source** que contiene el token de la tarjeta utilizada en el pago. Este token de método de pago quedará a partir de ahora ligado al cliente, por lo que en nuevas operaciones se podrán confirmar los pagos para este usuario sin necesidad de solicitarle de nuevo la tarjeta. Descubre como hacerlo en nuestra guía de [**Guardado y uso de tarjetas**](/docs/guides/guide-cards).
+
+Para conocer más sobre como validar la notificación puedes dirigirte a la sección [**Validación de la notificación**](/docs/notification-validation)
+
+### 4. Se redirige el cliente de nuevo a tu servidor[​](#4-se-redirige-el-cliente-de-nuevo-a-tu-servidor "Enlace directo al 4. Se redirige el cliente de nuevo a tu servidor")
+
+A continuación Paylands redirige al usuario a la url correspondiente según el resultado de la operación:
+
+* Si se ha efectuado el pago correctamente se redirige a la url especificada en el campo `url_ok`
+* En cualquier otro caso se redirige a la url especificada en el campo `url_ko`
+
+![Payment Card Process](/images/docs/integration/assets/images/payment-card-process-af8f7214dabb8174272db778417bbdd0.png)

@@ -1,0 +1,34 @@
+---
+title: "Revolut Pay"
+---
+
+## Introducción[​](#introducción "Enlace directo al Introducción")
+
+Revolut Pay es un servicio de pago que permite realizar cobros utilizando el checkout de Paylands.
+
+## Restricciones y requisitos[​](#restricciones-y-requisitos "Enlace directo al Restricciones y requisitos")
+
+Actualmente solo se soporta las monedas EUR y USD.
+
+## Sandbox[​](#sandbox "Enlace directo al Sandbox")
+
+* public: pk\_C1tipV9rBLl02V9443s5atLx5Im5OvP0jhhJABFjlVw93xZ3
+* secret: sk\_qShTv6Rz7Xmoen3sWziqPiCZbm6blZNR\_PKdJO6dSZvwD4nlTfaHnNn07r3Epu7i
+
+### Tarjetas de prueba[​](#tarjetas-de-prueba "Enlace directo al Tarjetas de prueba")
+
+[https://developer.revolut.com/docs/guides/accept-payments/get-started/test-implementation/test-cards](https://developer.revolut.com/docs/guides/accept-payments/get-started/test-implementation/test-cards)
+
+| Estado/Descripción                                     | Número de tarjeta (cualquer MM/YY CVV) |
+| ------------------------------------------------------ | -------------------------------------- |
+| OK                                                     | 4929420573595709 / 5281438801804148    |
+| FAILED: customer\_challenge\_failed                    | 4242424242424242 / 5215674115127070    |
+| DECLINED: insufficient\_funds                          | 4929573638125985                       |
+| DECLINED: expired\_card                                | 4532336743874205                       |
+| DECLINED: do\_not\_honour                              | 2720998837779594                       |
+| authorisation\_started (order took longer to complete) | 2223000010479399                       |
+
+## Alta de comercios[​](#alta-de-comercios "Enlace directo al Alta de comercios")
+
+* 1. [https://developer.revolut.com/docs/guides/accept-payments/get-started/apply-for-a-merchant-account](https://developer.revolut.com/docs/guides/accept-payments/get-started/apply-for-a-merchant-account)
+* 2. [https://developer.revolut.com/docs/guides/accept-payments/get-started/generate-the-api-key](https://developer.revolut.com/docs/guides/accept-payments/get-started/generate-the-api-key)

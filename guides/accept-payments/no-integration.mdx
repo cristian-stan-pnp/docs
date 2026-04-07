@@ -1,0 +1,32 @@
+---
+title: 'Herramientas No-Code'
+description: 'Process payments directly from your server'
+---
+
+# Pago por Webservice
+
+Este proceso de pago permite una integración más profunda, donde el comercio gestiona la interacción y Paylands procesa el pago en el backend.
+
+## Fases del Proceso
+
+### 1. Generar la orden de pago
+El comercio envía las características del pago al endpoint `/payment`.
+Paylands devuelve un objeto `order` junto con su UUID.
+
+> [!IMPORTANT]
+> Con este método, el campo `customer_ext_id` enviado a `/payment` es obligatorio y debe coincidir con el utilizado al guardar la tarjeta.
+
+### 2. Completar el pago
+El comercio finaliza el pago con el UUID de la orden y el UUID de la tarjeta almacenada.
+Realiza una petición a `/payment/direct`.
+
+El UUID de la tarjeta se obtiene de:
+- Una notificación de pago anterior.
+- La respuesta al guardar una tarjeta.
+- Tokenizar una nueva tarjeta.
+
+### 3. 3D Secure
+Dependiendo del banco emisor, puede requerirse autenticación 3DS. En ese caso, la respuesta contendrá una URL a la que se debe redirigir al usuario.
+
+### 4. Notificación
+Si se envió una `url_post`, el comercio recibirá allí la notificación con el resultado final.

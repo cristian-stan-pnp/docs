@@ -1,0 +1,97 @@
+---
+title: 'Glosario de Términos'
+description: 'Definición de los principales términos utilizados en la documentación de Paylands'
+---
+
+# Glosario de Términos
+
+Referencia de los principales conceptos y términos utilizados en la plataforma Paylands y en el sector de pagos.
+
+## A
+
+**3DS v1 / 3D Secure v1**
+Protocolo de autenticación segura de tarjetas de primera generación, desarrollado por EMVCo. Redirige al usuario al banco emisor para validar la identidad mediante contraseña o SMS. En desuso en favor de 3DS v2.
+
+**3DS v2 / 3D Secure v2**
+Versión mejorada del protocolo 3D Secure que incorpora autenticación biométrica, tecnología de análisis de riesgo y experiencias sin fricción (frictionless). Requerido por la normativa PSD2 en Europa.
+
+**Adquirente**
+Entidad financiera (habitualmente un banco) con licencia para la captación, gestión y movimiento de fondos entre una tarjeta de crédito/débito y la cuenta bancaria de un comercio. Los servicios de pago de Paylands siempre pertenecen a un procesador que, en ocasiones, también actúa como adquirente.
+
+**APM (Alternative Payment Method)**
+Método de pago alternativo que no requiere tarjeta de crédito convencional. Ejemplos: Bizum, PIX, Boleto, Klarna, PayPal, Viacash, etc.
+
+**Autorización**
+Operación de cobro efectiva en el momento de la transacción. La operativa `AUTHORIZATION` en Paylands realiza el cargo inmediato sobre la tarjeta del cliente.
+
+## B
+
+**BIN (Bank Identification Number)**
+Primeros 6 dígitos de un número de tarjeta que identifican el banco emisor, el tipo de tarjeta (crédito/débito), la red de pago y el país de emisión.
+
+## C
+
+**Chargeback (Contracargo)**
+Proceso por el cual un titular de tarjeta disputa un cargo ante su banco, solicitando la devolución del importe. El banco puede revertir la transacción y cargar comisiones adicionales al comercio.
+
+**COF (Credential on File)**
+Operación de pago que utiliza credenciales de tarjeta previamente almacenadas (tokenizadas). Incluye pagos recurrentes, suscripciones y pagos con un clic.
+
+**CIT (Customer Initiated Transaction)**
+Transacción iniciada directamente por el cliente, que normalmente requiere autenticación 3DS.
+
+## D
+
+**DCC (Dynamic Currency Conversion)**
+Conversión dinámica de divisas. Permite al cliente pagar en la moneda de su tarjeta cuando realiza una compra en un país extranjero, mostrándole el tipo de cambio en tiempo real.
+
+**DEFERRED**
+Operativa de preautorización. Retiene el importe en la tarjeta del cliente sin efectuar el cargo inmediato. Requiere una confirmación posterior (`CONFIRMATION`) para hacer efectivo el cobro o una cancelación (`CANCELLATION`) para liberar la retención.
+
+**DPAN (Device Primary Account Number)**
+Número de tarjeta virtual asociado a un dispositivo específico (p. ej. el utilizado por Apple Pay o Google Pay), que protege el número de tarjeta real durante las transacciones de wallet.
+
+## E
+
+**EMVCo**
+Organización responsable de los estándares globales de pago con tarjeta, incluyendo EMV (chip) y 3D Secure. Sus miembros fundadores incluyen American Express, Discover, JCB, Mastercard, UnionPay y Visa.
+
+## M
+
+**MIT (Merchant Initiated Transaction)**
+Transacción iniciada por el comercio, sin intervención del cliente. Ejemplos: cobros recurrentes de suscripciones, cobros diferidos. No requiere autenticación 3DS una vez establecido el acuerdo con el titular.
+
+## P
+
+**PCI DSS (Payment Card Industry Data Security Standard)**
+Estándar de seguridad de la industria de tarjetas de pago. Define los requisitos de seguridad que deben cumplir todas las entidades que almacenan, procesan o transmiten datos de tarjetas. Paylands es certificado PCI DSS Nivel 1.
+
+**Payout (Abono)**
+Operación de transferencia de fondos desde el comercio hacia una tarjeta o cuenta bancaria del cliente. Utilizado para devoluciones, reembolsos, premios o comisiones.
+
+**Preautorización**
+Ver *DEFERRED*. Reserva de fondos en la tarjeta del cliente sin cobro inmediato.
+
+**Procesador de pagos**
+Sistema que recepta, organiza y valida las autorizaciones y autenticaciones de transacciones contra bancos y entidades emisoras.
+
+## S
+
+**SCA (Strong Customer Authentication)**
+Autenticación reforzada del cliente, requerida por la normativa europea PSD2. Exige al menos dos de los tres factores: algo que el cliente **sabe** (PIN, contraseña), algo que **tiene** (dispositivo, token) y algo que **es** (biometría).
+
+**SEPA (Single Euro Payments Area)**
+Zona de pagos única en euros que facilita los pagos transfronterizos entre los países miembro de la UE y algunos países adicionales, utilizando el mismo estándar de transferencia.
+
+**Split Payment**
+División del importe de una transacción entre múltiples beneficiarios en el momento del pago. Utilizado habitualmente en modelos de marketplace.
+
+## T
+
+**Token / Tokenización**
+Sustitución de los datos sensibles de una tarjeta (PAN, CVV) por un identificador no sensible llamado "token". En Paylands, el `card_uuid` representa el token de una tarjeta almacenada de forma segura.
+
+## V
+
+**Vault (Bóveda)**
+Sistema seguro de almacenamiento de datos de tarjeta conforme a PCI DSS. Paylands actúa como vault, almacenando los datos de tarjeta de forma cifrada y proporcionando tokens (`card_uuid`) para referencias futuras.

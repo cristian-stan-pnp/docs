@@ -1,0 +1,168 @@
+---
+title: "SDK de Tokenización"
+description: "El SDK de tokenización de Paylands, es una libreria Javascript que  de los clientes utilizando un formulario contenido en un iframe dentro del dominio de Paylands. De este modo los comercios que no puedan gestionar datos de tarjeta, pueden utilizar este formulario para solicitarlos a los usuarios sin que el propio comercio intervenga en la recopilación y almacenamiento de dichos datos. Este proceso devuelve al comercio la tarjeta tokenizada."
+---
+
+El SDK de Javascript **se comunica con la web del cliente mediante eventos**, de forma que cada [método](#m%C3%A9todos) del SDK lanzará un evento al DOM que podrá ser recogido por el cliente para actuar en consecuencia.
+
+## Integración[​](#integración "Enlace directo al Integración")
+
+Vamos a realizar la integración del SDK Javascript de Tokenización para cargar el formulario y enviar la tarjeta a Paylands.
+
+### 1. Cargar la libreria SDK en tu web o app[​](#1-cargar-la-libreria-sdk-en-tu-web-o-app "Enlace directo al 1. Cargar la libreria SDK en tu web o app")
+
+La librería se puede obtener en el siguiente enlace:
+
+`https://api.paylands.com/js/v1-iframe.js`
+
+Puedes cargar la libreria copiando y pegando el siguiente script en tu web:
+
+```
+<script type="text/javascript" src="https://api.paylands.com/js/v1-iframe.js"></script>
+```
+
+Una vez cargada la librería existirá una nueva variable global `paylands` con la que podremos interactuar.
+
+### 2. Crear el usuario cliente al cual se le asignará la tarjeta[​](#2-crear-el-usuario-cliente-al-cual-se-le-asignará-la-tarjeta "Enlace directo al 2. Crear el usuario cliente al cual se le asignará la tarjeta")
+
+Para mostrar el formulario es necesario crear primero el cliente al cual le asignaremos la tarjeta. Desde tu servidor debes hacer una petición a la API de Paylands para **[Crear el cliente](/reference/#operation/create-customer)**.
+
+```
+curl --request POST 'https://api.paylands.com/v1/customer' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "customer_ext_id": "customer15487"}'
+```
+
+Esta petición retorna el `token` del cliente que deberemos usar en el próximo paso.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2017-01-12T09:12:58+0100",  "Customer": {    "external_id": "customer15487",    "token": "TOKEN"  }}
+```
+
+### 3. Mostrar el formulario[​](#3-mostrar-el-formulario "Enlace directo al 3. Mostrar el formulario")
+
+Con el token del usuario deberemos hacer una llamada al método `paylands.initializate()` cuando se lance el evento `paylandsLoaded` en el DOM. De no hacerlo así, la variable `paylands` podría no estar inicializada.
+
+En nuestro DOM creamos un div donde queremos mostrar el formulario.
+
+```
+<div id="paylands-iframe"></div>
+```
+
+Con esta llamada Javascript cargaremos el formulario en el div `paylands-iframe` para el cliente del `token` obtenido en el paso anterior.
+
+```
+<script>window.addEventListener('message', receiveMessage => {    if (receiveMessage.data === 'paylandsLoaded') {        //Escuchamos el mensaje paylandsLoaded para continuar        console.log('PaylandsLoaded', paylands);        //Si estamos haciendo pruebas debemos cambiar el modo a sandbox        //En producción quitar esta linea        paylands.setMode('sandbox');        //Inicializamos el formulario        paylands.initializate(            'TOKEN',            'paylands-iframe'        )    }}, false);</script>
+```
+
+El formulario aparecerá con el siguiente formato.
+
+![SDK Tokenization Form](data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QBqRXhpZgAATU0AKgAAAAgAAgESAAMAAAABAAEAAIdpAAQAAAABAAAAJgAAAAAAA5KGAAcAAAASAAAAUKACAAQAAAABAAAB6KADAAQAAAABAAAAPQAAAABBU0NJSQAAAFNjcmVlbnNob3T/4QkhaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA2LjAuMCI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiLz4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8P3hwYWNrZXQgZW5kPSJ3Ij8+AP/tADhQaG90b3Nob3AgMy4wADhCSU0EBAAAAAAAADhCSU0EJQAAAAAAENQdjNmPALIE6YAJmOz4Qn7/4gIgSUNDX1BST0ZJTEUAAQEAAAIQYXBwbAQAAABtbnRyUkdCIFhZWiAH5gACAAEACQAIABthY3NwQVBQTAAAAABBUFBMAAAAAAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWFwcGwU/+mZQYR8V9WyNtLZVuwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApkZXNjAAAA/AAAAGJjcHJ0AAABYAAAACN3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)
+
+Puedes personalizar la apariencia del formulario en el **Backend de Paylands → Personalización → [Plantillas](https://backend.paylands.com/templates)**. Al pulsar el botón *crear nueva*, podrás seleccionar la plantilla de tipo *Carta de tokenización* donde te permitirá modificar completamente su apariencia. En el caso de haber configurado una plantilla personalizada deberemos aplicarla en nuestro código utilizando el método `setTemplate`.
+
+```
+paylands.setTemplate(    'C082AA84-EC2D-4ED2-9312-D0992832E490' // UUID de la plantilla creada)
+```
+
+<Note>
+  La personalización mediante una plantilla de *Carta de tokenización* es completamente opcional. Si no se utiliza `setTemplate`, el formulario cargará la plantilla por defecto.
+</Note>
+
+### 4. Guardar la tarjeta[​](#4-guardar-la-tarjeta "Enlace directo al 4. Guardar la tarjeta")
+
+Una vez el formulario esté cargado y el usuario haya introducido sus datos de tarjeta, haremos una petición a `paylands.storeSourceCard()` para almacenarla en Paylands.
+
+Al ejecutar el método `paylands.storeSourceCard()`, en primer lugar se validan los datos introducidos y dependiendo de si hay algún error o no, se lanzará el [evento error o validation](#eventos) respectivamente. Esta validación sólo valida el formato de los datos introducidos.
+
+<Info>
+  Si se necesita comprobar que la tarjeta tiene fondos, que no está bloqueada, etc, este método admite dos parámetros: el primero es un valor booleano a true para indicar que se necesita validar la tarjeta contra la entidad bancaria. El segundo parámetro es el service\_uuid incluido junto a las credenciales de la API. La validación consiste en un cargo de 0€ en la tarjeta del usuario para comprobar que la tarjeta es válida.
+</Info>
+
+Veamos como lo haríamos:
+
+```
+paylands.storeSourceCard(    true, //queremos validar la tarjeta contra el banco    '3BF33A39-897E-4FBB-98CA-D1C0C55CA898' //service_uuid)
+```
+
+### 5. Informar al usuario del resultado[​](#5-informar-al-usuario-del-resultado "Enlace directo al 5. Informar al usuario del resultado")
+
+El paso anterior lanzará un [evento](#eventos) mediante el cual se podrá informar al usuario si la operación se ha realizado correctamente o ha habido algún error.
+
+* Si el evento es `error`, se indicarán los elementos erróneos del formulario.
+* Si el evento es `savedCard`, significa que la tarjeta se ha tokenizado.
+
+```
+<script>window.addEventListener('message', receiveMessage => {    if (receiveMessage.data === 'error') {        console.log('Error en la tarjeta');    } else if (receiveMessage.data === 'savedCard') {        console.log('Tarjeta guardada correctamente');    }}, false);</script>
+```
+
+El evento `savedCard` contendrá los datos de la tarjeta tokenizada.
+
+```
+{    "code": "200",    "current_time": "2022-01-25T11:55:05+0200",    "customer": {        "external_id": "1239111NBC"    },    "source": {        "object": "CARD",        "uuid": "33SISMS-C254-4783-386C-603058EISAC25",        "type": "C",        "token": "elsellsSrfa2ercf119283BanScrIcana2f4be9acfMISUS188",        "brand": "VISA",        "country": 724,        "holder": "UNKNOWN",        "bin": 454881,        "last4": "0004",        "expire_month": "01",        "expire_year": "22",        "additional": null,        "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",        "prepaid": "",        "validation_date": null    }}
+```
+
+### 6. Recibir los datos de la tarjeta en el servidor[​](#6-recibir-los-datos-de-la-tarjeta-en-el-servidor "Enlace directo al 6. Recibir los datos de la tarjeta en el servidor")
+
+Si existe la necesidad de recepcionar la notificación `savedCard` en el servidor, es posible hacerlo indicando la URL del servidor a la cual notificar mediante el método **setURLPost**.
+
+```
+paylands.setURLPost(    'URL_NOTIFICACIÓN' // URL de tu servidor a la que notificará Paylands)
+```
+
+La notificación enviada tendrá la misma estructura que recibe el evento `savedCard`:
+
+```
+{    "code": "200",    "current_time": "2022-01-25T11:55:05+0200",    "customer": {        "external_id": "1239111NBC"    },    "source": {        "object": "CARD",        "uuid": "33SISMS-C254-4783-386C-603058EISAC25",        "type": "C",        "token": "elsellsSrfa2ercf119283BanScrIcana2f4be9acfMISUS188",        "brand": "VISA",        "country": 724,        "holder": "UNKNOWN",        "bin": 454881,        "last4": "0004",        "expire_month": "01",        "expire_year": "22",        "additional": null,        "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",        "prepaid": "",        "validation_date": null    }}
+```
+
+<Note>
+  La recepción de la notificación en el servidor es completamente opcional. Si tu web/app no lo precisa, se puede obviar este paso.
+</Note>
+
+## Métodos[​](#métodos "Enlace directo al Métodos")
+
+A continuación se detallan todos los métodos públicos que dispone la variable global **paylands**:
+
+* **setMode**: utilizado cuando se están haciendo pruebas en sandbox. El valor que se debe pasar como parámetro es "sandbox". Si no se utiliza este método, se asume que las llamadas se hacen en producción.
+
+* **initializate**: este es el método principal, el cual cargará el formulario de tarjeta. El primer parámetro debe ser el token obtenido al [crear el usuario](#createCustomer). El segundo parámetro es el elemento del DOM en el que se insertará el formulario.
+
+* **setTemplate**: mediante este método se especifica la plantilla de formulario que se mostrará. Sólo recibe un parámetro, el UUID de la plantilla.
+
+* **validate**: en cualquier momento puede ejecutarse este método para obtener el estado actual de los datos de la tarjeta. El evento lanzado es `validation`.
+
+* **setAdditional**: mediante este método se asigna una descripción a la tarjeta.
+
+* **setURLPost**: si se necesita que el guardado de la tarjeta envíe una notificación en background al servidor, se puede usar este método para especificar la URL a la que se enviarán los datos de la tarjeta tokenizada.
+
+* **storeSourceCard**: este método se usa para almacenar la tarjeta en Paylands. En primer lugar se validan los datos introducidos y dependiendo de si hay algún error o no, se lanzará el evento *error* o *validation* respectivamente. Esta validación sólo valida el formato de los datos introducidos. Si se necesita comprobar que la tarjeta tiene fondos, que no está bloqueada, etc, este método admite dos parámetros: el primero es un valor booleano a true para indicar que se necesita validar la tarjeta contra la entidad bancaria. El segundo parámetro es el service\_uuid incluido junto a las credenciales de la API. La validación consiste en un cargo de 0€ en la tarjeta del usuario para comprobar que la tarjeta es válida.
+
+* **setFocus**: mediante este método se puede establecer el cursor en el input que se necesite:
+
+  * Si no se especifica ningún parámetro, el foco se establecerá en el primer INPUT vacío
+  * Si se especifica el ID de algún INPUT, el foco se establecerá sobre este.
+
+## Eventos[​](#eventos "Enlace directo al Eventos")
+
+A continuación se detallan los eventos que el SDK lanza para ser tratados por la web/app del cliente:
+
+* **paylandsLoaded**: este evento se lanza cuando el SDK ha sido cargado y la variable `paylands` está disponible para su uso.
+
+* **initiated**: Este evento es lanzado cuando se ha cargado el formulario de tarjeta.
+
+* **validation**: Este evento se lanza cuando se ejecuta el método `validate`.
+
+  * Si se valida con todos los campos vacíos:
+
+    ![Validate](/images/docs/guides/docs/sdk-validate-empty-fields.png)
+
+  * Si todos los campos son correctos:
+
+    ![ValidateOk](/images/docs/guides/docs/sdk-validate-valid-fields.png)
+
+* **error**: Este evento contendrá qué campos tienen datos incorrectos.
+
+  ![StoreSourceCardError](/images/docs/guides/docs/sdk-error.png)
+
+* **savedCard**: Este evento devuelve la tarjeta tokenizada.
+
+  ![StoreSourceCardOk](/images/docs/guides/docs/sdk-store-valid-card.png)

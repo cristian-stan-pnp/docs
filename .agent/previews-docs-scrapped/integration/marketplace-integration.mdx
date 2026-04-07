@@ -1,0 +1,26 @@
+---
+title: "Integración de un MarketPlace"
+description: "Para realizar la integración de un MarketPlace, primero se debe realizar la llamada indicada en la  en la sección . Además de los campos ahí indicados, a continuación se explica la parte referente al marketplace para indicar importes y comisiones asociados a cada comercio que se encuentre implicado en la transacción."
+---
+
+Esto es un ejemplo de cómo se vería la petición definitiva:
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 10000,  "operative": "AUTHORIZATION",  "secure": false,  "customer_ext_id": "test",  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",  "source_uuid": null,  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*NombreComercio",  "expires_in": 3600,  "extra_data": {    "marketplace":{        {            "merchant_location_id": 123,            "amount":0,            "description": "MarketPlace1",            "net_amount": 150        },        {            "merchant_location_id": 4487,            "amount":10000,            "description": "Comercio1",            "net_amount": 9850        }    }}'
+```
+
+Se le ha añadido un campo nuevo a la petición llamado `extra_data`. Aquí se debe añadir la información pertinente para que se procese correctamente el pago tanto al marketplace como a los comercios implicados.
+
+Los `merchant_location_id` son los ids que Paylands os facilitará tanto para el marketplace como para los comercios una vez se os dé el alta en nuestro sistema de marketplaces.
+
+En este ejemplo vemos que se trata de una transacción de 100€ (el amount siempre se indicará en céntimos por eso serían 10000). El importe bruto de los 100€ le corresponde al comercio1 con id 4487, de los cuales se quedará con 98,5€ y el 1,5€ restante irá para el MarketPlace como comisión.
+
+De este modo se indica para cada comercio, qué parte del importe total le corresponde. Y de esta parte, con el net\_amount se podrá saber qué parte hay que liquidarle al MarketPlace y al comercio.
+
+### Devoluciones[​](#devoluciones "Enlace directo al Devoluciones")
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment/refund' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{    "signature": "121149a0ba5361191d740fa898784a8b",    "order_uuid": "1f405ea3-9798-42a6-9e87-bd347ef67f55",    "amount": 5000,    "extra_data": {       "marketplace_refunds":{            {                "merchant_location_id": 123,                "amount":0,                "description": "MarketPlace1",                "net_amount": 10            },            {                "merchant_location_id": 4487,                "amount":5000,                "description": "Comercio1",                "net_amount": 4990            }       }    }}'
+```
+
+Cuando se realice una [devolución](/reference/#operation/refund-payment), debemos añadir el campo `extra_data` y dentro del mismo `marketplace_refunds`. Solo será necesario indicar `amount` y `marketplace_refunds` en el caso de devoluciones parciales. Este nuevo elemento sigue el mismo funcionamiento que el anterior descrito.

@@ -1,0 +1,34 @@
+---
+title: "TradeBP"
+description: "TradeBP es un servicio donde el usuario es redirigido a la plataforma de TradeBP donde permite realizar un ingreso en criptomonedas. El pago se lleva a cabo mediante redirección."
+---
+
+# Monedas soportadas
+
+La cantidad a pagar puede especificarse en EUR o USD, dependiendo de la moneda configurada en el servicio de pago.
+
+Si no se indica ninguna criptomoneda en el campo `crypto_currency`, por defecto se solicitará que el pago se realice con BTC. Las siguientes criptomonedas son soportadas: BTC, ETH.
+
+# Datos extra requeridos
+
+Al generar la orden de pago se deben enviar estos campos para los pagos via checkout y redirección:
+
+* **profile**: `first_name`, `last_name`, `email`, `birthdate`
+* **billing\_address**: `country`
+* **payment**: `crypto_currency`
+
+Ejemplo del `extra_data`:
+
+```
+{  "extra_data": {    "profile": {      "email": "john.doe@gmail.com",      "first_name": "John",      "last_name": "Doe",      "birthdate": "2024-05-01"    },    "address": {      "city": "Castellon",      "country": "ESP",      "address1": "Avinguda del Mar 23",      "zip_code": "12006",      "state_code": "ES"    },    "payment": {      "crypto_currency": "BTC"    }  }}
+```
+
+# Integración
+
+Una vez generada la orden, se debe redirigir al usuario a [la pantalla de pago](/reference/#operation/redirection-payment) indicando el token de la orden y en la query, el nombre del APM:
+
+La URL de redirección se construye reemplazando el **token** por el valor devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=CRYPTOHUB
+```
