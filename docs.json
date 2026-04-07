@@ -42,6 +42,19 @@
                 ]
               },
               {
+                "group": "Integración",
+                "pages": [
+                  "guides/accept-payments/simple-integration",
+                  "guides/accept-payments/webservice-payment",
+                  "guides/accept-payments/marketplace-integration",
+                  "guides/accept-payments/link-payments",
+                  "guides/accept-payments/moto-payments",
+                  "guides/accept-payments/email-sms-payments",
+                  "guides/accept-payments/payment-urls",
+                  "guides/accept-payments/partial-authorization"
+                ]
+              },
+              {
                 "group": "Checkout",
                 "pages": [
                   "guides/checkout/introduction",
@@ -56,18 +69,32 @@
                 "group": "Funcionalidades",
                 "pages": [
                   "guides/features/tokenization",
+                  "guides/features/cards",
+                  "guides/features/3ds",
                   "guides/features/fraud",
                   "guides/features/security",
+                  "guides/features/source-holder-verification",
                   "guides/features/customization",
-                  "guides/features/webhooks"
+                  "guides/features/webhooks",
+                  "guides/features/balance-obtainable"
                 ]
               },
               {
                 "group": "Herramientas",
                 "pages": [
                   "guides/tools/subscriptions",
-                  "guides/tools/proxipci",
-                  "guides/tools/debt-collector"
+                  "guides/tools/debt-collector",
+                  {
+                    "group": "Proxy PCI",
+                    "pages": [
+                      "guides/tools/proxipci",
+                      "guides/tools/proxipci/getting-started",
+                      "guides/tools/proxipci/channels",
+                      "guides/tools/proxipci/javascript-library",
+                      "guides/tools/proxipci/displaying-card-data",
+                      "guides/tools/proxipci/payments"
+                    ]
+                  }
                 ]
               },
               {
@@ -83,13 +110,58 @@
                 "group": "Métodos de pago alternativos",
                 "pages": [
                   "guides/apm/introduction",
-                  "guides/apm/bizum"
+                  "guides/apm/bizum",
+                  "guides/apm/cofidis",
+                  "guides/apm/mbway",
+                  "guides/apm/multibanco",
+                  "guides/apm/payshop",
+                  "guides/apm/boleto",
+                  "guides/apm/loterica",
+                  "guides/apm/picpay",
+                  "guides/apm/pix",
+                  "guides/apm/efecty",
+                  "guides/apm/pagofacil",
+                  "guides/apm/pse",
+                  "guides/apm/flowpay",
+                  "guides/apm/khipu",
+                  "guides/apm/klap",
+                  "guides/apm/mach",
+                  "guides/apm/servipag",
+                  "guides/apm/webpay",
+                  "guides/apm/spei",
+                  "guides/apm/safetypay"
                 ]
               },
               {
                 "group": "Servicios de pago",
                 "pages": [
-                  "guides/payment-services/introduction"
+                  "guides/payment-services/introduction",
+                  "guides/payment-services/redsys",
+                  "guides/payment-services/cecabank",
+                  "guides/payment-services/paylands",
+                  "guides/payment-services/trustpayments",
+                  "guides/payment-services/nuvei",
+                  "guides/payment-services/payretailers",
+                  "guides/payment-services/credorax",
+                  "guides/payment-services/credibanco",
+                  "guides/payment-services/floa",
+                  "guides/payment-services/pagsmile",
+                  "guides/payment-services/cashflows",
+                  "guides/payment-services/flywire",
+                  "guides/payment-services/cybersource",
+                  "guides/payment-services/paypal",
+                  "guides/payment-services/klarna",
+                  "guides/payment-services/mit",
+                  "guides/payment-services/inespay",
+                  "guides/payment-services/tink",
+                  "guides/payment-services/dlocal",
+                  "guides/payment-services/devengo",
+                  "guides/payment-services/apolopag",
+                  "guides/payment-services/clearhaus",
+                  "guides/payment-services/firepay",
+                  "guides/payment-services/revolutpay",
+                  "guides/payment-services/tradebp",
+                  "guides/payment-services/premierpay"
                 ]
               },
               {
@@ -104,7 +176,10 @@
                   "guides/resources/CFT-and-AFT",
                   "guides/resources/concepts",
                   "guides/resources/error-codes",
-                  "guides/resources/glossary"
+                  "guides/resources/glossary",
+                  "guides/resources/notification-validation",
+                  "guides/resources/batch-operations",
+                  "guides/resources/payment-config-security"
                 ]
               }
             ]

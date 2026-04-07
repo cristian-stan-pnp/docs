@@ -1,0 +1,18 @@
+---
+title: 'Pagos MoTo'
+description: 'Cómo procesar pagos MoTo (Mail Order / Telephone Order) con Paylands'
+---
+
+Esta operación no requiere que el usuario lleve a cabo el proceso de autenticación 3D Secure ya que está exenta de cumplir la normativa PSD2. En caso de tener activado el antifraude, las órdenes consideradas de riesgo se procesarán sin ninguna restricción adicional.
+
+## Pagos Mo/To a través del panel[​](#pagos-moto-a-través-del-panel "Enlace directo al Pagos Mo/To a través del panel")
+
+![Mo/To Payments](/images/docs/integration/assets/images/moto-payments-1-cdf2b6fa29d9372c13766a438a0c9f12.png)
+
+## Pagos Mo/To a través de la API[​](#pagos-moto-a-través-de-la-api "Enlace directo al Pagos Mo/To a través de la API")
+
+Puedes conocer más en la Referencia → [**Pagos Mo/To por API**](/reference/#operation/api-moto-payment)
+
+### Pagos Mo/To tokenizados[​](#pagos-moto-tokenizados "Enlace directo al Pagos Mo/To tokenizados")
+
+Si se ha tokenizado la tarjeta con anterioridad se puede indicar el SOURCE\_UUID de la tarjeta y el CUSTOMER\_EXT\_ID al cual se asoció la tarjeta para que el pago se lleve a cabo directamente a través del 3DS, sin que el usuario tenga que indicar los datos de la tarjeta en la carta de pago. Los pagos tokenizados son SEGUROS independientemente de si se indica el campo `secure` a TRUE o no.

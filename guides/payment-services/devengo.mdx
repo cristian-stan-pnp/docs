@@ -1,0 +1,55 @@
+---
+title: 'Devengo'
+description: 'Configuración e integración del servicio de pago Devengo en Paylands'
+---
+
+## Introducción[​](#introducción "Enlace directo al Introducción")
+
+Devengo es un servicio de pago que funciona mediante transferencias bancarias. Solo funciona con órdenes en las que la operativa indicada sea tipo `PAYOUT`.
+
+Para poder utilizar este servicio, es necesario que el comercio dé de alta una [cuenta bancaria](/reference/#tag/Cuentas-bancarias).
+
+Una vez nuestra cuenta bancaria está creada:
+
+1. Generar la [orden de pago](/reference/#operation/generate-payment-order).
+2. Llamar al endpoint `/payment/payout`. El campo source\_uuid es obligatorio, mientras que el campo apm no debe ser enviado, puesto que no tiene efecto en este servicio. [PAYOUT](/reference/#operation/payout-payment)
+
+## Pruebas de pago en Sandbox[​](#pruebas-de-pago-en-sandbox "Enlace directo al Pruebas de pago en Sandbox")
+
+En Sandbox, es recomendable usar un `amount` máximo de 1€ (amount = 100).
+
+Los códigos iban que se pueden usar para realizar pruebas son los siguientes:
+
+### Códigos iban para aceptar un pago[​](#códigos-iban-para-aceptar-un-pago "Enlace directo al Códigos iban para aceptar un pago")
+
+| IBAN                     |
+| ------------------------ |
+| ES9067130002000000458102 |
+
+### Códigos iban para rechazar un pago[​](#códigos-iban-para-rechazar-un-pago "Enlace directo al Códigos iban para rechazar un pago")
+
+| IBAN                     | Descripción error      | Código error |
+| ------------------------ | ---------------------- | ------------ |
+| ES3930350000020000000201 | blocked\_account       | ERR-0001     |
+| ES3930350000020000000104 | closed\_account        | ERR-0002     |
+| ES9030350000070000000202 | integration\_error     | ERR-0003     |
+| ES2530350000030000000501 | invalid\_bank          | ERR-0004     |
+| ES2330350000000000000005 | recoverable            | ERR-0005     |
+| ES9530350000050000000210 | suspended\_bank        | ERR-0006     |
+| ES7430350000090000000101 | wrong\_account\_number | ERR-0007     |
+| ES5530350000000000000302 | wrong\_amount          | ERR-0008     |
+| ES1730350000040000000305 | wrong\_operation\_code | ERR-0009     |
+| ES1730350000040000000402 | other                  | ERR-0010     |
+
+***
+
+### Pruebas de VoP en Sandbox[​](#pruebas-de-vop-en-sandbox "Enlace directo al Pruebas de VoP en Sandbox")
+
+Los siguientes IBAN permiten simular diferentes resultados en la VoP:
+
+| IBAN                     | Respuesta esperada        | Descripción                              |
+| ------------------------ | ------------------------- | ---------------------------------------- |
+| ES8569400001160529041877 | rejected                  | Siempre devuelve verificación rechazada. |
+| ES6769400001110836662135 | failed (`NO_MATCH`)       | Siempre devuelve verificación fallida.   |
+| ES3369400001190536473836 | confirmed (`CLOSE_MATCH`) | Siempre devuelve coincidencia parcial.   |
+| Cualquier otro IBAN      | confirmed (`MATCH`)       | Siempre devuelve coincidencia completa.  |

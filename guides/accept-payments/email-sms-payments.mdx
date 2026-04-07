@@ -1,0 +1,119 @@
+---
+title: 'Pagos por Email y SMS'
+description: 'Cómo enviar cobros por email y SMS con Paylands'
+---
+
+Por cada pago a realizar será necesario indicar la cantidad a pagar y el email o número de teléfono del destinatario, así como el asunto del email o SMS, entre otros. Cuando se cargue el fichero, se llevarán a cabo todos los envíos, los cuales quedan agrupados para poder llevar a cabo un seguimiento de cuántos han sido pagados y cuáles no. A medida que los usuarios paguen se actualizarán los estados de las operaciones asociadas.
+
+![Envío de pagos via email y sms](/images/docs/integration/assets/images/email-sms-campaigns-1-7d37b6bfe9da67f44f49b90ec0367392.png)
+
+## Funcionamiento a través del panel[​](#funcionamiento-a-través-del-panel "Enlace directo al Funcionamiento a través del panel")
+
+Esta funcionalidad es accesible solamente a través del [panel de Paylands](https://backend.paylands.com) en la sección "Herramientas de pago" > "Pagos vía email y sms". En esta sección se listan los listados de pagos iniciados recientemente. Para crear un nuevo pago, haz clic en el botón **Nuevo pago**. El formulario acepta la creación de un solo pago o un fichero CSV con una lista de pagos.
+
+![Envío de pago individual](/images/docs/integration/assets/images/email-sms-campaigns-2-81eb0f80c8dba4d6f12fc9dd0d991d14.png)
+
+A continuación se describen todos los campos que se pueden configurar para lanzar uno o más pagos:
+
+**Detalle del pago**
+
+* **Asunto**: Asunto del email o título del SMS que recibirá el usuario.
+* **Descripción**: Descripción interna de la campaña.
+* **Servicio de pago**: Servicio de pago con que se va a pagar.
+* **Método de envío**: Email, SMS o manual. Si se selecciona manual se general los enlaces pero no se envían a los usuarios.
+* **Fecha de expiración**: La fecha a partir de la cual el enlace de pago dejará de ser válido.
+
+**Pagos email y sms**
+
+* **Método de entrada**: *Formulario* para un único envío o *Subida de Fichero* para subir un fichero CSV.
+* **Cantidad**: Importe a cobrar en céntimos.
+* **Destino**: El email o número de móvil del destinatario si es SMS. Si se indica un teléfono, debe contener el prefijo (+34 para España). Si el método de envio es manual el formato es libre.
+* **Operativa**: AUTHORIZATION o DEFERRED. Determina si la cantidad cobrada es liquidada o no al día siguiente, respectivamente.
+* **Pago seguro?**: Indica si se llevará a cabo el proceso 3D Secure para autenticar la operación.
+* **ID externo**: ID externo que identifica el cliente que realiza el pago.
+* **Adicional**: Campo libre que se devolverá en la notificación del pago.
+* **UUID de tarjeta**: Si se indica la tarjeta, el usuario no necesitará volverla a introducir. Obligatorio que el campo "Pago seguro" sea "Sí".
+* **URL a notificar**: URL del comercio que recibirá la notificación del pago una vez finalice.
+* **URL en caso de éxito**: URL a la que se redirigirá al cliente en caso de éxito.
+* **URL en caso de fallo**: URL a la que se redirigirá el cliente en caso de error.
+* **Pago certificado**: Indica si el envío del enlace se certificará o no\*.
+* **Plantilla de tarjeta**: Permite seleccionar una plantilla de la pantalla en la cual el usuario introduce los datos de su tarjeta.
+* **Plantilla email y sms**: Permite seleccionar la plantilla que da formato al email/sms.
+* **Plantilla DCC**: Permite seleccionar la plantilla donde el usuario selecciona qué moneda quiere utilizar si el DCC está activo.
+* **Idioma**: Indica el idioma que se mostrará al destinatario.
+* **Extra data**: Permite indicar manualmente el campo `extra_data` al generar la orden de pago.
+
+\* Si la campaña se procesa mediante SMS o Email se podrá activar el certificado de recepción/apertura de enlace, lo que permite consultar si el usuario ha recibido el SMS/email o ha accedido al enlace de pago.
+
+<Note>
+  Al seleccionar *Subida de fichero* podrás cargar un fichero con multiples destinatarios configurando un importe y método de envio para cada uno de ellos.
+</Note>
+
+![Envio de pagos mediante fichero](/images/docs/integration/assets/images/email-sms-campaigns-3-c09fba2e7e26d6907d9e5105d68b42d0.png)
+
+## Estructura del fichero de pagos[​](#estructura-del-fichero-de-pagos "Enlace directo al Estructura del fichero de pagos")
+
+Para lanzar enviar múltiples enlaces de pago simultáneamente debe subirse un fichero CSV, que es un documento de texto cuya primera línea contiene la cabecera y el resto de líneas los datos de cada uno de los pagos. Esta es su estructura:
+
+| Cabecera          | Tipo    | Requerido | Descripción                                                                                                                                                                                    |
+| ----------------- | ------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AMOUNT            | Integer | Sí        | Importe a cobrar en céntimos.                                                                                                                                                                  |
+| OPERATIVE         | String  | Sí        | AUTHORIZATION o DEFERRED. Determina si la cantidad cobrada es liquidada o no al día siguiente, respectivamente.                                                                                |
+| DESTINATION       | String  | Sí        | El email o número de móvil del destinatario si es SMS. Si se indica un teléfono, debe contener el prefijo (+34 para España). Si el método de envio es manual el formato es libre.              |
+| SECURE            | String  | Sí        | Valores aceptados: true/false. Indica si se llevará a cabo el proceso 3D Secure para autenticar la operación.                                                                                  |
+| CUSTOMER\_EXT\_ID | String  | No        | ID externo que identifica el cliente que realiza el pago.                                                                                                                                      |
+| SOURCE\_UUID      | String  | No        | Si se indica el UUID de la tarjeta, el usuario no necesitará volverla a introducir. Obligatorio que la cabecera "SECURE" sea "true".                                                           |
+| ADDITIONAL        | String  | No        | Campo libre que se devolverá en la notificación del pago.                                                                                                                                      |
+| URL\_POST         | String  | No        | URL del comercio que recibirá la notificación del pago una vez finalice.                                                                                                                       |
+| URL\_OK           | String  | No        | URL a la que se redirigirá al cliente en caso de éxito.                                                                                                                                        |
+| URL\_KO           | String  | No        | URL a la que se redirigirá el cliente en caso de error.                                                                                                                                        |
+| CARD\_TEMPLATE    | String  | No        | Permite seleccionar una plantilla de la pantalla en la cual el usuario introduce los datos de su tarjeta.                                                                                      |
+| MOTO\_TEMPLATE    | String  | No        | Permite seleccionar la plantilla que da formato al email/sms.                                                                                                                                  |
+| DCC\_TEMPLATE     | String  | No        | Permite seleccionar la plantilla donde el usuario selecciona qué moneda quiere utilizar si el DCC está activo.                                                                                 |
+| CERTIFIED         | String  | No        | true/false. Indica si el envío de email o sms será certificado.                                                                                                                                |
+| LANGUAGE          | String  | No        | Indica el idioma que se mostrará al destinatario. Ejemplo: es                                                                                                                                  |
+| EXTRA\_DATA       | String  | No        | Campos del `extra_data` separados por punto y coma. Las subclaves serán anidadas usando un punto. Por ejemplo, para indicar el cof RECURRING, habría que indicar el valor cof.reason:RECURRING |
+
+Los valores se delimitan con una coma: ",". Las cabeceras opcionales que no contengan ningún valor pueden omitirse. Los valores nulos o vacíos se indican dejando un hueco entre comas. Un ejemplo de CSV es el siguiente:
+
+```
+AMOUNT,OPERATIVE,DESTINATION,SECURE,SOURCE_UUID,CUSTOMER_EXT_ID,ADDITIONAL,URL_POST,URL_OK,URL_KO,CARD_TEMPLATE,MOTO_TEMPLATE,DCC_TEMPLATE,CERTIFIED,LANGUAGE12035,AUTHORIZATION,+34666554411,false,,user_1234,additional_info_1234,http://google.es/notification,http://google.es/ok_payment,http://google.es/ko_payment,,90895BE4-F614-447A-AE7F-082B248FE3A3,,false,es
+```
+
+En el ejemplo, se creará la orden para un pago no seguro de 120.35€, asociado al cliente 'user\_1234'. El campo 'SOURCE\_UUID' no tiene ningún valor porque se ha dejado vacío.
+
+## Descargar certificado de recepción[​](#descargar-certificado-de-recepción "Enlace directo al Descargar certificado de recepción")
+
+Se puede descargar el certificado de recepción de un pago a través del panel, en el detalle del pago. Disponible para envíos mediante email y SMS.
+
+## Descargar certificado de apertura de link[​](#descargar-certificado-de-apertura-de-link "Enlace directo al Descargar certificado de apertura de link")
+
+Se puede descargar el certificado de apertura del enlance de pago de un pago a través del panel, en el detalle del pago. Disponible para envíos mediante SMS.
+
+<Warning>
+  Los certificados de recepción/apertura solo estarán disponibles si en el pago se configuró la certificación (con el campo **CERTIFIED** a **true**).
+</Warning>
+
+## Campos personalizados en plantillas de email y SMS[​](#campos-personalizados-en-plantillas-de-email-y-sms "Enlace directo al Campos personalizados en plantillas de email y SMS")
+
+La herramienta soporta plantillas específicas para enviarlas por SMS o e-mail. Para utilizar una plantilla personalizada, deberás enviar un e-mail a *[soporte@paylands.com](mailto:soporte@paylands.com)*.
+
+Se puede incluir campos personalizados en la plantillas de email y SMS. Para ello, el formato que se debe enviar, ya sea desde formulario del panel o envíandolas mediante API deberá ser:
+
+```
+clave1:valor1;clave2:valor2
+```
+
+Los diferentes campos deben ir separados por punto y coma.
+
+Por ejemplo, enviando en el campo additional el siguiente valor:
+
+```
+nombre: Juan García; edad: 28
+```
+
+En la plantilla de email/sms se puede acceder a estos valores de la siguiente forma:
+
+```
+Bienvenido {{customFields.nombre}},felices {{customFields.edad}} años.
+```

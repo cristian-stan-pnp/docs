@@ -1,0 +1,55 @@
+---
+title: 'Clearhaus'
+description: 'Configuración e integración del servicio de pago Clearhaus en Paylands'
+---
+
+## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+
+Los pagos exitosos en Sandbox deben tener un importe de al menos 3000€, lo que supone un importe de 300000.
+
+La API soporta devolver códigos de error concretos iguales al importe de la operación cuando se utiliza la siguiente tarjeta: `5555555500024444 12/34 987`. Puede encontrarse más información [aquí](https://docs.gateway.clearhaus.com/#test-card-numbers).
+
+| Resultado | Tarjeta                    |
+| --------- | -------------------------- |
+| OK        | 4111111111111111 12/34 123 |
+| KO        | 4200000000000000 12/34 123 |
+
+## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+
+La estructura del error tiene la siguiente forma:
+
+```
+Código
+```
+
+Por ejemplo:
+
+```
+40410
+```
+
+| Código | Mensaje                            |
+| ------ | ---------------------------------- |
+| 20000  | Approved                           |
+| 40000  | General input error                |
+| 40110  | Invalid card number                |
+| 40111  | Unsupported card scheme            |
+| 40120  | Invalid CSC                        |
+| 40130  | Invalid expire date                |
+| 40135  | Card expired                       |
+| 40140  | Invalid currency                   |
+| 40150  | Invalid text on statement          |
+| 40190  | Invalid transaction                |
+| 40200  | Clearhaus rule violation           |
+| 40300  | 3-D Secure problem                 |
+| 40310  | 3-D Secure authentication failure  |
+| 40400  | Backend problem                    |
+| 40410  | Declined by issuer or card scheme  |
+| 40411  | Card restricted                    |
+| 40412  | Card lost or stolen                |
+| 40413  | Insufficient funds                 |
+| 40414  | Suspected fraud                    |
+| 40415  | Amount limit exceeded              |
+| 40416  | Additional authentication required |
+| 40420  | Merchant blocked by cardholder     |
+| 50000  | Clearhaus error                    |

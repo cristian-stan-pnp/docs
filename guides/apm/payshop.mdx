@@ -1,0 +1,50 @@
+---
+title: 'Payshop'
+description: 'Acepta pagos con Payshop en Portugal a través de la API de Paylands'
+---
+
+# Payshop
+
+Existen dos formas de integrarlo: mediante redirección o pago push.
+
+## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order).
+
+Como identificador de servicio, debe indicarse el **service\_uuid** del servicio de PAYSHOP que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Una vez generada la orden, se debe redirigir al usuario a [la pantalla de pago](/reference/#operation/redirection-payment) indicando el token de la orden y en la query, el nombre del APM:
+
+Construimos la URL de redirección reemplazando el **token** por el valor devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=PAYSHOP
+```
+
+Una vez el usuario sea redirigido a esta pantalla, podrá visualizar la referencia que deberá introducir a través de la aplicación móvil de su banco o físicamente a través de un cajero automático. Cuando complete el pago, será redirigido de vuelta a la URL OK o KO, dependiendo del resultado del pago.
+
+## Integración mediante pago push[​](#integración-mediante-pago-push "Enlace directo al Integración mediante pago push")
+
+Si el comercio prefiere hacer llegar la referencia al usuario por otro canal distinto al navegador, es posible integrar el método de pago push, el cual devolverá la referencia al servidor para que ésta pueda ser enviada al usuario.
+
+Para ello, en primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order).
+
+A continuación, se debe lanzar la petición del [pago push](/reference/#operation/push-payment) indicando el UUID de la orden. La respuesta contendrá la referencia del pago y fecha límite para pagar. Estos campos se incluyen dentro de la transacción del pago, en el campo `payment_data`. A continuación se incluye un ejemplo:
+
+```
+"payment_data": {    "reference": "1234500001411",    "deadline": "2024-05-03"}
+```
+
+Una vez se complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.
+
+## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+
+Para más información sobre cómo probar este método de pago, visitar la documentación de PAYSHOP.
+
+## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+
+Por defecto la fecha de expiración se establece dentro de 3 días desde el momento en el que se lanza el pago. Si se quiere personalizar este valor, basta con añadir la siguiente información cuando se [genera la orden de pago](/reference/#operation/generate-payment-order) indicando con la fecha deseada en formato `Ymd`. Su valor debe ser igual o superior a la fecha actual:
+
+```
+"extra_data": {    "payment": {        "validUntil": "20240520"    }}
+```

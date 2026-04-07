@@ -1,0 +1,169 @@
+---
+title: 'Credorax'
+description: 'Configuración e integración del servicio de pago Credorax en Paylands'
+---
+
+## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+
+| Resultado                  | Tarjeta                    | Notas                              |
+| -------------------------- | -------------------------- | ---------------------------------- |
+| 3DS2.x Frictionless        | 4018810000100036 12/34 123 |                                    |
+| 3DS2.x Fingerprinting only | 4018810001010010 12/34 123 |                                    |
+| 3DS2.x Challenge only      | 4018810000150015 12/34 123 | Código 0101 para OK y 3333 para KO |
+| 3DS2.x Full flow           | 4018810000190011 12/34 123 | Código 0101 para OK y 3333 para KO |
+| Pago rechazado             | 4548812049400004 12/34 123 |                                    |
+
+### Dynamic descriptor[​](#dynamic-descriptor "Enlace directo al Dynamic descriptor")
+
+El campo `dynamic_descriptor` es opcional y en caso de indicarse deberá cumplir una serie de reglas específicas:
+
+* Tendrá un máximo de 13 caracteres.
+* Debe empezar por el nombre del comercio, seguido de un asterisco y la información deseada por el comercio.
+
+## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+
+Credorax puede devolver hasta dos códigos de error diferentes, uno de la procesadora y otro del esquema (VISA, MC...).
+
+### Errores de la procesadora[​](#errores-de-la-procesadora "Enlace directo al Errores de la procesadora")
+
+Si la operación no se ha podido llegar a realizar, el error tiene la siguiente estructura:
+
+La estructura del error tiene la siguiente forma:
+
+```
+Código procesadora Mensaje procesadora
+```
+
+Por ejemplo:
+
+```
+-38 The transaction has been denied by the Gateway. 3D secure Authentication failed.
+```
+
+| Código | Mensaje                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| -69    | Transaction has been declined. Invalid 3ds\_version parameter.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -68    | Authentication process timed out. Please try again.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -66    | Invalid combination of 3ds\_initiate and exemption\_action values                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| -65    | Gateway MID is not allowed for this exemption                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -64    | TRA exemption is not allowed for this transaction amount                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| -63    | The requested gateway mid is not enrolled to 3D-secure service.                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -50    | An error occurred during the 3D secure process                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| -39    | You need to be registered with the 3D Adviser service to complete the request                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -38    | The transaction has been denied by the Gateway because 3D secure Authentication failed. Reason: \{}                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -37    | Transaction has been denied. Malformed or missing \{} parameter. Originating component: \{}                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -36    | The selected Processor does not support some of the transaction’s parameters.                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -35    | The selected MID is not registered to your account.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -33    | You need to be registered with the routing service to complete the routing request.                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -32    | You are not registered with the selected Processor.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -30    | Transaction Failed due to error in 3D secure process                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| -20    | Processor authentication error. Please contact Credorax support.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| -17    | Fraud-protection service is unavailable                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| -16    | Rejected. Overriding the fraud threshold is not allowed                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| -15    | Rejected. Bypassing the fraud service is not allowed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| -13    | The requested gateway mid is not enrolled in the 3D Secure Adviser service.                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -12    | Transaction has been declined due to security restrictions.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -11    | Rejected. Format Error                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -10    | Internal server error. Please contact Source support.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| -9     | The parameter is malformed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -8     | The Package Signature is malformed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -7     | Incorrect Gateway Response. Connection is broken.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 0      | The transaction has been executed successfully.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 1      | The transaction has been denied by the Gateway.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 2      | The transaction has been denied by the Gateway due to its high fraud risk.                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 03     | A Processing Response Reason Code of '03' (Invalid Merchant) is typically provided by a Card Issuing Bank when a Merchant's business is not supported on a Cardholder's account. Some cards are restricted for use for specific purposes and certain Merchant Category Codes (MCC) may be blocked. Also, local legislation within a Cardholder's country may prevent transactions from being processed for some Merchants. We would recommend for the Cardholder to contact their bank for further information about these rejections. |
+| 04     | The transaction has been denied by the Gateway due to an interchange timeout.                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 05     | The transaction has been declined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 06     | Transaction pending cardholder authentication.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 07     | The transaction was declined by the gateway and will not be processed due to retry optimization policy.                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 9      | The transaction has been denied by the Gateway due to a LUHN check failure                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 10     | The transaction has been partially approved.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 11     | The queried transaction is currently being processed. Please try again.                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 13     | Rejected. The fraud-protection service is unavailable.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 15     | Rejected. Risk score is above limit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+
+### Errores del esquema[​](#errores-del-esquema "Enlace directo al Errores del esquema")
+
+Si la operación se ha intentado realizar pero se ha producido un error, el error tiene la siguiente estructura:
+
+```
+Código procesadora Mensaje procesadora [Codigo esquema Mensaje esquema]
+```
+
+Por ejemplo:
+
+```
+05 Transaction has been declined. [05 Do not honour]
+```
+
+| Código | Mensaje                                           | Notas                        |
+| ------ | ------------------------------------------------- | ---------------------------- |
+| 00     | Approved or completed successfully                |                              |
+| 01     | Refer to card issuer                              |                              |
+| 02     | Refer to card issuer - special condition          |                              |
+| 03     | Invalid merchant                                  |                              |
+| 04     | Pick up card                                      | Categoría 1 (VISA)           |
+| 05     | Do not honour                                     |                              |
+| 06     | Error                                             |                              |
+| 07     | Pick up card - special condition                  | Categoría 1 (VISA)           |
+| 08     | Honour with identification                        |                              |
+| 10     | Partial amount approved                           |                              |
+| 12     | Invalid transaction                               | Categoría 1 (VISA)           |
+| 13     | Invalid amount                                    |                              |
+| 14     | Invalid card number                               | Categoría 1 (VISA)           |
+| 15     | No such issuer                                    | Categoría 1 (VISA)           |
+| 19     | Re-enter transaction                              |                              |
+| 21     | No action taken                                   |                              |
+| 30     | Format error                                      |                              |
+| 34     | Implausible card data                             |                              |
+| 39     | No credit account                                 |                              |
+| 41     | Lost card, pick up                                | Categoría 1 (VISA)           |
+| 42     | No universal account                              |                              |
+| 43     | Pick up, stolen card                              | Categoría 1 (VISA)           |
+| 44     | No investment account                             |                              |
+| 46     | Closed Account                                    | Categoría 1 (VISA)           |
+| 50     | Do not renew                                      |                              |
+| 51     | Insufficient funds                                |                              |
+| 52     | No checking account                               |                              |
+| 53     | No savings account                                |                              |
+| 54     | Expired card                                      |                              |
+| 55     | Incorrect PIN                                     |                              |
+| 57     | Transaction not allowed for cardholder            | Categoría 1 (VISA)           |
+| 58     | Transaction not permitted to terminal             |                              |
+| 59     | Suspected Fraud                                   |                              |
+| 61     | Exceeds withdrawal limit                          |                              |
+| 62     | Restricted card                                   |                              |
+| 63     | Security violation                                |                              |
+| 64     | Wrong original account                            |                              |
+| 65     | Activity count limit exceeded                     |                              |
+| 68     | Response received too late                        |                              |
+| 70     | PIN data required                                 |                              |
+| 71     | Decline, PIN not changed                          |                              |
+| 75     | PIN tries exceeded                                |                              |
+| 76     | Wrong PIN, number of PIN tries exceeded           |                              |
+| 77     | Wrong Reference Number                            |                              |
+| 78     | Blocked, first used/Record not found              |                              |
+| 79     | Declined due to lifecycle event                   |                              |
+| 80     | Network error                                     |                              |
+| 81     | PIN cryptographic error                           |                              |
+| 82     | Timeout at issuer system                          |                              |
+| 83     | Transaction failed                                |                              |
+| 84     | Pre-authorization timed out                       |                              |
+| 85     | No reason to decline                              |                              |
+| 86     | Cannot verify PIN                                 |                              |
+| 87     | Purchase amount only, no cashback allowed         |                              |
+| 88     | Cryptographic failure                             |                              |
+| 89     | Authentication Failure                            |                              |
+| 91     | Issuer not available                              |                              |
+| 92     | Unable to route at acquirer module                |                              |
+| 93     | Transaction cannot be completed, violation of law |                              |
+| 94     | Duplicate transmission                            |                              |
+| 95     | Reconcile error / Auth not found                  |                              |
+| 96     | System malfunction                                | Categoría 2 (VISA)           |
+| 97     | Transaction has been declined by the processor    |                              |
+| N7     | CVV2 failure                                      |                              |
+| R0     | Stop Payment Order                                | Categoría 1 (VISA)           |
+| R1     | Revocation of Authorisation Order                 | Categoría 1 (VISA)           |
+| R3     | Revocation of all Authorisation Orders            | Categoría 1 (VISA)           |
+| 1A     | Strong Customer Authentication required           | SCA requerido (soft-decline) |
+| 6P     | Verification Failed                               |                              |

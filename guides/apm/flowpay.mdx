@@ -1,0 +1,38 @@
+---
+title: 'Flow Pay'
+description: 'Acepta pagos con Flow Pay en Chile a través de la API de Paylands'
+---
+
+# Flow Pay
+
+## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order), indicando el email.
+
+```
+  "extra_data": {    "profile": {      "first_name": " ",      "last_name": " ",      "email": "test@gmail.com",    }  }
+```
+
+Como identificador de servicio, debe indicarse el **service\_uuid** del servicio de FLOW que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Una vez generada la orden, se debe redirigir al usuario a [la pantalla de pago](/reference/#operation/redirection-payment) indicando el token de la orden y en la query, el nombre del APM:
+
+Construimos la URL de redirección reemplazando el **token** por el valor devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=FLOWPAY
+```
+
+Una vez el usuario sea redirigido a esta pantalla, podrá introducir los datos de tarjeta para completar el pago. Cuando complete el pago, será redirigido de vuelta a la URL OK o KO, dependiendo del resultado del pago.
+
+## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+
+Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de FLOW.
+
+## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+
+Opcionalmente, dentro del objeto `extra_data` se puede incluir el campo `payment_reason`, que permite indicar una descripción del pago.
+
+```
+  "extra_data": {    "payment": {      "payment_reason": "Payment description"    }  }
+```

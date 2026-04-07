@@ -1,0 +1,145 @@
+---
+title: 'Guía de Tarjetas'
+description: 'Guía completa para gestionar tarjetas en Paylands: tokenización, recurrencia y más'
+---
+
+Cuando hablamos de **tokenización**, nos estamos refiriendo a la acción de **guardar un método de pago para su uso futuro**. Al guardar el método de pago se genera un token que permitirá emitir cobros al cliente sin necesidad de solicitarle nuevamente los datos.
+
+La tokenización protege los datos confidenciales a través de un proceso de reemplazo de los datos con un equivalente no confidencial, conocido como token. El token no tiene significado o valor externo. Es una referencia, o identificador, que a través de un sistema de tokenización, se mapea de nuevo a los datos confidenciales. Este proceso recopila de forma segura información confidencial de la tarjeta de crédito y evita el robo de datos.
+
+<Info>
+  Auque solemos llamarlo "token" a raíz de que "tokenizamos" la tarjeta, nos estamos refiriendo al UUID de la tarjeta. El campo "token" de una tarjeta es en realidad un valor calculado a partir del número de la tarjeta, de modo que dos tarjetas con mismo [PAN](/docs/glossary#pan) tienen diferente UUID pero mismo token. Este token solamente sirve para saber si dos tarjetas son iguales. Siempre que queremos utilizar una tarjeta es necesario indicar su UUID.
+</Info>
+
+## Cómo guardar una tarjeta[​](#cómo-guardar-una-tarjeta "Enlace directo al Cómo guardar una tarjeta")
+
+Podemos almacenar una tarjeta en Paylands mediante uno de los siguientes métodos:
+
+### Realizando un pago[​](#realizando-un-pago "Enlace directo al Realizando un pago")
+
+Podemos tokenizar cualquier tarjeta al realizar un primer pago con ella. El método habitual para comercios que no son [PCI](/docs/glossary#pci-dss), es utilizar la [**integración simple mediante carta de pago**](/docs/integration/simple-integration) aunque también es posible lanzar la carta de pago mediante:
+
+* [Enlaces de pago](/docs/integration/link-payments)
+* [Pagos Moto](/docs/integration/moto-payments)
+* [Plugins E-commerce](/docs/category/ecommerce).
+
+En la notificación recibida tras el pago se incluye un objeto de la `orden` procesada. Dentro de la transacción existe a su vez el objeto `source` que contiene en su interior el `token` de la tarjeta utilizada en el pago. Este token quedará a partir de ahora ligado al cliente, por lo que en nuevas operaciones se podrán confirmar los pagos para este usuario sin necesidad de solicitarle de nuevo la tarjeta.
+
+Estos métodos realizan una orden con transacción [3DS](/docs/glossary#3ds-2) la cual genera un token con [SCA](/docs/glossary#sca) permitiendo que el comercio envie:
+
+* [MITs](/docs/glossary#mit)
+* Cargos puntuales (incrementales)
+* Cobros recurrentes (subscripciones)
+
+### Integrando el SDK de Tokenización[​](#integrando-el-sdk-de-tokenización "Enlace directo al Integrando el SDK de Tokenización")
+
+En el caso de estar construyendo una plataforma, web o mobile, donde se desea que el usuario pueda guardar su tarjeta (como Netflix, Amazon) para posteriormente emitirle cobros ya sea de compras o de suscripciones, disponemos de una libreria [**SDK de Tokenización**](/docs/guides/sdk-tokenization). Con este SDK los comercios que no son PCI pueden guardar y tokenizar las tarjetas de los clientes embebiendo un iframe en su web/app.
+
+## Obtención de las tarjetas[​](#obtención-de-las-tarjetas "Enlace directo al Obtención de las tarjetas")
+
+Una vez tenemos guardadas las tarjetas de nuestros clientes en Paylands podemos recuperarlas y hacer uso de ellas de distintas formas. El primer paso será obtener las tarjetas almacenadas de un cliente.
+
+La forma más habitual de recuperar la tarjeta de un cliente es realizando una llamada al método del API de Paylands [para obtener las tarjetas de un cliente](/reference/#operation/get-customer-cards). Mediante este método se obtiene el listado de tarjetas almacenadas en el sistema para un cliente `customer_ext_id` dado. El customer\_ext\_id debe coincidir con el que se utilizó al guardar la tarjeta en el sistema o al crear la orden de pago para cliente.
+
+```
+curl --request GET 'https://api.paylands.com/v1/sandbox/customer/{customer_ext_id}/cards?unique=true' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \
+```
+
+Obtendremos como respuesta el listado de tarjetas del cliente con el `uuid` de cada una de ellas.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2017-01-12T09:12:58+0100",  "cards": [    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 454881,      "brand": "VISA",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "12",      "expire_year": "21",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ebc9b5ffa2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d5851884c",      "type": "C",      "uuid": "90F358C9-7D3F-4334-A60D-1717CC1FBF5B"    },    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 533821,      "brand": "MASTERCARD",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "04",      "expire_year": "23",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ad49b5b1a2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d58516cba",      "type": "C",      "uuid": "0FDE261B-0E76-499D-A394-B6DCF6C03C56"    }  ]}
+```
+
+## Cómo usar la tarjeta[​](#cómo-usar-la-tarjeta "Enlace directo al Cómo usar la tarjeta")
+
+Una vez hemos obtenido las tarjetas de un cliente, podemos realizar pagos y autorizaciones de distintas formas que se explican a continuación.
+
+### Pago directo por webservice[​](#pago-directo-por-webservice "Enlace directo al Pago directo por webservice")
+
+El método de [**pago directo por webservice**](/reference/#operation/webservice-payment) permite realizar pagos sin la intervención del usuario. Esta forma de pago está dirigida a comercios avanzados que traten ellos mismos sus recurrencias, ya que son ellos quienes deciden la periodicidad de los cobros.
+
+Para ello se necesita el uuid de la orden de pago `order_uuid` y el uuid de una tarjeta `card_uuid` previamente almacenada en el sistema. Para generar una nueva orden podemos hacerlo llamando al método [Generar orden de pago](/reference/#operation/generate-payment-order). La respuesta nos devolverá el \[order\_uuid]. Por seguridad se solicita la IP del usuario `customer_ip` que solicita el pago pudiéndose indicar en formato IPv4 o IPv6.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment/direct' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "order_uuid": "1F405EA3-9798-42A6-9E87-BD347EF67F55",  "card_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",  "customer_ip": "62.43.214.55"}'
+```
+
+Al ejecutar este método se realizará el pago sin la intervención del usuario devolviendo la siguiente respuesta.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 1,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "DEFERRED",        "amount": 1,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": null,    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+Si como comercio tienes el sistema antifraude activado, podría darse el caso que alguna regla se activase y fuese necesario finalizar el cobro por [3DS](/docs/glossary#3ds-2). De ser así, la respuesta devuelta contendrá en el campo `details` la URL a la que debe redirigirse al usuario para autenticarse y poder finalizar el cobro.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "details": "URL_3DS",  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+<Warning>
+  Bajo ningún concepto debe modificarse esta URL, puesto que su formato puede variar en futuras actualizaciones. Su uso se restringe a obtenerla del cuerpo de la petición y redirigir al usuario.
+</Warning>
+
+### Pago tokenizado 3DS[​](#pago-tokenizado-3ds "Enlace directo al Pago tokenizado 3DS")
+
+Este método de **pago mediante el token de una orden** es similar al [pago directo por webservice](#pago-directo-por-webservice), con la diferencia que en este caso al usuario se le mostrará la pantalla de [3DS](/docs/glossary#3ds-2) antes de finalizarlo.
+
+Para generar una nueva orden podemos hacerlo llamando al método [**Generar orden de pago**](/reference/#operation/generate-payment-order). La respuesta nos devolverá el `order_token`. Lanzaremos un [**pago tokenizado 3DS**](/reference/#operation/3ds-tokenized) añadiendo el `order_token` de la orden en la URL de la llamada.
+
+### Autorización 3DS de la tarjeta[​](#autorización-3ds-de-la-tarjeta "Enlace directo al Autorización 3DS de la tarjeta")
+
+Si para una tarjeta no se ha realizado todavía un pago [3DS](/docs/glossary#3ds-2) y queremos utilizarla más adelante para lanzar [pagos directos por webservice](#pago-directo-por-webservice) sin querer cobrar todavía al usuario, es posible realizar una **autorización 3DS de la tarjeta lanzando un pago 3DS de 0€**. En este caso el usuario solamente se autentica de forma segura para más adelante poder ser cobrado por el comercio sin que él tenga que volver a intervenir. Este es un proceso habitual por ejemplo en hoteles o algunos proveedores de subscripciones.
+
+Deberemos generar una nueva orden de pago con el método [**Generar orden de pago**](/reference/#operation/generate-payment-order) indicando en el campo `source_uuid` el uuid de la tarjeta que deseamos autorizar y en el campo `amount` indicar el valor `0`. También es preciso indicar el campo `operative` con el valor `AUTHORIZATION`.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 0,  "operative": "AUTHORIZATION",  "source_uuid": "UUID_TARJETA",  "secure": false,  "customer_ext_id": "test",  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*NombreComercio",  "expires_in": 3600}'
+```
+
+Al lanzar la orden de autorización 3DS obtendremos la siguiente respuesta y la tarjeta estará autorizada para emitir futuros cobros.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 0,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "AUTHORIZATION",        "amount": 0,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": "34f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec9",    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+## Tarjetas dinámicas[​](#tarjetas-dinámicas "Enlace directo al Tarjetas dinámicas")
+
+Cuando el usuario paga mediante un wallet como Google Pay o Apple Pay, no está proporcionando el número de su tarjeta sino un pseudónimo llamado DPAN (Device PAN). Este número tiene la misma apariencia y está asociado al PAN (Primary Account Number) real de la tarjeta, sin embargo existen varias limitaciones en torno a la información que obtenemos y su uso. Estos medios de pago se conocen como **tarjetas dinámicas** en Paylands.
+
+|                    | PAN                                                         | DPAN                                                              |
+| ------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Definición**     | Identificador único por tarjeta                             | Identificador único por tarjeta y dispositivo                     |
+| **Disponibilidad** | Todos los proveedores lo soportan, no requiere de un wallet | Solo algunos proveedores lo soportan, requiere de un wallet       |
+| **Reusabilidad**   | Puede reutilizarse en cualquier tipo de pago                | Solo puede reutilizarse en pagos sin la presencia del usuario     |
+| **Tokenización**   | El PAN es real y no se puede invalidar                      | El DPAN es un alias y el usuario puede invalidarlo posteriormente |
+
+Debido a que varios DPAN corresponden a un mismo PAN, las tarjetas dinámicas no contienen el campo `token` que se utiliza para determinar si dos tarjetas tienen el mismo PAN. Debido también a que el DPAN es un alias y no el número de la tarjeta, no disponemos del `BIN`, aunque sí del `last4` real de la tarjeta porque Google Pay y Apple Pay lo proporcionan por separado. Finalmente, la fecha de expiración no se proporciona, por lo que no disponemos de ella.
+
+|                         | PAN | DPAN |
+| ----------------------- | --- | ---- |
+| UUID                    | ✔   | ✔    |
+| Token único             | ✔   | ❌    |
+| Fecha de expiración     | ✔   | ❌    |
+| BIN                     | ✔   | ❌    |
+| Last4                   | ✔   | ✔    |
+| Holder/Alias\*          | ✔   | ✔    |
+| Débito/Crédito          | ✔   | ✔    |
+| País de emisión         | ✔   | ✔    |
+| Nombre del banco        | ✔   | ✔    |
+| Prepago                 | ✔   | ✔    |
+| Descripción de la marca | ✔   | ✔    |
+
+### Ventajas y desventajas[​](#ventajas-y-desventajas "Enlace directo al Ventajas y desventajas")
+
+La principal ventaja de solicitar los datos de tarjeta a través de Google Pay o Apple Pay es que en algunos casos el pago ya se considera autenticado y no es necesario llevar a cabo el 3DS. La desventaja es que la autenticación la lleva a cabo el wallet cuando obtiene los datos de la tarjeta, por lo que es necesario que el usuario interactúe con el wallet cada vez. Esto previene que se lancen [**pagos tokenizados 3DS**](/reference/#operation/3ds-tokenized) con UUIDs de tarjetas dinámicas.
+
+Otra ventaja es que el usuario no necesita introducir los datos de su tarjeta si ya los tiene registrados en su wallet. Esto puede afectar positivamente a la conversión ya que para el usuario le resulta más cómodo seleccionar su tarjeta. Además, utilizar Google Pay o Apple Pay puede resultar más familiar a ciertos usuarios que desconfíen de introducir los datos de su tarjeta en páginas web de terceros.
+
+Una desventaja es que debido a que desconocemos el BIN de la tarjeta, el usuario solamente podrá ver los últimos 4 dígitos de su tarjeta para poder identificarla. Esto es relevante si se muestra al usuario la lista de tarjetas que tiene asociadas y necesita seleccionar una de ellas. Para facilitar su identificación, recomendamos mostrar la marca de la tarjeta junto a sus últimos 4 dígitos como en el siguiente ejemplo:
+
+![Ejemplo de listado de tarjetas](data:image/png;base64,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)
+
+Dependiendo del uso que se le vaya a dar a la tarjeta, es importante tener en cuenta su tipo cuando [**se obtienen las tarjetas de un usuario**](/reference/#operation/get-customer-cards). Las tarjetas dinámicas pueden identificarse mediante el campo `"object": "DYNAMIC_CARD"` de la respuesta.
+
+Otra desventaja es que no todos los servicios de pago soportan pagos con DPAN, sin embargo esto es cada vez menos habitual. Si tu comercio quiere ofrecer Google Pay o Apple Pay debes asegurarte de que el [**servicio de pago**](/docs/integrations/payment-services) que utilizas soporta pagos con DPAN.

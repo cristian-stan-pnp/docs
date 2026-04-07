@@ -1,0 +1,19 @@
+---
+title: 'Primeros pasos'
+description: 'Cómo comenzar a usar el PROXY PCI de Paylands'
+---
+
+<Info>
+  La documentación completa de la API REST de PROXY PCI puede encontrarse [aquí](http://pci-proxy-api.paynopain.com/docs).
+</Info>
+
+Una vez que tenga sus credenciales, puede utilizar el punto final de configuración para obtener su clave de API PROXY PCI [aquí](https://pci-proxy-api.paynopain.com/docs#/Authentication%20and%20setup/CustomersAdd).
+
+<Warning>
+  Por favor, tenga en cuenta que la `api_key` y la `signature` son las credenciales para la pasarela de pago de Paylands y el motor de bóveda seguro que cumple con la norma PCI. Guárdelas en un lugar seguro.
+</Warning>
+
+Hay dos entornos. Uno para las pruebas durante la fase de integración y el entorno de producción.
+
+* **Pruebas**: `https://pci-proxy-api.paynopain.com/sandbox`
+* **Entorno de producción**: `https://pci-proxy-api.paynopain.com/prod`

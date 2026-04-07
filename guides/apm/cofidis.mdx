@@ -1,0 +1,98 @@
+---
+title: 'Cofidis'
+description: 'Acepta pagos con Cofidis (4xCard y Cofidis Pay) en España a través de la API de Paylands'
+---
+
+# Cofidis
+
+Mediante este método de pago, el usuario será redirigido a la carta de pago de Cofidis, donde deberá aportar la información requerida, siendo necesario, en el caso de 4xcard, el documento de identidad y la tarjeta del titular, mientras que en el caso del producto Cofidis Pay se requerirá el documento de identidad y un justificante bancario de titularidad.
+
+El proceso de integración es [**similar al de la carta de pago por redirección**](/docs/integration/simple-integration).
+
+```
+/payment/process/{token}
+```
+
+Cofidis espera recibir un email obligatoriamente en el campo extra\_data al crear la orden:
+
+````
+```json  "extra_data": {    "profile": {      "first_name": "",      "last_name": "",      "email": "johndoe@paynopain.com"    }  }```
+````
+
+## Integración[​](#integración "Enlace directo al Integración")
+
+Para hacer hacer un pago en Cofidis debemos seguir los siguientes pasos:
+
+### 1. Generar la orden de pago en tu servidor[​](#1-generar-la-orden-de-pago-en-tu-servidor "Enlace directo al 1. Generar la orden de pago en tu servidor")
+
+Crea la orden igual que harías para realizar una [**integración simple**](/docs/integration/simple-integration#1-generar-la-orden-de-pago-en-tu-servidor).
+
+La orden será configurada con `secure=false`.
+
+Como identificador de servicio, aporta el **service\_uuid** del servicio de COFIDIS configurado para uno de los dos productos de Cofidis que desees que encontrarás en **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Si aún no tienes el servicio Cofidis activado, deberás solicitarnos su activación en **[soporte@paylands.com](mailto:soporte@paylands.com)**.
+
+Una vez aquí, generamos la orden con la siguiente petición:
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: Bearer [API_KEY]' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "[SIGNATURE]",  "amount": 10000,  "operative": "AUTHORIZATION",  "secure": false,  "customer_ext_id": "test",  "service": "[SERVICE_UUID]",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "source_uuid": null}'
+```
+
+Obteniendo como respuesta:
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2022-07-19T13:36:32+0200",  "order": {    "uuid": "997BFC59-2407-4CFD-A518-0FCE478AB7D5",    "created": "2022-07-19T13:36:32+0200",    "created_from_client_timezone": "2022-07-19T14:36:32+0300",    "amount": 50000,    "currency": "978",    "paid": false,    "status": "CREATED",    "safe": false,    "refunded": 0,    "additional": "Paylands test",    "service": "COFIDIS",    "service_uuid": "AB567191-DCCC-4143-81DA-5F1ED5F68B47",    "customer": "test",    "cof_txnid": null,    "transactions": [],    "token": "69694f7765bba3d5d7da3f401d304bef151c8eded8ceac43c48e3b852368502d815c86d0a6e901f031ae13fea256f0ac8d99d7cea7c369b4683b8f7c4db52b95",    "ip": null,    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"}}
+```
+
+### 2. Redirigir al cliente al formulario de pago[​](#2-redirigir-al-cliente-al-formulario-de-pago "Enlace directo al 2. Redirigir al cliente al formulario de pago")
+
+Construimos la URL de redirección a la pasarela de cofidis aportando el **token** de la orden devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}
+```
+
+Podemos presentar al usuario un botón de pago con cofidis como el siguiente:
+
+```
+<a href="https://api.paylands.com/v1/sandbox/payment/process/{token}">  <img src="cofidis-logo.png" alt="Cofidis Logo" style="width:200px; height:auto;"/></a>
+```
+
+![Cofidis button](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAABMWlDQ1BBZG9iZSBSR0IgKDE5OTgpAAAoz62OsUrDUBRAz4ui4lArBHFweJMoKLbqYMakLUUQrNUhydakoUppEl5e1X6Eo1sHF3e/wMlRcFD8Av9AcergECGDgwie6dzD5XLBqNh1p2GUYRBr1W460vV8OfvEDFMA0Amz1G61DgDiJI74wecrAuB50647Df7GfJgqDUyA7W6UhSAqQP9CpxrEGDCDfqpB3AGmOmnXQDwApV7uL0ApyP0NKCnX80F8AGbP9Xww5gAzyH0FMHV0qQFqSTpSZ71TLauWZUm7mwSRPB5lOhpkcj8OE5UmqqOjLpD/B8BivthuOnKtall76/wzrufL3N6PEIBYeixaQThU598qjJ3f5+LGeBkOb2F6UrTdK7jZgIXroq1WobwF9+MvwMZP/U6/OGUAAAAJcEhZcwAACxMAAAsTAQCanBgAAAXCaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjYtYzE0MiA3OS4xNjA5MjQsIDIwMTcvMDcvMTMtMDE6MDY6MzkgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDQyAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIyLTA3LTIwVDA5OjUwOjE0KzAyOjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIyLTA3LTIwVDA5OjUwOjE0KzAyOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMi0wNy0yMFQwOTo1MDoxNCswMjowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowOTI4ZDVmNS0xOGEyLWJiNDYtOGJlZS1lYmNlZGJjZGFkY2MiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDoxYjNjZmUzMC0zOTU1LTdmNDktOTRmZC00NTE3NDE0YjMyZDYiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpkZWQyYmI2Ni0xN2E4LTkzNGItYjRlZS1iZWNlOThjNDc2OGYiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIj4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDpkZWQyYmI2Ni0xN2E4LTkzNGItYjRlZS1iZWNlOThjNDc2OGYiIHN0RXZ0OndoZW49IjIwMjItMDctMjBUMDk6NTA6MTQrMDI6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCBDQyAoV2luZG93cykiLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjA5MjhkNWY1LTE4YTItYmI0Ni04YmVlLWViY2VkYmNkYWRjYyIgc3RFdnQ6d2hlbj0iMjAyMi0wNy0yMFQwOTo1MDoxNCswMjowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgc3RFdnQ6Y2hhbmdlZD0iLyIvPiA8L3JkZjpTZXE+IDwveG1wTU06SGlzdG9yeT4gPC9yZGY6RGVz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)
+
+Al pulsar el botón, el usuario será redirigido a la pasarela de Cofidis.
+
+![Cofidis Form](/images/docs/apm/assets/images/cofidis-fourxcard-2e2430871a11525867e8777c63674e90.png)
+
+### 3. Introducir datos y código de validación[​](#3-introducir-datos-y-código-de-validación "Enlace directo al 3. Introducir datos y código de validación")
+
+Una vez se ha redirigido al usuario a la página de Cofidis, necesitará introducir su información personal y, en el caso de Cofidis Pay, seleccionar el número de plazos deseado.
+
+Una vez completado el formulario, cofidis determinará si aprueba o rechaza la financiación siendo el usuario redirigido a la URL OK/KO de vuelta, dependiendo del resultado.
+
+### 4. Se notifica al servidor[​](#4-se-notifica-al-servidor "Enlace directo al 4. Se notifica al servidor")
+
+Una vez completado el proceso de pago, se recibirá la notificación POST, que será similar a un [**pago por webservice**](/reference/#operation/webservice-payment), salvo por los siguientes detalles:
+
+* La clave `source` que contiene los detalles de la tarjeta usada que aparece bajo `order.transactions.[n].source` contendrá el valor `null`.
+
+* Los pagos COFIDIS soportan únicamente autorizaciones `AUTHORIZATION` como operativa.
+
+## Testing[​](#testing "Enlace directo al Testing")
+
+Para realizar pruebas en el entorno sandbox y forzar que la operación sea OK/KO hay que tener en cuenta cual es el producto de COFIDIS que estamos empleando.
+
+Para el producto Cofidis Pay se pedirá completar un formulario rellenándolo con la información del usuario que solicita la financiación. Para completar con éxito las pruebas en el entorno sandbox se recomienda emplear amounts específicos, como 50000 (500.00€), así como introducir en el campo del primer apellido "IP+Apellido" (IPEjemplo), con el fin de evitar la solicitud de documentación real en este entorno de pruebas.
+
+Para 4xcard se requerirá aportar la información de un usuario de Cofidis y una tarjeta. Podemos emplear las siguientes tarjetas:
+
+```
+OK MC: 5132830960047108 03/24 462OK VISA: 4977830259527191 03/24 153KO: 5132830960047199 03/24 813
+```
+
+La URL de sandbox para los pagos cofidis es la siguiente:
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}
+```

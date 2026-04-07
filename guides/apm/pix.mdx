@@ -1,0 +1,66 @@
+---
+title: 'PIX'
+description: 'Acepta pagos con PIX en Brasil a través de la API de Paylands'
+---
+
+# PIX
+
+Existen dos formas de integrarlo: mediante redirección o pago push.
+
+## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order). Únicamente, en caso de usar PIX a través de PAGSMILE, será necesario indicar el nombre del usuario, email y número de identificación.
+
+```
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882"    }  }
+```
+
+Como identificador de servicio, debe indicarse el **service\_uuid** del servicio de FACILITAPAY, PAGSMILE o APOLOPAG que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
+
+Una vez generada la orden, se debe redirigir al usuario a [la pantalla de pago](/reference/#operation/redirection-payment) indicando el token de la orden y en la query, el nombre del APM:
+
+Construimos la URL de redirección reemplazando el **token** por el valor devuelto en la llamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=PIX
+```
+
+Una vez el usuario sea redirigido a esta pantalla, podrá visualizar una clave PIX o un código QR con el que, a través de la aplicación móvil de su banco, completar el pago. Cuando complete el pago, será redirigido de vuelta a la URL OK o KO, dependiendo del resultado del pago.
+
+## Integración mediante pago push[​](#integración-mediante-pago-push "Enlace directo al Integración mediante pago push")
+
+Si el comercio prefiere hacer llegar la referencia al usuario por otro canal distinto al navegador, es posible integrar el método de pago push, el cual devolverá la referencia al servidor para que ésta pueda ser enviada al usuario. Los pagos Push con PIX están disponibles a través de PAGSMILE y APOLOPAG.
+
+Para ello, en primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order), indicando nombre del usuario, email y número de identificación si se está usando PAGSMILE. En caso de usar APOLOPAG, indicar lo mismo con número de teléfono y fecha de nacimiento, a mayores.
+
+Para PAGSMILE:
+
+```
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882"    }  }
+```
+
+Para APOLOPAG:
+
+```
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "659.516.937-13",      "birthdate": "1996-01-01",      "phone": {        "number": "5151428089"      }    }  }
+```
+
+A continuación, se debe lanzar la petición del [pago push](/reference/#operation/push-payment) indicando el UUID de la orden. La respuesta contendrá la clave pix y el código qr con el que pagar. Estos campos se incluyen dentro de la transacción del pago, en el campo `payment_data`. A continuación se incluye un ejemplo:
+
+```
+"payment_data": {    "qr_code": "00020126580014br.pix013627a44d0a-0736-4bbf-a4a4-6e11063973315204000053039865406100.pixTest123742074363049E0B",    "qr_code_url": "https://paylands/pix-example/qr-code"}
+```
+
+Una vez se complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.
+
+## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+
+Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de FACILITAPAY, PAGSMILE y APOLOPAG.
+
+## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+
+Opcionalmente, si se está usando PIX con PAGSMILE o APOLOPAG, dentro del objeto `extra_data` se puede incluir el campo `payment_reason`, que permite indicar una descripción del pago.
+
+```
+  "extra_data": {    "payment": {      "payment_reason": "Payment description"    }  }
+```

@@ -1,0 +1,30 @@
+---
+title: 'URLs de pago'
+description: 'Referencia de URLs de pago de la API de Paylands (sandbox y producción)'
+---
+
+### Ejemplo de respuesta:[​](#ejemplo-de-respuesta "Enlace directo al Ejemplo de respuesta:")
+
+```
+{    "message": "OK",    "code": 200,    "current_time": "2023-01-19T16:24:27+0100",    "order": {        "uuid": "A1C91A5A-5D0B-4F02-9C0A-E94B0984F775",        "created": "2023-01-19T16:24:27+0100",        "created_from_client_timezone": "2023-01-19T16:24:27+0100",        "amount": 1,        "currency": "978",        "paid": false,        "status": "CREATED",        "safe": true,        "refunded": 0,        "additional": "",        "service": "REDSYSPSD2",        "service_uuid": "F9D76AE8-DDBB-4F17-8074-C2DABEE0A919",        "customer": "008fc337-6f63-499c-bfff-dae376bd4e8a",        "cof_txnid": null,        "transactions": [],        "token": "927b226343428bd1589ebce27c613cac862cf07c4a95dab259fa7e67c900f259bdae189adb4a827f3dc46c45665b77e1abe4a2adefbb3616ec9c81b3eaa2044b",        "ip": null,        "urls": {            "payment_card": "https:\/\/api.paylands.com\/v1\/sandbox\/payment\/process\/927b226343428bd1589ebce27c613cac862cf07c4a95dab259fa7e67c900f259bdae189adb4a827f3dc46c45665b77e1abe4a2adefbb3616ec9c81b3eaa2044b",            "bizum": "https:\/\/api.paylands.com\/v1\/sandbox\/payment\/bizum\/927b226343428bd1589ebce27c613cac862cf07c4a95dab259fa7e67c900f259bdae189adb4a827f3dc46c45665b77e1abe4a2adefbb3616ec9c81b3eaa2044b",            "3ds_tokenized": "https:\/\/api.paylands.com\/v1\/sandbox\/payment\/tokenized\/927b226343428bd1589ebce27c613cac862cf07c4a95dab259fa7e67c900f259bdae189adb4a827f3dc46c45665b77e1abe4a2adefbb3616ec9c81b3eaa2044b"        },        "reference": null,        "dynamic_descriptor": null,        "threeds_data": null    },    "client": {        "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"    },    "validation_hash": "82fab7c792e645c11a83027255acb444c8768f4551e08dcf103a81fe491687db"}
+```
+
+Para activarla debemos acceder al panel de Paylands y dirigirnos en el menu lateral Administración > Clientes. Una vez aquí accedemos a los detalles del cliente en el cual deseamos activar esta opción y nos dirigimos a la pestaña preferencias de configuración.
+
+![Clients Preferences](/images/docs/integration/assets/images/configuration-clients-preferences-b214cf1aa1dc9fb553b91dbcc08cd8e8.png)
+
+Una vez aquí podemos activar **Generar urls de pago** y si queremos una versión abreviada de la url podemos activar **Generar urls abreviadas**. Es importante remarcar que la primera opción debe estar activada si queremos recibir las urls de forma abreviada.
+
+### Ejemplo de respuesta con urls abreviadas:[​](#ejemplo-de-respuesta-con-urls-abreviadas "Enlace directo al Ejemplo de respuesta con urls abreviadas:")
+
+```
+{    "message": "OK",    "code": 200,    "current_time": "2023-01-19T17:16:22+0100",    "order": {        "uuid": "C7CD819E-4753-4B17-BF8C-BFD475F494E9",        "created": "2023-01-19T17:16:21+0100",        "created_from_client_timezone": "2023-01-19T17:16:21+0100",        "amount": 1,        "currency": "978",        "paid": false,        "status": "CREATED",        "safe": true,        "refunded": 0,        "additional": "",        "service": "REDSYSPSD2",        "service_uuid": "F9D76AE8-DDBB-4F17-8074-C2DABEE0A919",        "customer": "008fc337-6f63-499c-bfff-dae376bd4e8a",        "cof_txnid": null,        "transactions": [],        "token": "60923aea7b42aab34a3869057db010706ee17bac7821236afc4ec61312bc290299281cf3a1cf847f22e2c3e86b939d265fe8b1b28587fece1b17f9952a8fcde9",        "ip": null,        "urls": {            "payment_card": "https:\/\/api.paylands.com\/su\/tOIZRL7BhmEp",            "bizum": "https:\/\/api.paylands.com\/su\/eHXolAqXtK4s",            "3ds_tokenized": "https:\/\/api.paylands.com\/su\/141nZR9MJfgQ"        },        "reference": null,        "dynamic_descriptor": null,        "threeds_data": null    },    "client": {        "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"    },    "validation_hash": "cc8f74563d6f4a976e5721147abefeadae8c300f0c5055dae2410f6345d1c910"}
+```
+
+## Generación de Urls:[​](#generación-de-urls "Enlace directo al Generación de Urls:")
+
+Estas tres urls se generan de forma automática pero en el caso de `bizum` y `3ds tokenized` deben cumplirse unos requisitos.
+
+**Bizum:** Solo se generará esta url si el servicio indicado al crear la orden soporta este método de pago. [**Bizum**](/docs/apm/apm-bizum)
+
+**3ds\_tokenized:** Para generar esta url es necesario que cuando creemos la orden indiquemos `secure: true` y un `source_uuid` válido. [**3Ds Tokenized**](/reference/#operation/3ds-tokenized)
