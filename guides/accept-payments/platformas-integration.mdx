@@ -1,32 +1,216 @@
 ---
 title: 'Plataformas y Entornos PCI'
-description: 'Process payments directly from your server'
+description: 'Integración directa para plataformas PCI: genera la orden y procesa el cobro en una sola petición enviando los datos de tarjeta directamente'
 ---
 
-# Plataformas y Entornos PCI
+<Warning>
+  Este método de integración está **exclusivamente disponible para comercios con certificación PCI DSS**. Si tu plataforma no está certificada, debes utilizar la [integración por redirección](/guides/accept-payments/simple-integration) o el [pago por webservice](/guides/accept-payments/webservice-payment).
+</Warning>
 
-Este proceso de pago permite una integración más profunda, donde el comercio gestiona la interacción y Paylands procesa el pago en el backend.
+## ¿Qué es el pago en un solo paso?
 
-## Fases del Proceso
+El **pago en un solo paso** (`POST /v1/payment/direct`) permite a plataformas certificadas PCI realizar el cobro completo en una única petición al servidor de Paylands, enviando los datos de la tarjeta directamente sin necesidad de redirigir al usuario a ninguna pantalla de pago.
 
-### 1. Generar la orden de pago
-El comercio envía las características del pago al endpoint `/payment`.
-Paylands devuelve un objeto `order` junto con su UUID.
+A diferencia del [pago por webservice](/guides/accept-payments/webservice-payment) (que requiere dos llamadas: primero crear la orden y luego ejecutar el pago), este endpoint unifica las dos fases en una sola petición.
 
-> [!IMPORTANT]
-> Con este método, el campo `customer_ext_id` enviado a `/payment` es obligatorio y debe coincidir con el utilizado al guardar la tarjeta.
+<Info>
+  Si el pago es no seguro (`"secure": false`) y se proporciona un `TraceID` en `extra_data.cof.txnid`, se realizará un pago directo MIT (Merchant Initiated Transaction), sin intervención del usuario.
+</Info>
 
-### 2. Completar el pago
-El comercio finaliza el pago con el UUID de la orden y el UUID de la tarjeta almacenada.
-Realiza una petición a `/payment/direct`.
+---
 
-El UUID de la tarjeta se obtiene de:
-- Una notificación de pago anterior.
-- La respuesta al guardar una tarjeta.
-- Tokenizar una nueva tarjeta.
+## Flujo de integración
 
-### 3. 3D Secure
-Dependiendo del banco emisor, puede requerirse autenticación 3DS. En ese caso, la respuesta contendrá una URL a la que se debe redirigir al usuario.
+```mermaid
+sequenceDiagram
+    participant C as Comercio (Servidor)
+    participant P as Paylands API
 
-### 4. Notificación
-Si se envió una `url_post`, el comercio recibirá allí la notificación con el resultado final.
+    C->>P: POST /v1/payment/direct<br/>(datos de tarjeta + parámetros de orden)
+    alt Pago no seguro (secure: false)
+        P-->>C: 200 OK — Orden pagada
+    else Pago seguro o riesgo detectado (secure: true)
+        P-->>C: 303 — URL de autenticación 3DS
+        C->>Usuario: Redirige al enlace 3DS
+        Usuario-->>P: Completa autenticación
+        P-->>C: Notificación en url_post
+    end
+```
+
+---
+
+## Endpoint
+
+```
+POST https://api.paylands.com/v1/payment/direct
+```
+
+### Cabeceras
+
+| Cabecera | Descripción |
+|---|---|
+| `Authorization` | Tu API Key codificada en Base64 (HTTP Basic Auth) |
+| `Content-Type` | `application/json` |
+
+---
+
+## Parámetros del cuerpo (Request Body)
+
+### Campos obligatorios
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `signature` | `string` | Firma HMAC que acompaña a la API key |
+| `amount` | `integer` | Importe en formato fraccionario (ej. `100` = 1,00 €) |
+| `operative` | `string` | Operativa del pago: `AUTHORIZATION`, `DEFERRED`, `PARTIAL_AUTHORIZATION` |
+| `secure` | `boolean` | `true` si el pago requiere 3D Secure; `false` en caso contrario |
+| `customer_ext_id` | `string` | Identificador externo del usuario en el sistema del comercio |
+| `service` | `string` | UUID del servicio de pago de Paylands |
+| `card_holder` | `string` | Nombre del titular de la tarjeta |
+| `card_pan` | `string` | Número completo de la tarjeta (PAN) |
+| `card_expiry_month` | `string` | Mes de expiración (ej. `"12"`) |
+| `card_expiry_year` | `string` | Año de expiración (ej. `"26"`) |
+| `card_cvv` | `string` | Código de verificación (CVV/CVC) |
+
+### Campos opcionales
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `description` | `string` | Descripción del pago |
+| `additional` | `string` | Campo libre para datos adicionales del comercio |
+| `url_post` | `string` | URL que recibirá la notificación del resultado del pago |
+| `url_ok` | `string` | URL de redirección si el pago fue exitoso |
+| `url_ko` | `string` | URL de redirección si el pago falló |
+| `reference` | `string` | Referencia externa del comercio (evita pagos duplicados) |
+| `dynamic_descriptor` | `string` | Descriptor dinámico del cargo en el extracto del usuario |
+| `customer_ip` | `string` | IP del usuario que realiza el pago |
+| `save_card` | `boolean` | Indica si se debe tokenizar y guardar la tarjeta |
+| `expires_in` | `integer` | Tiempo en segundos hasta que expira la orden |
+| `card_additional` | `string` | Campo libre asociado a la tarjeta |
+| `threeds_data` | `object` | Datos de autenticación MPI/3DS externo (si procede) |
+
+---
+
+## Ejemplo de petición
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment/direct' \
+  --header 'Authorization: Basic cGtfdGVzdF8qKioqKioqKioqKioqKioqKioqKioqKioqKjoq' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "signature": "341f7de8e6fc49da8d8736473af6b03a",
+    "amount": 100,
+    "operative": "AUTHORIZATION",
+    "secure": false,
+    "customer_ext_id": "user_123",
+    "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+    "description": "Pago de prueba",
+    "url_post": "https://mi.comercio.com/notificacion",
+    "url_ok": "https://mi.comercio.com/ok",
+    "url_ko": "https://mi.comercio.com/ko",
+    "card_holder": "Jose Garcia",
+    "card_pan": "4761739000060016",
+    "card_expiry_month": "12",
+    "card_expiry_year": "26",
+    "card_cvv": "123",
+    "customer_ip": "127.0.0.1",
+    "reference": "ORDER-001",
+    "save_card": true
+  }'
+```
+
+---
+
+## Respuestas
+
+### ✅ 200 — Pago procesado correctamente (`secure: false`)
+
+La orden está pagada y la transacción completada de forma síncrona.
+
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "order": {
+    "uuid": "495BEE1F-7D00-4E4B-9511-F1665118932F",
+    "amount": 100,
+    "currency": 978,
+    "paid": true,
+    "status": "SUCCESS",
+    "safe": false,
+    "transactions": [
+      {
+        "uuid": "595E1818-A4E3-4A16-92A5-1DC6988162CC",
+        "operative": "AUTHORIZATION",
+        "amount": 100,
+        "status": "SUCCESS",
+        "error": "NONE",
+        "source": {
+          "object": "CARD",
+          "uuid": "6C5D535E-1B5B-4665-8A32-08ADF2A680B7",
+          "brand": "VISA",
+          "last4": "0016",
+          "holder": "Jose Garcia"
+        }
+      }
+    ]
+  }
+}
+```
+
+### 🔐 303 — Requiere autenticación 3DS (`secure: true` o riesgo detectado)
+
+Cuando el pago requiere autenticación 3D Secure, la respuesta incluye una URL a la que se debe redirigir al usuario para que complete el proceso.
+
+```json
+{
+  "message": "OK",
+  "code": 303,
+  "redirect_url": "https://api.paylands.com/v1/sandbox/payment/tokenized/{token}"
+}
+```
+
+<Note>
+  Una vez el usuario complete la autenticación 3DS, Paylands enviará el resultado del pago a la `url_post` que indicaste en la petición.
+</Note>
+
+---
+
+## Pagos con tarjetas dinámicas (DPAN)
+
+Si envías datos de tarjetas dinámicas como las obtenidas a través de **Google Pay**, **Apple Pay** o **VTS/MDES**, es obligatorio incluir los campos `cryptogram` y `eci` dentro del objeto `dpan_data` en pagos CIT (Customer Initiated Transaction).
+
+```json
+{
+  "dpan_data": {
+    "cryptogram": "ABCDEFabcdef1234567890==",
+    "eci": "07"
+  }
+}
+```
+
+En pagos **MIT** (Merchant Initiated Transaction), basta con indicar los datos de la tarjeta y el `TraceID` en `extra_data.cof.txnid`.
+
+---
+
+## Autenticación 3DS externa (MPI)
+
+Si tu plataforma realiza la autenticación 3DS de forma independiente mediante un MPI externo, puedes enviar los datos de autenticación en el campo `threeds_data`:
+
+```json
+{
+  "threeds_data": {
+    "version": 2.2,
+    "trans_status": "Y",
+    "eci": 5,
+    "cavv": "012fE34RTD34567AkFlR98Ol65Fr",
+    "ds_trans_id": "ba2fad84-2a9f-4a5a-8ca6-9eb74f7908ac"
+  }
+}
+```
+
+---
+
+## Referencia API
+
+Para la especificación completa del endpoint, consulta la [Referencia API → Pago en un solo paso](https://docs.paylands.com/reference/#operation/one-step-payment).
