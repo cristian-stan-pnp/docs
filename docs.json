@@ -178,8 +178,7 @@
                   "guides/resources/error-codes",
                   "guides/resources/glossary",
                   "guides/resources/notification-validation",
-                  "guides/resources/batch-operations",
-                  "guides/resources/payment-config-security"
+                  "guides/resources/batch-operations"
                 ]
               }
             ]
