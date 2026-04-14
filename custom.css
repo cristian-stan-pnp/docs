@@ -1,0 +1,19 @@
+/* ==========================================================================
+   Paylands Custom Overrides
+   ========================================================================== */
+
+/* --- Info / Note callouts (blue) --- */
+.bg-blue-50 {
+  background-color: #83d0d28c !important;
+}
+.border-blue-200 {
+  border-color: #83d0d28c !important;
+}
+
+/* --- Warning / Tip callouts (yellow) --- */
+.bg-yellow-50 {
+  background-color: #f3bd33 !important;
+}
+.border-yellow-200 {
+  border-color: #f3bd33 !important;
+}

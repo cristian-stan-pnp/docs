@@ -325,7 +325,6 @@ ${body}
 console.log('\n🔗 Migrating Integration pages...');
 
 const integrations = [
-  { file: 'guides/accept-payments/simple-integration.mdx', scraped: 'integration/simple-integration.mdx', title: 'Integración simple', description: 'Cómo integrar la carta de pago por redirección de Paylands' },
   { file: 'guides/accept-payments/webservice-payment.mdx', scraped: 'integration/webservice-payment.mdx', title: 'Pago por webservice', description: 'Integración avanzada mediante el webservice de Paylands' },
   { file: 'guides/accept-payments/marketplace-integration.mdx', scraped: 'integration/marketplace-integration.mdx', title: 'Integración Marketplace', description: 'Cómo integrar Paylands en un marketplace con múltiples comercios' },
   { file: 'guides/accept-payments/payment-urls.mdx', scraped: 'integration/payment-urls.mdx', title: 'URLs de pago', description: 'Referencia de URLs de pago de la API de Paylands (sandbox y producción)' },

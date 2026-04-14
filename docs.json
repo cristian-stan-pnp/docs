@@ -44,7 +44,6 @@
               {
                 "group": "Integración",
                 "pages": [
-                  "guides/accept-payments/simple-integration",
                   "guides/accept-payments/webservice-payment",
                   "guides/accept-payments/marketplace-integration",
                   "guides/accept-payments/link-payments",
