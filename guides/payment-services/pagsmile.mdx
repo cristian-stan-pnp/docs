@@ -12,7 +12,7 @@ Pagsmile es un servicio que permite realizar pagos por tarjeta o mediante los m�
 Pagsmile espera recibir la siguiente información en el campo `extra_data` al crear la orden. Los campos a enviar varían dependiendo del método de pago escogido.
 
 ```
-"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com"        "document_identification_number": "11032341882",        "phone": {            "number": "700000000",            "prefix": "351"        }     },    "billing_address": {        "address1": "calle test",        "city": "",        "state_code": "",        "zip_code": "38082365",        "country": "BRL"    }}
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "11032341882",        "phone": {            "number": "700000000",            "prefix": "351"        }     },    "billing_address": {        "address1": "calle test",        "city": "",        "state_code": "",        "zip_code": "38082365",        "country": "BRL"    }}
 ```
 
 * Pago con tarjeta: no necesita `extra_data`
@@ -38,7 +38,7 @@ Los payouts PIX se realizarán usando el CPF como tipo de cuenta por defecto. Si
 | Tipo de cuenta | Cuenta                                               | Descripción                                                             | Ejemplo                                               |
 | -------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------- |
 | CPF            | extra\_data.profile.document\_identification\_number | CPF. 11 dígitos.                                                        | 22\*\*\*\*\*\*\*99                                    |
-| PHONE          | extra\_data.profile.phone.number                     | Número de teléfono, sin prefijo teléfonico.                             | 11987654321                                           |
+| PHONE          | extra\_data.profile.phone.number                     | Número de teléfono, sin prefijo telefónico.                             | 11987654321                                           |
 | EMAIL          | extra\_data.profile.email                            | Correo electrónico.                                                     | [merchant@pagsmile.com](mailto:merchant@pagsmile.com) |
 | EVP            | extra\_data.payment.evp                              | Clave alfanumérica de 32 caracteres, que vincula a una cuenta bancaria. | a1073db4-a3a0-11ed-a8fc-0242ac120002                  |
 
@@ -82,7 +82,7 @@ Campos obligatorios:
 
 #### Transfiya[​](#transfiya "Enlace directo al Transfiya")
 
-Los pagos con Transfiya requiren `amount` >= 1000 COP.
+Los pagos con Transfiya requieren `amount` >= 1000 COP.
 
 Campos obligatorios:
 
@@ -117,13 +117,13 @@ Campos obligatorios:
 
 #### Vita Wallet[​](#vita-wallet "Enlace directo al Vita Wallet")
 
-Los pagos con Vita Wallet requiren `amount` >= 5000 CLP.
+Los pagos con Vita Wallet requieren `amount` >= 5000 CLP.
 
 Campos obligatorios:
 
 * **Nombre y apellidos** (`profile.first_name` y `profile.last_name`)
 * **País** (`billing_address.country`): valor fijo `CHL`
-* **Número de teléfono** (`profile.email`)
+* **Email** (`profile.email`)
 * **Tipo de cuenta** (`payment.account_type`): valor fijo `EMAIL`
 
 ```

@@ -16,7 +16,7 @@ description: 'Configuración e integración del servicio de pago nativo Paylands
 
 El CVV siempre será 123 y se recomienda utilizar como fecha de expiración 12/34. En el caso de indicar otra, deberá ser posterior a la fecha actual y siguiendo el formato mm/aa. El campo del titular de la tarjeta es indiferente, por lo que puede introducirse el valor que se desee.
 
-En el caso de un pago no seguro, a raiz de la entrada de la PSD2, el banco emisor puede requerir intervención del usuario, lo que se conoce como Strong Customer Authentication (SCA), provocando un soft decline en la operación. Esto significa que el usuario debe ser redirigido al 3DS para finalizar el pago. La respuesta del endpoint de pago directo en este caso devolverá un código http 303 y en el cuerpo de la respuesta contendrá una url a la que el comercio deberá redirigir al usuario para que finalice la operación por 3DS.
+En el caso de un pago no seguro, a raíz de la entrada de la PSD2, el banco emisor puede requerir intervención del usuario, lo que se conoce como Strong Customer Authentication (SCA), provocando un soft decline en la operación. Esto significa que el usuario debe ser redirigido al 3DS para finalizar el pago. La respuesta del endpoint de pago directo en este caso devolverá un código http 303 y en el cuerpo de la respuesta contendrá una url a la que el comercio deberá redirigir al usuario para que finalice la operación por 3DS.
 
 Las nuevas versiones del 3DS v2 requieren de pasos intermedios que Paylands realiza de forma automática, por lo que el comercio sólo debe tener en cuenta las tarjetas anteriores para poder probar los diferentes tipos de pago con el estado que se desee (SUCCESS/REFUSED).
 
