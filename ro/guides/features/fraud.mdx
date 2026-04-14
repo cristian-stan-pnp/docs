@@ -1,0 +1,310 @@
+---
+title: "Antifraudă și securitate"
+description: "Sistemul antifraudă și listele de securitate Paylands: reguli, whitelist, blacklist și liste gri"
+---
+
+## Anti Fraudă
+
+Paylands oferă un sistem antifraudă puternic care permite atât redirecționarea tranzacțiilor suspecte către 3DS, cât și respingerea lor directă, fără ca plata să fie procesată.
+
+Pentru aceasta, există o serie de verificări disponibile care pot fi grupate pentru a forma reguli antifraudă, fiecare cu propriul punctaj. Suma punctajelor tuturor regulilor care au fost activate va determina punctajul pentru operațiunea în curs.
+
+### Configurarea și crearea Anti Fraudei
+
+În primul rând, trebuie să navigăm la fila Securitate -> Anti Fraudă din panou. Aici vom vedea o listă cu toate sistemele antifraudă disponibile și numărul de servicii asociate fiecăruia.
+
+În coloana `Servicii Totale` putem consulta făcând click pe numărul de servicii asociate antifraudei. Reține că trebuie să asociezi antifraudei acele servicii care vor folosi acest sistem. Un serviciu poate fi asociat doar unui singur sistem antifraudă.
+
+![Anti fraud list](/images/docs/assets/images/antifraud_list-28332c37709f7d7da5e1caf87c100030.png)
+
+Pentru a asocia un serviciu trebuie să navigăm la Administrare -> Lista de Servicii -> Listare. Accesăm detaliile serviciului pe care dorim să îl asociem unui Anti Fraudă. În fila Anti Fraudă alegem cel dorit și actualizăm.
+
+![Anti fraud service](/images/docs/assets/images/associate_antifraud_service-af03a69630483f7eaa9c50e4f4e49680.png)
+
+Validările disponibile sunt:
+
+<AccordionGroup>
+  <Accordion title="maximumCorrectPaymentsByCard">
+    * Numărul de tranzacții corecte cu un card în ultimele X zile
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumCorrectPaymentsByIp">
+    * Numărul de tranzacții corecte de la o adresă IP în ultimele X zile
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumCorrectPaymentsByExternalId">
+    * Numărul de tranzacții corecte asociate unui utilizator în ultimele X zile
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByCard">
+    * Numărul de tranzacții respinse cu un card în ultimele X zile
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByIp">
+    * Numărul de tranzacții respinse asociate unei adrese IP în ultimele X zile
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByExternalId">
+    * Numărul de tranzacții respinse asociate unui utilizator în ultimele X zile
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByCard">
+    * Numărul de încasări cu un card în ultimele X minute
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în minute)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByIp">
+    * Numărul de încasări de la o adresă IP în ultimele X minute
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în minute)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByExternalId">
+    * Numărul de încasări asociate unui utilizator în ultimele X minute
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în minute)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsFromCardFromDifferentIPs">
+    * Numărul de încasări cu adrese IP diferite de la care a fost folosit cardul în ultimele X zile în serviciul de plată curent
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsFromIPFromDifferentCards">
+    * Numărul de încasări cu carduri diferite de la o adresă IP în ultimele X zile în serviciul de plată curent
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumRetriesFromCardUsedByOtherUser">
+    * Numărul de încasări de la utilizatori diferiți care au folosit cardul în serviciul de plată curent
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumRetriesFromSameIpUsedByOtherUsers">
+    * Numărul de încasări de la utilizatori diferiți care au folosit cardul de la aceeași adresă IP în serviciul de plată curent
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="successivePaymentsWithSimilarCards">
+    * Numărul de plăți din ultimele zile de la aceeași adresă IP cu carduri similare
+    * Parametri:
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumAmountPayment">
+    * Suma maximă de plată
+    * Parametri:
+      * *amount*: number
+  </Accordion>
+
+  <Accordion title="maximumUsedCardsByExternalId">
+    * Numărul de încasări cu carduri diferite folosite de același utilizator în ultimele X zile
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="paymentFromProxy">
+    * Verifică dacă există vreun antet de proxy
+  </Accordion>
+
+  <Accordion title="paymentFromTor">
+    * Verifică coincidența adresei IP cu o listă a ultimelor adrese IP folosite de TOR
+  </Accordion>
+
+  <Accordion title="lastAmountsSum">
+    * Suma valorilor tranzacțiilor corecte din ultimele X zile
+
+    * Parametri:
+
+      * *amount*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="minimumAmountPayment">
+    * Suma minimă de plată
+    * Parametri:
+      * *amount*: number
+  </Accordion>
+
+  <Accordion title="datesRange">
+    * Compară ora tranzacției cu intervalul de date furnizat
+
+    * Parametri:
+
+      * *from*: date
+      * *to*: date
+  </Accordion>
+
+  <Accordion title="matchingIpFromCountry">
+    * Compară țara monedei cu țara utilizatorului
+
+    * Parametri:
+
+      * *operator*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="matchingBrand">
+    * Verifică dacă cardul aparține unei mărci specifice
+    * Parametri:
+      * *brand*: string
+  </Accordion>
+
+  <Accordion title="matchingBrandAndCountry">
+    * Verifică dacă cardul aparține unei mărci și unei țări specifice
+
+    * Parametri:
+
+      * *brand*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="matchingSourceCountry">
+    * Verifică dacă cardul aparține unei țări specifice
+
+    * Parametri:
+
+      * *operator*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="maximumAmountCorrectPaymentsByCard">
+    * Numărul maxim de plăți reușite cu același card
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumCorrectUsedCardsByExternalId">
+    * Numărul maxim de carduri folosite în plăți corecte pe ID Extern
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectUsedCardsByExternalId">
+    * Numărul maxim de carduri folosite în plăți incorecte pe ID Extern
+
+    * Parametri:
+
+      * *retries*: number
+      * *interval*: number (în zile)
+  </Accordion>
+</AccordionGroup>
+
+## Liste de securitate
+
+În cadrul listelor de securitate putem configura acele elemente (IP, BIN, UUID, EXTERNAL\_ID și TOKEN) pentru a le marca ca sigure, cu risc sau pentru a le bloca.
+
+Pentru a accesa fiecare dintre listele de securitate trebuie doar să navigăm la **Securitate** și să facem click pe lista dorită.
+
+În această secțiune putem vedea fiecare dintre listele disponibile unde putem să le activăm sau să le dezactivăm și să consultăm serviciile asociate acestora. Putem chiar să dezasociem serviciile dorite din lista respectivă.
+
+![ColorList table](/images/docs/assets/images/colorlist_table-ec48062c05b366a4785978833e314c1e.png)
+
+![ColorList services](/images/docs/assets/images/colorlist_services-5d2d074e0b68dd664ee3e6f76f2608db.png)
+
+În detaliile fiecărei liste putem crea, modifica și șterge elemente. Reține că va trebui, de asemenea, să asociezi atâtea servicii câte dorești să utilizeze această listă.
+
+![ColorList detail](/images/docs/assets/images/colorlist_detail-ed1a5fc228afbaf082d9de64dc48f594.png)
+
+![ColorList add service](/images/docs/assets/images/colorlist_add_service-77491fc9efcb98ef490ee2cae1f8299f.png)
+
+### Liste Albe
+
+Din această secțiune poți configura liste albe care pot fi asociate serviciilor existente.
+
+Aceste liste permit configurarea verificărilor pentru a evita ca o operațiune de încredere să intre în evaluarea de risc sau fraudă. Parametrii care pot fi verificați pentru a valida că operațiunea este de încredere sunt următorii:
+
+* IP: Adresa IP de la care se realizează operațiunea.
+* BIN: Primele 6 cifre ale numerotării cardului.
+* UUID: Identificatorul cardului.
+* ID\_EXTERNO: Identificatorul clientului.
+* TOKEN: Token-ul identificator al cardului.
+
+### Liste Negre
+
+Din această secțiune poți configura liste negre care pot fi asociate serviciilor existente.
+
+Aceste liste permit configurarea verificărilor pentru a evita ca o operațiune cu încredere îndoielnică să fie procesată. Parametrii care pot fi verificați pentru a valida că operațiunea trebuie blocată sunt următorii:
+
+* IP: Adresa IP de la care se realizează operațiunea.
+* BIN: Primele 6 cifre ale numerotării cardului.
+* UUID: Identificatorul cardului.
+* ID\_EXTERNO: Identificatorul clientului.
+* TOKEN: Token-ul identificator al cardului.
+
+### Liste Gri
+
+Din această secțiune poți configura liste gri care pot fi asociate serviciilor existente.
+
+Aceste liste permit configurarea verificărilor pentru a obliga o operațiune cu încredere îndoielnică să fie procesată ca o comandă securizată (3DS). Parametrii care pot fi verificați pentru a valida că nivelul de securitate al operațiunii trebuie crescut sunt următorii:
+
+* IP: Adresa IP de la care se realizează operațiunea.
+* BIN: Primele 6 cifre ale numerotării cardului.
+* UUID: Identificatorul cardului.
+* ID\_EXTERNO: Identificatorul clientului.
+* TOKEN: Token-ul identificator al cardului.

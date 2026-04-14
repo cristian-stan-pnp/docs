@@ -1,0 +1,78 @@
+---
+title: 'PayPal'
+description: 'Configurarea și integrarea serviciului de plată PayPal în Paylands'
+---
+
+## Introducere[​](#introducere "Link direct către Introducere")
+
+PayPal este un serviciu de plată care permite procesarea plăților utilizând checkout-ul Paylands sau printr-o redirecționare.
+
+## Restricții și cerințe[​](#restricții-și-cerințe "Link direct către Restricții și cerințe")
+
+În prezent, doar moneda EUR este suportată.
+
+La generarea comenzii de plată, trebuie trimise cel puțin câmpurile *profile* și *billing\_address* pentru a putea concilia plățile prin PayPal.
+
+```
+"extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@gmail.com",        "phone": {            "number": "666666666",            "prefix": "34"        }    },    "billing_address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }}
+```
+
+***
+
+## STC (Set Transaction Context)[​](#stc-set-transaction-context "Link direct către STC (Set Transaction Context)")
+
+Trimiterea datelor STC permite îmbogățirea informațiilor tranzacției cu informații suplimentare despre cumpărător și serviciul contractat.
+
+În cererea utilizată pentru [**generarea comenzii de plată**](/reference/#operation/generate-payment-order):
+
+* Datele cumpărătorului sunt trimise în `extra_data.profile` și `extra_data.billing_address`
+* Datele contextului OTA (Online Travel Agency), legate de rezervare sau serviciul de călătorie, sunt trimise în `extra_data.payment`
+
+Datele OTA sunt necesare doar pentru anumite industrii, cum ar fi hotelurile.
+
+### OTA - Hoteluri (MCC 7011)[​](#ota---hoteluri-mcc-7011 "Link direct către OTA - Hoteluri (MCC 7011)")
+
+Următoarele câmpuri corespund contextului OTA pentru hoteluri.
+
+Toate câmpurile OTA trebuie trimise în cadrul **`extra_data.payment`**.
+
+| Câmp                     | Tip                          | Descriere                                                | Exemplu                         |
+| ------------------------ | ---------------------------- | -------------------------------------------------------- | ------------------------------- |
+| `buyer_creation_date`    | `string (ISO 8601 datetime)` | Data înregistrării utilizatorului în sistemul comerciantului | `2012-12-09T19:14:55.277+00:00` |
+| `ota_type`               | `string`                     | Tipul industriei OTA. Pentru hoteluri trebuie să fie `"hotel"` | `"hotel"`                       |
+| `ota_service_start_date` | `string (ISO 8601 datetime)` | Data de început a sejurului (check-in)                   | `2026-06-01T15:00:00+00:00`     |
+| `ota_service_end_date`   | `string (ISO 8601 datetime)` | Data de sfârșit a sejurului (check-out)                  | `2026-06-05T12:00:00+00:00`     |
+| `ota_change_guest`       | `boolean`                    | Indică dacă titularul rezervării poate fi schimbat        | `false`                         |
+| `ota_start_country`      | `string (ISO Alpha-2)`       | Codul țării unde începe sejurul                           | `"ES"`                          |
+| `ota_start_city`         | `string`                     | Orașul unde începe sejurul                                | `"Madrid"`                      |
+| `ota_start_zipcode`      | `string`                     | Codul poștal unde începe sejurul                         | `"28080"`                       |
+
+#### Exemplu[​](#exemplu "Link direct către Exemplu")
+
+```
+{    "extra_data": {        "profile": {            "first_name": "John",            "last_name": "Doe",            "email": "john@doe.com",            "birthdate": "1984-11-28",            "phone": {                "number": "678767878",                "prefix": "+34"            }        },        "billing_address": {            "city": "Madrid",            "country": "ESP",            "address1": "Avenida principal, 24",            "zip_code": "12345",            "state_code": "ESP"        },        "payment": {            "buyer_creation_date": "2012-12-09T19:14:55.277+00:00",            "ota_type": "hotel",            "ota_service_start_date": "2012-12-09T19:14:55.277+00:00",            "ota_service_end_date": "2012-12-14T19:14:55.277+00:00",            "ota_change_guest": false,            "ota_start_country": "ES",            "ota_start_city": "Madrid",            "ota_start_zipcode": "28080"        }    }}
+```
+
+***
+
+## Sandbox[​](#sandbox "Link direct către Sandbox")
+
+Efectuarea unei plăți cu PayLater și PayPal:
+
+* utilizator: [sb-uto4v27115289@personal.example.com](mailto:sb-uto4v27115289@personal.example.com)
+* parolă: 3T9gvRX>
+
+Efectuarea unei plăți cu PayPal:
+
+* utilizator: [sb-y94a925372648@business.example.com](mailto:sb-y94a925372648@business.example.com)
+* parolă: U\@2!S\[gZ
+
+# Restricții de sumă pentru PayLater
+
+PayLater este suportat în mai multe țări, fiecare cu condiții specifice în funcție de sumă și ratele de plată:
+
+* Spania, Italia și Regatul Unit: sumă între 30 și 2.000 euro (EUR), plată în 3 rate.
+* Germania: sumă între 99 și 5.000 euro (EUR), plata poate fi în 3, 6, 12 sau 24 rate. De asemenea, pot alege să plătească în 30 de zile de la achiziție dacă suma este între 1 și 1.000 euro (EUR).
+* Franța și Australia: sumă între 30 și 2.000 euro (EUR), plată în 4 rate.
+* Regatul Unit: dacă suma este mai mare de 99 euro (EUR), se poate aplica o dobândă de 0% la achiziție.
+* Statele Unite: sumă între 30 și 1.500 euro (EUR), plată în 4 rate cu data de încasare la fiecare două săptămâni. Există opțiunea de plată lunară, dar ratele trebuie să fie de 6, 12 sau 24 și suma trebuie să fie între 199 și 10.000 euro (EUR).

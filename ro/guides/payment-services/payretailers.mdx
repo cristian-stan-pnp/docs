@@ -1,0 +1,527 @@
+---
+title: 'PayRetailers'
+description: 'Configurarea și integrarea serviciului de plată PayRetailers în Paylands'
+---
+
+## Integrarea PayRetailers[​](#integración-de-payretailers "Link direct la Integrarea PayRetailers")
+
+PayRetailers permite procesarea **pay-in-urilor** prin metode de plată locale în LATAM (PSE, EFECTY, Pago Fácil, Khipu, SPEI, PIX, Transfer și Tarjeta Colombia), precum și **pay-out-uri**. Plățile pot fi efectuate prin **checkout** sau **redirecționare**.
+
+***
+
+## Payins cu Payretailers[​](#payins-con-payretailers "Link direct la Payins cu Payretailers")
+
+### Cerințe generale[​](#requisitos-generales "Link direct la Cerințe generale")
+
+#### Monede acceptate[​](#monedas-soportadas "Link direct la Monede acceptate")
+
+În prezent, PayRetailers acceptă doar următoarele monede:
+
+* USD
+* ARS
+* COP
+* PEN
+* MXN
+* BRL
+
+#### Date obligatorii (`extra_data`)[​](#datos-obligatorios-extra_data "Link direct la datos-obligatorios-extra_data")
+
+Toate metodele de plată necesită includerea următoarelor informații în `extra_data`:
+
+* **profile**
+* `first_name`
+* `last_name`
+* `email`
+* `document_identification_number`
+* `phone.number`, `phone.prefix` (dacă este cazul)
+
+* **billing\_address**
+* `city`, `country`, `zip_code`, `address1`, `state_code`
+
+Exemplu:
+
+```
+"extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@gmail.com",        "document_identification_number": "92309089",        "phone": {            "number": "02614235138",            "prefix": "54"        }    },    "billing_address": {        "city": "Bogota",        "country": "COL",        "address1": "Calle Mayor, 23",        "zip_code": "111611",        "state_code": ""    }}
+```
+
+#### Parametri suplimentari în URL[​](#parámetros-adicionales-en-la-url "Link direct la Parametri suplimentari în URL")
+
+| Parametru | Descriere                      | Exemple                                  |
+| --------- | ------------------------------ | ---------------------------------------- |
+| `apm`     | Selectarea metodei de plată    | `?apm=PSE`, `?apm=PIX`, `?apm=TRANSFER` |
+| `lang`    | Limba fluxului                 | `?lang=es`, `?lang=en`, `?lang=pt`       |
+
+Limba implicită: `es` (spaniolă).
+
+#### Comportamentul mediului sandbox[​](#comportamiento-del-entorno-sandbox "Link direct la Comportamentul mediului sandbox")
+
+Mediul **sandbox** al PayRetailers poate să nu reflecte complet comportamentul real al metodelor de plată.
+
+Pentru a simula diferite stări finale în sandbox, se pot utiliza următoarele valori ale `amount`:
+
+| `amount`              | Stare               | Detaliu              |
+| --------------------- | ------------------- | -------------------- |
+| `11111`               | Plătit              | Plată acceptată      |
+| `44444`               | Respins             | Plată anulată        |
+| `55555`               | Respins             | Plată expirată       |
+| `66666`               | Respins             | Eroare la plată      |
+| Orice altă valoare    | Așteptare răspuns   | Plată în așteptare   |
+
+***
+
+### Metode de plată[​](#métodos-de-pago "Link direct la Metode de plată")
+
+#### PSE (Columbia)[​](#pse-colombia "Link direct la PSE (Columbia)")
+
+* **Țară:** `COL`
+* **Monede:** COP, USD
+* **APM:** PSE
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@example.com",        "document_identification_number": "92309089",        "phone": { "number": "02614235138", "prefix": "54" }    },    "billing_address": {        "city": "Bogota",        "country": "COL",        "address1": "Calle 12",        "zip_code": "111611",        "state_code": ""    }}
+```
+
+***
+
+#### EFECTY (Columbia)[​](#efecty-colombia "Link direct la EFECTY (Columbia)")
+
+* **Țară:** `COL`
+* **Monede:** COP, USD
+* **APM:** EFECTY
+
+*(Exemplu identic cu PSE)*
+
+***
+
+#### Pago Fácil (Argentina)[​](#pago-fácil-argentina "Link direct la Pago Fácil (Argentina)")
+
+* **Țară:** `ARG`
+* **Monede:** ARS, USD
+* **APM:** PAGO\_FACIL
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@example.com",        "document_identification_number": "92309089"    },    "billing_address": {        "city": "Buenos Aires",        "country": "ARG",        "address1": "Av. Libertador 123",        "zip_code": "1000",        "state_code": ""    }}
+```
+
+***
+
+#### Khipu (Argentina și Peru)[​](#khipu-argentina-y-perú "Link direct la Khipu (Argentina și Peru)")
+
+* **Țări:** `ARG`, `PER`
+* **Monede:** ARS, PEN, USD
+* **APM:** KHIPU
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@example.com",        "document_identification_number": "92309089"    },    "billing_address": {        "city": "Lima",        "country": "PER",        "address1": "Av. Arequipa 123",        "zip_code": "15046",        "state_code": ""    }}
+```
+
+***
+
+#### SPEI (Mexic)[​](#spei-méxico "Link direct la SPEI (Mexic)")
+
+* **Țară:** `MEX`
+* **Monede:** MXN, USD
+* **APM:** SPEI
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "PERM850515MDFPRD32"    },    "billing_address": {        "city": "Ciudad de Mexico",        "country": "MEX",        "address1": "Calle Mayor 12",        "zip_code": "06010",        "state_code": ""    }}
+```
+
+***
+
+#### PIX (Brazilia)[​](#pix-brasil "Link direct la PIX (Brazilia)")
+
+* **Țară:** `BRA`
+* **Monede:** BRL, USD
+* **APM:** PIX
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "310.535.927-36"    },    "billing_address": {        "city": "Sao Paulo",        "country": "BRA",        "address1": "R. Sao Joaquim, 596",        "zip_code": "01508001",        "state_code": ""    }}
+```
+
+***
+
+#### TRANSFER (Ecuador și Brazilia)[​](#transfer-ecuador-y-brasil "Link direct la TRANSFER (Ecuador și Brazilia)")
+
+* **Țară:** `ECU`, `BRA`
+* **Monede:** USD, BRL
+* **APM:** TRANSFER
+
+##### Bănci acceptate (`payment.bank_name`)[​](#bancos-soportados-paymentbank_name "Link direct la bancos-soportados-paymentbank_name")
+
+| Țară    | Valori permise                       |
+| ------- | ------------------------------------ |
+| Ecuador | `BANCO_PICHINCHA`, `BANCO_GUAYAQUIL` |
+| Brazilia | `SANTANDER_BRASIL`                  |
+
+###### Valori implicite[​](#valores-por-defecto "Link direct la Valori implicite")
+
+Dacă **nu** se trimite `payment.bank_name`:
+
+* Ecuador → `BANCO_PICHINCHA`
+* Brazilia → `SANTANDER_BRASIL`
+
+##### Exemplu (Ecuador, Banco Guayaquil)[​](#ejemplo-ecuador-banco-guayaquil "Link direct la Exemplu (Ecuador, Banco Guayaquil)")
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "00113562600"    },    "billing_address": {        "city": "Quito",        "country": "ECU",        "address1": "Av. Amazonas 123",        "zip_code": "170102",        "state_code": ""    },    "payment": {        "bank_name": "BANCO_GUAYAQUIL"    }}
+```
+
+***
+
+#### Tarjeta (Columbia)[​](#tarjeta-colombia "Link direct la Tarjeta (Columbia)")
+
+* **Țară:** `COL`
+* **Monede:** COP, USD
+* **APM:** CARD
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "00113562600",        "phone": { "number": "579999999999" }    },    "billing_address": {        "city": "Bogota",        "country": "COL",        "address1": "Calle Mayor 12",        "zip_code": "111611",        "state_code": ""    }}
+```
+
+***
+
+## Limite pentru tranzacții[​](#límites-para-las-transacciones "Link direct la Limite pentru tranzacții")
+
+Acest tabel reflectă limitele pe tip de comerciant, utilizator și țară:
+
+| Țară        | Limită numerar pe utilizator și zi | Limită numerar pe utilizator și lună | Limită online pe utilizator și zi | Limită online pe utilizator și lună | Limită card de credit pe utilizator pe zi | Limită card de credit pe utilizator pe lună |
+| ----------- | ---------------------------------- | ------------------------------------ | --------------------------------- | ----------------------------------- | ----------------------------------------- | ------------------------------------------- |
+| Ecuador     | 2.000 USD                          | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | Indisponibil                              | Indisponibil                                |
+| Peru        | 2.000 USD                          | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | Indisponibil                              | Indisponibil                                |
+| Mexic       | 2.000 USD                          | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | Indisponibil                              | Indisponibil                                |
+| Panama      | 2.000 USD                          | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | Indisponibil                              | Indisponibil                                |
+| El Salvador | 2.000 USD                          | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | Indisponibil                              | Indisponibil                                |
+| Nicaragua   | 2.000 USD                          | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | Indisponibil                              | Indisponibil                                |
+| Costa Rica  | 2.000 USD                          | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | 2.500 USD                                 | 7.000 USD                                  |
+| Chile       | 2.000 USD                          | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | 35.000 USD                                | 80.000 USD                                 |
+| Brazilia    | 10.000 USD                         | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | Indisponibil                              | Indisponibil                                |
+| Guatemala   | 2.000 USD                          | 8.000 USD                            | Indisponibil                      | Indisponibil                        | Indisponibil                              | Indisponibil                                |
+| Columbia    | 10.000 USD                         | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | 2.500 USD                                 | 7.000 USD                                  |
+| Argentina   | 10.000 USD                         | 30.000 USD                           | 35.000 USD                        | 80.000 USD                          | 2.500 USD                                 | 7.000 USD                                  |
+
+***
+
+## Erori de tranzacții[​](#errores-de-transacciones "Link direct la Erori de tranzacții")
+
+Acest tabel reflectă posibilele erori care pot apărea în procesul de plată:
+
+| Mesaj de eroare                                 | Semnificație                                                                                                                                                                                                                             |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PAYMENT\_METHOD\_NOT\_ALLOWED                   | The payment method ID used in the request is not active or enabled, and cannot be used.                                                                                                                                                  |
+| PAYMENT\_PSP\_ERROR                             | Generic error message received from the PSP, normally originated from a timeout on the PSP side in high traffic instances.                                                                                                               |
+| PERSONAL\_ID\_VALIDATION\_FAILED                | The PersonalID doesn't exist or belongs to a minor, deceased individuals or PEP and associates. Also the payment will be blocked if the PersonalID is related to any international lists of money laundering and/or terrorist financing. |
+| TRANSACTION\_INVALID\_FIELD\_LANGUAGE           | The "Language" field of the request contains an invalid language value.                                                                                                                                                                  |
+| TRANSACTION\_INVALID\_FIELD\_CURRENCY           | The "Currency" field contains an unsupported or invalid currency value.                                                                                                                                                                  |
+| TRANSACTION\_INVALID\_FIELD\_COUNTRY            | The "Country" field contains an unsupported or invalid country value.                                                                                                                                                                    |
+| TRANSACTION\_INVALID\_EMAIL                     | The "Email" field contains an invalid value(normally due to email syntax).                                                                                                                                                               |
+| TRANSACTION\_INVALID\_CPF                       | (Brazil only) the "personalID" field contains an invalid value.                                                                                                                                                                          |
+| TRANSACTION\_MIN\_AMOUNT                        | The "Amount" field contains a value that is below the minimum limit for the requested payment method.                                                                                                                                    |
+| TRANSACTION\_MAX\_AMOUNT                        | The "Amount" field contains a value that exceeds the maximum limit for the requested payment method.                                                                                                                                     |
+| INVALID\_AMOUNT                                 | The value sent for "amount" is not an integer.                                                                                                                                                                                           |
+| TRANSACTION\_REQUIRED\_COUNTRY                  | The "Country" parameter is empty.                                                                                                                                                                                                        |
+| TRANSACTION\_REQUIRED\_CURRENCY                 | The "Currency" parameter is empty.                                                                                                                                                                                                       |
+| TRANSACTION\_BLOCKED BY\_CUSTOMER\_LIMIT\_RULE  | The daily/monthly limit of transaction attempts for this customer has been reached, and no transactions can be generated for the customer until the next day/week/month.                                                                 |
+| CUSTOMER\_COMPLIANCE\_VALIDATION\_FAILED        | (Brazil only) the "personalID" field contains a non-existent CPF.                                                                                                                                                                        |
+| MERCHANT\_COMPLIANCE VALIDATION\_ERROR          | If one of your users is blocked with this error message please expose your case on our Freshdesk.                                                                                                                                        |
+| PAYMENT\_PSP\_ERROR                             | Generic error message received from the payment partner PSP, usually comes from a timeout on PSP's side in high traffic instances.                                                                                                       |
+| TRANSACTION\_CREATION\_ERROR                    | The payment method used in the request is not active and cannot be used. Shop credentials have been disabled.                                                                                                                            |
+| PAYMENT\_AMOUNT\_NOT\_EQUAL                     | The paid amount differs from the original amount or QR amount.                                                                                                                                                                           |
+| PAYER\_CPF\_NOT\_EQUAL                          | The payer's document number(CPF) does not match the buyer's document number.                                                                                                                                                             |
+| CORPORATE\_BANK\_ACCOUNT\_PAYMENT\_NOT\_ALLOWED | The transaction was paid from a corporate bank account.                                                                                                                                                                                  |
+| PAYMENT\_COMPLIANCE\_VALIDATION\_FAILED         | The transaction was paid from a corporate bank account.                                                                                                                                                                                  |
+| CUSTOMER\_INVALID\_AGE                          | Underaged.                                                                                                                                                                                                                               |
+| CUSTOMER\_INVALID\_AGE\_NULL                    | Payer age not available.                                                                                                                                                                                                                 |
+| CUSTOMER\_INVALID\_STATUS                       | CPF is not valid/ active (deceased customer).                                                                                                                                                                                            |
+| CUSTOMER\_IS\_PEP                               | Politically exposed person.                                                                                                                                                                                                              |
+| CUSTOMER\_IS\_PEP\_RELATED                      | Family member of a politically exposed person.                                                                                                                                                                                           |
+| CUSTOMER\_IS\_IN\_INTERNATIONAL\_LISTS          | Customer is in the lavajato/laft list.                                                                                                                                                                                                   |
+| CUSTOMER\_SUSPENDED\_STATUS                     | CPF suspend by government triggered/criminal illegal activities.                                                                                                                                                                         |
+| CUSTOMER\_POSSIBLE\_INVALID\_STATUS             | In process of losing CPF.                                                                                                                                                                                                                |
+| CUSTOMER\_NOT\_FOUND                            | No CPF data available.                                                                                                                                                                                                                   |
+
+***
+
+## Payouts cu Payretailers[​](#payouts-con-payretailers "Link direct la Payouts cu Payretailers")
+
+Payretailers permite efectuarea de **payouts** (transferuri de fonduri) în următoarele țări:
+
+| Țară     | Monedă |
+| -------- | ------ |
+| Brazilia | BRL    |
+| Mexic    | MXN    |
+| Chile    | CLP    |
+| Columbia | COP    |
+| Peru     | PEN    |
+| Ecuador  | USD    |
+
+Există două metode de payout:
+
+| Metodă   | Descriere                                  | Țări compatibile     |
+| -------- | ------------------------------------------ | -------------------- |
+| Transfer | Transfer bancar tradițional                | Toate cele de mai sus |
+| PIX      | Transfer imediat prin cheie PIX            | Doar Brazilia        |
+
+***
+
+### Câmpuri obligatorii în `extra_data`[​](#campos-obligatorios-en-extra_data "Link direct la campos-obligatorios-en-extra_data")
+
+#### `profile` (întotdeauna necesar):[​](#profile-siempre-requerido "Link direct la profile-siempre-requerido")
+
+* `first_name`
+* `last_name`
+* `email`
+* `document_identification_number`
+* `document_identification_type` *(opțional; doar pentru COL, ECU și PER. Valori posibile: `NATIONAL_IDENTITY_DOCUMENT`, `FOREIGN_IDENTIFICATION_DOCUMENT`, `FISCAL_IDENTIFICATION_CODE`, `VALID_PASSPORT`)*
+* `phone.number` *(necesar doar dacă `country` este BRA, PER sau ECU)*
+
+#### `billing_address`:[​](#billing_address "Link direct la billing_address")
+
+* `address1`
+* `country`
+
+#### `payment` (în funcție de tipul de payout):[​](#payment-según-el-tipo-de-payout "Link direct la payment-según-el-tipo-de-payout")
+
+**Dacă tipul de payout este `Transfer`:**
+
+* `bank_name` *(cu excepția Argentinei)* – Acest câmp trebuie să conțină **codul** băncii destinatarului. Consultă secțiunea [Coduri de bănci pe țară](#c%C3%B3digos-de-bancos-por-pa%C3%ADs) pentru a vedea valorile valide în funcție de țară.
+* `account` [Vezi specificațiile](#especificaciones-para-account-por-pa%C3%ADs-transfer)
+* `account_type` *(cu excepția Argentinei și Mexicului)*
+* `account_agency_number` *(doar Brazilia, obligatoriu)* – Cod numeric al agenției bancare, furnizat de bancă. **Se folosesc doar cifrele de dinaintea cratimei** (ex: `"1234-5"` → se trimite `"1234"`).
+* `aba_swift` *(opțional și doar Brazilia)*
+* `payout_beneficiary_type_code` *(opțional, doar Chile. Valori: `PERSON` (implicit), `COMPANY`)*
+
+**Dacă tipul de payout este `PIX` (doar Brazilia):**
+
+* `recipient_pix_key` *(opțional. Dacă nu este indicat, se folosește CPF-ul ca cheie PIX)*
+
+***
+
+### Valorile `document_identification_type` pe țară[​](#valores-de-document_identification_type-por-país "Link direct la valores-de-document_identification_type-por-país")
+
+Câmpul `document_identification_type` se include în `profile`, este **opțional** și **poate fi folosit doar pentru țările Columbia, Ecuador și Peru**. Dacă nu este indicat, se va utiliza implicit `NATIONAL_IDENTITY_DOCUMENT`. Pentru restul țărilor, acest câmp nu trebuie trimis.
+
+| Țară | Valoare `document_identification_type` | Tip de document echivalent      |
+| ---- | -------------------------------------- | ------------------------------- |
+| ARG  |                                        | DNI                             |
+| BR   |                                        | CPF                             |
+| CL   |                                        | RUT                             |
+| MX   |                                        | CURP                            |
+| COL  | `NATIONAL_IDENTITY_DOCUMENT`           | Carte de identitate             |
+| COL  | `FOREIGN_IDENTIFICATION_DOCUMENT`      | Document de străin              |
+| ECU  | `NATIONAL_IDENTITY_DOCUMENT`           | DNI                             |
+| ECU  | `FISCAL_IDENTIFICATION_CODE`           | RUC                             |
+| ECU  | `VALID_PASSPORT`                       | Pașaport                        |
+| PER  | `NATIONAL_IDENTITY_DOCUMENT`           | DNI                             |
+| PER  | `FOREIGN_IDENTIFICATION_DOCUMENT`      | Carnet de rezidență             |
+| PER  | `FISCAL_IDENTIFICATION_CODE`           | RUC                             |
+| PER  | `VALID_PASSPORT`                       | Pașaport                        |
+
+***
+
+### Valorile `account_type` pe țară (Transfer)[​](#valores-de-account_type-por-país-transfer "Link direct la valores-de-account_type-por-país-transfer")
+
+| account\_type  | BR | CO | CL | PE | EC | MX |
+| -------------- | -- | -- | -- | -- | -- | -- |
+| CHECKING       | ✓  | ✓  | ✓  | ✓  | ✓  |    |
+| SAVINGS        | ✓  | ✓  | ✓  | ✓  | ✓  |    |
+| RUT            |    |    | ✓  |    |    |    |
+| ACCOUNT\_CLABE |    |    |    |    |    | ✓  |
+| CARD\_NUMBER   |    |    |    |    |    | ✓  |
+
+> Argentina și Mexic nu necesită indicarea `account_type`, se aplică o valoare implicită internă:
+>
+> * Argentina: CBU sau CVU
+> * Mexic: tip General (ACCOUNT\_CLABE)
+
+***
+
+### Specificații pentru `account` pe țară (Transfer)[​](#especificaciones-para-account-por-país-transfer "Link direct la especificaciones-para-account-por-país-transfer")
+
+#### Lungime așteptată / format[​](#longitud-esperada--formato "Link direct la Lungime așteptată / format")
+
+> **Validarea datelor:** `^[0-9]+$` (doar cifre sunt permise în `account`)
+
+| Țară           | Lungime așteptată  | Comentarii suplimentare                                                                     |
+| -------------- | ------------------ | ------------------------------------------------------------------------------------------- |
+| AR (Argentina) | 22                 | CBU sau CVU                                                                                 |
+| BR (Brazilia)  | 13                 | —                                                                                           |
+| CL (Chile)     | 16                 | —                                                                                           |
+| CO (Columbia)  | 16                 | —                                                                                           |
+| MX (Mexic)     | 16, 18             | General (ACCOUNT\_CLABE): 18 cifre Număr de card de debit (CARD\_NUMBER): 16 cifre          |
+| EC (Ecuador)   | 12                 | —                                                                                           |
+| PE (Peru)      | 10, 13, 14, 18, 20 | Depinde de bancă. [Vezi detalii](#detalle-para-per%C3%BA-account)                           |
+
+##### Detalii pentru Peru (`account`)[​](#detalle-para-perú-account "Link direct la detalle-para-perú-account")
+
+| Bancă / Instituție       | Lungime așteptată | Comentarii / Exemple                                             |
+| ------------------------ | ----------------- | ---------------------------------------------------------------- |
+| Banco de Crédito (BCP)   | 13 / 14           | 13 = cont curent/maestru. 14 = economii                         |
+| Interbank                | 13                | —                                                                |
+| Banco Continental (BBVA) | 18 / 20           | Ex.: 18: `001106660100012345` 20: `00110666010001234512`         |
+| Scotiabank               | 10                | 3 cifre agenție + 7 cont. Ex.: `0037651234`                     |
+| Alte bănci / IFI-uri     | 20                | CCI obligatoriu. Ex.: `00219400254640654321`                     |
+
+***
+
+### Formatul cheii PIX (`recipient_pix_key`)[​](#formato-de-clave-pix-recipient_pix_key "Link direct la formato-de-clave-pix-recipient_pix_key")
+
+| Tip cheie  | Format regex                                                   | Exemplu                                |
+| ---------- | -------------------------------------------------------------- | -------------------------------------- |
+| CPF        | `^[0-9]{11}$`                                                  | `12345678901`                          |
+| Telefon    | `^+[1-9][0-9]\d{1,14}$`                                        | `+5510998765432`                       |
+| Email      | `^[a-z0-9.!#$&'*+/=?^_{}~-]+@[a-z0-9.-]+$`                     | `pix@bcb.gov.br`                       |
+| Aleatoriu  | `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` | `123e4567-e89b-12d3-a456-426655440000` |
+
+> Notă: Dacă nu se indică explicit câmpul `recipient_pix_key` în `extra_data.payment`, se va utiliza automat valoarea câmpului `document_identification_number` ca cheie PIX, cu condiția ca aceasta să reprezinte un CPF valid, simplificând integrarea în cazurile cele mai frecvente.
+
+***
+
+### Exemple de `extra_data` pentru payouts de tip Transfer[​](#ejemplos-de-extra_data-para-payouts-de-tipo-transfer "Link direct la ejemplos-de-extra_data-para-payouts-de-tipo-transfer")
+
+#### Ecuador[​](#ecuador "Link direct la Ecuador")
+
+```
+"extra_data": {  "profile": {    "first_name": "John",    "last_name": "Doe",    "email": "jon.doe@test.com",    "document_identification_number": "00113562600",    "document_identification_type": "NATIONAL_IDENTITY_DOCUMENT",    "phone": {      "number": "572222222222"    }  },  "billing_address": {    "city": "Quito",    "country": "ECU",    "address1": "Portete E19-151",    "address2": null,    "address3": null,    "zip_code": "",    "state_code": ""  },  "payment": {    "bank_name": "0001",    "account": "123123123124",    "account_type": "CHECKING"  }}
+```
+
+#### Brazilia[​](#brasil "Link direct la Brazilia")
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "john.doe@test.com",        "document_identification_number": "00113562600",        "phone": {            "number": "5511999999999"        }     },    "billing_address": {    "city": "Sao Paulo",    "country": "BRA",    "address1": "R. Sao Joaquim, 596",    "address2": null,    "address3": null,    "zip_code": "",    "state_code": ""},    "payment": {        "bank_name": "341",        "account": "0001",        "account_type": "CHECKING",        "account_agency_number": "8585",        "aba_swift": "ERDSAD"    }}
+```
+
+***
+
+### Teste în mediul sandbox[​](#pruebas-en-entorno-de-sandbox "Link direct la Teste în mediul sandbox")
+
+În mediul sandbox, poți simula diferite rezultate în operațiunile de payout utilizând valoarea câmpului `amount` pe care o vei indica la [**generarea ordinului de plată**](/reference/#operation/generate-payment-order):
+
+* **Orice valoare diferită de `666`** simulează un **payout reușit**.
+* Valoarea **`666`** simulează un **payout respins**.
+
+***
+
+## Limite pentru payouts[​](#límites-para-los-payouts "Link direct la Limite pentru payouts")
+
+Acest tabel reflectă limitele pe tip de comerciant, utilizator și țară:
+
+| Țară     | Limită pe zi   | Limită pe săptămână | Limită pe lună | Limită pe an   | Limită pe tranzacție   |
+| -------- | -------------- | ------------------- | -------------- | -------------- | ---------------------- |
+| Brazilia | 10.000 USD     | 70.000 BRL          | 150.000,00 BRL | Nu există      | Nu există              |
+| Mexic    | 5.000 USD      | Nu există           | 20.000 USD     | Nu există      | Nu există              |
+| Chile    | 5.000 USD      | Nu există           | 20.000 USD     | Nu există      | Nu există              |
+| Columbia | 5.000 USD      | Nu există           | 20.000 USD     | Nu există      | 10.000.000 COP        |
+| Peru     | 3.500 USD      | Nu există           | 7.000 USD      | 84.000 USD     | Nu există              |
+| Ecuador  | 3.500 USD      | Nu există           | 7.000 USD      | 84.000 USD     | Nu există              |
+
+***
+
+## Coduri de bănci pe țară[​](#códigos-de-bancos-por-país "Link direct la Coduri de bănci pe țară")
+
+Poți consulta valorile valide ale câmpului `payment.bank_name` pentru fiecare țară în secțiunea următoare. Această valoare va consta într-un cod numeric.
+
+### Brazilia[​](#brasil-1 "Link direct la Brazilia")
+
+> Poți consulta lista completă de bănci pe [conta-corrente.com](https://www.conta-corrente.com)
+
+| Cod    | Bancă                                     |
+| ------ | ----------------------------------------- |
+| 001    | Banco do Brasil S.A.                      |
+| 341    | Banco Itaú S.A.                           |
+| 033    | Banco Santander (Brasil) S.A.             |
+| 237    | Banco Bradesco S.A. / Next                |
+| 104    | Caixa Econômica Federal                   |
+| 422    | Banco Safra S.A.                          |
+| 748    | Banco Cooperativo Sicredi S.A.            |
+| 041    | Banco do Estado do Rio Grande do Sul S.A. |
+| 208    | BANCO BTG PACTUAL S.A.                    |
+| 655    | Neon Pagamentos                           |
+| 077    | Banco Inter S.A.                          |
+| 121    | Banco Agibank S.A.                        |
+| 212    | Banco Original S.A                        |
+| 260    | Nubank                                    |
+| 336    | Banco C6 S.A.                             |
+| 413    | Banco BV (Before Banco Votorantim)        |
+
+### Chile[​](#chile "Link direct la Chile")
+
+| Cod    | Bancă                                          |
+| ------ | ---------------------------------------------- |
+| 012    | Banco Del Estado De Chile                      |
+| 001    | Banco De Chile / Banco A. Edwards / Credichile |
+| 028    | Banco Bice                                     |
+| 051    | Banco Falabella                                |
+| 053    | Banco Ripley                                   |
+| 037    | Banco Santander – Santiago                     |
+| 049    | Banco Security                                 |
+| 014    | Scotiabank / Sud – Americano                   |
+| 016    | BCI / Tbanc                                    |
+
+### Mexic[​](#méxico "Link direct la Mexic")
+
+| Cod    | Bancă              |
+| ------ | ------------------ |
+| 40012  | BBVA Bancomer      |
+| 40021  | HSBC               |
+| 40014  | Santander          |
+| 40072  | Banorte            |
+| 40127  | Banco Azteca       |
+| 40137  | Bancoppel          |
+| 40131  | Banco Famsa        |
+| 40138  | ABC Capital        |
+| 40150  | Banco Inmobiliario |
+
+> Pentru a vedea lista completă de bănci din Mexic, consultă: [Bancos de México - PayRetailers](https://www.payretailers.dev/reference/payout-parameters#bank-name-2)
+
+### Columbia[​](#colombia "Link direct la Columbia")
+
+| Cod    | Bancă                 |
+| ------ | --------------------- |
+| 0001   | Banco de Bogotá       |
+| 0007   | Bancolombia           |
+| 0013   | BBVA Colombia         |
+| 0014   | Itaú                  |
+| 0019   | Banco Colpatria       |
+| 0023   | Banco de Occidente    |
+| 0051   | Banco Davivienda S.A. |
+| 0052   | Banco AV Villas       |
+| 0062   | Banco Falabella S.A.  |
+| 0070   | Lulo Bank             |
+| 0507   | Nequi                 |
+| 0801   | MOVii                 |
+
+### Ecuador[​](#ecuador-1 "Link direct la Ecuador")
+
+| Cod    | Bancă                     |
+| ------ | ------------------------- |
+| 0001   | Banco Amazonas            |
+| 0002   | Banco Bolivariano         |
+| 0004   | Banco Central del Ecuador |
+| 0010   | Banco de Guayaquil        |
+| 0011   | Banco de la Producción    |
+| 0016   | Banco del Pacífico        |
+| 0023   | Banco Pichincha           |
+| 0025   | Banco Promerica           |
+| 0026   | Banco Solidario           |
+
+### Peru[​](#perú "Link direct la Peru")
+
+| Cod    | Bancă              |
+| ------ | ------------------ |
+| 0001   | Interbank          |
+| 0002   | BBVA Perú          |
+| 0003   | BCP Perú           |
+| 0004   | Scotiabank Perú    |
+| 0006   | Banco Pichincha    |
+| 0007   | Mibanco            |
+| 0008   | Banco de la Nación |
+| 0010   | Banco Santander    |
+| 0012   | Banco Falabella    |
+| 0013   | Banco Ripley       |
+| 0014   | Banco GNB          |
+| 0015   | Banco Azteca       |
+| 0016   | Banco Cencosud     |
+| 0019   | Caja Arequipa      |
+| 0025   | Caja Piura         |
+| 0027   | Caja Tacna         |
