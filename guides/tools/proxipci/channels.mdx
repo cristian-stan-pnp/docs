@@ -122,7 +122,7 @@ Vaya y visite [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/
 curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke \-H 'Content-Type: application/json' \-H 'SomeCustomHeader: SayHello!' \--data '{"bookings":[{"id":"BK-213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4442330588722461","cvv":"222","expiry":"12/28","holder":"John Doe"}}},{"id":"BK-3213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4701731341611394","cvv":"333", "expiry":"06-2025","holder":"Patma Patill"}}}]}'
 ```
 
-Después de ejecutar el comando deberías ver la petición en la consola de beeceptor. Siéntase libre de inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.
+Después de ejecutar el comando deberías ver la petición en la consola de beeceptor. Siéntete libre de inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.
 
 ## Ejemplo de XML[​](#ejemplo-de-xml "Enlace directo al Ejemplo de XML")
 

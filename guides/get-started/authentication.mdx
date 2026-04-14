@@ -4,8 +4,9 @@ title: 'Autenticación'
 
 Las llamadas a la API se deben autenticar mediante tu **API Key** en cada petición.
 
-> [!WARNING]
-> Tu API Key conlleva muchos privilegios por lo que asegúrate de mantenerla en secreto. No compartas tu API Key ni la expongas nunca en el código del lado del cliente de cualquier sitio web público.
+<Warning>
+  Tu API Key conlleva muchos privilegios por lo que asegúrate de mantenerla en secreto. No compartas tu API Key ni la expongas nunca en el código del lado del cliente de cualquier sitio web público.
+</Warning>
 
 ## Obtener tu API Key
 Puedes encontrar tu API Key de comercio en tu panel del Backend de Paylands. Pulsando en el icono superior derecha se desplegarán tus credenciales.
@@ -15,7 +16,7 @@ La autenticación de la API se realiza mediante **HTTP Basic Auth**. Provee tu A
 
 Si necesitas autenticar via **Bearer authentication** (como por ejemplo, para una petición cross-origin), usa el modificador `-H "Authorization: Bearer <API Key>"` en lugar de `-u <API Key>:`.
 
-Por ejemplo, si tu api key es `5d66a96f460f4109b24c2243fb1c43e1`, las siguientes cabeceras serán válidas:
+Por ejemplo, si tu API Key es `5d66a96f460f4109b24c2243fb1c43e1`, las siguientes cabeceras serán válidas:
 
 ```http
 Authorization: Basic NWQ2NmE5NmY0NjBmNDEwOWIyNGMyMjQzZmIxYzQzZTE=

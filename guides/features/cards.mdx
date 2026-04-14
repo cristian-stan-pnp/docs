@@ -39,7 +39,7 @@ En el caso de estar construyendo una plataforma, web o mobile, donde se desea qu
 
 Una vez tenemos guardadas las tarjetas de nuestros clientes en Paylands podemos recuperarlas y hacer uso de ellas de distintas formas. El primer paso será obtener las tarjetas almacenadas de un cliente.
 
-La forma más habitual de recuperar la tarjeta de un cliente es realizando una llamada al método del API de Paylands [para obtener las tarjetas de un cliente](/reference/#operation/get-customer-cards). Mediante este método se obtiene el listado de tarjetas almacenadas en el sistema para un cliente `customer_ext_id` dado. El customer\_ext\_id debe coincidir con el que se utilizó al guardar la tarjeta en el sistema o al crear la orden de pago para cliente.
+La forma más habitual de recuperar la tarjeta de un cliente es realizando una llamada al método del API de Paylands [para obtener las tarjetas de un cliente](/reference/#operation/get-customer-cards). Mediante este método se obtiene el listado de tarjetas almacenadas en el sistema para un cliente `customer_ext_id` dado. El customer\_ext\_id debe coincidir con el que se utilizó al guardar la tarjeta en el sistema o al crear la orden de pago para el cliente.
 
 ```
 curl --request GET 'https://api.paylands.com/v1/sandbox/customer/{customer_ext_id}/cards?unique=true' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \
