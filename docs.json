@@ -8,7 +8,7 @@
     "light": "#ee1b4e",
     "dark": "#ee1b4e"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "settings": {
     "customScripts": [
       "/chatwoot-widget.js"
