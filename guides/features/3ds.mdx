@@ -7,7 +7,7 @@ description: 'Guía de autenticación 3D Secure para pagos seguros con Paylands'
 
 La segunda Directiva de Servicios de Pago (PSD2) será de **cumplimiento obligatorio a partir del 31 de Diciembre de 2020**. Esta directiva afecta a los pagos realizados en la zona económica europea y obliga a que todos los pagos en los que el usuario esté presente se lleven a cabo de forma segura mediante 3DS. Adicionalmente, ya no podrán lanzarse pagos no seguros sin la presencia del usuario salvo que la tarjeta haya realizado al menos un pago seguro mediante 3DS anteriormente.
 
-Los siguientes tipos de servicios de pago se verán afectados por a PSD2 a partir del día 31 de Diciembre de 2020:
+Los siguientes tipos de servicios de pago se verán afectados por la PSD2 a partir del día 31 de Diciembre de 2020:
 
 * REDSYS
 * EVOSNAP
@@ -32,7 +32,7 @@ Recomendamos utilizar [pagos tokenizados](/reference/#operation/3ds-tokenized) u
 
 ### Ventajas[​](#ventajas "Enlace directo al Ventajas")
 
-Hasta ahora los pagos seguros utilizaban siempre la versión 3DS 1.0, la cual obliga a que el usuario introduzca una código que recibe en su teléfono móvil, dando lugar a una fricción que podía resultar en que el usuario abandonase el proceso de compra. Las nuevas versiones del protocolo 3DS versión 2 permiten saltarse este paso en determinadas circunstancias:
+Hasta ahora los pagos seguros utilizaban siempre la versión 3DS 1.0, la cual obliga a que el usuario introduzca un código que recibe en su teléfono móvil, dando lugar a una fricción que podía resultar en que el usuario abandonase el proceso de compra. Las nuevas versiones del protocolo 3DS versión 2 permiten saltarse este paso en determinadas circunstancias:
 
 * El importe de la operación es bajo (menos de 30€) o el importe total de las últimas 5 operaciones no supera los 100€.
 * El umbral de fraude del comercio es bajo y la operación no supera los 100, 250 o 500€.

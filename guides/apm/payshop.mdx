@@ -43,7 +43,7 @@ Para más información sobre cómo probar este método de pago, visitar la docum
 
 ## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
 
-Por defecto la fecha de expiración se establece dentro de 3 días desde el momento en el que se lanza el pago. Si se quiere personalizar este valor, basta con añadir la siguiente información cuando se [genera la orden de pago](/reference/#operation/generate-payment-order) indicando con la fecha deseada en formato `Ymd`. Su valor debe ser igual o superior a la fecha actual:
+Por defecto la fecha de expiración se establece dentro de 3 días desde el momento en el que se lanza el pago. Si se quiere personalizar este valor, basta con añadir la siguiente información cuando se [genera la orden de pago](/reference/#operation/generate-payment-order) indicando la fecha deseada en formato `Ymd`. Su valor debe ser igual o superior a la fecha actual:
 
 ```
 "extra_data": {    "payment": {        "validUntil": "20240520"    }}

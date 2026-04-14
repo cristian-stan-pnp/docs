@@ -25,7 +25,7 @@ Un `fieldMapping` consta de los siguientes campos:
 | NOMBRE      | DESCRIPCIÓN                                                                                                                                                                                                                                    |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | referencia  | Opcional. Se puede utilizar para asociar los datos de la tarjeta a una referencia de su software. Por ejemplo, un identificador de reserva.                                                                                                    |
-| pan         | Humber de la tarjeta o el token de la tarjeta.                                                                                                                                                                                                 |
+| pan         | Número de la tarjeta o el token de la tarjeta.                                                                                                                                                                                                 |
 | cardHolder  | Nombre del titular de la tarjeta.                                                                                                                                                                                                              |
 | expiry      | Fecha de caducidad de la tarjeta. Los formatos válidos son MM-YYYY, MM-YY, YYYY-MM, YY-MM, MM/YYYY, YYYY/MM, MM/YY, YY/MM, MMYY. Si la fecha de caducidad está dividida en dos campos separados, utilice en su lugar expiryMonth y expiryYear. |
 | expiryMonth | Se utiliza si la fecha de caducidad de la tarjeta está dividida en dos campos.                                                                                                                                                                 |
@@ -46,7 +46,7 @@ La principal diferencia entre las configuraciones de los canales son los campos 
 
 ![PUSH + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_tokenization.png)
 
-Usted es un PMS y un channel mannager envía nuevas reservas a su software de backend (por ejemplo: SOAP API). Estas reservas incluyen datos sensibles de tarjetas de pago que no desea almacenar directamente en su base de datos, sino delegarlos en la bóveda segura PCI de PROXY.
+Usted es un PMS y un channel manager envía nuevas reservas a su software de backend (por ejemplo: SOAP API). Estas reservas incluyen datos sensibles de tarjetas de pago que no desea almacenar directamente en su base de datos, sino delegarlos en la bóveda segura PCI de PROXY.
 
 En este caso tendría que crear el channel de tipo **PUSH + TOKENIZATION**. En el campo *endpoint* añadirá su punto de entrada de la API SOAP (por ejemplo: `http://somehost.com/xmlsoapinterface`).
 
@@ -58,7 +58,7 @@ De este modo, el channel manager invocará a PROXY PCI, que hará su magia y fin
 
 ![PULL + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_tokenization.png)
 
-Usted es un PMS, pero todavía necesita las reservas de un channel mannager. Pero en este caso el channel manager no le envía los datos. Usted es el que inicia una solicitud al channel manager y luego el channel manager responde con las últimas reservas.
+Usted es un PMS, pero todavía necesita las reservas de un channel manager. Pero en este caso el channel manager no le envía los datos. Usted es el que inicia una solicitud al channel manager y luego el channel manager responde con las últimas reservas.
 
 En este caso usted necesita un channel de tipo **PULL + TOKENIZATION** donde el atributo endpoint del channel es el endpoint API del channel manager. Usted puede entonces iniciar su solicitud al endpoint invocación del channel, entonces el PROXY PCI obtendrá las nuevas reservas del endpoint de la API del channel manager, hará su magia, y responderá con las nuevas reservas.
 
@@ -70,13 +70,13 @@ En este caso usted necesita un channel de tipo **PULL + TOKENIZATION** donde el 
 
 ![PUSH + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_detokenization.png)
 
-En este caso queremos enviar los datos recogidos de nuestra tarjeta pan a un PAYMENT GATEWAY de terceros para procesar el pago. El PAYMENT GATEWAY ofrece un endpoint para esto donde hay que enviar los datos de la tarjeta en su formato JSON especificado. En este escenario necesitaremos un channel de tipo **PUSH + DETOKENIZATION**. El endpoint del channel será el endpoint de la API PAYMENT GATEWAY. USted enviará los detalles de la tarjeta, excepto el pan, al endpoint de invocación del channel PROXY PCI y el PROXY PCI reemplazará el token de la tarjeta con el pan real de la tarjeta.
+En este caso queremos enviar los datos recogidos de nuestra tarjeta pan a un PAYMENT GATEWAY de terceros para procesar el pago. El PAYMENT GATEWAY ofrece un endpoint para esto donde hay que enviar los datos de la tarjeta en su formato JSON especificado. En este escenario necesitaremos un channel de tipo **PUSH + DETOKENIZATION**. El endpoint del channel será el endpoint de la API PAYMENT GATEWAY. Usted enviará los detalles de la tarjeta, excepto el pan, al endpoint de invocación del channel PROXY PCI y el PROXY PCI reemplazará el token de la tarjeta con el pan real de la tarjeta.
 
 ## PULL + DETOKENIZATION[​](#pull--detokenization "Enlace directo al PULL + DETOKENIZATION")
 
 ![PULL + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_detokenization.png)
 
-En este caso de uso final usted es un channel manager y ha recogido los detalles de la tarjeta de un futuro huésped utilizando la biblioteca del lado del cliente javascipt. Así que ahora un sistema PMS compatible con PCI quiere descargar los detalles completos de la tarjeta de su channel manager. En este caso, simplemente configuraría un channel de tipo **PULL + DETOKENIZATION**. En el atributo de endpoint especificará su endpoint de API y proporcionará el endpoint de invocación PROXY PCI resultante al sistema PMS, que iniciará la solicitud. Nosotros reenviaremos la solicitud a su API y usted responderá con la reserva. Reemplazaremos el token de la tarjeta con el pan real y responderemos al PMS.
+En este caso de uso final usted es un channel manager y ha recogido los detalles de la tarjeta de un futuro huésped utilizando la biblioteca del lado del cliente javascript. Así que ahora un sistema PMS compatible con PCI quiere descargar los detalles completos de la tarjeta de su channel manager. En este caso, simplemente configuraría un channel de tipo **PULL + DETOKENIZATION**. En el atributo de endpoint especificará su endpoint de API y proporcionará el endpoint de invocación PROXY PCI resultante al sistema PMS, que iniciará la solicitud. Nosotros reenviaremos la solicitud a su API y usted responderá con la reserva. Reemplazaremos el token de la tarjeta con el pan real y responderemos al PMS.
 
 <Warning>
   Cuando se utiliza la acción DETOKENIZATION, el PROXY PCI sólo reemplazará el token y el cvv de la tarjeta por sus valores reales. Todos los demás campos tienen que ser proporcionados en el payload tal y como son. Puede almacenar con seguridad la fecha de caducidad y el titular de la tarjeta por sí mismo.
