@@ -8,7 +8,7 @@ Cuando hablamos de **tokenización**, nos estamos refiriendo a la acción de **g
 La tokenización protege los datos confidenciales a través de un proceso de reemplazo de los datos con un equivalente no confidencial, conocido como token. El token no tiene significado o valor externo. Es una referencia, o identificador, que a través de un sistema de tokenización, se mapea de nuevo a los datos confidenciales. Este proceso recopila de forma segura información confidencial de la tarjeta de crédito y evita el robo de datos.
 
 <Info>
-  Auque solemos llamarlo "token" a raíz de que "tokenizamos" la tarjeta, nos estamos refiriendo al UUID de la tarjeta. El campo "token" de una tarjeta es en realidad un valor calculado a partir del número de la tarjeta, de modo que dos tarjetas con mismo [PAN](/docs/glossary#pan) tienen diferente UUID pero mismo token. Este token solamente sirve para saber si dos tarjetas son iguales. Siempre que queremos utilizar una tarjeta es necesario indicar su UUID.
+  Aunque solemos llamarlo "token" a raíz de que "tokenizamos" la tarjeta, nos estamos refiriendo al UUID de la tarjeta. El campo "token" de una tarjeta es en realidad un valor calculado a partir del número de la tarjeta, de modo que dos tarjetas con mismo [PAN](/docs/glossary#pan) tienen diferente UUID pero mismo token. Este token solamente sirve para saber si dos tarjetas son iguales. Siempre que queremos utilizar una tarjeta es necesario indicar su UUID.
 </Info>
 
 ## Cómo guardar una tarjeta[​](#cómo-guardar-una-tarjeta "Enlace directo al Cómo guardar una tarjeta")
@@ -25,15 +25,15 @@ Podemos tokenizar cualquier tarjeta al realizar un primer pago con ella. El mét
 
 En la notificación recibida tras el pago se incluye un objeto de la `orden` procesada. Dentro de la transacción existe a su vez el objeto `source` que contiene en su interior el `token` de la tarjeta utilizada en el pago. Este token quedará a partir de ahora ligado al cliente, por lo que en nuevas operaciones se podrán confirmar los pagos para este usuario sin necesidad de solicitarle de nuevo la tarjeta.
 
-Estos métodos realizan una orden con transacción [3DS](/docs/glossary#3ds-2) la cual genera un token con [SCA](/docs/glossary#sca) permitiendo que el comercio envie:
+Estos métodos realizan una orden con transacción [3DS](/docs/glossary#3ds-2) la cual genera un token con [SCA](/docs/glossary#sca) permitiendo que el comercio envíe:
 
 * [MITs](/docs/glossary#mit)
 * Cargos puntuales (incrementales)
-* Cobros recurrentes (subscripciones)
+* Cobros recurrentes (suscripciones)
 
 ### Integrando el SDK de Tokenización[​](#integrando-el-sdk-de-tokenización "Enlace directo al Integrando el SDK de Tokenización")
 
-En el caso de estar construyendo una plataforma, web o mobile, donde se desea que el usuario pueda guardar su tarjeta (como Netflix, Amazon) para posteriormente emitirle cobros ya sea de compras o de suscripciones, disponemos de una libreria [**SDK de Tokenización**](/docs/guides/sdk-tokenization). Con este SDK los comercios que no son PCI pueden guardar y tokenizar las tarjetas de los clientes embebiendo un iframe en su web/app.
+En el caso de estar construyendo una plataforma, web o mobile, donde se desea que el usuario pueda guardar su tarjeta (como Netflix, Amazon) para posteriormente emitirle cobros ya sea de compras o de suscripciones, disponemos de una librería [**SDK de Tokenización**](/docs/guides/sdk-tokenization). Con este SDK los comercios que no son PCI pueden guardar y tokenizar las tarjetas de los clientes embebiendo un iframe en su web/app.
 
 ## Obtención de las tarjetas[​](#obtención-de-las-tarjetas "Enlace directo al Obtención de las tarjetas")
 
@@ -89,7 +89,7 @@ Para generar una nueva orden podemos hacerlo llamando al método [**Generar orde
 
 ### Autorización 3DS de la tarjeta[​](#autorización-3ds-de-la-tarjeta "Enlace directo al Autorización 3DS de la tarjeta")
 
-Si para una tarjeta no se ha realizado todavía un pago [3DS](/docs/glossary#3ds-2) y queremos utilizarla más adelante para lanzar [pagos directos por webservice](#pago-directo-por-webservice) sin querer cobrar todavía al usuario, es posible realizar una **autorización 3DS de la tarjeta lanzando un pago 3DS de 0€**. En este caso el usuario solamente se autentica de forma segura para más adelante poder ser cobrado por el comercio sin que él tenga que volver a intervenir. Este es un proceso habitual por ejemplo en hoteles o algunos proveedores de subscripciones.
+Si para una tarjeta no se ha realizado todavía un pago [3DS](/docs/glossary#3ds-2) y queremos utilizarla más adelante para lanzar [pagos directos por webservice](#pago-directo-por-webservice) sin querer cobrar todavía al usuario, es posible realizar una **autorización 3DS de la tarjeta lanzando un pago 3DS de 0€**. En este caso el usuario solamente se autentica de forma segura para más adelante poder ser cobrado por el comercio sin que él tenga que volver a intervenir. Este es un proceso habitual por ejemplo en hoteles o algunos proveedores de suscripciones.
 
 Deberemos generar una nueva orden de pago con el método [**Generar orden de pago**](/reference/#operation/generate-payment-order) indicando en el campo `source_uuid` el uuid de la tarjeta que deseamos autorizar y en el campo `amount` indicar el valor `0`. También es preciso indicar el campo `operative` con el valor `AUTHORIZATION`.
 

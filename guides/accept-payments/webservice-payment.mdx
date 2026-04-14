@@ -5,9 +5,9 @@ description: 'Integración avanzada mediante el webservice de Paylands'
 
 1. Generar la orden de pago
 
-   * El comercio envia las características del pago al endpoint `/payment`
+   * El comercio envía las características del pago al endpoint `/payment`
    * Paylands devuelve un objeto `order` junto con su `UUID` que se utilizará para finalizar el pago
-   * **IMPORTANTE**: con este método, el campo `customer_ext_id`enviado a `/payment` es obligatorio, y debe coincidir con el `customer_ext_id` utilizado al guardar la tarjeta en el sistema.
+   * **IMPORTANTE**: con este método, el campo `customer_ext_id` enviado a `/payment` es obligatorio, y debe coincidir con el `customer_ext_id` utilizado al guardar la tarjeta en el sistema.
 
 2. Completar el pago
 

@@ -47,11 +47,10 @@ PRODUCTION
 
 Para inicializar la librería necesitas proporcionar el id del elemento DOM donde la librería debe inyectar el iframe con el campo de entrada pan junto con el `token` emitido con la API REST. Una vez que el iframe haya terminado de cargarse, se disparará un evento `ready`.
 
-\`\`html
-
-Enviar
-
-\`\`\`
+```html
+<div id="pan"></div>
+<button id="submit">Enviar</button>
+```
 
 ```
 var proxyFields = new ProxyFields();proxyFields.init('::token::', { cardNumber: "pan" });proxyFields.on('ready', () => {    console.log('iframe ha terminado de cargarse');});
@@ -61,8 +60,39 @@ var proxyFields = new ProxyFields();proxyFields.init('::token::', { cardNumber: 
 
 El método recomendado para dar estilo al campo de entrada es utilizar el método `setStyle`. Esto debe hacerse en el callback `ready`.
 
-\`\`js proxyFields.on("ready", function() \{ proxyFields.setStyle( "cardNumber", "width: 300px; border-radius: 4px; border: 1px solid black; padding:5px 10px;font-size:100%;" ); proxyFields.setStyle("cardNumber::placeholder", "color: grey"); proxyFields.setPlaceholder("cardNumber", "4987806170805591"); });
-
+```js
+proxyFields.on("ready", function() {
+  proxyFields.setStyle(
+    "cardNumber",
+    "width: 300px; border-radius: 4px; border: 1px solid black; padding:5px 10px;font-size:100%;"
+  );
+  proxyFields.setStyle("cardNumber::placeholder", "color: grey");
+  proxyFields.setPlaceholder("cardNumber", "4987806170805591");
+});
 ```
-### Validación y envío de los datosUna vez que el usuario ha completado el formulario de envío puedes llamar al método `submit`. El método `submit` recibe como único parámetro un objeto en el que tienes que proporcionar información adicional de la tarjeta. Estos datos pueden ser recogidos directamente por usted ya que no están sujetos a la normativa PCI.Una vez que hayas llamado al método `submit` se disparará un callback `validate` con un objeto de entrada que contiene información relacionada con el error si lo hubiera. Si la bandeja es válida, el envío se llevará a cabo y se disparará una llamada de retorno de éxito o de error. Después de que se dispare la llamada de retorno `success`, puedes llamar con seguridad al [método de la API REST](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) en tu servidor para obtener el token del pan.``jsproxyFields.submit({  expiryMonth: "01",  expiryYear: "21",  cardHolder: "Name Displayed On Card"});proxyFields.on("validate", function(data) {  if(validate.hasErrors){    console.log("Card pan is not valid");    proxyFields.setStyle("cardNumber","border: 1px solid red");  }});proxyFields.on("success", function(data) {  console.log('Submission succeded');});proxyFields.on("error", function(error) {  console.log('Ha ocurrido algo malo');});
+
+### Validación y envío de los datos
+
+Una vez que el usuario ha completado el formulario de envío puedes llamar al método `submit`. El método `submit` recibe como único parámetro un objeto en el que tienes que proporcionar información adicional de la tarjeta. Estos datos pueden ser recogidos directamente por usted ya que no están sujetos a la normativa PCI.
+
+Una vez que hayas llamado al método `submit` se disparará un callback `validate` con un objeto de entrada que contiene información relacionada con el error si lo hubiera. Si la bandeja es válida, el envío se llevará a cabo y se disparará una llamada de retorno de éxito o de error. Después de que se dispare la llamada de retorno `success`, puedes llamar con seguridad al [método de la API REST](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) en tu servidor para obtener el token del pan.
+
+```js
+proxyFields.submit({
+  expiryMonth: "01",
+  expiryYear: "21",
+  cardHolder: "Name Displayed On Card"
+});
+proxyFields.on("validate", function(data) {
+  if(validate.hasErrors){
+    console.log("Card pan is not valid");
+    proxyFields.setStyle("cardNumber","border: 1px solid red");
+  }
+});
+proxyFields.on("success", function(data) {
+  console.log('Submission succeeded');
+});
+proxyFields.on("error", function(error) {
+  console.log('Ha ocurrido algo malo');
+});
 ```

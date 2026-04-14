@@ -131,7 +131,7 @@ Por ejemplo:
 | 119    | Deneg. Por controles de com. Electrónico.                                                          |                             |
 | 120    | Denegada por controles operativos. No reintentar.                                                  |                             |
 | 121    | Excede límite de la transacción. Consulte con la entidad emisora de la tarjeta.                    |                             |
-| 123    | Error en la autenticación, consulte con la entidad emisora de la terjeta.                          |                             |
+| 123    | Error en la autenticación, consulte con la entidad emisora de la tarjeta.                          |                             |
 | 125    | Tarjeta no efectiva                                                                                |                             |
 | 126    | Error en el formato de la autenticación. Consulte con la entidad emisora de la tarjeta.            |                             |
 | 129    | CVV Incorrecto                                                                                     |                             |
@@ -166,7 +166,7 @@ Por ejemplo:
 | 940    | Transacción anulada previamente.                                                                   |                             |
 | 941    | Transacción de autorización ya anulada por anulación anterior.                                     |                             |
 | 944    | Sesión Incorrecta                                                                                  |                             |
-| 945    | Refererencia tarnsacción de sistema repetida.                                                      |                             |
+| 945    | Referencia transacción de sistema repetida.                                                      |                             |
 | 950    | Operación de devolución no permitida                                                               |                             |
 | 965    | Violación normas existentes.                                                                       |                             |
 | 8210   | Operación que ha sido redirigida al emisor a autenticar EMV3DS V2.1 (para H2H)                     |                             |
@@ -179,14 +179,14 @@ Por ejemplo:
 | 9256   | El comercio no puede realizar preautorizaciones                                                    |                             |
 | 9257   | Esta tarjeta no permite operativa de preautorizaciones                                             |                             |
 | 9261   | Operación detenida por superar el control de restricciones en la entrada al SIS                    |                             |
-| 9700   | PayPal a devuelto un KO                                                                            |                             |
+| 9700   | PayPal ha devuelto un KO                                                                           |                             |
 | 9801   | Error en datos enviados. No se ha especificado el Tlf. O la Url de notificación                    |                             |
 | 9899   | Los datos en Ds\_Merchant\_Data y no estaban correctamente firmados                                |                             |
 | 9900   | SafetyPay ha devuelto un KO                                                                        |                             |
 | 9909   | Error genérico. Consulte con Soporte                                                               |                             |
 | 9912   | La operación ha tenido algún problema y se ha de generar una anulación automática                  |                             |
 | 9913   | Error en el envío notificación SOAP                                                                |                             |
-| 9914   | Respuesta KO po el comercio en la notificación SOAP                                                |                             |
+| 9914   | Respuesta KO por el comercio en la notificación SOAP                                               |                             |
 | 9929   | El titular ha cancelado la operación                                                               |                             |
 | 9930   | La transferencia está pendiente                                                                    |                             |
 | 9966   | BIZUM ha devuelto un KO en la autorización                                                         |                             |
@@ -246,7 +246,7 @@ Por ejemplo:
 | 9075   | SIS0075    | El "Ds\_Merchant\_Order" tiene menos de 4 o más de 12 posiciones .                                                                             |       |
 | 9079   | SIS0079    | Error genérico. Consulte con Soporte                                                                                                           |       |
 | 9080   | SIS0080    | Error genérico. Consulte con Soporte                                                                                                           |       |
-| 9081   | SIS0081    | Se han perdico los datos de la sesión                                                                                                          |       |
+| 9081   | SIS0081    | Se han perdido los datos de la sesión                                                                                                          |       |
 | 9089   | SIS0089    | El valor de caducidad no ocupa 4 posiciones                                                                                                    |       |
 | 9092   | SIS0092    | El valor de caducidad es nulo                                                                                                                  |       |
 | 9093   | SIS0093    | Denegación emisor                                                                                                                              |       |
@@ -259,14 +259,14 @@ Por ejemplo:
 | 9119   | SIS0119    | Valor del campo Ds\_Merchant\_DateFrecuency no válido                                                                                          |       |
 | 9120   | SIS0120    | Valor del campo Ds\_Merchant\_ChargeExpiryDate no válido                                                                                       |       |
 | 9121   | SIS0121    | Valor del campo Ds\_Merchant\_SumTotal no válido                                                                                               |       |
-| 9123   | SIS0123    | Se ha excedido la fecha tope para realiza la Transacción                                                                                       |       |
+| 9123   | SIS0123    | Se ha excedido la fecha tope para realizar la Transacción                                                                                       |       |
 | 9124   | SIS0124    | No ha transcurrido la frecuencia mínima en un pago recurrente sucesivo                                                                         |       |
 | 9126   | SIS0126    | Operación Duplicada                                                                                                                            |       |
 | 9127   | SIS0127    | Error genérico. Consulte con Soporte                                                                                                           |       |
 | 9128   | SIS0128    | Error genérico. Consulte con Soporte                                                                                                           |       |
 | 9132   | SIS0132    | La fecha de Confirmación de Autorización no puede superar en mas de 7 dias a la de Preautorización.                                            |       |
 | 9133   | SIS0133    | La fecha de Confirmación de Autenticación no puede superar en mas de 45 días a la de Autenticacion Previa                                      |       |
-| 9142   | SIS0142    | Tiempo excecido para el pago                                                                                                                   |       |
+| 9142   | SIS0142    | Tiempo excedido para el pago                                                                                                                   |       |
 | 9186   | SIS0186    | Faltan datos para operación                                                                                                                    |       |
 | 9194   | SIS0194    | Error problemas con la aplicación del cambio y el mostrado al titular                                                                          |       |
 | 9214   | SIS0214    | El comercio no permite devoluciones. Se requiere usar firma ampliada.                                                                          |       |
@@ -344,7 +344,7 @@ Por ejemplo:
 | 9448   | SIS0448    | El comercio no tiene el método de Pago Diners                                                                                                  |       |
 | 9452   | SIS0452    | Error, la tarjeta de la operación es 4B y el comercio no tiene el método de pago "Tarjeta 4B"                                                  |       |
 | 9453   | SIS0453    | El comercio no tiene configurado método de pago "Pago JCB"                                                                                     |       |
-| 9454   | SIS0454    | El comercio no tiene configurado métoco de pago "Pago Amex"                                                                                    |       |
+| 9454   | SIS0454    | El comercio no tiene configurado método de pago "Pago Amex"                                                                                    |       |
 | 9463   | SIS0463    | El comercio está intentando realizar una operación no segura sin metodo de pago No seguro                                                      |       |
 | 9467   | SIS0467    | La referencia que se está utilizando está dada de baja                                                                                         |       |
 | 9473   | SIS0473    | la respuesta de la petición de Autenticación de PPII es nula.                                                                                  |       |
@@ -377,7 +377,7 @@ Por ejemplo:
 | 9537   | SIS0537    | Pago de recibo/tributo denegado por la entidad                                                                                                 |       |
 | 9538   | SIS0538    | Rechazo en el pago de recibo/tributo                                                                                                           |       |
 | 9540   | SIS0540    | El móvil enviado es demasiado largo (más de 12 posiciones)                                                                                     |       |
-| 9541   | SIS0541    | La referencia enviada es demasiada larga (más de 40 posiciones)                                                                                |       |
+| 9541   | SIS0541    | La referencia enviada es demasiado larga (más de 40 posiciones)                                                                                |       |
 | 9543   | SIS0543    | Error, la tarjeta de la operación es DINERS y el comercio no tiene el método de pago "Pago DINERS" o "Pago Discover No Seguro"                 |       |
 | 9544   | SIS0544    | Error, la tarjeta de la operación es DINERS y el comercio no tiene el método de pago "Pago Discover No Seguro"                                 |       |
 | 9548   | SIS0548    | Error DISCOVER                                                                                                                                 |       |
@@ -461,12 +461,12 @@ Por ejemplo:
 | 9754   | SIS0754    | La tarjeta no permite autenticación en versión 2                                                                                               |       |
 | 9800   | SIS0800    | BIZUM. Error en la respuesta de inicio de RTP. (Revisar Ds\_RtpResponse y Ds\_RtpDescription)                                                  |       |
 | 9801   | SIS0801    | BUZUM RTP. No se especifica el tlf o la url de notificación.                                                                                   |       |
-| 9802   | SIS0802    | Envia un valor incorrecto en el parémtro DS\_MERCHANT\_COF\_TYPE                                                                               |       |
+| 9802   | SIS0802    | Envía un valor incorrecto en el parámetro DS\_MERCHANT\_COF\_TYPE                                                                               |       |
 | 9803   | SIS0803    | Error en datos enviados, DS\_MERCHANT\_COF\_TXID con valor erróneo > 15 posiciones                                                             |       |
 | 9812   | SIS0812    | Error obteniendo los parametros XPAYDECODEDDATA                                                                                                |       |
 | 9815   | SIS0815    | Error, ya existe una operación de Paygold con los mismos datos en proceso de autorizar o ya autorizada                                         |       |
 | 9816   | SIS0816    | Error en operación con XPAY. Operación con token y sin criptograma                                                                             |       |
-| 9817   | SIS0817    | Operacion aunteticada por 3RI no se puede procesar por estado incorrecto                                                                       |       |
+| 9817   | SIS0817    | Operación autenticada por 3RI no se puede procesar por estado incorrecto                                                                       |       |
 | 9836   | SIS0836    | Error, no existe operación original de paygold con los datos proporcionados                                                                    |       |
 | 9843   | SIS0843    | Error en los datos Ds\_Merchant\_TokenData.                                                                                                    |       |
 | 9844   | SIS0844    | El perfil del comercio no está configurado para aceptar devoluciones de tributos.                                                              |       |
@@ -499,14 +499,14 @@ Por ejemplo:
 | 9256   | El comercio no puede realizar preautorizaciones                                   |       |
 | 9257   | Esta tarjeta no permite operativa de preautorizaciones                            |       |
 | 9261   | Operación detenida por superar el control de restricciones en la entrada al SIS   |       |
-| 9700   | PayPal a devuelto un KO                                                           |       |
+| 9700   | PayPal ha devuelto un KO                                                          |       |
 | 9801   | Error en datos enviados. No se ha especificado el Tlf. O la Url de notificación   |       |
 | 9899   | Los datos en Ds\_Merchant\_Data y no estaban correctamente firmados               |       |
 | 9900   | SafetyPay ha devuelto un KO                                                       |       |
 | 9909   | Error genérico. Consulte con Soporte                                              |       |
 | 9912   | La operación ha tenido algún problema y se ha de generar una anulación automática |       |
 | 9913   | Error en el envío notificación SOAP                                               |       |
-| 9914   | Respuesta KO po el comercio en la notificación SOAP                               |       |
+| 9914   | Respuesta KO por el comercio en la notificación SOAP                              |       |
 | 9929   | El titular ha cancelado la operación                                              |       |
 | 9930   | La transferencia está pendiente                                                   |       |
 | 9966   | BIZUM ha devuelto un KO en la autorización                                        |       |

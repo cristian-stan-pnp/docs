@@ -7,7 +7,7 @@ description: 'Sistema antifraude y listas de seguridad de Paylands: reglas, whit
 
 Paylands ofrece un potente sistema antifraude el cual permite tanto redirigir transacciones sospechosas al 3DS como rechazarlas directamente, sin llegar a procesarse el pago.
 
-Para ello hay una serie de comprobaciones disponibles que pueden agruparse para formas reglas antifraude, cada una con su propia puntuación. La suma de las puntuaciones de todas las reglas que se hayan activado será lo que determinará la puntuación para la operación en curso.
+Para ello hay una serie de comprobaciones disponibles que pueden agruparse para formar reglas antifraude, cada una con su propia puntuación. La suma de las puntuaciones de todas las reglas que se hayan activado será lo que determinará la puntuación para la operación en curso.
 
 ### Configuración y creación del Anti Fraude
 
@@ -25,7 +25,7 @@ Las validaciones disponibles son:
 
 <AccordionGroup>
   <Accordion title="maximumCorrectPaymentsByCard">
-    * Cantidad de transacciones correctas con una tarjeta en los últimos X dias
+    * Cantidad de transacciones correctas con una tarjeta en los últimos X días
 
     * Parámetros:
 
@@ -167,7 +167,7 @@ Las validaciones disponibles son:
   </Accordion>
 
   <Accordion title="paymentFromTor">
-    * Comprueba la coincidencia de la IP con una lista de las ultimas IPs usadas por TOR
+    * Comprueba la coincidencia de la IP con una lista de las últimas IPs usadas por TOR
   </Accordion>
 
   <Accordion title="lastAmountsSum">
@@ -219,7 +219,7 @@ Las validaciones disponibles son:
   </Accordion>
 
   <Accordion title="matchingSourceCountry">
-    * Comprueba si la tarjeta pertenece a un pais concreto
+    * Comprueba si la tarjeta pertenece a un país concreto
 
     * Parámetros:
 
@@ -242,7 +242,7 @@ Las validaciones disponibles son:
     * Parámetros:
 
       * *retries*: number
-      * *interval*: number (in days)
+      * *interval*: number (en días)
   </Accordion>
 
   <Accordion title="maximumIncorrectUsedCardsByExternalId">
@@ -251,7 +251,7 @@ Las validaciones disponibles son:
     * Parámetros:
 
       * *retries*: number
-      * *interval*: number (in days)
+      * *interval*: number (en días)
   </Accordion>
 </AccordionGroup>
 

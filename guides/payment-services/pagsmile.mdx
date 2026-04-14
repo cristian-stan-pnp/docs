@@ -22,7 +22,7 @@ Pagsmile espera recibir la siguiente información en el campo `extra_data` al cr
 
 ## Payouts[​](#payouts "Enlace directo al Payouts")
 
-Pagsmile permite payouts en diferentes países usando los siguentes métodos de pago:
+Pagsmile permite payouts en diferentes países usando los siguientes métodos de pago:
 
 ### Brasil[​](#brasil "Enlace directo al Brasil")
 
@@ -82,7 +82,7 @@ Campos obligatorios:
 
 #### Transfiya[​](#transfiya "Enlace directo al Transfiya")
 
-Los pagos con Transfiya requiren `amount` >= 1000 COP.
+Los pagos con Transfiya requieren `amount` >= 1000 COP.
 
 Campos obligatorios:
 
@@ -117,13 +117,13 @@ Campos obligatorios:
 
 #### Vita Wallet[​](#vita-wallet "Enlace directo al Vita Wallet")
 
-Los pagos con Vita Wallet requiren `amount` >= 5000 CLP.
+Los pagos con Vita Wallet requieren `amount` >= 5000 CLP.
 
 Campos obligatorios:
 
 * **Nombre y apellidos** (`profile.first_name` y `profile.last_name`)
 * **País** (`billing_address.country`): valor fijo `CHL`
-* **Número de teléfono** (`profile.email`)
+* **Email** (`profile.email`)
 * **Tipo de cuenta** (`payment.account_type`): valor fijo `EMAIL`
 
 ```
