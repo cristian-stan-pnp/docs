@@ -12,7 +12,7 @@ Usando este método de pago, el usuario recibirá una notificación PUSH en su t
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) opcionalmente indicando el número de teléfono del usuario para que el usuario no tenga que rellenarlo.
 
 ```
-  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno"      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }
 ```
 
 Como identificador de servicio, debe indicarse el **service\_uuid** del servicio de SIBS que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
@@ -34,7 +34,7 @@ Si por el contrario queremos que no sea necesario que el usuario esté presente 
 Para ello, en primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) **obligatoriamente** indicando el nombre, apellidos y número de teléfono del usuario. Si no se dispone del nombre y apellidos del usuario, se puede enviar una cadena vacía en estos campos.
 
 ```
-  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno"      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }
 ```
 
 A continuación, se debe lanzar la petición del [pago push](/reference/#operation/push-payment) indicando el UUID de la orden. A continuación el usuario recibirá la notificación push en su teléfono móvil, y una vez complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.
