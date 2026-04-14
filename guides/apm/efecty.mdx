@@ -15,7 +15,7 @@ El método mediante redirección requiere que el usuario esté presente en el mo
   "extra_data": {      "checkout": {          "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"      },      "profile": {          "first_name": "John",          "last_name": "Doe",          "email": "johndoe@gmail.com",          "document_identification_number": "92309089",          "phone": {              "number": "02614235138",              "prefix": "54"          }      },      "billing_address": {          "city": "Castellon",          "country": "COL",          "address1": "Avinguda del Mar 23",          "zip_code": "12000",          "state_code": "CT"      }  }
 ```
 
-El proceso de integración es [**similar al de la carta de pago por redirección**](/docs/integration/simple-integration), pero en este caso se deberá especificar el apm en la url base:
+El proceso de integración es [**similar al de la carta de pago por redirección**](/docs/integration/simple-integration), pero en este caso se deberá especificar el APM en la URL base:
 
 ```
 /payment/{token}?apm=EFECTY
