@@ -1,0 +1,121 @@
+---
+title: 'Partial authorization'
+description: 'How to manage partial authorizations in Paylands'
+---
+
+Instead of rejecting the operation, the system authorizes **the maximum available amount** on the card.
+
+This functionality is especially useful for business models that can manage the remaining amount through another payment method or a new charge attempt.
+
+> ⚠️ Partial authorizations should only be used if your business flow can handle pending amounts.
+
+***
+
+## How to use partial authorizations
+
+To enable partial authorization, you must use the **`PARTIAL_AUTHORIZATION`** operative when creating the payment order.
+
+> ℹ️ **AUTHORIZATION** rejects the operation if the full amount cannot be authorized, while **PARTIAL\_AUTHORIZATION** approves it even if only a portion of the amount can be authorized.
+
+***
+
+### Order creation example
+
+Example request to create an order using the partial authorization operative:
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+--header 'Authorization: pk_test_************************' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 600,
+  "operative": "PARTIAL_AUTHORIZATION",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+  "description": "Payment #1",
+  "additional": null,
+  "url_post": "https://my.website.com/process",
+  "url_ok": "https://my.website.com/ok",
+  "url_ko": "https://my.website.com/ko",
+  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",
+  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",
+  "source_uuid": null,
+  "save_card": true,
+  "reference": "50620",
+  "dynamic_descriptor": "PNP*MerchantName",
+  "expires_in": 3600
+}'
+```
+
+***
+
+### Partial authorization payment response example
+
+Below is the response of a successful payment in which a partial authorization was performed.
+
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "order": {
+    "uuid": "6E317E9E-1508-487A-98CB-389F7054B9CF",
+    "amount": 600,
+    "currency": "986",
+    "paid": true,
+    "status": "SUCCESS",
+    "transactions": [
+      {
+        "uuid": "1EAC092C-5A96-49E3-8FDB-D2374DE2F3B9",
+        "operative": "PARTIAL_AUTHORIZATION",
+        "amount": 420,
+        "status": "SUCCESS",
+        "error": "NONE",
+        "source": {
+          "object": "CARD",
+          "brand": "VISA",
+          "last4": "0071"
+        },
+        "...": "Other transaction fields omitted for clarity"
+      }
+    ]
+  },
+  "...": "Additional response fields omitted for clarity"
+}
+```
+
+> 💡 **Key behavior:** The order maintains the originally requested amount (**600**), while the transaction shows the finally authorized amount (**420**).
+
+***
+
+## How to test partial authorizations in sandbox
+
+You can validate the behavior of partial authorizations in the sandbox environment using the following methods:
+
+### Paynopain
+
+To simulate a partial authorization with **Paynopain**, send a request with the following amount:
+
+```
+amount: 100010
+```
+
+This value is configured to trigger a partial authorization during testing.
+
+### Paylands simulator
+
+Paylands provides a simulator that allows you to test different payment flows in sandbox, including partial authorizations.
+
+**Test card for partial authorization:**
+
+```
+4000058400000071
+```
+
+**Simulator behavior:**
+
+* For payments with an **amount greater than 100**, the simulator will apply a **partial authorization**.
+* For payments with an **amount equal to or less than 100**, the **full amount** will be authorized.
+
+For more information about the simulator, see the [Paylands service documentation](/guides/payment-services/paylands).

@@ -3,40 +3,40 @@ title: 'Source Holder Verification'
 description: 'How to verify the identity of a card holder in Paylands'
 ---
 
-Verification can be performed using the holder's name or using a legal identifier of the holder, depending on the selected method.
+Verification can be performed using the holder's name or a legal identifier of the holder, depending on the selected method.
 
 ***
 
 ## Verification methods
 
-SHV allows verifying the ownership of a `source` using one of the following methods:
+SHV allows you to verify the ownership of a `source` using one of the following methods:
 
-* `NAME` (**default**): verifies whether the indicated holder name matches the actual holder of the payment method.
-* `IDENTIFICATION_NUMBER`: verifies whether the indicated legal identifier corresponds to the actual holder of the payment method.
+* `NAME` (**default**): verifies whether the specified holder name matches the actual holder of the payment method.
+* `IDENTIFICATION_NUMBER`: verifies whether the specified legal identifier corresponds to the actual holder of the payment method.
 
 The method can be specified using the `verification_method` field. If not specified, `NAME` is used.
 
 ***
 
-## In which flows can it be used?
+## Which flows can it be used in?
 
 SHV can be applied in **three flows**:
 
 1. **[Specific verification endpoint](/reference/#operation/verify-source-holder)**
 
-   * Allows **verifying a `source` against a holder** and **obtaining the result** of the verification.
+   * Allows you to **verify a `source` against a holder** and **obtain the result** of the verification.
    * Returns the match result: `MATCH`, `NO_MATCH`, `PARTIAL_MATCH` (when the verification is performed).
 
-2. **Storing a payment method ([tokenize card](/reference/#operation/save-card) / [create bank account](/reference/#operation/save-bank))**
+2. **Store a payment method ([tokenize card](/reference/#operation/save-card) / [create bank account](/reference/#operation/save-bank))**
 
-   * In the card or bank account **storage** endpoint, if the required fields are sent, SHV validates whether the `source` being stored **belongs to the indicated holder**.
-   * Depending on the configured policies, the flow can be **blocked** and prevent the `source` from being stored.
+   * In the card or bank account **storage** endpoint, if the required fields are sent, SHV validates whether the `source` being stored **belongs to the specified holder**.
+   * Depending on the configured policies, the flow can be **blocked**, preventing the `source` from being stored.
 
 3. **Payment flow (payins and payouts)**
 
-   * When [**generating the payment order**](/reference/#operation/generate-payment-order), the `source_holder_verification` body can be specified in `extra_data`.
+   * When [**generating the payment order**](/reference/#operation/generate-payment-order), you can specify the `source_holder_verification` body in `extra_data`.
 
-   * Before attempting the payment, an SHV verification of the `source` being used for payment is executed.
+   * Before attempting the payment, an SHV verification of the `source` used for the payment is executed.
 
    * Allows **blocking the payment** if:
 
@@ -45,54 +45,93 @@ SHV can be applied in **three flows**:
 
 ***
 
-## Specific endpoint: verify source holder
+## Specific endpoint: verify the holder of a source
 
 ### Request example with NAME
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",  "service": "E8952860-5441-45A2-9233-33651DABA250",  "holder": {    "first_name": "Luis",    "last_name": "Pérez López"  }}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "holder": {
+    "first_name": "Luis",
+    "last_name": "Pérez López"
+  }
+}
 ```
 
 ### Request example with IDENTIFICATION\_NUMBER
 
 > When `verification_method` is `IDENTIFICATION_NUMBER`, `holder.identification_number` must be sent. The `first_name` field is still required for verification.
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",  "service": "E8952860-5441-45A2-9233-33651DABA250",  "holder": {    "first_name": "Luis",    "last_name": "Pérez López",    "identification_number": "B88353412"  },  "verification_method": "IDENTIFICATION_NUMBER"}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "holder": {
+    "first_name": "Luis",
+    "last_name": "Pérez López",
+    "identification_number": "B88353412"
+  },
+  "verification_method": "IDENTIFICATION_NUMBER"
+}
 ```
 
 ### Response example
 
-```
-{  "message": "OK",  "code": 200,  "current_time": "2026-02-24T14:35:01+0100",  "verification": {    "uuid": "A8CABF0C-C690-46C7-9F4B-E6AC3F929799",    "status": "PERFORMED",    "match_result": "MATCH",    "error": null,    "policy_action": null,    "verification_method": "NAME"  }}
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "current_time": "2026-02-24T14:35:01+0100",
+  "verification": {
+    "uuid": "A8CABF0C-C690-46C7-9F4B-E6AC3F929799",
+    "status": "PERFORMED",
+    "match_result": "MATCH",
+    "error": null,
+    "policy_action": null,
+    "verification_method": "NAME"
+  }
+}
 ```
 
 ***
 
-## Applying SHV in source storage or payments
+## Apply SHV in source storage or payments
 
 In the **source storage** and **payment** flows, the body sent is the same:
 
-```
-{  "source_holder_verification": {    "enabled": true,    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```json
+{
+  "source_holder_verification": {
+    "enabled": true,
+    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
 ```
 
 ### What does this body do?
 
 * If `enabled = true`, SHV is attempted during the flow.
 
-* It allows defining **policies**:
+* Allows defining **policies**:
 
   * which results are acceptable (`accepted_verification_results`),
   * what to do if the verification **is not available** or **is not performed** (`allow_unavailable`),
   * what to do in case of **errors** (`allow_error`).
 
-* It allows providing `first_name` and `last_name`. If not sent:
+* Allows providing `first_name` and `last_name`. If not sent:
 
   * In **payments**, the system attempts to obtain them from `extra_data.profile`.
   * In **storage**, the system attempts to obtain them from `card_holder` / `account_holder`.
 
-* It allows selecting the verification method via `verification_method`.
+* Allows selecting the verification method via `verification_method`.
 
 For the verification to be performed, the necessary data must be available in the operation:
 
@@ -105,22 +144,85 @@ For the verification to be performed, the necessary data must be available in th
 
 ### Tokenize card (storage)
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "customer_ext_id": "test1",  "card_holder": "TEST",  "card_pan": "4242424242424242",  "card_expiry_year": 34,  "card_expiry_month": "12",  "additional": null,  "url_post": "",  "validate": false,  "service": "E8952860-5441-45A2-9233-33651DABA250",  "card_cvv": 123,  "source_holder_verification": {    "enabled": true,    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "customer_ext_id": "test1",
+  "card_holder": "TEST",
+  "card_pan": "4242424242424242",
+  "card_expiry_year": 34,
+  "card_expiry_month": "12",
+  "additional": null,
+  "url_post": "",
+  "validate": false,
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "card_cvv": 123,
+  "source_holder_verification": {
+    "enabled": true,
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
 ```
 
 ### Create bank account (storage)
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "account_holder": "prueba",  "iban": "ES4469400001180255458867",  "customer_ext_id": "test",  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",  "source_holder_verification": {    "enabled": true,    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH", "NO_MATCH"],    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "account_holder": "prueba",
+  "iban": "ES4469400001180255458867",
+  "customer_ext_id": "test",
+  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",
+  "source_holder_verification": {
+    "enabled": true,
+    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH", "NO_MATCH"],
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
 ```
 
 ### Create order (payment flow)
 
 > In payments, `source_holder_verification` is sent inside `extra_data`.
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 10,  "operative": "PAYOUT",  "secure": false,  "customer_ext_id": "test",  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",  "description": "test",  "additional": "Paylands test",  "url_post": "https://enpxp0f8f1owh.x.pipedream.net/",  "url_ok": "",  "url_ko": "",  "template_uuid": null,  "dcc_template_uuid": null,  "extra_data": {    "profile": {      "first_name": "Luis",      "last_name": "test",      "email": "victor.colejo@paynopain.com",      "birthdate": "1996-04-04"    },    "source_holder_verification": {      "enabled": true,      "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],      "allow_unavailable": true,      "allow_error": false,      "first_name": "Pedro",      "last_name": "Perez"    }  }}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 10,
+  "operative": "PAYOUT",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",
+  "description": "test",
+  "additional": "Paylands test",
+  "url_post": "https://enpxp0f8f1owh.x.pipedream.net/",
+  "url_ok": "",
+  "url_ko": "",
+  "template_uuid": null,
+  "dcc_template_uuid": null,
+  "extra_data": {
+    "profile": {
+      "first_name": "Luis",
+      "last_name": "test",
+      "email": "victor.colejo@paynopain.com",
+      "birthdate": "1996-04-04"
+    },
+    "source_holder_verification": {
+      "enabled": true,
+      "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],
+      "allow_unavailable": true,
+      "allow_error": false,
+      "first_name": "Pedro",
+      "last_name": "Perez"
+    }
+  }
+}
 ```
 
 ***
@@ -129,23 +231,32 @@ For the verification to be performed, the necessary data must be available in th
 
 | Field                           | Type                | Required    | Default | Description                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | ------------------------------- | ------------------- | ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `enabled`                       | `boolean`           | **Yes**     | —       | Enables payment method holder verification. When set to `true`, the platform performs an SHV check before continuing with the flow (for example, before executing the payment).                                                                                                                                                                                                                                  |
-| `verification_method`           | `string` *(enum)*   | No          | `NAME`  | Method used to verify the ownership of the payment method. Allowed values: `NAME` or `IDENTIFICATION_NUMBER`. If set to `NAME`, the verification checks whether the indicated holder name matches the actual holder of the payment method. If set to `IDENTIFICATION_NUMBER`, the verification checks whether the indicated legal identifier corresponds to the actual holder of the payment method. |
+| `enabled`                       | `boolean`           | **Yes**     | —       | Activates payment method holder verification. When set to `true`, the platform performs an SHV check before continuing with the flow (for example, before executing the payment).                                                                                                                                                                                                                                  |
+| `verification_method`           | `string` *(enum)*   | No          | `NAME`  | Method used to verify the ownership of the payment method. Allowed values: `NAME` or `IDENTIFICATION_NUMBER`. If set to `NAME`, the verification checks whether the specified holder name matches the actual holder of the payment method. If set to `IDENTIFICATION_NUMBER`, the verification checks whether the specified legal identifier corresponds to the actual holder of the payment method. |
 | `accepted_verification_results` | `string[]` *(enum)* | No          | —       | List of verification results considered acceptable to continue with the operation. If omitted or empty, the flow continues regardless of the SHV result. Allowed values: `MATCH`, `NO_MATCH`, `PARTIAL_MATCH`.                                                                                                                                                                                              |
-| `allow_unavailable`             | `boolean`           | No          | `true`  | Allows continuing with the flow if the verification **was not performed** because it is not supported by the bank or by the card type/brand, or because even though it could be supported the bank does not execute it.                                                                                                                                                                                                                                 |
+| `allow_unavailable`             | `boolean`           | No          | `true`  | Allows the flow to continue if the verification **was not performed** because it is not supported by the bank or by the card type/brand, or because even though it could be supported, the bank did not execute it.                                                                                                                                                                                                                                 |
 | `allow_error`                   | `boolean`           | No          | `false` | Determines the behavior when the check cannot be completed due to transient failures/errors (e.g., timeout or temporary unavailability). When `true`, these errors **do not** block the flow. When `false`, these errors **block** the operation.                                                                                                                                                                                                           |
-| `first_name`                    | `string`            | No          | —       | First name of the payment method holder. If not sent: in payments, it is attempted to be obtained from `extra_data.profile`; in storage, from `card_holder` / `account_holder`. This data must be available for the verification to be performed.                                                                                                                                                                                              |
+| `first_name`                    | `string`            | No          | —       | First name of the payment method holder. If not sent: in payments, the system attempts to obtain it from `extra_data.profile`; in storage, from `card_holder` / `account_holder`. This data must be available for the verification to be performed.                                                                                                                                                                                              |
 | `last_name`                     | `string`            | No          | —       | Last name of the payment method holder (same logic as `first_name`).                                                                                                                                                                                                                                                                                                                                                                   |
-| `identification_number`         | `string`            | Conditional | —       | Legal identifier of the payment method holder (for example, NIF, DNI, passport, or company registration number). Required when `verification_method` is `IDENTIFICATION_NUMBER`. If not sent, in payments it is attempted to be obtained from `extra_data.profile.document_identification_number`.                                                                                                                                             |
+| `identification_number`         | `string`            | Conditional | —       | Legal identifier of the payment method holder (for example, national ID, passport, or company registration number). Required when `verification_method` is `IDENTIFICATION_NUMBER`. If not sent, in payments the system attempts to obtain it from `extra_data.profile.document_identification_number`.                                                                                                                                             |
 
 ***
 
-## SHV Response (common format)
+## SHV response (common format)
 
-Regardless of the endpoint/flow, the SHV response block is returned in this format:
+Regardless of the endpoint/flow, the SHV response block is returned with this structure:
 
-```
-{  "source_holder_verification": {    "uuid": "ED17EDE3-51A7-47A9-BD13-50448587278C",    "status": "PERFORMED",    "match_result": "NO_MATCH",    "error": null,    "policy_action": "ALLOWED",    "verification_method": "NAME"  }}
+```json
+{
+  "source_holder_verification": {
+    "uuid": "ED17EDE3-51A7-47A9-BD13-50448587278C",
+    "status": "PERFORMED",
+    "match_result": "NO_MATCH",
+    "error": null,
+    "policy_action": "ALLOWED",
+    "verification_method": "NAME"
+  }
+}
 ```
 
 ### Field meanings
@@ -154,17 +265,17 @@ Regardless of the endpoint/flow, the SHV response block is returned in this form
 * `status`: final status of the verification attempt.
 * `match_result`: match result (if applicable).
 * `error`: the error that may have occurred during the verification.
-* `policy_action`: applies only to the **source creation** and **payment** flows (when `source_holder_verification` is sent with policies). Indicates the final decision made regarding the continuation of the flow.
+* `policy_action`: applies only to **source creation** and **payment** flows (when `source_holder_verification` is sent with policies). Indicates the final decision made regarding the continuation of the flow.
 
 ***
 
-## `status` states
+## `status` values
 
 Possible values:
 
-* `PERFORMED` The verification was able to be performed. `match_result` is expected to be populated (`MATCH`, `PARTIAL_MATCH`, or `NO_MATCH`).
+* `PERFORMED` The verification was successfully carried out. `match_result` is expected to be populated (`MATCH`, `PARTIAL_MATCH`, or `NO_MATCH`).
 
-* `NOT_PERFORMED` The verification was not performed (for reasons not necessarily related to support).
+* `NOT_PERFORMED` The verification was not carried out (for reasons not necessarily related to support).
 
 * `NOT_SUPPORTED` The verification is not supported for the bank / account type / card brand or type.
 
@@ -178,7 +289,7 @@ Possible values:
 
 An SHV check can return:
 
-* `MATCH` — The holder data completely matches the actual holder of the payment method.
+* `MATCH` — The holder data fully matches the actual holder of the payment method.
 * `PARTIAL_MATCH` — Approximate match with minor discrepancies.
 * `NO_MATCH` — The holder data does not match the actual holder.
 
@@ -202,11 +313,11 @@ Possible values:
 
 ## Sandbox simulation (IBAN)
 
-In **sandbox** environments, for **bank accounts**, `match_result` results can be simulated using these IBANs:
+In **sandbox** environments, for **bank accounts**, you can simulate `match_result` results using these IBANs:
 
-| IBAN                       | Simulated result             | Description                                   |
-| -------------------------- | ---------------------------- | --------------------------------------------- |
-| `ES8569400001160529041877` | rejected                     | Always simulates a rejected verification.     |
-| `ES6769400001110836662135` | failed (`NO_MATCH`)          | Always simulates a `NO_MATCH` result.         |
-| `ES3369400001190536473836` | confirmed (`PARTIAL_MATCH`)  | Always simulates an approximate match.        |
-| Any other IBAN             | confirmed (`MATCH`)          | Always simulates a complete match.            |
+| IBAN                       | Simulated result             | Description                                     |
+| -------------------------- | ---------------------------- | ----------------------------------------------- |
+| `ES8569400001160529041877` | rejected                     | Always simulates a rejected verification.       |
+| `ES6769400001110836662135` | failed (`NO_MATCH`)          | Always simulates a `NO_MATCH` result.           |
+| `ES3369400001190536473836` | confirmed (`PARTIAL_MATCH`)  | Always simulates an approximate match.          |
+| Any other IBAN             | confirmed (`MATCH`)          | Always simulates a full match.                  |

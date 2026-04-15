@@ -1,0 +1,96 @@
+---
+title: 'Operațiuni în lot'
+description: 'Cum să efectuezi autorizări și rambursări în lot cu API-ul Paylands'
+---
+
+Acest endpoint permite trimiterea unui fișier CSV către server conținând mai multe operațiuni care vor fi executate într-un proces batch.
+
+Acest CSV trebuie să conțină o linie de antet cu numele câmpurilor. A doua linie și următoarele vor conține toate informațiile despre diferitele operațiuni. Câmpurile din fiecare linie trebuie separate prin virgulă (,).
+
+Operațiunile în lot disponibile pe aceste endpoint-uri sunt Plăți și Rambursări, fiecare dintre aceste operațiuni având propria structură de fișier și endpoint la care se face cererea.
+
+## Plăți în lot
+
+Pentru a procesa în lot un set de plăți, trebuie doar să [trimiteți un CSV la endpoint-ul corespunzător](/reference/#operation/batch-payments-file) urmând structura fișierului de plăți descrisă mai jos.
+
+### Structura CSV pentru plăți în lot
+
+Un CSV de plăți conține o primă linie cu antetele câmpurilor de procesat și o linie cu datele operațiunii pentru fiecare plată care se dorește a fi efectuată.
+
+Antetele CSV trebuie să fie următoarele:
+
+```
+AMOUNT,CARD,CUSTOMER_EXTERNAL_ID,SERVICE,ADDITIONAL,URL_POST,EXTRA_DATA
+```
+
+Iar liniile de operațiune trebuie completate cu următoarele câmpuri:
+
+| Câmp                   | Tip     | Obligatoriu | Descriere                                                                                                           |
+| ---------------------- | ------- | ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| AMOUNT                 | Integer | DA          | Suma de încasat, în cenți                                                                                           |
+| CARD                   | String  | DA          | UUID-ul cardului care va fi utilizat pentru efectuarea plății                                                        |
+| CUSTOMER\_EXTERNAL\_ID | String  | DA          | Identificatorul utilizatorului care va efectua plata. Trebuie să fie același cu cel utilizat la salvarea cardului    |
+| SERVICE                | String  | DA          | UUID-ul serviciului                                                                                                 |
+| ADDITIONAL             | String  | NU          | Câmp text liber care va fi trimis comerciantului în notificare                                                      |
+| URL\_POST              | String  | NU          | URL-ul comerciantului unde va fi trimisă notificarea cu rezultatul plății                                           |
+| EXTRA\_DATA            | String  | NU          | Se pot indica atâtea câmpuri câte sunt necesare urmând formatul CSV, separând fiecare dintre ele cu `;`             |
+
+Datele care pot fi incluse în extra\_data sunt aceleași cu cele conținute în câmpul extra\_data la [**generarea unui ordin de plată**](/reference/#operation/generate-payment-order).
+
+Pentru ca **Paylands** să poată citi corect fișierul .csv trebuie respectat standardul separând câmpurile cu `,`
+
+Un exemplu de fișier CSV de plăți ar fi următorul:
+
+```csv
+AMOUNT,CARD,CUSTOMER_EXTERNAL_ID,SERVICE,ADDITIONAL,URL_POST,EXTRA_DATA
+111,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_111,https://google.es/post,cof.reason:OTHER;address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
+222,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_222,,
+333,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_333,,address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
+```
+
+## Rambursări în lot
+
+Pentru a procesa în lot un set de rambursări, va trebui să [trimiteți un CSV la endpoint-ul de rambursări în lot](/reference/#operation/batch-refunds-file) urmând structura fișierelor de rambursări descrisă mai jos:
+
+### Structura CSV pentru rambursări în lot
+
+Fișierul CSV de rambursări trebuie să conțină o primă linie cu antetele câmpurilor de procesat și o linie cu datele operațiunii pentru fiecare rambursare care se dorește a fi procesată.
+
+Antetele CSV trebuie să fie următoarele:
+
+```
+ORDER_UUID,AMOUNT
+```
+
+Iar liniile fiecărei operațiuni trebuie completate cu următoarele câmpuri:
+
+| Câmp        | Tip     | Obligatoriu | Descriere                                    |
+| ----------- | ------- | ----------- | -------------------------------------------- |
+| ORDER\_UUID | String  | DA          | UUID-ul ordinului care se dorește rambursat   |
+| AMOUNT      | Integer | NU          | Suma de rambursat, în cenți                   |
+
+Un exemplu de fișier CSV de rambursări ar fi următorul:
+
+```csv
+ORDER_UUID,AMOUNT
+AAA94216-045C-4A8F-ABBC-E480BEAA22B4,111
+3FC5B2E2-87FC-4329-B3AC-FE9DEC9EE56A,452
+1F8B9B46-E125-4F01-B981-35C2358FCCF3,388
+```
+
+## Răspunsul operațiunilor
+
+Răspunsul acestor endpoint-uri va menține același format ca restul endpoint-urilor. În plus, va fi adăugat câmpul "errors" care va conține un array cu toate erorile produse în fișier, împreună cu linia la care a apărut.
+
+```json
+{
+  "errors": [
+    {
+      "line": 13,
+      "msg": "Invalid card"
+    }
+  ]
+}
+```
+
+Dacă nu există erori la trimiterea fișierului, răspunsul va conține un array gol sub cheia "errors".

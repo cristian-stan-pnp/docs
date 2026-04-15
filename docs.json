@@ -290,7 +290,10 @@
                 "pages": [
                   "en/guides/accept-payments/web-integration",
                   "en/guides/accept-payments/server-integration",
-                  "en/guides/accept-payments/payment-methods"
+                  "en/guides/accept-payments/payment-methods",
+                  "en/guides/accept-payments/marketplace-integration",
+                  "en/guides/accept-payments/payment-urls",
+                  "en/guides/accept-payments/partial-authorization"
                 ]
               },
               {
@@ -307,6 +310,7 @@
                   "en/guides/features/subscriptions",
                   "en/guides/features/3ds",
                   "en/guides/features/security",
+                  "en/guides/features/fraud",
                   "en/guides/features/source-holder-verification",
                   "en/guides/features/customization",
                   "en/guides/features/debt-collector"
@@ -318,17 +322,11 @@
                   {
                     "group": "Proxy PCI",
                     "pages": [
-                      "en/guides/tools/proxipci/javascript-library"
+                      "en/guides/tools/proxipci/channels",
+                      "en/guides/tools/proxipci/javascript-library",
+                      "en/guides/tools/proxipci/payments"
                     ]
                   }
-                "group": "Payment Services",
-                "pages": [
-                  "en/guides/payment-services/payretailers",
-                  "en/guides/payment-services/floa",
-                  "en/guides/payment-services/pagsmile",
-                  "en/guides/payment-services/flywire",
-                  "en/guides/payment-services/paypal",
-                  "en/guides/payment-services/tink"
                 ]
               },
               {
@@ -340,6 +338,7 @@
               {
                 "group": "Alternative Payment Methods",
                 "pages": [
+                  "en/guides/apm/cofidis",
                   "en/guides/apm/flowpay",
                   "en/guides/apm/khipu",
                   "en/guides/apm/klap",
@@ -352,6 +351,8 @@
               {
                 "group": "Payment Services",
                 "pages": [
+                  "en/guides/payment-services/paypal",
+                  "en/guides/payment-services/payretailers"
                   "en/guides/payment-services/redsys",
                   "en/guides/payment-services/cecabank",
                   "en/guides/payment-services/credorax",
@@ -363,7 +364,8 @@
                 "pages": [
                   "en/guides/resources/CFT-and-AFT",
                   "en/guides/resources/concepts",
-                  "en/guides/resources/error-codes"
+                  "en/guides/resources/error-codes",
+                  "en/guides/resources/batch-operations"
                 ]
               }
             ]
@@ -476,7 +478,10 @@
                 "pages": [
                   "pt/guides/accept-payments/web-integration",
                   "pt/guides/accept-payments/server-integration",
-                  "pt/guides/accept-payments/payment-methods"
+                  "pt/guides/accept-payments/payment-methods",
+                  "pt/guides/accept-payments/marketplace-integration",
+                  "pt/guides/accept-payments/payment-urls",
+                  "pt/guides/accept-payments/partial-authorization"
                 ]
               },
               {
@@ -493,12 +498,23 @@
                   "pt/guides/features/subscriptions",
                   "pt/guides/features/3ds",
                   "pt/guides/features/security",
+                  "pt/guides/features/fraud",
                   "pt/guides/features/source-holder-verification",
                   "pt/guides/features/customization",
                   "pt/guides/features/debt-collector"
                 ]
               },
               {
+                "group": "Ferramentas",
+                "pages": [
+                  {
+                    "group": "Proxy PCI",
+                    "pages": [
+                      "pt/guides/tools/proxipci/channels",
+                      "pt/guides/tools/proxipci/javascript-library",
+                      "pt/guides/tools/proxipci/payments"
+                    ]
+                  }
                 "group": "Serviços de Pagamento",
                 "pages": [
                   "pt/guides/payment-services/payretailers",
@@ -518,6 +534,7 @@
               {
                 "group": "Métodos de Pagamento Alternativos",
                 "pages": [
+                  "pt/guides/apm/cofidis",
                   "pt/guides/apm/flowpay",
                   "pt/guides/apm/khipu",
                   "pt/guides/apm/klap",
@@ -530,6 +547,8 @@
               {
                 "group": "Serviços de Pagamento",
                 "pages": [
+                  "pt/guides/payment-services/paypal",
+                  "pt/guides/payment-services/payretailers"
                   "pt/guides/payment-services/redsys",
                   "pt/guides/payment-services/cecabank",
                   "pt/guides/payment-services/credorax",
@@ -541,7 +560,8 @@
                 "pages": [
                   "pt/guides/resources/CFT-and-AFT",
                   "pt/guides/resources/concepts",
-                  "pt/guides/resources/error-codes"
+                  "pt/guides/resources/error-codes",
+                  "pt/guides/resources/batch-operations"
                 ]
               }
             ]
@@ -654,7 +674,10 @@
                 "pages": [
                   "ro/guides/accept-payments/web-integration",
                   "ro/guides/accept-payments/server-integration",
-                  "ro/guides/accept-payments/payment-methods"
+                  "ro/guides/accept-payments/payment-methods",
+                  "ro/guides/accept-payments/marketplace-integration",
+                  "ro/guides/accept-payments/payment-urls",
+                  "ro/guides/accept-payments/partial-authorization"
                 ]
               },
               {
@@ -677,6 +700,16 @@
                 ]
               },
               {
+                "group": "Instrumente",
+                "pages": [
+                  {
+                    "group": "Proxy PCI",
+                    "pages": [
+                      "ro/guides/tools/proxipci/channels",
+                      "ro/guides/tools/proxipci/javascript-library",
+                      "ro/guides/tools/proxipci/payments"
+                    ]
+                  }
                 "group": "Servicii de Plată",
                 "pages": [
                   "ro/guides/payment-services/payretailers",
@@ -696,6 +729,7 @@
               {
                 "group": "Metode de Plată Alternative",
                 "pages": [
+                  "ro/guides/apm/cofidis",
                   "ro/guides/apm/flowpay",
                   "ro/guides/apm/khipu",
                   "ro/guides/apm/klap",
@@ -708,6 +742,8 @@
               {
                 "group": "Servicii de Plată",
                 "pages": [
+                  "ro/guides/payment-services/paypal",
+                  "ro/guides/payment-services/payretailers"
                   "ro/guides/payment-services/redsys",
                   "ro/guides/payment-services/cecabank",
                   "ro/guides/payment-services/credorax",
@@ -719,7 +755,8 @@
                 "pages": [
                   "ro/guides/resources/CFT-and-AFT",
                   "ro/guides/resources/concepts",
-                  "ro/guides/resources/error-codes"
+                  "ro/guides/resources/error-codes",
+                  "ro/guides/resources/batch-operations"
                 ]
               }
             ]

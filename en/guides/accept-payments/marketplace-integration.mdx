@@ -1,0 +1,87 @@
+---
+title: 'Marketplace integration'
+description: 'How to integrate Paylands into a marketplace with multiple merchants'
+---
+
+This is an example of what the final request would look like:
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 10000,
+  "operative": "AUTHORIZATION",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+  "description": "Payment #1",
+  "additional": null,
+  "url_post": "https://my.website.com/process",
+  "url_ok": "https://my.website.com/ok",
+  "url_ko": "https://my.website.com/ko",
+  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",
+  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",
+  "source_uuid": null,
+  "save_card": true,
+  "reference": "50620",
+  "dynamic_descriptor": "PNP*NombreComercio",
+  "expires_in": 3600,
+  "extra_data": {
+    "marketplace": [
+      {
+        "merchant_location_id": 123,
+        "amount": 0,
+        "description": "MarketPlace1",
+        "net_amount": 150
+      },
+      {
+        "merchant_location_id": 4487,
+        "amount": 10000,
+        "description": "Comercio1",
+        "net_amount": 9850
+      }
+    ]
+  }
+}'
+```
+
+A new field called `extra_data` has been added to the request. Here you must include the relevant information so that the payment is correctly processed for both the marketplace and the merchants involved.
+
+The `merchant_location_id` values are the IDs that Paylands will provide for both the marketplace and the merchants once you are registered in our marketplace system.
+
+In this example, the transaction is for 100€ (the amount is always specified in cents, hence 10000). The gross amount of 100€ corresponds to merchant1 with ID 4487, of which they will keep 98.50€ and the remaining 1.50€ will go to the MarketPlace as a commission.
+
+This is how you indicate for each merchant what portion of the total amount corresponds to them. And from this portion, the net\_amount shows how much should be settled to the MarketPlace and the merchant.
+
+### Refunds
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment/refund' \
+--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "signature": "121149a0ba5361191d740fa898784a8b",
+  "order_uuid": "1f405ea3-9798-42a6-9e87-bd347ef67f55",
+  "amount": 5000,
+  "extra_data": {
+    "marketplace_refunds": [
+      {
+        "merchant_location_id": 123,
+        "amount": 0,
+        "description": "MarketPlace1",
+        "net_amount": 10
+      },
+      {
+        "merchant_location_id": 4487,
+        "amount": 5000,
+        "description": "Comercio1",
+        "net_amount": 4990
+      }
+    ]
+  }
+}'
+```
+
+When performing a [refund](/reference/#operation/refund-payment), you must add the `extra_data` field and within it `marketplace_refunds`. You only need to specify `amount` and `marketplace_refunds` in the case of partial refunds. This new element follows the same behavior as described above.

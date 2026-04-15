@@ -1,0 +1,121 @@
+---
+title: 'Autorização parcial'
+description: 'Como gerir autorizações parciais no Paylands'
+---
+
+Em vez de rejeitar a operação, o sistema autoriza **o montante máximo disponível** no cartão.
+
+Esta funcionalidade é especialmente útil para modelos de negócio que podem gerir o montante restante através de outro método de pagamento ou uma nova tentativa de cobrança.
+
+> ⚠️ As autorizações parciais devem ser utilizadas apenas se o seu fluxo de negócio permitir gerir montantes pendentes.
+
+***
+
+## Como usar as autorizações parciais
+
+Para ativar a autorização parcial, deve utilizar a operativa **`PARTIAL_AUTHORIZATION`** ao criar a ordem de pagamento.
+
+> ℹ️ **AUTHORIZATION** rejeita a operação se o montante completo não puder ser autorizado, enquanto **PARTIAL\_AUTHORIZATION** aprova-a mesmo que apenas uma parte do montante possa ser autorizada.
+
+***
+
+### Exemplo de criação de ordem
+
+Exemplo de pedido para criar uma ordem utilizando a operativa de autorização parcial:
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+--header 'Authorization: pk_test_************************' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 600,
+  "operative": "PARTIAL_AUTHORIZATION",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+  "description": "Payment #1",
+  "additional": null,
+  "url_post": "https://my.website.com/process",
+  "url_ok": "https://my.website.com/ok",
+  "url_ko": "https://my.website.com/ko",
+  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",
+  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",
+  "source_uuid": null,
+  "save_card": true,
+  "reference": "50620",
+  "dynamic_descriptor": "PNP*MerchantName",
+  "expires_in": 3600
+}'
+```
+
+***
+
+### Exemplo de resposta de um pagamento com autorização parcial
+
+A seguir, apresenta-se a resposta de um pagamento bem-sucedido no qual foi efetuada uma autorização parcial.
+
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "order": {
+    "uuid": "6E317E9E-1508-487A-98CB-389F7054B9CF",
+    "amount": 600,
+    "currency": "986",
+    "paid": true,
+    "status": "SUCCESS",
+    "transactions": [
+      {
+        "uuid": "1EAC092C-5A96-49E3-8FDB-D2374DE2F3B9",
+        "operative": "PARTIAL_AUTHORIZATION",
+        "amount": 420,
+        "status": "SUCCESS",
+        "error": "NONE",
+        "source": {
+          "object": "CARD",
+          "brand": "VISA",
+          "last4": "0071"
+        },
+        "...": "Outros campos da transação omitidos para maior clareza"
+      }
+    ]
+  },
+  "...": "Campos adicionais da resposta omitidos para maior clareza"
+}
+```
+
+> 💡 **Comportamento chave:** A ordem mantém o montante original solicitado (**600**), enquanto a transação mostra o montante finalmente autorizado (**420**).
+
+***
+
+## Como testar autorizações parciais em sandbox
+
+Pode validar o comportamento das autorizações parciais no ambiente sandbox utilizando os seguintes métodos:
+
+### Paynopain
+
+Para simular uma autorização parcial com **Paynopain**, envie um pedido com o seguinte montante:
+
+```
+amount: 100010
+```
+
+Este valor está configurado para provocar uma autorização parcial durante o teste.
+
+### Simulador do Paylands
+
+O Paylands disponibiliza um simulador que permite testar diferentes fluxos de pagamento em sandbox, incluindo o de autorizações parciais.
+
+**Cartão de teste para autorização parcial:**
+
+```
+4000058400000071
+```
+
+**Comportamento do simulador:**
+
+* Para pagamentos com um **montante superior a 100**, o simulador aplicará uma **autorização parcial**.
+* Para pagamentos com um **montante igual ou inferior a 100**, será autorizado o **montante completo**.
+
+Para mais informações sobre o simulador, consulte a [documentação do serviço Paylands](/guides/payment-services/paylands).
