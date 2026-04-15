@@ -313,7 +313,11 @@
                   "en/guides/payment-services/pagsmile",
                   "en/guides/payment-services/flywire",
                   "en/guides/payment-services/paypal",
-                  "en/guides/payment-services/tink"
+                  "en/guides/payment-services/tink",
+                  "en/guides/payment-services/trustpayments",
+                  "en/guides/payment-services/mit",
+                  "en/guides/payment-services/inespay",
+                  "en/guides/payment-services/apolopag"
                 ]
               },
               {
@@ -475,7 +479,11 @@
                   "pt/guides/payment-services/pagsmile",
                   "pt/guides/payment-services/flywire",
                   "pt/guides/payment-services/paypal",
-                  "pt/guides/payment-services/tink"
+                  "pt/guides/payment-services/tink",
+                  "pt/guides/payment-services/trustpayments",
+                  "pt/guides/payment-services/mit",
+                  "pt/guides/payment-services/inespay",
+                  "pt/guides/payment-services/apolopag"
                 ]
               },
               {
@@ -637,7 +645,11 @@
                   "ro/guides/payment-services/pagsmile",
                   "ro/guides/payment-services/flywire",
                   "ro/guides/payment-services/paypal",
-                  "ro/guides/payment-services/tink"
+                  "ro/guides/payment-services/tink",
+                  "ro/guides/payment-services/trustpayments",
+                  "ro/guides/payment-services/mit",
+                  "ro/guides/payment-services/inespay",
+                  "ro/guides/payment-services/apolopag"
                 ]
               },
               {

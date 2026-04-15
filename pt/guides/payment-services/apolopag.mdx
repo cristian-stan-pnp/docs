@@ -1,0 +1,68 @@
+---
+title: 'Apolopag'
+description: 'Configuração e integração do serviço de pagamento Apolopag no Paylands'
+---
+
+## Introdução
+
+Apolopag é um serviço que permite realizar pagamentos por cartão ou através dos métodos de pagamento alternativos PIX e PicPay. Também permite PIX Payouts. Pode ser utilizado tanto no checkout do Paylands como por redirecionamento, assim como com pagamentos push.
+
+## Dados extras obrigatórios
+
+Apolopag espera receber as seguintes informações obrigatoriamente no campo `extra_data` ao criar a ordem, para pagamentos com cartão ou pagamentos PUSH com PIX e PicPay:
+
+* Nome e sobrenome
+* Email
+* Documento de identificação (CPF)
+* Telefone
+* Data de nascimento (opcional para pagamentos com cartão)
+
+Estes campos podem ser fornecidos com a seguinte estrutura em `extra_data`:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "659.516.937-13",        "birthdate": "1996-01-01",        "phone": {            "number": "5151428089"        }     }}
+```
+
+## Payouts
+
+Para usar PIX Payouts com Apolopag é necessário enviar as seguintes informações no `extra_data`:
+
+* Nome e sobrenome
+* Documento de identificação (CPF)
+* Telefone
+* Código do banco
+* Número da agência bancária
+* Número da conta
+* Tipo de conta (current/saving/salary/payment)
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "document_identification_number": "842.359.516-10"     },    "payment": {        "bank_code": "218",        "branch": "0944",        "account": "091234-5",        "account_type": "current"    }}
+```
+
+## Métodos de pagamento em Sandbox
+
+O cartão de teste é o seguinte. Em geral, a data de validade e o CVV não importam desde que a data seja posterior à data atual e o CVV tenha 3 dígitos.
+
+```
+- número do cartão: 4111 1111 1111 1111
+- CVV: 123
+- data de validade: 12/34
+```
+
+## Moeda
+
+A moeda suportada para este serviço é o real brasileiro (BRL).
+
+## Códigos de erro
+
+A estrutura do erro tem o seguinte formato:
+
+```
+Código - Mensagem
+```
+
+Por exemplo:
+
+```
+400 - first and last name are required
+```

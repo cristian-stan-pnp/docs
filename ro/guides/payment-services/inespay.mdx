@@ -1,0 +1,36 @@
+---
+title: 'Inespay'
+description: 'Configurarea și integrarea serviciului de plată Inespay în Paylands'
+---
+
+## Monedă
+
+Moneda suportată pentru acest serviciu este euro.
+
+## Plăți în mediul de test
+
+Pentru a efectua tranzacții în acest mediu, urmați pașii următori:
+
+```
+- Selectați banca SIMULATOR.
+- Utilizator: user1. Parolă: 1234.
+- Contract 1 și account ES11 ....
+- Cod 1111.
+```
+
+Cu aceasta, plata este finalizată.
+
+## Câmpuri necesare pentru crearea comenzii
+
+Pentru funcționarea corectă a integrării, sunt necesare atât câmpul *additional* al comenzii, cât și *customer\_ext\_id*.
+
+## Coduri de eroare
+
+```
+Cod
+```
+
+| Cod  | Mesaj                       |
+| ---- | --------------------------- |
+| E300 | Eroare generică             |
+| E301 | Eroare parametri incorecți  |

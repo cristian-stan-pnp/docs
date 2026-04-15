@@ -1,0 +1,36 @@
+---
+title: 'Inespay'
+description: 'Configuração e integração do serviço de pagamento Inespay no Paylands'
+---
+
+## Moeda
+
+A moeda suportada para este serviço é o euro.
+
+## Pagamentos em ambiente de teste
+
+Para realizar transações neste ambiente, siga os seguintes passos:
+
+```
+- Selecione o banco SIMULATOR.
+- Usuário: user1. Senha: 1234.
+- Contract 1 e account ES11 ....
+- Código 1111.
+```
+
+Com isso, o pagamento estará finalizado.
+
+## Campos necessários para criação da ordem
+
+Para o funcionamento correto da integração, são necessários tanto o *additional* da ordem quanto o *customer\_ext\_id*.
+
+## Códigos de erro
+
+```
+Código
+```
+
+| Código | Mensagem                      |
+| ------ | ----------------------------- |
+| E300   | Erro genérico                 |
+| E301   | Erro de parâmetros incorretos |

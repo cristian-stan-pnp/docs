@@ -1,0 +1,36 @@
+---
+title: 'Inespay'
+description: 'Configuration and integration of the Inespay payment service in Paylands'
+---
+
+## Currency
+
+The supported currency for this service is euros.
+
+## Payments in test environment
+
+To perform transactions in this environment, follow these steps:
+
+```
+- Select the SIMULATOR bank.
+- Username: user1. Password: 1234.
+- Contract 1 and account ES11 ....
+- Code 1111.
+```
+
+This completes the payment.
+
+## Required fields for order creation
+
+For the integration to work correctly, both the order's *additional* field and the *customer\_ext\_id* are required.
+
+## Error codes
+
+```
+Code
+```
+
+| Code | Message                    |
+| ---- | -------------------------- |
+| E300 | Generic error              |
+| E301 | Incorrect parameters error |

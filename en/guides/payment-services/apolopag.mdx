@@ -1,0 +1,68 @@
+---
+title: 'Apolopag'
+description: 'Configuration and integration of the Apolopag payment service in Paylands'
+---
+
+## Introduction
+
+Apolopag is a service that allows card payments or payments through the alternative payment methods PIX and PicPay. It also supports PIX Payouts. It can be used both in the Paylands checkout and via redirection, as well as with push payments.
+
+## Required extra data
+
+Apolopag requires the following information to be sent in the `extra_data` field when creating the order, for card payments or PUSH payments with PIX and PicPay:
+
+* First and last name
+* Email
+* Identification document (CPF)
+* Phone
+* Date of birth (optional for card payments)
+
+These fields can be provided with the following structure in `extra_data`:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "659.516.937-13",        "birthdate": "1996-01-01",        "phone": {            "number": "5151428089"        }     }}
+```
+
+## Payouts
+
+To use PIX Payouts with Apolopag, the following information must be sent in `extra_data`:
+
+* First and last name
+* Identification document (CPF)
+* Phone
+* Bank code
+* Bank branch number
+* Account number
+* Account type (current/saving/salary/payment)
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "document_identification_number": "842.359.516-10"     },    "payment": {        "bank_code": "218",        "branch": "0944",        "account": "091234-5",        "account_type": "current"    }}
+```
+
+## Sandbox payment methods
+
+The test card is as follows. In general, the expiration date and CVV do not matter as long as the date is after the current date, and the CVV has 3 digits.
+
+```
+- card number: 4111 1111 1111 1111
+- CVV: 123
+- expiration date: 12/34
+```
+
+## Currency
+
+The supported currency for this service is the Brazilian real (BRL).
+
+## Error codes
+
+The error structure has the following format:
+
+```
+Code - Message
+```
+
+For example:
+
+```
+400 - first and last name are required
+```
