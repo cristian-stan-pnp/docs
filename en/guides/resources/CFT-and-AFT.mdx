@@ -210,12 +210,12 @@ Key fields:
 
 The availability of AFT depends on the combination of **card brand + merchant MCC**.
 
-## Visa
+### Visa
 
 - **ACCOUNT_TO_ACCOUNT**: MCC `4829`, `6012`, `6051`, `6211`, `6540`
 - **PERSON_TO_PERSON**: MCC `4829`
 
-## Mastercard
+### Mastercard
 
 - **ACCOUNT_TO_ACCOUNT**: MCC `6012`, `6051`, `6211`, `6536`, `6537`, `6540`
 - **PERSON_TO_PERSON**: MCC `4829`, `6536`, `6537`, `6538`, `6540`
@@ -224,7 +224,7 @@ The availability of AFT depends on the combination of **card brand + merchant MC
 
 ## 6. Technical integration flow
 
-## 6.1 CFT flow (card credit)
+### 6.1 CFT flow (card credit)
 
 1. **Create a payment order (`POST /payment`)** with `PAYOUT` operation:
 
@@ -270,7 +270,7 @@ The availability of AFT depends on the combination of **card brand + merchant MC
 
 ---
 
-## 6.2 AFT flow (funding from card)
+### 6.2 AFT flow (funding from card)
 
 1. **Create a payment order (`POST /payment`)** including `profile`, `billing_address`, and optionally `aft`:
 
@@ -331,12 +331,12 @@ The availability of AFT depends on the combination of **card brand + merchant MC
 
 ## 8. When to use CFT and when to use AFT?
 
-## Use **CFT** when:
+### Use **CFT** when:
 - You want to **send money to the user's card**.  
 - You need a **direct cashout**.  
 - You want an immediate and irreversible credit.  
 
-## Use **AFT** when:
+### Use **AFT** when:
 - You need to **load an account** (wallet, e-wallet, prepaid) from a card.  
 - You want to enable **P2P transfers**.  
 - You require a flow conditioned by MCC, brand, or acquirer rules.  

@@ -94,20 +94,37 @@ Para aumentar las probabilidades de que no sea necesario que el usuario se auten
 
 Actualmente soportamos las exenciones de **Análisis de Riesgo (TRA)** y de **Bajo importe (LV)** en el servicio de pago **Redsys**. Para solicitarlas, basta aportar la siguiente información en el campo `extra_data` al crear la orden:
 
-```
-"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
+```json
+"extra_data": {
+  ...
+  "sca": {
+    "exemptions": ["TRA", "LV"]
+  },
+}
 ```
 
 También es posible solicitar que **no se aplique ninguna exención** dejando el valor de `exemptions` como una lista vacía:
 
-```
-"extra_data": {        ...        "sca": {            "exemptions": []        },    }
+```json
+"extra_data": {
+  ...
+  "sca": {
+    "exemptions": []
+  },
+}
 ```
 
 Si el valor de `exemptions` no se indica explícitamente, por defecto se solicitará la exención de **Bajo importe (LV)** si ésta cumple los requisitos establecidos. Tras el pago, si se ha llegado a solicitar alguna exención, su nombre se incluirá bajo la clave `order.threeds_data.exemption`. Si no se solicitó, o no se pudo solicitar ninguna exención, su valor será `null`.
 
-```
-"threeds_data": {      "version": "...",      "flow": "...",      "sca_requested": ...,      "status": "...",      "eci": "...",      "exemption": "TRA"  }
+```json
+"threeds_data": {
+  "version": "...",
+  "flow": "...",
+  "sca_requested": ...,
+  "status": "...",
+  "eci": "...",
+  "exemption": "TRA"
+}
 ```
 
 Finalmente, que una exención sea solicitada no implica que haya sido aceptada. Para poder entender mejor si una exención fue aceptada o no, puede verse el campo `threeds_data.flow`. Si la exención fue solicitada pero su valor es CHALLENGE\_ONLY o FULL, significa que no se aceptó. Si su valor es FRICTIONLESS o FINGERPRINTING\_ONLY, significa que puede que sí fuera aceptada. No hay forma de conocer al 100% si una exención fue aceptada, solo si fue rechazada.
