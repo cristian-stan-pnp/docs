@@ -5,7 +5,7 @@ description: 'Acceptați plăți cu Khipu în Chile prin API-ul Paylands'
 
 # Khipu
 
-## Integrare prin redirecționare pentru FLOW[​](#integrare-prin-redirecționare-pentru-flow "Link direct la Integrare prin redirecționare pentru FLOW")
+## Integrare prin redirecționare pentru FLOW
 
 Pentru a-l integra prin redirecționare, utilizatorul trebuie să fie prezent în momentul plății, care trebuie procesată printr-un browser. În primul rând, trebuie să [generăm o comandă de plată](/reference/#operation/generate-payment-order), indicând email-ul.
 
@@ -25,7 +25,7 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
 
 Odată ce utilizatorul este redirecționat către acest ecran, va putea selecta banca sa pentru a autoriza tranzacția. Când finalizează plata, va fi redirecționat înapoi la URL-ul OK sau KO, în funcție de rezultatul plății.
 
-## Integrare prin redirecționare pentru Payretailers[​](#integrare-prin-redirecționare-pentru-payretailers "Link direct la Integrare prin redirecționare pentru Payretailers")
+## Integrare prin redirecționare pentru Payretailers
 
 Pentru a-l integra prin redirecționare, utilizatorul trebuie să fie prezent în momentul plății, care trebuie procesată printr-un browser. În primul rând, trebuie să [generăm o comandă de plată](/reference/#operation/generate-payment-order), indicând first\_name, last\_name, email, document\_identification\_number, phone, city, country, address1, zip\_code, state\_code.
 
@@ -43,11 +43,11 @@ Construim URL-ul de redirecționare înlocuind **token**-ul cu valoarea returnat
 https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
 ```
 
-## Testare[​](#testare "Link direct la Testare")
+## Testare
 
 Pentru mai multe informații despre cum să testați această metodă de plată la fiecare dintre furnizorii săi, vizitați documentația FLOW și Payretailers.
 
-## Câmpuri personalizate[​](#câmpuri-personalizate "Link direct la Câmpuri personalizate")
+## Câmpuri personalizate
 
 Opțional, în cadrul obiectului `extra_data` puteți include câmpul `payment_reason`, care vă permite să indicați o descriere a plății.
 

@@ -5,7 +5,7 @@ description: 'Como enviar cobranças por email e SMS com Paylands'
 
 Para cada pagamento a ser realizado, será necessário indicar o valor a pagar e o email ou número de telefone do destinatário, assim como o assunto do email ou SMS, entre outros. Quando o ficheiro for carregado, todos os envios serão realizados, ficando agrupados para permitir o acompanhamento de quantos foram pagos e quais não. À medida que os utilizadores efetuam os pagamentos, os estados das operações associadas serão atualizados.
 
-![Envío de pagos via email y sms](/images/docs/integration/assets/images/email-sms-campaigns-1-7d37b6bfe9da67f44f49b90ec0367392.png)
+![Envío de pagos via email y SMS](/images/docs/integration/assets/images/email-sms-campaigns-1-7d37b6bfe9da67f44f49b90ec0367392.png)
 
 ## Funcionamento através do painel
 
@@ -23,7 +23,7 @@ A seguir são descritos todos os campos que podem ser configurados para lançar 
 * **Método de envio**: Email, SMS ou manual. Se manual for selecionado, os links são gerados mas não são enviados aos utilizadores.
 * **Data de expiração**: A data a partir da qual o link de pagamento deixará de ser válido.
 
-**Pagamentos email e sms**
+**Pagamentos email e SMS**
 
 * **Método de entrada**: *Formulário* para um único envio ou *Upload de Ficheiro* para carregar um ficheiro CSV.
 * **Quantia**: Valor a cobrar em cêntimos.
@@ -38,7 +38,7 @@ A seguir são descritos todos os campos que podem ser configurados para lançar 
 * **URL em caso de falha**: URL para a qual o cliente será redirecionado em caso de erro.
 * **Pagamento certificado**: Indica se o envio do link será certificado ou não\*.
 * **Template de cartão**: Permite selecionar um template do ecrã no qual o utilizador introduz os dados do seu cartão.
-* **Template email e sms**: Permite selecionar o template que formata o email/sms.
+* **Template email e SMS**: Permite selecionar o template que formata o email/SMS.
 * **Template DCC**: Permite selecionar o template onde o utilizador seleciona que moeda pretende utilizar se o DCC estiver ativo.
 * **Idioma**: Indica o idioma que será apresentado ao destinatário.
 * **Extra data**: Permite indicar manualmente o campo `extra_data` ao gerar a ordem de pagamento.
@@ -68,9 +68,9 @@ Para enviar múltiplos links de pagamento simultaneamente, deve ser carregado um
 | URL\_OK           | String  | Não         | URL para a qual o cliente será redirecionado em caso de sucesso.                                                                                                                               |
 | URL\_KO           | String  | Não         | URL para a qual o cliente será redirecionado em caso de erro.                                                                                                                                  |
 | CARD\_TEMPLATE    | String  | Não         | Permite selecionar um template do ecrã no qual o utilizador introduz os dados do seu cartão.                                                                                                   |
-| MOTO\_TEMPLATE    | String  | Não         | Permite selecionar o template que formata o email/sms.                                                                                                                                         |
+| MOTO\_TEMPLATE    | String  | Não         | Permite selecionar o template que formata o email/SMS.                                                                                                                         |
 | DCC\_TEMPLATE     | String  | Não         | Permite selecionar o template onde o utilizador seleciona que moeda pretende utilizar se o DCC estiver ativo.                                                                                   |
-| CERTIFIED         | String  | Não         | true/false. Indica se o envio de email ou sms será certificado.                                                                                                                                |
+| CERTIFIED         | String  | Não         | true/false. Indica se o envio de email ou SMS será certificado.                                                                                                                                |
 | LANGUAGE          | String  | Não         | Indica o idioma que será apresentado ao destinatário. Exemplo: es                                                                                                                              |
 | EXTRA\_DATA       | String  | Não         | Campos do `extra_data` separados por ponto e vírgula. As subchaves serão aninhadas usando um ponto. Por exemplo, para indicar o cof RECURRING, seria necessário indicar o valor cof.reason:RECURRING |
 
@@ -114,7 +114,7 @@ Por exemplo, enviando no campo additional o seguinte valor:
 nombre: Juan García; edad: 28
 ```
 
-No template de email/sms é possível aceder a estes valores da seguinte forma:
+No template de email/SMS é possível aceder a estes valores da seguinte forma:
 
 ```
 Bienvenido {{customFields.nombre}}, felices {{customFields.edad}} años.
