@@ -22,7 +22,7 @@ Las nuevas versiones del 3DS v2 requieren de pasos intermedios que Paylands real
 
 No obstante, en caso de desearlo, se proporcionan también tarjetas de prueba para poder simular cualquiera de los pasos intermedios en el proceso de cobro de una operación.
 
-## 3DS v1.0[​](#3ds-v10 "Enlace directo al 3DS v1.0")
+## 3DS v1.0
 
 Las tarjetas con 3DS v1 son aquellas que o bien fueron emitidas antes de la entrada de la PSD2, o aquellas en las que el banco no las ha configurado para soportar los nuevos flujos 3DS v2. En estos casos, Paylands redirige al usuario al 3DS v1.0 de su banco para que finalice la operación.
 
@@ -33,7 +33,7 @@ Las tarjetas con 3DS v1 son aquellas que o bien fueron emitidas antes de la entr
 | v1.0 KO (Init3DS) | 5514214341183643 12/34 123 |
 | v1.0 KO (AuthV1)  | 5182246146680010 12/34 123 |
 
-## 3DS v2.2 Frictionless[​](#3ds-v22-frictionless "Enlace directo al 3DS v2.2 Frictionless")
+## 3DS v2.2 Frictionless
 
 El flujo de pago Frictionless consiste en redirigir al usuario al 3DS, pero donde el banco emisor (o, en este caso, el simulador) decide que no es necesario que el usuario intervenga, provocando que la operación finalice automáticamente con un estado de SUCCESS o REFUSED.
 
@@ -45,7 +45,7 @@ El flujo de pago Frictionless consiste en redirigir al usuario al 3DS, pero dond
 | Frictionless KO       | 5111111111111118 12/34 123 | Incluye el campo error\_details completo, con un código MAC que permite reintentar el pago transcurrido cierto tiempo |
 | Frictionless KO (MSP) | 5503460708601080 12/34 123 |                                                                                                                       |
 
-## 3DS v2.2 Sólo Challenge[​](#3ds-v22-sólo-challenge "Enlace directo al 3DS v2.2 Sólo Challenge")
+## 3DS v2.2 Sólo Challenge
 
 El flujo de sólo challenge consiste en redirigir al 3DS, el cual puede dar tres respuestas, dependiendo de la elección del usuario: SUCCESS (OK), ATTEMPT (KO) o REFUSED (KO). El estado de ATTEMPT se utiliza para simular un error en el proceso de conexión con el banco emisor, como por ejemplo, cuando el banco del usuario no tiene disponible el 3DS.
 
@@ -56,7 +56,7 @@ El flujo de sólo challenge consiste en redirigir al 3DS, el cual puede dar tres
 | Solo Challenge KO (Challenge) | 5342125074190670 12/34 123 |
 | Solo Challenge KO (MSP)       | 5404154444859348 12/34 123 |
 
-## 3DS Version v2.2 Fingerprinting[​](#3ds-version-v22-fingerprinting "Enlace directo al 3DS Version v2.2 Fingerprinting")
+## 3DS Version v2.2 Fingerprinting
 
 El flujo Fingerprinting consiste en capturar, en una pantalla intermedia del flujo de pago, los datos del dispositivo donde se está realizando el pago. El usuario no deberá realizar ninguna acción, ya que esta pantalla de forma automática capturará los datos del dispositivo y, una vez recopilados, redirigirá al 3DS para finalizar la operación.
 
@@ -66,7 +66,7 @@ El flujo Fingerprinting consiste en capturar, en una pantalla intermedia del flu
 | Fingerprinting KO       | 4414095707030385 12/34 123 |
 | Fingerprinting KO (MSP) | 5110753687112003 12/34 123 |
 
-## 3DS v1.0 Fallback[​](#3ds-v10-fallback "Enlace directo al 3DS v1.0 Fallback")
+## 3DS v1.0 Fallback
 
 El flujo v1 Fallback consiste en tarjetas 3DS v2 que no admiten el pago con su versión predefinida por lo que se debe procesar el 3DS mediante la versión 1.0. En estos casos, Paylands automáticamente redirige al 3DS de la versión 1.0 pudiendo finalizar la operación con cualquiera de los estados habituales (SUCCESS (OK), ATTEMPT (KO) o REFUSED (KO)).
 
@@ -76,7 +76,7 @@ El flujo v1 Fallback consiste en tarjetas 3DS v2 que no admiten el pago con su v
 | Fallback KO (Challenge) | 5167407669858305 12/34 123 |
 | Fallback KO (MSP)       | 5278269366564578 12/34 123 |
 
-## 3DS Version v2.2 Full flow[​](#3ds-version-v22-full-flow "Enlace directo al 3DS Version v2.2 Full flow")
+## 3DS Version v2.2 Full flow
 
 El flujo de pago Full flow consiste en tarjetas que aceptan 3DS v2.2 donde el flujo de pago pasa por todos los estados intermedios hasta que finaliza. Inicialmente se aplica el fingerprinting y luego se redirige al 3DS donde se podrá seleccionar cualquiera de las respuestas SUCCESS (OK), ATTEMPT (KO) o REFUSED (KO).
 
@@ -92,7 +92,7 @@ A continuación se indica, para estas tarjetas que simulan los pasos intermedios
 * MSP: significa que la autenticación 3DS ha sido exitosa pero el pago no ha sido realizado con éxito.
 * Challenge: significa que el proceso 3DS se ha inicializado, pero la redirección al pago seguro no se ha podido realizar.
 
-## Bizum[​](#bizum "Enlace directo al Bizum")
+## Bizum
 
 En el caso de la operativa Bizum hay dos números que simulan un pago correcto y otro incorrecto. Si se utiliza un número diferente a estos dos, la operación será rechazada con un error indicando que el número de teléfono es incorrecto.
 
@@ -101,7 +101,7 @@ En el caso de la operativa Bizum hay dos números que simulan un pago correcto y
 | Pago OK   | +34 700 00 00 00   |
 | Pago KO   | +34 900 00 00 00   |
 
-## Payouts[​](#payouts "Enlace directo al Payouts")
+## Payouts
 
 En el caso de la operativa payouts hay dos tipos de sources que podemos utilizar para realizar pagos exitosos y fallidos. Para los payouts con tarjeta:
 

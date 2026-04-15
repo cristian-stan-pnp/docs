@@ -5,7 +5,7 @@ description: 'Acepta pagos con SPEI en México a través de la API de Paylands'
 
 # SPEI
 
-## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+## Integración mediante redirección
 
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order). En el caso de usar SPEI a través de FLOW necesitaremos enviar obligatoriamente el email en el `extra_data`:
 
@@ -25,11 +25,11 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=SPEI
 
 Una vez el usuario sea redirigido a esta pantalla, podrá visualizar una CLABE o un código QR con el que, a través de la aplicación móvil, completar el pago. Cuando complete el pago, será redirigido de vuelta a la URL OK o KO, dependiendo del resultado del pago.
 
-## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+## Pruebas
 
 Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de FACILITAPAY y FLOW.
 
-## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+## Campos personalizados
 
 Opcionalmente, si se está usando SPEI con FLOW, dentro del objeto `extra_data` se puede incluir el campo `payment_reason`, que permite indicar una descripción del pago.
 

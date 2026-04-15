@@ -3,14 +3,14 @@ title: 'Floa'
 description: 'Configuración e integración del servicio de pago Floa en Paylands'
 ---
 
-## Introducción[​](#introducción "Enlace directo al Introducción")
+## Introducción
 
 Floa es una solución de pago francesa que permite financiar compras con opciones de crédito al consumo, incluyendo pagos a plazos. Entre las opciones de pago a plazos se ofrece:
 
 * 3X: Pagos en 3 cuotas, con 30 días de diferencia entre cada una.
 * 4X: Pagos en 4 cuotas, con 30 días de diferencia entre cada una.
 
-## Datos extra requeridos[​](#datos-extra-requeridos "Enlace directo al Datos extra requeridos")
+## Datos extra requeridos
 
 Dependiendo del tipo de producto o servicio ofrecido será necesario indicar información adicional dentro del `extra_data` durante la creación de la orden, aunque el país siempre será obligatorio (`extra_data.billing_address.country`), junto con el nombre y primer apellido (`extra_data.profile.first_name` y `extra_data.profile.last_name`, respectivamente).
 
@@ -44,25 +44,25 @@ Dependiendo del producto existen los siguientes sectores de actividad: **General
 
 A continuación, se muestra un ejemplo de `extra_data` enviado para realizar un pago con cada sector de actividad:
 
-### General[​](#general "Enlace directo al General")
+### General
 
 ```
 "extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe"    },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avenida del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "Juego de mesa",        "categorie_2": "Virus 2",        "cart_item_count": 1,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/",        "shipping_method": "STD",        "shipping_cost": "500",        "discount_amount": "1000"    }}
 ```
 
-### Stay (Hotel)[​](#stay-hotel "Enlace directo al Stay (Hotel)")
+### Stay (Hotel)")
 
 ```
 "extra_data":{    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@gmail.com"        },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avenida del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "HOTEL",        "categorie_2": "Room",        "departure_date": "05/05/2024 12:00",        "return_date": "12/05/2024 12:00",        "traveller_count": 2,        "own_ticket": true,        "room_range": 3,        "insurance": "no",        "destination_country": "ES",        "travel_type": "OneWay",        "cart_item_count": 2,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/"    }}
 ```
 
-### Travel[​](#travel "Enlace directo al Travel")
+### Travel
 
 ```
 "extra_data":{    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@gmail.com"        },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avinguda del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "AIRLINE TICKET",        "departure_date": "30/04/2024 12:00",        "return_date": "05/05/2024 12:00",        "traveller_count": 2,        "own_ticket": true,        "insurance": "no",        "destination_country": "ES",        "travel_type": "TwoWay",        "cart_item_count": 2,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/",        "departure_airport": "VLC",        "arrival_airport": "LEN",        "main_departure_company": "Iberia"    }}
 ```
 
-## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+## Métodos de pago en Sandbox
 
 Es recomendable usar un amount de entre 100€ y 250€ para aumentar las probabilidades de elegibilidad exitosa.
 
@@ -72,11 +72,11 @@ Los datos de tarjeta de prueba son los siguientes:
 - número de tarjeta OK: 5017 6791 1038 0400- número de tarjeta KO: 5017 6791 0090 0712- CVV: 000- fecha de expiración: mayor a la fecha de la última cuota
 ```
 
-## Moneda[​](#moneda "Enlace directo al Moneda")
+## Moneda
 
 La moneda soportada para este servicio es el euro (EUR).
 
-## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+## Códigos de error
 
 La estructura del error tiene la siguiente forma:
 

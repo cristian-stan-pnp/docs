@@ -3,7 +3,7 @@ title: 'Flywire'
 description: 'Configuración e integración del servicio de pago Flywire en Paylands'
 ---
 
-## Introducción[​](#introducción "Enlace directo al Introducción")
+## Introducción
 
 Flywire es una solución especializada en el **procesamiento de pagos transfronterizos de alto valor**, especialmente en sectores como educación, salud y turismo.
 
@@ -11,7 +11,7 @@ A través de este servicio se admiten **pagos únicos con tarjeta de crédito y 
 
 ***
 
-## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+## Integración mediante redirección
 
 Flywire solo admite **integración mediante redirección**. El pagador debe estar presente durante el proceso de pago, que se realizará a través del navegador.
 
@@ -27,7 +27,7 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}
 
 ***
 
-## Idioma de la página de pago[​](#idioma-de-la-página-de-pago "Enlace directo al Idioma de la página de pago")
+## Idioma de la página de pago
 
 Puedes indicar el idioma de la página de pago mediante el parámetro `lang` en la URL de redirección:
 
@@ -56,15 +56,15 @@ Si no se indica el parámetro `lang`, la página de pago se mostrará en **espa�
 
 ***
 
-## Moneda soportada[​](#moneda-soportada "Enlace directo al Moneda soportada")
+## Moneda soportada
 
 * **EUR (Euro)**
 
 ***
 
-## Datos Extra[​](#datos-extra "Enlace directo al Datos Extra")
+## Datos Extra
 
-### Datos del pagador[​](#datos-del-pagador "Enlace directo al Datos del pagador")
+### Datos del pagador
 
 Para procesar pagos con Flywire es necesario proporcionar los **datos del pagador**. Estos datos deben corresponder **siempre a la persona que realiza el pago**, no al beneficiario del servicio.
 
@@ -78,7 +78,7 @@ Estos datos se envían mediante el campo `extra_data` al crear la orden de pago,
 
 > Estos campos **no son obligatorios** al crear la orden de pago. Si alguno no se envía, se solicitará automáticamente al usuario durante el flujo de pago mediante un formulario en la página de Flywire.
 
-### Campos dinámicos del comercio (context\_fields)[​](#campos-dinámicos-del-comercio-context_fields "Enlace directo al Campos dinámicos del comercio (context_fields)")
+### Campos dinámicos del comercio (context\_fields)")
 
 Algunos comercios de Flywire requieren **campos dinámicos adicionales**. Estos campos **dependen del comercio configurado** y pueden variar según el caso (por ejemplo: datos del alumno, matrícula, referencia interna, número de expediente, etc.).
 
@@ -94,9 +94,9 @@ Para enviarlos, incluye los campos en `extra_data.payment.context_fields`. Ejemp
 
 ***
 
-## Pruebas en sandbox[​](#pruebas-en-sandbox "Enlace directo al Pruebas en sandbox")
+## Pruebas en sandbox
 
-### Escenarios de prueba[​](#escenarios-de-prueba "Enlace directo al Escenarios de prueba")
+### Escenarios de prueba
 
 En sandbox, Flywire permite forzar distintos resultados en función de la combinación `first_name` + `last_name` del pagador.
 
@@ -118,9 +118,9 @@ Si decides enviar `extra_data.profile` al crear la orden, puedes usar los siguie
 
 > Nota: Las tarjetas de prueba deben usarse junto con estas combinaciones de valores.
 
-### Tarjetas de prueba[​](#tarjetas-de-prueba "Enlace directo al Tarjetas de prueba")
+### Tarjetas de prueba
 
-#### Visa[​](#visa "Enlace directo al Visa")
+#### Visa
 
 | Número              | Expiración | CVV | Moneda | País emisor | Tipo   |
 | ------------------- | ---------- | --- | ------ | ----------- | ------ |
@@ -130,7 +130,7 @@ Si decides enviar `extra_data.profile` al crear la orden, puedes usar los siguie
 | 4761 3600 0000 0017 | 03/30      | 737 | INR    | IN          | Debit  |
 | 4111 1111 1111 1111 | 03/30      | 737 | USD    | US          | Credit |
 
-#### Mastercard[​](#mastercard "Enlace directo al Mastercard")
+#### Mastercard
 
 | Número              | Expiración | CVV | Moneda | País emisor | Tipo   |
 | ------------------- | ---------- | --- | ------ | ----------- | ------ |
@@ -139,7 +139,7 @@ Si decides enviar `extra_data.profile` al crear la orden, puedes usar los siguie
 | 5252 5202 0000 0017 | 03/30      | 737 | JPY    | JP          | Debit  |
 | 5454 5454 5454 5454 | 03/30      | 737 | USD    | US          | Credit |
 
-#### American Express (Amex)[​](#american-express-amex "Enlace directo al American Express (Amex)")
+#### American Express (Amex)")
 
 | Número             | Expiración | CVV  | Moneda | País emisor | Tipo   |
 | ------------------ | ---------- | ---- | ------ | ----------- | ------ |

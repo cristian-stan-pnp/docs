@@ -42,7 +42,7 @@ O mapeamento de campos é especificado como atributos XPATH ou JSONPATH dependen
 
 A principal diferença entre as configurações dos canais são os campos **direção** e **ação**. Para que fique mais claro, vejamos alguns cenários do mundo real:
 
-## PUSH + TOKENIZAÇÃO[​](#push--tokenização "Ligação direta ao PUSH + TOKENIZAÇÃO")
+## PUSH + TOKENIZAÇÃO
 
 ![PUSH + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_tokenization.png)
 
@@ -54,7 +54,7 @@ Depois de ter criado o channel utilizando a API REST do PROXY PCI, pode atualiza
 
 Deste modo, o channel manager invocará o PROXY PCI, que fará a sua magia e finalmente reencaminhará as reservas para o seu endpoint configurado, tendo substituído todos os panes do cartão por uma versão de token do mesmo. Este token pode ser armazenado por si e utilizado para emitir um pagamento ou reencaminhá-lo para outro terceiro.
 
-## PULL + TOKENIZAÇÃO[​](#pull--tokenização "Ligação direta ao PULL + TOKENIZAÇÃO")
+## PULL + TOKENIZAÇÃO
 
 ![PULL + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_tokenization.png)
 
@@ -66,13 +66,13 @@ Neste caso precisa de um channel do tipo **PULL + TOKENIZATION** onde o atributo
   O método de invocação do canal PROXY PCI reencaminha todas as QUERY e HTTP HEADERS para o ponto final configurado.
 </Info>
 
-## PUSH + DETOKENIZATION[​](#push--detokenization "Ligação direta ao PUSH + DETOKENIZATION")
+## PUSH + DETOKENIZATION
 
 ![PUSH + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_detokenization.png)
 
 Neste caso queremos enviar os dados recolhidos do nosso cartão pan para um PAYMENT GATEWAY de terceiros para processar o pagamento. O PAYMENT GATEWAY oferece um endpoint para isso onde é necessário enviar os dados do cartão no seu formato JSON especificado. Neste cenário precisaremos de um channel do tipo **PUSH + DETOKENIZATION**. O endpoint do channel será o endpoint da API PAYMENT GATEWAY. Enviará os detalhes do cartão, exceto o pan, para o endpoint de invocação do channel PROXY PCI e o PROXY PCI substituirá o token do cartão pelo pan real do cartão.
 
-## PULL + DETOKENIZATION[​](#pull--detokenization "Ligação direta ao PULL + DETOKENIZATION")
+## PULL + DETOKENIZATION
 
 ![PULL + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_detokenization.png)
 
@@ -88,7 +88,7 @@ Neste caso de uso final é um channel manager e recolheu os detalhes do cartão 
 
 Para sua melhor compreensão preparámos alguns channels para que os invoque. Há um endpoint de tokenização JSON PUSH e um exemplo de destokenização XML PUSH para que o possa testar.
 
-## Exemplo JSON[​](#exemplo-json "Ligação direta ao Exemplo JSON")
+## Exemplo JSON
 
 Exemplo JSON
 
@@ -96,7 +96,7 @@ Exemplo JSON
 {  "bookings": [    {      "id": "BK-213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4442330588722461",          "cvv": "123",          "expiry": "12/21",          "holder": "John Doe"        }      }    },    {      "id": "BK-3213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4701731341611394",          "expiry": "06-2025",          "holder": "Patma Patill"        }      }    }  ]}
 ```
 
-## MAPEAMENTO DE CAMPOS[​](#mapeo-de-campos "Ligação direta ao MAPEAMENTO DE CAMPOS")
+## MAPEAMENTO DE CAMPOS
 
 | NOME DO CAMPO | VALOR                                     |
 | ------------- | ----------------------------------------- |
@@ -106,7 +106,7 @@ Exemplo JSON
 | pan           | $.bookings\[\*].payment\_data.card.pan    |
 | cardCVV       | $.bookings\[\*].payment\_data.card.cvv    |
 
-## EXEMPLO DE CANAL EM FUNCIONAMENTO[​](#ejemplo-de-canal-en-funcionamiento "Ligação direta ao EXEMPLO DE CANAL EM FUNCIONAMENTO")
+## EXEMPLO DE CANAL EM FUNCIONAMENTO
 
 Configurámos um canal com este mapeamento de campos exato. Esta é a configuração exata do canal:
 
@@ -124,7 +124,7 @@ curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-
 
 Depois de executar o comando deverá ver o pedido na consola do beeceptor. Sinta-se à vontade para inspecionar o corpo recebido e verificar o campo pan do objeto cartão.
 
-## Exemplo de XML[​](#ejemplo-de-xml "Ligação direta ao Exemplo de XML")
+## Exemplo de XML
 
 Exemplo XML
 
@@ -136,7 +136,7 @@ Exemplo XML
   Este payload foi parcialmente extraído do gestor de canais do [Siteminder](https://www.siteminder.com/).
 </Info>
 
-### Namespaces[​](#namespaces "Ligação direta ao Namespaces")
+### Namespaces
 
 <Warning>
   Compreender como funcionam xpath e namespaces é crucial para o mapeamento de campos XML.
@@ -162,13 +162,13 @@ Se um elemento tiver o espaço de nomes em branco (xmlns="") então é um espaç
 
 Exemplo: `//title`
 
-### Mapeamento de campos[​](#mapeo-de-campos-1 "Ligação direta ao Mapeamento de campos")
+### Mapeamento de campos
 
 | NOME DO CAMPO | VALOR                         |
 | ------------- | ----------------------------- |
-| referencia    | //ota:UniqueID/@ID            |
+| reference     | //ota:UniqueID/@ID            |
 | cardHolder    | //ota:CardHolderName          |
-| caducidade    | //ota:PaymentCard/@ExpireDate |
+| expiry        | //ota:PaymentCard/@ExpireDate |
 | pan           | //ota:PaymentCard/@CardNumber |
 | cardCVV       | //ota:PaymentCard/@CardCVV    |
 
@@ -178,7 +178,7 @@ Configurámos um canal com este mapeamento de campos exato. Esta é a configura�
 {    "action": "detokenize",    "direction": "push",    "endpoint": "https://pciproxypnp.free.beeceptor.com/push/xml/detokenize",    "contentType": "xml",    "fieldMapping": {        "reference": "//ota:UniqueID/@ID",        "cardHolder": "//ota:CardHolderName",        "expiry": "//ota:PaymentCard/@ExpireDate",        "pan": "//ota:PaymentCard/@CardNumber",        "cardCVV": "//ota:PaymentCard/@CardCVV"    },    "encoding": "utf8"}
 ```
 
-Isto significa que se for invocado, o corpo transmitido será analisado e os campos mapeados serão extraídos e guardados. Em seguida, o PAN é substituído por uma versão token do mesmo. Finalmente, o novo corpo é reencaminhado para o endpoint fornecido, incluindo todos os cabeçalhos e parâmetros de consulta originais que foram enviados para o endpoint do channel.
+Isto significa que se for invocado, o corpo transmitido será analisado e os campos mapeados serão extraídos. Em seguida, o token é substituído pelo PAN real do cartão. Finalmente, o novo corpo é reencaminhado para o endpoint fornecido, incluindo todos os cabeçalhos e parâmetros de consulta originais que foram enviados para o endpoint do channel.
 
 Aceda a [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) e deixe a página aberta. Em seguida, execute o seguinte comando curl:
 

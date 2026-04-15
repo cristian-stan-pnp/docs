@@ -17,7 +17,7 @@ En este ejemplo vemos que se trata de una transacción de 100€ (el amount siem
 
 De este modo se indica para cada comercio, qué parte del importe total le corresponde. Y de esta parte, con el net\_amount se podrá saber qué parte hay que liquidarle al MarketPlace y al comercio.
 
-### Devoluciones[​](#devoluciones "Enlace directo al Devoluciones")
+### Devoluciones
 
 ```
 curl --request POST 'https://api.paylands.com/v1/sandbox/payment/refund' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{    "signature": "121149a0ba5361191d740fa898784a8b",    "order_uuid": "1f405ea3-9798-42a6-9e87-bd347ef67f55",    "amount": 5000,    "extra_data": {       "marketplace_refunds":{            {                "merchant_location_id": 123,                "amount":0,                "description": "MarketPlace1",                "net_amount": 10            },            {                "merchant_location_id": 4487,                "amount":5000,                "description": "Comercio1",                "net_amount": 4990            }       }    }}'

@@ -3,11 +3,11 @@ title: 'Klarna'
 description: 'Configuración e integración del servicio de pago Klarna en Paylands'
 ---
 
-## Introducción[​](#introducción "Enlace directo al Introducción")
+## Introducción
 
 Klarna te permite comprar ahora y pagar después en cuotas sin intereses, facilitando tus compras sin afectar tu flujo de efectivo inmediato.
 
-## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+## Integración mediante redirección
 
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debes [generar una orden de pago](/reference/#operation/generate-payment-order).
 
@@ -19,7 +19,7 @@ Finalmente construyes la URL de redirección reemplazando el **token** por el va
 https://api.paylands.com/v1/sandbox/payment/process/{token}
 ```
 
-## Restricciones y requisitos[​](#restricciones-y-requisitos "Enlace directo al Restricciones y requisitos")
+## Restricciones y requisitos
 
 Actualmente soporta estas monedas:
 
@@ -39,7 +39,7 @@ Actualmente soporta estas monedas:
 * GBP
 * USD
 
-Al generar la orden de pago se deben enviar en el extra\_data, al menos, los campos de *profile*, *billing\_address* y *shipping\_address* para poder conciliar los pagos via Klarna. Además, en el caso de comercios del sector hospitality, se deberán incluir los siguientes campos dentro de *payment*:
+Al generar la orden de pago se deben enviar en el extra\_data, al menos, los campos de *profile*, *billing\_address* y *shipping\_address* para poder conciliar los pagos vía Klarna. Además, en el caso de comercios del sector hospitality, se deberán incluir los siguientes campos dentro de *payment*:
 
 ```
 "extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@gmail.com"    },    "billing_address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    },    "shipping_address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    },    "payment":{        "order_lines": [{            "name": "Hotel, room John Doe number 21",            "unit_price": 100        }],        "hotel_reservation_details":[        {            "pnr":"20qsx2121",            "hotel_itinerary":[                {                    "hotel_name":"Hotel ltd.",                    "address":{                        "street_address":"New Burlington St 10",                        "postal_code":"W1B 1JA",                        "city":"London",                        "country":"GB"                    },                    "start_time":"2022-08-06T19:50:00Z",                    "end_time":"2022-08-20T22:00:00Z",                    "number_of_rooms":1,                    "ticket_delivery_method":"email",                    "ticket_delivery_recipient":"john.doe@email.com",                    "hotel_price":23050,                    "class":"Presidential Suite",                    "passenger_id":[                        1,                        2                    ]                }            ],                "insurance":[                    {                         "insurance_company":"AON",                         "insurance_type":"cancellation",                         "insurance_price":200                    }                ],                "passengers":[                    {                        "id":1,                        "title":"mr",                        "first_name":"John",                        "last_name":"Doe"                    },                    {                        "id":2,                        "title":"mrs",                        "first_name":"Jane",                        "last_name":"Doe"                    }                ],                "affiliate":"Hotels.com"        }    ],    "payment_history_simple":[        {            "unique_account_identifier":"1234567890qwertyuiopasdfg",            "paid_before":true        }    ],    "customer_account_info":[        {            "unique_account_identifier":"1234567890qwertyuiopasdfg",            "account_registration_date":"2021-06-10T12:02:21Z",            "account_last_modified":"2021-07-10T12:02:21Z"        }    ]}}

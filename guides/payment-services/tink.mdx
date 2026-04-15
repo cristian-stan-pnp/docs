@@ -3,35 +3,35 @@ title: 'Tink'
 description: 'Configuración e integración del servicio de pago Tink en Paylands'
 ---
 
-## Introducción[​](#introducción "Enlace directo al Introducción")
+## Introducción
 
 Tink es un servicio que permite **iniciar pagos (transferencias bancarias)** y realizar operaciones financieras seguras, como **verificaciones bancarias y validaciones de cuentas** (incluyendo *Account Check* y *Business Account Check*).
 
-## Moneda soportada[​](#moneda-soportada "Enlace directo al Moneda soportada")
+## Moneda soportada
 
 * **EUR (Euro)**
 
-## Funcionalidades disponibles[​](#funcionalidades-disponibles "Enlace directo al Funcionalidades disponibles")
+## Funcionalidades disponibles
 
-### Pagos[​](#pagos "Enlace directo al Pagos")
+### Pagos
 
 Consiste en **pagos únicos** a través de transferencias bancarias. Este tipo de operación permite que un cliente realice un pago desde su cuenta bancaria hacia un beneficiario, todo dentro de un flujo guiado y seguro.
 
-### Verificación de cuenta (Account Check / Business Account Check)[​](#verificación-de-cuenta-account-check--business-account-check "Enlace directo al Verificación de cuenta (Account Check / Business Account Check)")
+### Verificación de cuenta (Account Check / Business Account Check)")
 
 La verificación de cuenta mediante Tink permite confirmar que una cuenta bancaria es válida y que pertenece al tipo de titular esperado. Existen dos variantes dentro de la misma funcionalidad:
 
 * **Account Check** (por defecto): para verificar cuentas de particulares.
 * **Business Account Check**: para verificar cuentas de empresa.
 
-#### Requisitos de uso[​](#requisitos-de-uso "Enlace directo al Requisitos de uso")
+#### Requisitos de uso
 
 Para poder utilizar la verificación de cuenta es necesario:
 
 * Tener la funcionalidad de **Account Check** activada en la cuenta de la plataforma.
 * Realizar una operación con **importe 0** (`amount = 0`) a través del flujo de pago de Tink.
 
-#### Cómo indicar Business Account Check[​](#cómo-indicar-business-account-check "Enlace directo al Cómo indicar Business Account Check")
+#### Cómo indicar Business Account Check
 
 Por defecto, la verificación se interpreta como **Account Check normal** (particulares). Si se desea realizar un **Business Account Check** en lugar de un Account Check normal, se debe indicar a través del campo `extra_data.payment.is_business` en la petición, estableciéndolo a `true`.
 
@@ -39,7 +39,7 @@ Por defecto, la verificación se interpreta como **Account Check normal** (parti
 "extra_data": {    "payment": {        "is_business": true    }}
 ```
 
-## Pruebas en sandbox[​](#pruebas-en-sandbox "Enlace directo al Pruebas en sandbox")
+## Pruebas en sandbox
 
 Tras la redirección, selecciona **Tink Demo Bank**. Para simular un escenario concreto, emplea los siguientes datos de prueba:
 

@@ -7,9 +7,9 @@ description: 'Acepta pagos con Lotérica en Brasil a través de la API de Paylan
 
 Hay dos formas de integrarlo: mediante redirección o pago push.
 
-## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+## Integración mediante redirección
 
-Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) indicando el nombre del usuario, email, número de identificación y número de teléfono para que el usuario no tenga que rellenarlo.
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) indicando el nombre del usuario, email, número de identificación y número de teléfono para que el usuario no tenga que rellenarlos.
 
 ```
   "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882"    },    "phone": {       "number": "700000000",       "prefix": "351"    }  }
@@ -27,7 +27,7 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=LOTERICA
 
 Una vez que el usuario sea redirigido a esta pantalla, podrá ver el comprobante de pago que contiene el código de referencia único y el código de barras de Loterica. Pueden imprimir el comprobante o copiar el número del banco y llevarlo a una tienda de lotería, o utilizar una aplicación móvil compatible para escanear el código de barras y completar el pago electrónicamente.
 
-## Integración mediante pago push[​](#integración-mediante-pago-push "Enlace directo al Integración mediante pago push")
+## Integración mediante pago push
 
 Si por el contrario queremos que no sea necesario que el usuario esté presente en el momento del pago, este método de pago puede integrarse mediante un pago push.
 
@@ -45,11 +45,11 @@ A continuación, se debe lanzar la petición del [pago push](/reference/#operati
 
 Una vez se complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.
 
-## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+## Pruebas
 
 Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de PAGSMILE.
 
-## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+## Campos personalizados
 
 Opcionalmente, dentro del `extra_data` podemos incluir el campo `payment_reason`, que permite indicar una descripción del pago.
 

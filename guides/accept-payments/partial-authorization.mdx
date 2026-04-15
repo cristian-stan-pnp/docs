@@ -11,7 +11,7 @@ Esta funcionalidad es especialmente útil para modelos de negocio que pueden ges
 
 ***
 
-## Cómo usar las autorizaciones parciales[​](#cómo-usar-las-autorizaciones-parciales "Enlace directo al Cómo usar las autorizaciones parciales")
+## Cómo usar las autorizaciones parciales
 
 Para habilitar la autorización parcial debes utilizar la operativa **`PARTIAL_AUTHORIZATION`** al crear la orden de pago.
 
@@ -19,7 +19,7 @@ Para habilitar la autorización parcial debes utilizar la operativa **`PARTIAL_A
 
 ***
 
-### Ejemplo de creación de orden[​](#ejemplo-de-creación-de-orden "Enlace directo al Ejemplo de creación de orden")
+### Ejemplo de creación de orden
 
 Ejemplo de petición para crear una orden utilizando la operativa de autorización parcial:
 
@@ -29,7 +29,7 @@ curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Aut
 
 ***
 
-### Ejemplo de respuesta de un pago con autorización parcial[​](#ejemplo-de-respuesta-de-un-pago-con-autorización-parcial "Enlace directo al Ejemplo de respuesta de un pago con autorización parcial")
+### Ejemplo de respuesta de un pago con autorización parcial
 
 A continuación, se muestra la respuesta de un pago exitoso en el que se ha llevado a cabo una autorización parcial.
 
@@ -41,11 +41,11 @@ A continuación, se muestra la respuesta de un pago exitoso en el que se ha llev
 
 ***
 
-## Cómo probar autorizaciones parciales en sandbox[​](#cómo-probar-autorizaciones-parciales-en-sandbox "Enlace directo al Cómo probar autorizaciones parciales en sandbox")
+## Cómo probar autorizaciones parciales en sandbox
 
 Puedes validar el comportamiento de las autorizaciones parciales en el entorno sandbox utilizando los siguientes métodos:
 
-### Paynopain[​](#paynopain "Enlace directo al Paynopain")
+### Paynopain
 
 Para simular una autorización parcial con **Paynopain**, envía una petición con el siguiente importe:
 
@@ -55,7 +55,7 @@ amount: 100010
 
 Este valor está configurado para provocar una autorización parcial durante la prueba.
 
-### Simulador de Paylands[​](#simulador-de-paylands "Enlace directo al Simulador de Paylands")
+### Simulador de Paylands
 
 Paylands pone a tu disposición un simulador que permite probar distintos flujos de pago en sandbox, incluyendo el de autorizaciones parciales.
 

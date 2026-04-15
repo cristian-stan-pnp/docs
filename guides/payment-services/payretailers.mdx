@@ -3,17 +3,17 @@ title: 'PayRetailers'
 description: 'Configuración e integración del servicio de pago PayRetailers en Paylands'
 ---
 
-## Integración de PayRetailers[​](#integración-de-payretailers "Enlace directo al Integración de PayRetailers")
+## Integración de PayRetailers
 
 PayRetailers permite procesar **pay-ins** mediante métodos de pago locales en LATAM (PSE, EFECTY, Pago Fácil, Khipu, SPEI, PIX, Transfer y Tarjeta Colombia), así como **pay-outs**. Los pagos pueden realizarse mediante **checkout** o **redirección**.
 
 ***
 
-## Payins con Payretailers[​](#payins-con-payretailers "Enlace directo al Payins con Payretailers")
+## Payins con Payretailers
 
-### Requisitos generales[​](#requisitos-generales "Enlace directo al Requisitos generales")
+### Requisitos generales
 
-#### Monedas soportadas[​](#monedas-soportadas "Enlace directo al Monedas soportadas")
+#### Monedas soportadas
 
 Actualmente PayRetailers solo soporta las siguientes divisas:
 
@@ -24,7 +24,7 @@ Actualmente PayRetailers solo soporta las siguientes divisas:
 * MXN
 * BRL
 
-#### Datos obligatorios (`extra_data`)[​](#datos-obligatorios-extra_data "Enlace directo al datos-obligatorios-extra_data")
+#### Datos obligatorios (`extra_data`)
 
 Todos los métodos de pago requieren incluir la siguiente información dentro de `extra_data`:
 
@@ -44,7 +44,7 @@ Ejemplo:
 "extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@gmail.com",        "document_identification_number": "92309089",        "phone": {            "number": "02614235138",            "prefix": "54"        }    },    "billing_address": {        "city": "Bogota",        "country": "COL",        "address1": "Calle Mayor, 23",        "zip_code": "111611",        "state_code": ""    }}
 ```
 
-#### Parámetros adicionales en la URL[​](#parámetros-adicionales-en-la-url "Enlace directo al Parámetros adicionales en la URL")
+#### Parámetros adicionales en la URL
 
 | Parámetro | Descripción                  | Ejemplos                                |
 | --------- | ---------------------------- | --------------------------------------- |
@@ -53,7 +53,7 @@ Ejemplo:
 
 Idioma por defecto: `es` (español).
 
-#### Comportamiento del entorno sandbox[​](#comportamiento-del-entorno-sandbox "Enlace directo al Comportamiento del entorno sandbox")
+#### Comportamiento del entorno sandbox
 
 El entorno **sandbox** de PayRetailers puede no reflejar completamente el comportamiento real de los métodos de pago.
 
@@ -69,9 +69,9 @@ Para simular distintos estados finales en sandbox, se pueden utilizar los siguie
 
 ***
 
-### Métodos de pago[​](#métodos-de-pago "Enlace directo al Métodos de pago")
+### Métodos de pago
 
-#### PSE (Colombia)[​](#pse-colombia "Enlace directo al PSE (Colombia)")
+#### PSE (Colombia)")
 
 * **País:** `COL`
 * **Monedas:** COP, USD
@@ -83,7 +83,7 @@ Para simular distintos estados finales en sandbox, se pueden utilizar los siguie
 
 ***
 
-#### EFECTY (Colombia)[​](#efecty-colombia "Enlace directo al EFECTY (Colombia)")
+#### EFECTY (Colombia)")
 
 * **País:** `COL`
 * **Monedas:** COP, USD
@@ -93,7 +93,7 @@ Para simular distintos estados finales en sandbox, se pueden utilizar los siguie
 
 ***
 
-#### Pago Fácil (Argentina)[​](#pago-fácil-argentina "Enlace directo al Pago Fácil (Argentina)")
+#### Pago Fácil (Argentina)")
 
 * **País:** `ARG`
 * **Monedas:** ARS, USD
@@ -105,7 +105,7 @@ Para simular distintos estados finales en sandbox, se pueden utilizar los siguie
 
 ***
 
-#### Khipu (Argentina y Perú)[​](#khipu-argentina-y-perú "Enlace directo al Khipu (Argentina y Perú)")
+#### Khipu (Argentina y Perú)")
 
 * **Países:** `ARG`, `PER`
 * **Monedas:** ARS, PEN, USD
@@ -117,7 +117,7 @@ Para simular distintos estados finales en sandbox, se pueden utilizar los siguie
 
 ***
 
-#### SPEI (México)[​](#spei-méxico "Enlace directo al SPEI (México)")
+#### SPEI (México)")
 
 * **País:** `MEX`
 * **Monedas:** MXN, USD
@@ -129,7 +129,7 @@ Para simular distintos estados finales en sandbox, se pueden utilizar los siguie
 
 ***
 
-#### PIX (Brasil)[​](#pix-brasil "Enlace directo al PIX (Brasil)")
+#### PIX (Brasil)")
 
 * **País:** `BRA`
 * **Monedas:** BRL, USD
@@ -141,27 +141,27 @@ Para simular distintos estados finales en sandbox, se pueden utilizar los siguie
 
 ***
 
-#### TRANSFER (Ecuador y Brasil)[​](#transfer-ecuador-y-brasil "Enlace directo al TRANSFER (Ecuador y Brasil)")
+#### TRANSFER (Ecuador y Brasil)")
 
 * **País:** `ECU`, `BRA`
 * **Monedas:** USD, BRL
 * **APM:** TRANSFER
 
-##### Bancos soportados (`payment.bank_name`)[​](#bancos-soportados-paymentbank_name "Enlace directo al bancos-soportados-paymentbank_name")
+##### Bancos soportados (`payment.bank_name`)
 
 | País    | Valores permitidos                   |
 | ------- | ------------------------------------ |
 | Ecuador | `BANCO_PICHINCHA`, `BANCO_GUAYAQUIL` |
 | Brasil  | `SANTANDER_BRASIL`                   |
 
-###### Valores por defecto[​](#valores-por-defecto "Enlace directo al Valores por defecto")
+###### Valores por defecto
 
 Si **no** se envía `payment.bank_name`:
 
 * Ecuador → `BANCO_PICHINCHA`
 * Brasil → `SANTANDER_BRASIL`
 
-##### Ejemplo (Ecuador, Banco Guayaquil)[​](#ejemplo-ecuador-banco-guayaquil "Enlace directo al Ejemplo (Ecuador, Banco Guayaquil)")
+##### Ejemplo (Ecuador, Banco Guayaquil)")
 
 ```
 "extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "00113562600"    },    "billing_address": {        "city": "Quito",        "country": "ECU",        "address1": "Av. Amazonas 123",        "zip_code": "170102",        "state_code": ""    },    "payment": {        "bank_name": "BANCO_GUAYAQUIL"    }}
@@ -169,7 +169,7 @@ Si **no** se envía `payment.bank_name`:
 
 ***
 
-#### Tarjeta (Colombia)[​](#tarjeta-colombia "Enlace directo al Tarjeta (Colombia)")
+#### Tarjeta (Colombia)")
 
 * **País:** `COL`
 * **Monedas:** COP, USD
@@ -181,7 +181,7 @@ Si **no** se envía `payment.bank_name`:
 
 ***
 
-## Límites para las transacciones[​](#límites-para-las-transacciones "Enlace directo al Límites para las transacciones")
+## Límites para las transacciones
 
 Con esta tabla reflejamos los límites por tipo de comercio, usuario y país:
 
@@ -202,7 +202,7 @@ Con esta tabla reflejamos los límites por tipo de comercio, usuario y país:
 
 ***
 
-## Errores de transacciones[​](#errores-de-transacciones "Enlace directo al Errores de transacciones")
+## Errores de transacciones
 
 Con esta tabla reflejamos posibles errores que puedan surgir en el proceso del pago:
 
@@ -242,7 +242,7 @@ Con esta tabla reflejamos posibles errores que puedan surgir en el proceso del p
 
 ***
 
-## Payouts con Payretailers[​](#payouts-con-payretailers "Enlace directo al Payouts con Payretailers")
+## Payouts con Payretailers
 
 Payretailers permite realizar **payouts** (envíos de fondos) en los siguientes países:
 
@@ -264,9 +264,9 @@ Existen dos métodos de payout:
 
 ***
 
-### Campos obligatorios en `extra_data`[​](#campos-obligatorios-en-extra_data "Enlace directo al campos-obligatorios-en-extra_data")
+### Campos obligatorios en `extra_data`
 
-#### `profile` (siempre requerido):[​](#profile-siempre-requerido "Enlace directo al profile-siempre-requerido")
+#### `profile` (siempre requerido):
 
 * `first_name`
 * `last_name`
@@ -275,12 +275,12 @@ Existen dos métodos de payout:
 * `document_identification_type` *(opcional; solo para COL, ECU y PER. Valores posibles: `NATIONAL_IDENTITY_DOCUMENT`, `FOREIGN_IDENTIFICATION_DOCUMENT`, `FISCAL_IDENTIFICATION_CODE`, `VALID_PASSPORT`)*
 * `phone.number` *(requerido solo si `country` es BRA, PER o ECU)*
 
-#### `billing_address`:[​](#billing_address "Enlace directo al billing_address")
+#### `billing_address`:
 
 * `address1`
 * `country`
 
-#### `payment` (según el tipo de payout):[​](#payment-según-el-tipo-de-payout "Enlace directo al payment-según-el-tipo-de-payout")
+#### `payment` (según el tipo de payout):
 
 **Si el tipo de payout es `Transfer`:**
 
@@ -297,7 +297,7 @@ Existen dos métodos de payout:
 
 ***
 
-### Valores de `document_identification_type` por país[​](#valores-de-document_identification_type-por-país "Enlace directo al valores-de-document_identification_type-por-país")
+### Valores de `document_identification_type` por país
 
 El campo `document_identification_type` se incluye dentro de `profile`, es **opcional** y **solo se puede usar para los países Colombia, Ecuador y Perú**. Si no se indica, se utilizará por defecto `NATIONAL_IDENTITY_DOCUMENT`. Para el resto de países, no se debe enviar este campo.
 
@@ -319,7 +319,7 @@ El campo `document_identification_type` se incluye dentro de `profile`, es **opc
 
 ***
 
-### Valores de `account_type` por país (Transfer)[​](#valores-de-account_type-por-país-transfer "Enlace directo al valores-de-account_type-por-país-transfer")
+### Valores de `account_type` por país (Transfer)
 
 | account\_type  | BR | CO | CL | PE | EC | MX |
 | -------------- | -- | -- | -- | -- | -- | -- |
@@ -336,9 +336,9 @@ El campo `document_identification_type` se incluye dentro de `profile`, es **opc
 
 ***
 
-### Especificaciones para `account` por país (Transfer)[​](#especificaciones-para-account-por-país-transfer "Enlace directo al especificaciones-para-account-por-país-transfer")
+### Especificaciones para `account` por país (Transfer)
 
-#### Longitud esperada / formato[​](#longitud-esperada--formato "Enlace directo al Longitud esperada / formato")
+#### Longitud esperada / formato
 
 > **Validación de datos:** `^[0-9]+$` (solo se permiten dígitos en `account`)
 
@@ -352,7 +352,7 @@ El campo `document_identification_type` se incluye dentro de `profile`, es **opc
 | EC (Ecuador)   | 12                 | —                                                                                           |
 | PE (Perú)      | 10, 13, 14, 18, 20 | Depende del banco. [Ver detalle](#detalle-para-per%C3%BA-account)                           |
 
-##### Detalle para Perú (`account`)[​](#detalle-para-perú-account "Enlace directo al detalle-para-perú-account")
+##### Detalle para Perú (`account`)
 
 | Banco / Institución      | Longitud esperada | Comentarios / Ejemplos                                   |
 | ------------------------ | ----------------- | -------------------------------------------------------- |
@@ -364,7 +364,7 @@ El campo `document_identification_type` se incluye dentro de `profile`, es **opc
 
 ***
 
-### Formato de clave PIX (`recipient_pix_key`)[​](#formato-de-clave-pix-recipient_pix_key "Enlace directo al formato-de-clave-pix-recipient_pix_key")
+### Formato de clave PIX (`recipient_pix_key`)
 
 | Tipo clave | Formato regex                                                  | Ejemplo                                |
 | ---------- | -------------------------------------------------------------- | -------------------------------------- |
@@ -377,15 +377,15 @@ El campo `document_identification_type` se incluye dentro de `profile`, es **opc
 
 ***
 
-### Ejemplos de `extra_data` para payouts de tipo Transfer[​](#ejemplos-de-extra_data-para-payouts-de-tipo-transfer "Enlace directo al ejemplos-de-extra_data-para-payouts-de-tipo-transfer")
+### Ejemplos de `extra_data` para payouts de tipo Transfer
 
-#### Ecuador[​](#ecuador "Enlace directo al Ecuador")
+#### Ecuador
 
 ```
 "extra_data": {  "profile": {    "first_name": "John",    "last_name": "Doe",    "email": "jon.doe@test.com",    "document_identification_number": "00113562600",    "document_identification_type": "NATIONAL_IDENTITY_DOCUMENT",    "phone": {      "number": "572222222222"    }  },  "billing_address": {    "city": "Quito",    "country": "ECU",    "address1": "Portete E19-151",    "address2": null,    "address3": null,    "zip_code": "",    "state_code": ""  },  "payment": {    "bank_name": "0001",    "account": "123123123124",    "account_type": "CHECKING"  }}
 ```
 
-#### Brasil[​](#brasil "Enlace directo al Brasil")
+#### Brasil
 
 ```
 "extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "john.doe@test.com",        "document_identification_number": "00113562600",        "phone": {            "number": "5511999999999"        }     },    "billing_address": {    "city": "Sao Paulo",    "country": "BRA",    "address1": "R. Sao Joaquim, 596",    "address2": null,    "address3": null,    "zip_code": "",    "state_code": ""},    "payment": {        "bank_name": "341",        "account": "0001",        "account_type": "CHECKING",        "account_agency_number": "8585",        "aba_swift": "ERDSAD"    }}
@@ -393,7 +393,7 @@ El campo `document_identification_type` se incluye dentro de `profile`, es **opc
 
 ***
 
-### Pruebas en entorno de sandbox[​](#pruebas-en-entorno-de-sandbox "Enlace directo al Pruebas en entorno de sandbox")
+### Pruebas en entorno de sandbox
 
 En el entorno de sandbox, puedes simular distintos resultados en las operaciones de payout utilizando el valor del campo `amount` que indicarás al [**generar la orden de pago**](/reference/#operation/generate-payment-order):
 
@@ -402,7 +402,7 @@ En el entorno de sandbox, puedes simular distintos resultados en las operaciones
 
 ***
 
-## Límites para los payouts[​](#límites-para-los-payouts "Enlace directo al Límites para los payouts")
+## Límites para los payouts
 
 Con esta tabla reflejamos los límites por tipo de comercio, usuario y país:
 
@@ -417,11 +417,11 @@ Con esta tabla reflejamos los límites por tipo de comercio, usuario y país:
 
 ***
 
-## Códigos de bancos por país[​](#códigos-de-bancos-por-país "Enlace directo al Códigos de bancos por país")
+## Códigos de bancos por país
 
 Puedes consultar los valores válidos del campo `payment.bank_name` para cada país en la siguiente sección. Este valor consistirá en un código numérico.
 
-### Brasil[​](#brasil-1 "Enlace directo al Brasil")
+### Brasil
 
 > Puedes consultar la lista completa de bancos en [conta-corrente.com](https://www.conta-corrente.com)
 
@@ -444,7 +444,7 @@ Puedes consultar los valores válidos del campo `payment.bank_name` para cada pa
 | 336    | Banco C6 S.A.                             |
 | 413    | Banco BV (Before Banco Votorantim)        |
 
-### Chile[​](#chile "Enlace directo al Chile")
+### Chile
 
 | Código | Banco                                          |
 | ------ | ---------------------------------------------- |
@@ -458,7 +458,7 @@ Puedes consultar los valores válidos del campo `payment.bank_name` para cada pa
 | 014    | Scotiabank / Sud – Americano                   |
 | 016    | BCI / Tbanc                                    |
 
-### México[​](#méxico "Enlace directo al México")
+### México
 
 | Código | Banco              |
 | ------ | ------------------ |
@@ -474,7 +474,7 @@ Puedes consultar los valores válidos del campo `payment.bank_name` para cada pa
 
 > Para ver la lista completa de bancos en México, consulta: [Bancos de México - PayRetailers](https://www.payretailers.dev/reference/payout-parameters#bank-name-2)
 
-### Colombia[​](#colombia "Enlace directo al Colombia")
+### Colombia
 
 | Código | Banco                 |
 | ------ | --------------------- |
@@ -491,7 +491,7 @@ Puedes consultar los valores válidos del campo `payment.bank_name` para cada pa
 | 0507   | Nequi                 |
 | 0801   | MOVii                 |
 
-### Ecuador[​](#ecuador-1 "Enlace directo al Ecuador")
+### Ecuador
 
 | Código | Banco                     |
 | ------ | ------------------------- |
@@ -505,7 +505,7 @@ Puedes consultar los valores válidos del campo `payment.bank_name` para cada pa
 | 0025   | Banco Promerica           |
 | 0026   | Banco Solidario           |
 
-### Perú[​](#perú "Enlace directo al Perú")
+### Perú
 
 | Código | Banco              |
 | ------ | ------------------ |

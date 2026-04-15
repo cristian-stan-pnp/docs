@@ -3,11 +3,11 @@ title: 'PayPal'
 description: 'Configuração e integração do serviço de pagamento PayPal no Paylands'
 ---
 
-## Introdução[​](#introdução "Link direto para Introdução")
+## Introdução
 
 PayPal é um serviço de pagamento que permite realizar cobranças utilizando o checkout do Paylands ou através de um redirecionamento.
 
-## Restrições e requisitos[​](#restrições-e-requisitos "Link direto para Restrições e requisitos")
+## Restrições e requisitos
 
 Atualmente apenas a moeda EUR é suportada.
 
@@ -19,7 +19,7 @@ Ao gerar a ordem de pagamento, devem ser enviados, no mínimo, os campos de *pro
 
 ***
 
-## STC (Set Transaction Context)[​](#stc-set-transaction-context "Link direto para STC (Set Transaction Context)")
+## STC (Set Transaction Context)")
 
 O envio de dados STC permite enriquecer a informação da transação com informações adicionais do comprador e do serviço contratado.
 
@@ -30,7 +30,7 @@ No pedido utilizado para [**gerar a ordem de pagamento**](/reference/#operation/
 
 Os dados OTA só são necessários para determinadas indústrias, como hotéis.
 
-### OTA - Hotéis (MCC 7011)[​](#ota---hotéis-mcc-7011 "Link direto para OTA - Hotéis (MCC 7011)")
+### OTA - Hotéis (MCC 7011)")
 
 Os seguintes campos correspondem ao contexto OTA para hotéis.
 
@@ -47,7 +47,7 @@ Todos os campos OTA devem ser enviados dentro de **`extra_data.payment`**.
 | `ota_start_city`         | `string`                     | Cidade onde começa a estadia                             | `"Madrid"`                      |
 | `ota_start_zipcode`      | `string`                     | Código postal onde começa a estadia                      | `"28080"`                       |
 
-#### Exemplo[​](#exemplo "Link direto para Exemplo")
+#### Exemplo
 
 ```
 {    "extra_data": {        "profile": {            "first_name": "John",            "last_name": "Doe",            "email": "john@doe.com",            "birthdate": "1984-11-28",            "phone": {                "number": "678767878",                "prefix": "+34"            }        },        "billing_address": {            "city": "Madrid",            "country": "ESP",            "address1": "Avenida principal, 24",            "zip_code": "12345",            "state_code": "ESP"        },        "payment": {            "buyer_creation_date": "2012-12-09T19:14:55.277+00:00",            "ota_type": "hotel",            "ota_service_start_date": "2012-12-09T19:14:55.277+00:00",            "ota_service_end_date": "2012-12-14T19:14:55.277+00:00",            "ota_change_guest": false,            "ota_start_country": "ES",            "ota_start_city": "Madrid",            "ota_start_zipcode": "28080"        }    }}
@@ -55,7 +55,7 @@ Todos os campos OTA devem ser enviados dentro de **`extra_data.payment`**.
 
 ***
 
-## Sandbox[​](#sandbox "Link direto para Sandbox")
+## Sandbox
 
 Fazer um pagamento com PayLater e PayPal:
 

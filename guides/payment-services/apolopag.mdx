@@ -3,11 +3,11 @@ title: 'Apolopag'
 description: 'Configuración e integración del servicio de pago Apolopag en Paylands'
 ---
 
-## Introducción[​](#introducción "Enlace directo al Introducción")
+## Introducción
 
 Apolopag es un servicio que permite realizar pagos por tarjeta o mediante los métodos de pago alternativos PIX y PicPay. También permite PIX Payouts. Puede ser utilizado tanto en el checkout de Paylands como mediante redirección, así como con pagos push.
 
-## Datos extra requeridos[​](#datos-extra-requeridos "Enlace directo al Datos extra requeridos")
+## Datos extra requeridos
 
 Apolopag espera recibir la siguiente información obligatoriamente en el campo `extra_data` al crear la orden, para pagos con tarjeta o para pagos PUSH con PIX y PicPay:
 
@@ -23,7 +23,7 @@ Estos campos pueden aportarse con la siguiente estructura en `extra_data`:
 "extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "659.516.937-13",        "birthdate": "1996-01-01",        "phone": {            "number": "5151428089"        }     }}
 ```
 
-## Payouts[​](#payouts "Enlace directo al Payouts")
+## Payouts
 
 Para usar PIX Payouts con Apolopag es necesario enviar la siguiente información en el `extra_data`:
 
@@ -39,7 +39,7 @@ Para usar PIX Payouts con Apolopag es necesario enviar la siguiente información
 "extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "document_identification_number": "842.359.516-10"     },    "payment": {        "bank_code": "218",        "branch": "0944",        "account": "091234-5",        "account_type": "current"    }}
 ```
 
-## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+## Métodos de pago en Sandbox
 
 La tarjeta de prueba es la siguiente. En general, la fecha de caducidad y CVV no importan siempre y cuando la fecha sea posterior a la fecha actual, y el CVV tenga 3 cifras.
 
@@ -47,11 +47,11 @@ La tarjeta de prueba es la siguiente. En general, la fecha de caducidad y CVV no
 - número de tarjeta: 4111 1111 1111 1111- CVV: 123- fecha de expiración: 12/34
 ```
 
-## Moneda[​](#moneda "Enlace directo al Moneda")
+## Moneda
 
 La moneda soportada para este servicio es el real brasileño (BRL).
 
-## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+## Códigos de error
 
 La estructura del error tiene la siguiente forma:
 

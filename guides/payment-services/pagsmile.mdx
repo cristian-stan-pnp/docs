@@ -3,11 +3,11 @@ title: 'Pagsmile'
 description: 'Configuración e integración del servicio de pago Pagsmile en Paylands'
 ---
 
-## Introducción[​](#introducción "Enlace directo al Introducción")
+## Introducción
 
 Pagsmile es un servicio que permite realizar pagos por tarjeta o mediante los métodos de pago alternativos PIX, Loterica y Boleto. También permite PIX Payouts y Bank Transfer Payouts. Puede ser utilizado tanto en el checkout de Paylands como mediante redirección, así como con pagos push.
 
-## Datos extra requeridos[​](#datos-extra-requeridos "Enlace directo al Datos extra requeridos")
+## Datos extra requeridos
 
 Pagsmile espera recibir la siguiente información en el campo `extra_data` al crear la orden. Los campos a enviar varían dependiendo del método de pago escogido.
 
@@ -20,13 +20,13 @@ Pagsmile espera recibir la siguiente información en el campo `extra_data` al cr
 * Loterica: nombre, email, documento de identificación (CPF) y número de teléfono
 * Boleto: nombre, email, documento de identificación (CPF) y código postal (`zip_code`)
 
-## Payouts[​](#payouts "Enlace directo al Payouts")
+## Payouts
 
 Pagsmile permite payouts en diferentes países usando los siguientes métodos de pago:
 
-### Brasil[​](#brasil "Enlace directo al Brasil")
+### Brasil
 
-#### PIX Payout[​](#pix-payout "Enlace directo al PIX Payout")
+#### PIX Payout
 
 Campos obligatorios:
 
@@ -48,7 +48,7 @@ El siguiente ejemplo muestra el `extra_data` enviado en la creación de orden pa
 "extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "merchant@pagsmile.com",        "document_identification_number": "842.359.516-10"     },    "payment": {        "account_type": "EMAIL"    }}
 ```
 
-#### Bank Transfer Payout Brasil (Transfer)[​](#bank-transfer-payout-brasil-transfer "Enlace directo al Bank Transfer Payout Brasil (Transfer)")
+#### Bank Transfer Payout Brasil (Transfer)")
 
 Campos obligatorios:
 
@@ -65,9 +65,9 @@ En el caso de Bank Transfer Payouts también será necesario enviar la informaci
 "extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "document_identification_number": "842.359.516-10"     },    "payment": {        "bank_code": "001",        "branch": "0002",        "account": "123412341",        "account_type": "CHECKING"    }}
 ```
 
-### Colombia[​](#colombia "Enlace directo al Colombia")
+### Colombia
 
-#### Tpaga[​](#tpaga "Enlace directo al Tpaga")
+#### Tpaga
 
 Campos obligatorios:
 
@@ -80,7 +80,7 @@ Campos obligatorios:
 "extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "phone": {            "number": "322222222"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "account_type": "PHONE"    }}
 ```
 
-#### Transfiya[​](#transfiya "Enlace directo al Transfiya")
+#### Transfiya
 
 Los pagos con Transfiya requieren `amount` >= 1000 COP.
 
@@ -97,7 +97,7 @@ Campos obligatorios:
 "extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "123456789",        "phone": {            "number": "572222222222"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "account_type": "PHONE"    }}
 ```
 
-#### Bank Transfer Payout Colombia (Transfer)[​](#bank-transfer-payout-colombia-transfer "Enlace directo al Bank Transfer Payout Colombia (Transfer)")
+#### Bank Transfer Payout Colombia (Transfer)")
 
 Campos obligatorios:
 
@@ -113,9 +113,9 @@ Campos obligatorios:
 "extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "email": "test@pagsmile.com",        "document_identification_number": "123456789",        "phone": {            "number": "012345678910"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "bank_code": "007",        "account": "57012345678910",        "account_type": "CHECKING"    }}
 ```
 
-### Chile[​](#chile "Enlace directo al Chile")
+### Chile
 
-#### Vita Wallet[​](#vita-wallet "Enlace directo al Vita Wallet")
+#### Vita Wallet
 
 Los pagos con Vita Wallet requieren `amount` >= 5000 CLP.
 
@@ -130,7 +130,7 @@ Campos obligatorios:
 "extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "email": "paid@pagsmile.com"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "CHL"    },    "payment": {        "account_type": "EMAIL"    }}
 ```
 
-#### Bank Transfer Payout Chile (Transfer)[​](#bank-transfer-payout-chile-transfer "Enlace directo al Bank Transfer Payout Chile (Transfer)")
+#### Bank Transfer Payout Chile (Transfer)")
 
 Campos obligatorios:
 
@@ -146,9 +146,9 @@ Campos obligatorios:
 "extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "111111111"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "CHL"    },    "payment": {        "account_type": "CHECKING",        "account": "222222222222",        "bank_code": "001"    }}
 ```
 
-### México[​](#méxico "Enlace directo al México")
+### México
 
-#### SPEI Payout[​](#spei-payout "Enlace directo al SPEI Payout")
+#### SPEI Payout
 
 Campos obligatorios:
 
@@ -165,7 +165,7 @@ Campos obligatorios:
 "extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "111111111"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "MEX"    },    "payment": {        "account_type": "CLABE",        "account": "646020146401877826"    }}
 ```
 
-## Tipo de documento de identificación[​](#tipo-de-documento-de-identificación "Enlace directo al Tipo de documento de identificación")
+## Tipo de documento de identificación
 
 Se deberá indicar el tipo de documento de identificación dentro del `extra_data` en el campo `profile.document_identification_type`. Por defecto, si no se indica, se utilizará el valor **NATIONAL\_IDENTITY\_DOCUMENT**.
 
@@ -178,7 +178,7 @@ A continuación se muestran los posibles valores de ese campo y sus equivalencia
 | **FISCAL\_IDENTIFICATION\_CODE**      | -      | -        | RUT   | RFC    |
 | **VALID\_PASSPORT**                   | -      | -        | PAS   | -      |
 
-## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+## Métodos de pago en Sandbox
 
 La tarjeta de prueba es la siguiente. En general, la fecha de caducidad y CVV no importan siempre y cuando la fecha sea posterior a la fecha actual, y el CVV tenga 3 cifras.
 
@@ -186,11 +186,11 @@ La tarjeta de prueba es la siguiente. En general, la fecha de caducidad y CVV no
 - número de tarjeta: 4111 1111 1111 1111- CVV: 123- fecha de expiración: 12/34
 ```
 
-## Moneda[​](#moneda "Enlace directo al Moneda")
+## Moneda
 
 Las monedas soportadas para este servicio son el real brasileño (BRL), el peso colombiano (COP), el peso chileno (CLP) y el peso mexicano (MXN).
 
-## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+## Códigos de error
 
 La estructura del error tiene la siguiente forma:
 

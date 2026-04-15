@@ -5,7 +5,7 @@ description: 'Acepta pagos con Khipu en Chile a través de la API de Paylands'
 
 # Khipu
 
-## Integración mediante redirección para FLOW[​](#integración-mediante-redirección-para-flow "Enlace directo al Integración mediante redirección para FLOW")
+## Integración mediante redirección para FLOW
 
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order), indicando el email.
 
@@ -25,7 +25,7 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
 
 Una vez el usuario sea redirigido a esta pantalla, el usuario podrá seleccionar su banco para autorizar la transacción. Cuando complete el pago, será redirigido de vuelta a la URL OK o KO, dependiendo del resultado del pago.
 
-## Integración mediante redirección para Payretailers[​](#integración-mediante-redirección-para-payretailers "Enlace directo al Integración mediante redirección para Payretailers")
+## Integración mediante redirección para Payretailers
 
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order), indicando el first\_name, last\_name, email, document\_identification\_number, phone, city, country, address1, zip\_code, state\_code.
 
@@ -43,11 +43,11 @@ Construimos la URL de redirección reemplazando el **token** por el valor devuel
 https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
 ```
 
-## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+## Pruebas
 
 Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de FLOW y Payretailers.
 
-## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+## Campos personalizados
 
 Opcionalmente, dentro del objeto `extra_data` se puede incluir el campo `payment_reason`, que permite indicar una descripción del pago.
 

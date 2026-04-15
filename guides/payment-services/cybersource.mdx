@@ -3,7 +3,7 @@ title: 'CyberSource'
 description: 'Configuración e integración del servicio de pago CyberSource en Paylands'
 ---
 
-## Datos extra requeridos[​](#datos-extra-requeridos "Enlace directo al Datos extra requeridos")
+## Datos extra requeridos
 
 Cybersource espera recibir la siguiente información obligatoriamente en el campo `extra_data` al crear la orden:
 
@@ -28,7 +28,7 @@ Estos campos pueden aportarse con la siguiente estructura en `extra_data`:
 "extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_type": "NATIONAL_IDENTITY_DOCUMENT",        "document_identification_number": "77477416F"    },    "address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }}
 ```
 
-## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+## Métodos de pago en Sandbox
 
 Las tarjetas de prueba son las siguientes. En general, la fecha de caducidad y CVV no importan siempre y cuando la fecha sea posterior a la fecha actual, y el CVV tenga 3 cifras.
 
@@ -37,7 +37,7 @@ Las tarjetas de prueba son las siguientes. En general, la fecha de caducidad y C
 | OK        | 4622943127013705 12/34 123 |                                               |
 | KO        | 4622943127013705 12/34 123 | El amount debe ser >= 1000000 (10.000,00 DOP) |
 
-## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+## Códigos de error
 
 Los códigos de error en Cybersource siguen la siguiente estructura:
 
