@@ -89,8 +89,8 @@ In the **source storage** and **payment** flows, the body sent is the same:
 
 * It allows providing `first_name` and `last_name`. If not sent:
 
-  * In **payments**, they are attempted to be obtained from `extra_data.profile`.
-  * In **storage**, they are attempted to be obtained from `card_holder` / `account_holder`.
+  * In **payments**, the system attempts to obtain them from `extra_data.profile`.
+  * In **storage**, the system attempts to obtain them from `card_holder` / `account_holder`.
 
 * It allows selecting the verification method via `verification_method`.
 
