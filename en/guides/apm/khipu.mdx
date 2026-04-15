@@ -5,7 +5,7 @@ description: 'Accept payments with Khipu in Chile through the Paylands API'
 
 # Khipu
 
-## Redirect integration for FLOW[​](#redirect-integration-for-flow "Direct link to Redirect integration for FLOW")
+## Redirect integration for FLOW
 
 To integrate via redirect, the user must be present at the time of payment, which must be processed through a browser. First, you need to [generate a payment order](/reference/#operation/generate-payment-order), specifying the email.
 
@@ -25,7 +25,7 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
 
 Once the user is redirected to this screen, they can select their bank to authorize the transaction. When the payment is completed, they will be redirected back to the OK or KO URL, depending on the payment result.
 
-## Redirect integration for Payretailers[​](#redirect-integration-for-payretailers "Direct link to Redirect integration for Payretailers")
+## Redirect integration for Payretailers
 
 To integrate via redirect, the user must be present at the time of payment, which must be processed through a browser. First, you need to [generate a payment order](/reference/#operation/generate-payment-order), specifying first\_name, last\_name, email, document\_identification\_number, phone, city, country, address1, zip\_code, state\_code.
 
@@ -43,11 +43,11 @@ Build the redirect URL by replacing the **token** with the value returned in the
 https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
 ```
 
-## Testing[​](#testing "Direct link to Testing")
+## Testing
 
 For more information on how to test this payment method with each of its providers, visit the FLOW and Payretailers documentation.
 
-## Custom fields[​](#custom-fields "Direct link to Custom fields")
+## Custom fields
 
 Optionally, within the `extra_data` object you can include the `payment_reason` field, which allows you to specify a payment description.
 

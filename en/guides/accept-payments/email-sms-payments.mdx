@@ -5,7 +5,7 @@ description: 'How to send payments via email and SMS with Paylands'
 
 For each payment to be made, you will need to specify the amount to pay and the recipient's email or phone number, as well as the email or SMS subject, among others. When the file is loaded, all deliveries will be carried out, and they are grouped together so you can track how many have been paid and which have not. As users make payments, the statuses of the associated operations will be updated.
 
-![Sending payments via email and sms](/images/docs/integration/assets/images/email-sms-campaigns-1-7d37b6bfe9da67f44f49b90ec0367392.png)
+![Sending payments via email and SMS](/images/docs/integration/assets/images/email-sms-campaigns-1-7d37b6bfe9da67f44f49b90ec0367392.png)
 
 ## How it works through the panel
 
@@ -38,7 +38,7 @@ Below are all the fields that can be configured to launch one or more payments:
 * **Failure URL**: URL to which the customer will be redirected in case of error.
 * **Certified payment**: Indicates whether the link delivery will be certified or not\*.
 * **Card template**: Allows selecting a template for the screen where the user enters their card details.
-* **Email and SMS template**: Allows selecting the template that formats the email/sms.
+* **Email and SMS template**: Allows selecting the template that formats the email/SMS.
 * **DCC template**: Allows selecting the template where the user selects which currency they want to use if DCC is active.
 * **Language**: Indicates the language that will be displayed to the recipient.
 * **Extra data**: Allows manually specifying the `extra_data` field when generating the payment order.
@@ -68,9 +68,9 @@ To send multiple payment links simultaneously, a CSV file must be uploaded. This
 | URL\_OK           | String  | No       | URL to which the customer will be redirected in case of success.                                                                                                                               |
 | URL\_KO           | String  | No       | URL to which the customer will be redirected in case of error.                                                                                                                                 |
 | CARD\_TEMPLATE    | String  | No       | Allows selecting a template for the screen where the user enters their card details.                                                                                                           |
-| MOTO\_TEMPLATE    | String  | No       | Allows selecting the template that formats the email/sms.                                                                                                                                     |
+| MOTO\_TEMPLATE    | String  | No       | Allows selecting the template that formats the email/SMS.                                                                                                                     |
 | DCC\_TEMPLATE     | String  | No       | Allows selecting the template where the user selects which currency they want to use if DCC is active.                                                                                        |
-| CERTIFIED         | String  | No       | true/false. Indicates whether the email or sms delivery will be certified.                                                                                                                     |
+| CERTIFIED         | String  | No       | true/false. Indicates whether the email or SMS delivery will be certified.                                                                                                                     |
 | LANGUAGE          | String  | No       | Indicates the language that will be displayed to the recipient. Example: es                                                                                                                    |
 | EXTRA\_DATA       | String  | No       | `extra_data` fields separated by semicolons. Subkeys are nested using a dot. For example, to specify the cof RECURRING, you would specify the value cof.reason:RECURRING                      |
 
@@ -114,7 +114,7 @@ For example, sending the following value in the additional field:
 nombre: Juan García; edad: 28
 ```
 
-In the email/sms template, these values can be accessed as follows:
+In the email/SMS template, these values can be accessed as follows:
 
 ```
 Bienvenido {{customFields.nombre}}, felices {{customFields.edad}} años.

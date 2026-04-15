@@ -5,7 +5,7 @@ description: 'Accept payments with Webpay in Chile through the Paylands API'
 
 # Webpay
 
-## Redirect integration with PAYRETAILERS[​](#redirect-integration-with-payretailers "Direct link to Redirect integration with PAYRETAILERS")
+## Redirect integration with PAYRETAILERS
 
 This method requires the user to be present at the time of payment, which must be processed through a browser. First, you need to [generate a payment order](/reference/#operation/generate-payment-order) specifying the following user fields to avoid the user having to fill them in at a later step.
 
@@ -13,7 +13,7 @@ This method requires the user to be present at the time of payment, which must b
   "extra_data": {      "profile": {          "first_name": "John",          "last_name": "Doe",          "email": "johndoe@gmail.com",          "document_identification_number": "92309089",          "phone": {              "number": "02614235138",              "prefix": "54"          }      },      "billing_address": {          "city": "Castellon",          "country": "CHL",          "address1": "Avinguda del Mar 23",          "zip_code": "12000",          "state_code": "CT"      }  }
 ```
 
-## Redirect integration with FLOW[​](#redirect-integration-with-flow "Direct link to Redirect integration with FLOW")
+## Redirect integration with FLOW
 
 To integrate via redirect, the user must be present at the time of payment, which must be processed through a browser. First, you need to [generate a payment order](/reference/#operation/generate-payment-order), specifying the email.
 
@@ -33,11 +33,11 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=WEBPAY
 
 Once the user is redirected to this screen, they can enter their card details to complete the payment. When the payment is completed, they will be redirected back to the OK or KO URL, depending on the payment result.
 
-## Testing[​](#testing "Direct link to Testing")
+## Testing
 
 For more information on how to test this payment method with each of its providers, visit the PAYRETAILERS or FLOW documentation.
 
-## Custom fields[​](#custom-fields "Direct link to Custom fields")
+## Custom fields
 
 Optionally, when using WEBPAY with FLOW, within the `extra_data` object you can include the `payment_reason` field, which allows you to specify a payment description.
 

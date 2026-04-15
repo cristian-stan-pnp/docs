@@ -5,7 +5,7 @@ description: 'Aceite pagamentos com Servipag no Chile através da API da Payland
 
 # Servipag
 
-## Integração por redirecionamento[​](#integração-por-redirecionamento "Link direto para Integração por redirecionamento")
+## Integração por redirecionamento
 
 Para integrá-lo por redirecionamento, o utilizador deve estar presente no momento do pagamento, que deve ser processado através de um navegador. Em primeiro lugar, devemos [gerar uma ordem de pagamento](/reference/#operation/generate-payment-order), indicando o email.
 
@@ -25,11 +25,11 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=SERVIPAG
 
 Uma vez que o utilizador seja redirecionado para este ecrã, poderá completar o pagamento. Quando finalizar o pagamento, será redirecionado de volta para o URL OK ou KO, dependendo do resultado do pagamento.
 
-## Testes[​](#testes "Link direto para Testes")
+## Testes
 
 Para mais informações sobre como testar este método de pagamento em cada um dos seus fornecedores, visite a documentação do FLOW.
 
-## Campos personalizados[​](#campos-personalizados "Link direto para Campos personalizados")
+## Campos personalizados
 
 Opcionalmente, dentro do objeto `extra_data` pode incluir o campo `payment_reason`, que permite indicar uma descrição do pagamento.
 
