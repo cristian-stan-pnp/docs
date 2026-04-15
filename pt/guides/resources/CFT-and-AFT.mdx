@@ -210,12 +210,12 @@ Campos chave:
 
 A disponibilidade de AFT depende da combinação **marca do cartão + MCC do comerciante**.
 
-## Visa
+### Visa
 
 - **ACCOUNT_TO_ACCOUNT**: MCC `4829`, `6012`, `6051`, `6211`, `6540`
 - **PERSON_TO_PERSON**: MCC `4829`
 
-## Mastercard
+### Mastercard
 
 - **ACCOUNT_TO_ACCOUNT**: MCC `6012`, `6051`, `6211`, `6536`, `6537`, `6540`
 - **PERSON_TO_PERSON**: MCC `4829`, `6536`, `6537`, `6538`, `6540`
@@ -224,7 +224,7 @@ A disponibilidade de AFT depende da combinação **marca do cartão + MCC do com
 
 ## 6. Fluxo técnico de integração
 
-## 6.1 Fluxo CFT (crédito ao cartão)
+### 6.1 Fluxo CFT (crédito ao cartão)
 
 1. **Criar uma ordem de pagamento (`POST /payment`)** com operativa `PAYOUT`:
 
@@ -270,7 +270,7 @@ A disponibilidade de AFT depende da combinação **marca do cartão + MCC do com
 
 ---
 
-## 6.2 Fluxo AFT (funding desde cartão)
+### 6.2 Fluxo AFT (funding desde cartão)
 
 1. **Criar ordem de pagamento (`POST /payment`)** incluindo `profile`, `billing_address` e opcionalmente `aft`:
 
@@ -331,12 +331,12 @@ A disponibilidade de AFT depende da combinação **marca do cartão + MCC do com
 
 ## 8. Quando usar CFT e quando usar AFT?
 
-## Use **CFT** quando:
+### Use **CFT** quando:
 - Quer **enviar dinheiro para o cartão** do utilizador.  
 - Necessita de um **cashout direto**.  
 - Quer um crédito imediato e irreversível.  
 
-## Use **AFT** quando:
+### Use **AFT** quando:
 - Necessita de **carregar uma conta** (wallet, carteira eletrónica, pré-pago) desde um cartão.  
 - Quer habilitar **transferências P2P**.  
 - Requer um fluxo condicionado por MCC, marca ou regras de adquirência.  
