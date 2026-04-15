@@ -7,7 +7,7 @@ description: 'Accept payments with Cofidis (4xCard and Cofidis Pay) in Spain thr
 
 With this payment method, the user will be redirected to the Cofidis payment page, where they must provide the required information. In the case of 4xcard, the ID document and the cardholder's card are required, while for the Cofidis Pay product, the ID document and a bank account ownership certificate are required.
 
-The integration process is [**similar to the redirect payment page**](/docs/integration/simple-integration).
+The integration process is [**similar to the redirect payment page**](/guides/accept-payments/web-integration).
 
 ```
 /payment/process/{token}
@@ -31,7 +31,7 @@ To make a Cofidis payment, follow these steps:
 
 ### 1. Generate the payment order on your server
 
-Create the order the same way you would for a [**simple integration**](/docs/integration/simple-integration#1-generar-la-orden-de-pago-en-tu-servidor).
+Create the order the same way you would for a [**simple integration**](/guides/accept-payments/web-integration).
 
 The order will be configured with `secure=false`.
 

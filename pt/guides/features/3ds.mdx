@@ -94,20 +94,37 @@ Posso iniciar um pagamento 3DS para autenticar o usuário em um serviço e depoi
 
 Atualmente suportamos as isenções de **Análise de Risco (TRA)** e de **Baixo valor (LV)** no serviço de pagamento **Redsys**. Para solicitá-las, basta fornecer as seguintes informações no campo `extra_data` ao criar a ordem:
 
-```
-"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
+```json
+"extra_data": {
+  ...
+  "sca": {
+    "exemptions": ["TRA", "LV"]
+  },
+}
 ```
 
 Também é possível solicitar que **nenhuma isenção seja aplicada** deixando o valor de `exemptions` como uma lista vazia:
 
-```
-"extra_data": {        ...        "sca": {            "exemptions": []        },    }
+```json
+"extra_data": {
+  ...
+  "sca": {
+    "exemptions": []
+  },
+}
 ```
 
 Se o valor de `exemptions` não for indicado explicitamente, por padrão será solicitada a isenção de **Baixo valor (LV)** se esta cumprir os requisitos estabelecidos. Após o pagamento, se alguma isenção tiver sido solicitada, seu nome será incluído na chave `order.threeds_data.exemption`. Se não foi solicitada, ou não foi possível solicitar nenhuma isenção, seu valor será `null`.
 
-```
-"threeds_data": {      "version": "...",      "flow": "...",      "sca_requested": ...,      "status": "...",      "eci": "...",      "exemption": "TRA"  }
+```json
+"threeds_data": {
+  "version": "...",
+  "flow": "...",
+  "sca_requested": ...,
+  "status": "...",
+  "eci": "...",
+  "exemption": "TRA"
+}
 ```
 
 Finalmente, o fato de uma isenção ter sido solicitada não implica que tenha sido aceita. Para entender melhor se uma isenção foi aceita ou não, pode-se verificar o campo `threeds_data.flow`. Se a isenção foi solicitada mas seu valor é CHALLENGE\_ONLY ou FULL, significa que não foi aceita. Se seu valor é FRICTIONLESS ou FINGERPRINTING\_ONLY, significa que pode ter sido aceita. Não há forma de saber com 100% de certeza se uma isenção foi aceita, apenas se foi rejeitada.
