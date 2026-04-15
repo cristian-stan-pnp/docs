@@ -18,7 +18,7 @@ A channel always consists of the following attributes:
 | direction   | pull, push                                 | Indicates whether the payload body to be processed is sent to the channel or obtained from the channel.                 |
 | contentType | json,xml                                   | Format of the payload body from which data must be extracted for the tokenization or detokenization process.            |
 | encoding    | utf8, ascii, utf16le, ucs2, base64, latin1 | Encoding of the request body                                                                                            |
-| fieldMapping|                                            | Tells the PCI proxy how the data will be extracted from the body                                                        |
+| fieldMapping|                                            | Tells the PCI proxy how the data will be extracted from the body.                                                       |
 
 A `fieldMapping` consists of the following fields:
 
@@ -30,7 +30,7 @@ A `fieldMapping` consists of the following fields:
 | expiry      | Card expiry date. Valid formats are MM-YYYY, MM-YY, YYYY-MM, YY-MM, MM/YYYY, YYYY/MM, MM/YY, YY/MM, MMYY. If the expiry date is split into two separate fields, use expiryMonth and expiryYear instead.                                      |
 | expiryMonth | Used if the card expiry date is split into two fields.                                                                                                                                                                                         |
 | expiryYear  | Used if the card expiry date is split into two fields.                                                                                                                                                                                         |
-| cardCVV     | Card CVV number                                                                                                                                                                                                                                |
+| cardCVV     | Card CVV number.                                                                                                                                                                                                                               |
 
 Field mapping is specified as XPATH or JSONPATH attributes depending on the body's contentType. To better understand these query languages, visit the [XPATH](https://www.w3schools.com/xml/xml_xpath.asp) and [JSONPATH](https://goessner.net/articles/JsonPath/index.html#e2) resources.
 
