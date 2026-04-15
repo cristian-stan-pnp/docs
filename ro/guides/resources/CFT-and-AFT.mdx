@@ -1,0 +1,342 @@
+---
+title: "Credit Fund Transfer (CFT) și Account Funding Transactions (AFT)"
+---
+
+# CFT vs AFT
+
+În Paynopain există două mecanisme legate de transferurile de fonduri asociate cardurilor:
+
+- **Credit Fund Transfer (CFT)**: comerciantul trimite bani pe cardul utilizatorului printr-un credit direct.  
+- **Account Funding Transactions (AFT)**: utilizate pentru a muta fonduri **de pe** un card (al utilizatorului/expeditorului) către un cont bancar, card sau chiar altă persoană (destinatar).  
+
+Ambele concepte coexistă pe platformă, dar acoperă **direcții de flux și cazuri de utilizare diferite**, și au **cerințe tehnice distincte** la nivel de payload și date KYC.
+
+---
+
+## 1. Viziune de nivel înalt
+
+### Credit Fund Transfer (CFT)
+
+- **Direcția banilor**: de la comerciant → cardul utilizatorului.  
+- **Utilizare tipică**:  
+  - Returnarea unui sold unui client fără a-l lega de o vânzare concretă.  
+  - Cashout / payout din soldul comerciantului către carduri Visa/Mastercard.
+- **Operativă**:
+  1. Se generează o **comandă de plată** (`/payment`) cu `operative: "PAYOUT"` și `secure: false`.  
+  2. Se face **creditul pe card** (`/payment/payout`) indicând:
+     - `order_uuid` al comenzii.
+     - `source_uuid` al cardului utilizatorului (tokenizat în Paynopain).  
+- **Caracteristică importantă**:  
+  - Transferul de fonduri este **final**; **nu este posibil să se reverseze un credit pe card**.  
+
+### Account Funding Transactions (AFT)
+
+- **Direcția banilor**: de pe cardul utilizatorului →  
+  - un cont al utilizatorului însuși (**ACCOUNT_TO_ACCOUNT**), sau  
+  - altă persoană/destinatar (**PERSON_TO_PERSON**).  
+- **Utilizare tipică**:
+  - Încărcarea soldului într-un cont (wallet, prepaid, etc.) folosind un card.
+  - Trimiterea de bani între persoane folosind cardul ca sursă.
+- **Unde se configurează**:
+  - Prin obiectul `extra_data.aft` în **generarea comenzii de plată**.  
+- **Dependențe**:
+  - Depinde de **MCC-ul comerciantului** și de **marca cardului** pentru a ști dacă tipul de AFT este suportat.  
+
+---
+
+## 2. Coincidențe tehnice între CFT și AFT
+
+Deși rezolvă probleme diferite, împărtășesc mai multe concepte:
+
+- **Lucrează cu carduri Visa și Mastercard** (compatibilitatea este întotdeauna condiționată de achizitor, MCC, etc.).  
+- Ambele necesită **date de profil ale utilizatorului** în `extra_data.profile` (nume, prenume, email, etc.), deși AFT necesită mai multe câmpuri (precum `birthdate` și adresă completă).  
+- Se bazează pe aceeași **infrastructură de comenzi de plată** (`/payment`) și notificare a rezultatelor (`url_post`).
+- Logica de afaceri (dacă se poate sau nu efectua operațiunea) depinde de **configurarea comerciantului**.
+
+---
+
+## 3. Diferențe cheie CFT vs AFT
+
+### 3.1 Direcția fluxului și roluri
+
+| Aspect                       | CFT                                                | AFT                                                                 |
+|-----------------------------|----------------------------------------------------|----------------------------------------------------------------------|
+| Sursă de fonduri            | Comerciant / soldul comerciantului                 | Cardul utilizatorului (cardholder)                  |
+| Destinația fondurilor       | Cardul utilizatorului                              | Cont/card/telefon al utilizatorului sau altei persoane |
+| Operativă principală        | **Credit pe card** (payout)                        | **Funding de cont** (account sau person-to-person)                  |
+| Rolul utilizatorului        | Destinatar de fonduri                              | Expeditor (și opțional destinatar, dacă P2P)                        |
+
+### 3.2 Endpoints și câmpuri cheie
+
+- **CFT**:
+  - Comandă de plată: `POST /payment`
+    - `operative: "PAYOUT"`
+    - `secure: false`  
+    - `extra_data.profile` cu datele minime ale utilizatorului.
+  - Credit pe card: `POST /payment/payout`
+    - `order_uuid`
+    - `source_uuid` (card destinație).  
+
+- **AFT**:
+  - Se configurează cu câmpul `extra_data.aft` la generarea comenzii de plată.  
+  - Nu necesită un endpoint specific suplimentar, dar necesită:
+    - `extra_data.profile` (expeditor).
+    - `extra_data.billing_address`.
+    - `extra_data.aft` (tipul de AFT și, dacă este cazul, destinatar).  
+
+### 3.3 Cerințe de date ale utilizatorului
+
+#### CFT
+
+Pentru CFT, documentația cere ca minim:  
+
+- `extra_data.profile.first_name`
+- `extra_data.profile.last_name`
+- `extra_data.profile.email`
+- `extra_data.profile.phone.number`
+- `extra_data.profile.phone.prefix`
+
+Nu se cere în exemplu adresa poștală și nici data nașterii, deși pot fi recomandate în scopuri de conformitate și scoring.
+
+#### AFT
+
+Pentru AFT, datele expeditorului sunt mai stricte:  
+
+- În cadrul `extra_data.profile`:
+  - `first_name` (obligatoriu)
+  - `last_name` (obligatoriu)
+  - `birthdate` (obligatoriu, format `YYYY-MM-DD`)
+  - `email` (recomandat)  
+- În cadrul `extra_data.billing_address`:
+  - `country` (obligatoriu)
+  - `address1` (obligatoriu)
+  - `city` (obligatoriu)
+  - `zip_code` (obligatoriu)
+  - `state_code` (obligatoriu doar dacă țara este `USA` sau `CAN`)  
+
+În plus, dacă `type = "PERSON_TO_PERSON"`, trebuie furnizat un `receiver` complet.
+
+---
+
+## 4. Tipuri de AFT și structura `extra_data.aft`
+
+### 4.1 Tipuri de AFT
+
+Documentația definește trei tipuri:  
+
+- `NONE`: forțează ca AFT să nu fie aplicat.
+- `ACCOUNT_TO_ACCOUNT`: cardul utilizatorului mută fonduri către un cont al utilizatorului însuși (funding de cont propriu).
+- `PERSON_TO_PERSON`: cardul utilizatorului trimite fonduri către altă persoană (necesită date ale destinatarului).
+
+Dacă nu se trimite câmpul `aft`, Paylands poate aplica **AFT de tip `ACCOUNT_TO_ACCOUNT` automat** dacă:
+
+- Comerciantul este configurat pentru aceasta conform MCC-ului său.
+- Datele utilizatorului au fost incluse corect în `profile` și `billing_address`.  
+
+### 4.2 Structura de bază a `extra_data.aft`
+
+```json
+"extra_data": {
+  "profile": {
+    "first_name": "Luis",
+    "last_name": "Cliente",
+    "email": "luis@example.com",
+    "birthdate": "1990-01-01"
+  },
+  "billing_address": {
+    "country": "ESP",
+    "address1": "Calle Ejemplo 123",
+    "city": "Castellón",
+    "zip_code": "12001",
+    "state_code": "CT"
+  },
+  "aft": {
+    "type": "PERSON_TO_PERSON",
+    "receiver": {
+      "first_name": "Ana",
+      "last_name": "Receptora",
+      "country": "ESP",
+      "account_number": "4111111111111111",
+      "account_type": "CARD_NUMBER"
+    }
+  }
+}
+
+```
+
+### Câmpuri notabile
+
+În cadrul `extra_data.aft`, câmpurile relevante sunt:
+
+```json
+"extra_data": {
+  "profile": {
+    "first_name": "Luis",
+    "last_name": "Cliente",
+    "email": "luis@example.com",
+    "birthdate": "1990-01-01"
+  },
+  "billing_address": {
+    "country": "ESP",
+    "address1": "Calle Ejemplo 123",
+    "city": "Castellón",
+    "zip_code": "12001",
+    "state_code": "CT"
+  },
+  "aft": {
+    "type": "PERSON_TO_PERSON",
+    "receiver": {
+      "first_name": "Ana",
+      "last_name": "Receptora",
+      "country": "ESP",
+      "account_number": "4111111111111111",
+      "account_type": "CARD_NUMBER"
+    }
+  }
+}
+```
+
+Câmpuri cheie:
+
+- `aft.type` (obligatoriu): [NONE, ACCOUNT_TO_ACCOUNT, PERSON_TO_PERSON]
+- `aft.receiver` (obligatoriu doar pentru PERSON_TO_PERSON):
+    - `first_name`
+    - `last_name`
+    - `country` (ISO 3 litere, de exemplu ESP)
+    - `account_number` (card, cont sau număr de telefon mobil)
+    - `account_type` (opțional): [CARD_NUMBER, ACCOUNT_NUMBER, MOBILE_PHONE_NUMBER].
+
+## 5. Compatibilitate pe marcă și MCC (doar AFT)
+
+Disponibilitatea AFT depinde de combinația **marcă de card + MCC-ul comerciantului**.
+
+## Visa
+
+- **ACCOUNT_TO_ACCOUNT**: MCC `4829`, `6012`, `6051`, `6211`, `6540`
+- **PERSON_TO_PERSON**: MCC `4829`
+
+## Mastercard
+
+- **ACCOUNT_TO_ACCOUNT**: MCC `6012`, `6051`, `6211`, `6536`, `6537`, `6540`
+- **PERSON_TO_PERSON**: MCC `4829`, `6536`, `6537`, `6538`, `6540`
+
+---
+
+## 6. Flux tehnic de integrare
+
+## 6.1 Flux CFT (credit pe card)
+
+1. **Creați o comandă de plată (`POST /payment`)** cu operativă `PAYOUT`:
+
+```json
+{
+  "signature": "<semnătură>",
+  "amount": 1500,
+  "currency": "978",
+  "operative": "PAYOUT",
+  "secure": false,
+  "customer_ext_id": "user-123",
+  "service": "<SERVICE_UUID>",
+  "description": "Payout CFT exemplu",
+  "url_post": "https://magazinuldvs.com/notificare",
+  "extra_data": {
+    "profile": {
+      "first_name": "María",
+      "last_name": "Cliente",
+      "email": "maria@example.com",
+      "phone": {
+        "number": "600000000",
+        "prefix": "34"
+      }
+    }
+  }
+}
+```
+
+2. **Efectuați creditul (`POST /payment/payout`)** indicând `order_uuid` și `source_uuid`:
+
+```json
+{
+  "signature": "<semnătură>",
+  "order_uuid": "<ORDER_UUID>",
+  "source_uuid": "<CARD_UUID>",
+  "customer_ip": "127.0.0.1"
+}
+```
+
+3. Se primește răspuns imediat + notificare la `url_post`.
+
+4. Important: **creditele CFT nu pot fi reversate**.
+
+---
+
+## 6.2 Flux AFT (funding de pe card)
+
+1. **Creați comandă de plată (`POST /payment`)** incluzând `profile`, `billing_address` și opțional `aft`:
+
+```json
+{
+  "signature": "<semnătură>",
+  "amount": 2000,
+  "currency": "978",
+  "operative": "PAYMENT",
+  "service": "<SERVICE_UUID>",
+  "description": "Funding de cont via card",
+  "url_post": "https://magazinuldvs.com/notificare",
+  "extra_data": {
+    "profile": {
+      "first_name": "Luis",
+      "last_name": "Cliente",
+      "email": "luis@example.com",
+      "birthdate": "1990-01-01"
+    },
+    "billing_address": {
+      "country": "ESP",
+      "address1": "Calle Ejemplo 123",
+      "city": "Castellón",
+      "zip_code": "12001",
+      "state_code": "CT"
+    },
+    "aft": {
+      "type": "ACCOUNT_TO_ACCOUNT"
+    }
+  }
+}
+```
+
+2. Paylands decide intern dacă aplică AFT și ce tip, în funcție de:
+   - Configurarea comerciantului  
+   - MCC  
+   - Marca cardului  
+   - `extra_data.aft.type`
+
+3. Se primește răspuns imediat + notificare la `url_post`.
+
+---
+
+## 7. Tabel comparativ rezumat
+
+| Caracteristică                         | CFT                                                  | AFT                                                                 |
+|----------------------------------------|------------------------------------------------------|----------------------------------------------------------------------|
+| Direcția fondurilor                    | Comerciant → cardul utilizatorului                   | Cardul utilizatorului → cont propriu sau altă persoană              |
+| Operativă principală                   | `PAYOUT` + `/payment/payout`                         | `PAYMENT` + logica AFT în `extra_data.aft`                          |
+| Endpoint specific                      | Da, `POST /payment/payout`                           | Nu suplimentar (totul în `/payment`)                                |
+| Câmp cheie                             | `operative: "PAYOUT"`, `secure: false`               | `extra_data.aft.type`                                               |
+| Date minime ale utilizatorului         | `profile` de bază                                    | `profile` + `billing_address` + `receiver` (dacă este cazul)       |
+| Compatibilitate pe MCC                 | Nedetaliată                                          | Tabel complet pe marcă și MCC                                       |
+| Reversibilitate                        | Nu este reversibil                                   | Depinde de flux și politicile de rambursare                         |
+| Scenariu tipic                         | Cashout, returnări, payouts                          | Funding de conturi, P2P, top-ups                                    |
+
+---
+
+## 8. Când să utilizați CFT și când AFT?
+
+## Utilizați **CFT** când:
+- Doriți să **trimiteți bani pe cardul** utilizatorului.  
+- Aveți nevoie de un **cashout direct**.  
+- Doriți un credit imediat și ireversibil.  
+
+## Utilizați **AFT** când:
+- Aveți nevoie să **încărcați un cont** (wallet, portofel electronic, prepaid) de pe un card.  
+- Doriți să activați **transferuri P2P**.  
+- Aveți nevoie de un flux condiționat de MCC, marcă sau reguli de achizitor.  

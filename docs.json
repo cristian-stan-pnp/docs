@@ -310,8 +310,21 @@
                 ]
               },
               {
+                "group": "Alternative Payment Methods",
+                "pages": [
+                  "en/guides/apm/flowpay",
+                  "en/guides/apm/khipu",
+                  "en/guides/apm/klap",
+                  "en/guides/apm/mach",
+                  "en/guides/apm/servipag",
+                  "en/guides/apm/webpay",
+                  "en/guides/apm/spei"
+                ]
+              },
+              {
                 "group": "Resources",
                 "pages": [
+                  "en/guides/resources/CFT-and-AFT",
                   "en/guides/resources/concepts",
                   "en/guides/resources/error-codes"
                 ]
@@ -446,8 +459,21 @@
                 ]
               },
               {
+                "group": "Métodos de Pagamento Alternativos",
+                "pages": [
+                  "pt/guides/apm/flowpay",
+                  "pt/guides/apm/khipu",
+                  "pt/guides/apm/klap",
+                  "pt/guides/apm/mach",
+                  "pt/guides/apm/servipag",
+                  "pt/guides/apm/webpay",
+                  "pt/guides/apm/spei"
+                ]
+              },
+              {
                 "group": "Recursos",
                 "pages": [
+                  "pt/guides/resources/CFT-and-AFT",
                   "pt/guides/resources/concepts",
                   "pt/guides/resources/error-codes"
                 ]
@@ -582,8 +608,21 @@
                 ]
               },
               {
+                "group": "Metode de Plată Alternative",
+                "pages": [
+                  "ro/guides/apm/flowpay",
+                  "ro/guides/apm/khipu",
+                  "ro/guides/apm/klap",
+                  "ro/guides/apm/mach",
+                  "ro/guides/apm/servipag",
+                  "ro/guides/apm/webpay",
+                  "ro/guides/apm/spei"
+                ]
+              },
+              {
                 "group": "Resurse",
                 "pages": [
+                  "ro/guides/resources/CFT-and-AFT",
                   "ro/guides/resources/concepts",
                   "ro/guides/resources/error-codes"
                 ]

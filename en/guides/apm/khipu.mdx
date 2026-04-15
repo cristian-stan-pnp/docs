@@ -1,0 +1,56 @@
+---
+title: 'Khipu'
+description: 'Accept payments with Khipu in Chile through the Paylands API'
+---
+
+# Khipu
+
+## Redirect integration for FLOW[​](#redirect-integration-for-flow "Direct link to Redirect integration for FLOW")
+
+To integrate via redirect, the user must be present at the time of payment, which must be processed through a browser. First, you need to [generate a payment order](/reference/#operation/generate-payment-order), specifying the email.
+
+```
+  "extra_data": {    "profile": {      "first_name": " ",      "last_name": " ",      "email": "test@gmail.com"    }  }
+```
+
+As the service identifier, you must specify the **service\_uuid** of the FLOW service that you have activated in your **Paylands Backend → Manage → Payment services → [List](https://backend.paylands.com/payment-services/list)**.
+
+Once the order is generated, the user must be redirected to [the payment screen](/reference/#operation/redirection-payment) specifying the order token and the APM name in the query:
+
+Build the redirect URL by replacing the **token** with the value returned in the previous call.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
+```
+
+Once the user is redirected to this screen, they can select their bank to authorize the transaction. When the payment is completed, they will be redirected back to the OK or KO URL, depending on the payment result.
+
+## Redirect integration for Payretailers[​](#redirect-integration-for-payretailers "Direct link to Redirect integration for Payretailers")
+
+To integrate via redirect, the user must be present at the time of payment, which must be processed through a browser. First, you need to [generate a payment order](/reference/#operation/generate-payment-order), specifying first\_name, last\_name, email, document\_identification\_number, phone, city, country, address1, zip\_code, state\_code.
+
+```
+  "extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "Kobe",        "last_name": "Bryant",        "email": "andreu.sanchez@paynopain.com",        "document_identification_number": "92309089",        "phone": {            "number": "02614235138",            "prefix": "54"        }    },    "billing_address": {        "city": "Castellon",        "country": "COL",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }  }
+```
+
+As the service identifier, you must specify the **service\_uuid** of the Payretailers service that you have activated in your **Paylands Backend → Manage → Payment services → [List](https://backend.paylands.com/payment-services/list)**.
+
+Once the order is generated, the user must be redirected to [the payment screen](/reference/#operation/redirection-payment) specifying the order token and the APM name in the query:
+
+Build the redirect URL by replacing the **token** with the value returned in the previous call.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KHIPU
+```
+
+## Testing[​](#testing "Direct link to Testing")
+
+For more information on how to test this payment method with each of its providers, visit the FLOW and Payretailers documentation.
+
+## Custom fields[​](#custom-fields "Direct link to Custom fields")
+
+Optionally, within the `extra_data` object you can include the `payment_reason` field, which allows you to specify a payment description.
+
+```
+  "extra_data": {    "payment": {      "payment_reason": "Payment description"    }  }
+```
