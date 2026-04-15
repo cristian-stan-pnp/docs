@@ -81,7 +81,7 @@ proxyFields.on("ready", function() {
 
 Odată ce utilizatorul a completat formularul de trimitere, puteți apela metoda `submit`. Metoda `submit` primește ca unic parametru un obiect în care trebuie să furnizați informații suplimentare despre card. Aceste date pot fi colectate direct de către dumneavoastră, deoarece nu sunt supuse normativei PCI.
 
-Odată ce ați apelat metoda `submit`, un callback `validate` va fi declanșat cu un obiect de intrare care conține informații legate de eroare, dacă există. Dacă pan-ul este valid, trimiterea va avea loc și un callback de succes sau eroare va fi declanșat. După ce callback-ul `success` este declanșat, puteți apela în siguranță [metoda API-ului REST](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) pe serverul dumneavoastră pentru a obține token-ul pan.
+Odată ce ați apelat metoda `submit`, un callback `validate` va fi declanșat cu un obiect de intrare care conține informații legate de eroare, dacă există. Dacă cardul este valid, trimiterea va avea loc și un callback de succes sau eroare va fi declanșat. După ce callback-ul `success` este declanșat, puteți apela în siguranță [metoda API-ului REST](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) pe serverul dumneavoastră pentru a obține token-ul pan.
 
 ```js
 proxyFields.submit({

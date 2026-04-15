@@ -81,7 +81,7 @@ proxyFields.on("ready", function() {
 
 Once the user has completed the submission form you can call the `submit` method. The `submit` method receives as its only parameter an object in which you need to provide additional card information. This data can be collected directly by you since it is not subject to PCI regulations.
 
-Once you have called the `submit` method, a `validate` callback will be fired with an input object containing error-related information if any. If the pan is valid, the submission will take place and a success or error callback will be fired. After the `success` callback is fired, you can safely call the [REST API method](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) on your server to get the pan token.
+Once you have called the `submit` method, a `validate` callback will be fired with an input object containing error-related information if any. If the card is valid, the submission will take place and a success or error callback will be fired. After the `success` callback is fired, you can safely call the [REST API method](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) on your server to get the pan token.
 
 ```js
 proxyFields.submit({
