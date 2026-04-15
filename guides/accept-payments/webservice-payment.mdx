@@ -15,11 +15,11 @@ description: 'Integración avanzada mediante el webservice de Paylands'
    * El UUID de la tarjeta se puede obtener de la notificación de un pago finalizado previamente o de la respuesta de guardar una tarjeta en el sistema
    * Si se quiere utilizar una nueva tarjeta, hay que tokenizarla previamente para obtener el UUID correspondiente.
    * Paylands comprueba estos datos, procesa la orden y devuelve de forma síncrona el resultado de la operación
-   * Dependiendo del banco emisor de la tarjeta, éste puede requerir que la operación finalice por 3DS, lo cual conlleva la intervención del usuario. En este caso la respuesta contendrá una URL la cual el comercio deberá redirigir al usuario para finalizar el cobro.
+   * Dependiendo del banco emisor de la tarjeta, éste puede requerir que la operación finalice por 3DS, lo cual conlleva la intervención del usuario. En este caso la respuesta contendrá una URL a la cual el comercio deberá redirigir al usuario para finalizar el cobro.
 
 3. Notificación
 
-   * Si se envió una `url_post` al generar la orden de pago, el comercio recibe la notificación en dicha url
+   * Si se envió una `url_post` al generar la orden de pago, el comercio recibe la notificación en dicha URL
    * Se recibe el objeto `order` actualizado con el resultado de la operación
 
 ![Pago por webservice](/images/docs/integration/docs/direct-payment-process.png "Pago por webservice")

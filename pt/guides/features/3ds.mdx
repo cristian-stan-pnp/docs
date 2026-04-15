@@ -5,7 +5,7 @@ description: 'Guia de autenticação 3D Secure para pagamentos seguros com Payla
 
 ## PSD2
 
-A segunda Diretiva de Serviços de Pagamento (PSD2) será de **cumprimento obrigatório a partir de 31 de dezembro de 2020**. Esta diretiva afeta os pagamentos realizados na zona económica europeia e obriga a que todos os pagamentos em que o utilizador esteja presente sejam realizados de forma segura através de 3DS. Adicionalmente, já não poderão ser iniciados pagamentos não seguros sem a presença do utilizador, a menos que o cartão tenha realizado pelo menos um pagamento seguro através de 3DS anteriormente.
+A segunda Diretiva de Serviços de Pagamento (PSD2) será de **cumprimento obrigatório a partir de 31 de dezembro de 2020**. Esta diretiva afeta os pagamentos realizados na zona econômica europeia e obriga que todos os pagamentos em que o usuário esteja presente sejam realizados de forma segura mediante 3DS. Adicionalmente, não será mais possível iniciar pagamentos não seguros sem a presença do usuário, a menos que o cartão tenha realizado pelo menos um pagamento seguro mediante 3DS anteriormente.
 
 Os seguintes tipos de serviços de pagamento serão afetados pela PSD2 a partir de 31 de dezembro de 2020:
 
@@ -14,85 +14,85 @@ Os seguintes tipos de serviços de pagamento serão afetados pela PSD2 a partir 
 * CREDORAX
 * CLEARHAUS
 
-### Regulamentação
+### Normativa
 
-A PSD2 será de cumprimento obrigatório desde que duas condições sejam cumpridas:
+A PSD2 será de cumprimento obrigatório desde que duas condições sejam atendidas:
 
-* O serviço de pagamento está localizado dentro da Zona Euro.
-* O cartão foi emitido a partir de um país dentro da Zona Euro.
+* O serviço de pagamento está localizado dentro da Eurozona.
+* O cartão foi emitido em um país dentro da Eurozona.
 
-A primeira condição será sempre cumprida nos serviços de pagamento mencionados anteriormente, pelo que o único fator que pode influenciar na aplicação da regulamentação PSD2 é o país de origem do cartão. Os cartões provenientes de um país fora da Zona Euro estão isentos de cumprir a PSD2. No entanto, como não é possível saber até ao momento da cobrança se o cartão está isento ou não, **recomendamos que todos os pagamentos sejam realizados de forma segura através de 3DS quando o utilizador estiver presente**.
+A primeira condição será sempre atendida nos serviços de pagamento mencionados anteriormente, portanto o único fator que pode influenciar na aplicação da normativa PSD2 é o país de procedência do cartão. Os cartões provenientes de um país fora da Eurozona estão isentos de cumprir a PSD2. No entanto, como não é possível saber até o momento da cobrança se o cartão está isento ou não, **recomendamos que todos os pagamentos sejam realizados de forma segura mediante 3DS quando o usuário estiver presente**.
 
-Se for tentado um pagamento não seguro e este não puder ser realizado devido à PSD2:
+Se for tentado realizar um pagamento não seguro e este não puder ser efetuado devido à PSD2:
 
-* Se o utilizador estiver presente ([pagamento através da página de pagamento](/reference/#operation/redirection-payment)) o utilizador será redirecionado para o 3DS.
-* Se o utilizador não estiver presente ([pagamento direto](/reference/#operation/webservice-payment)) a API devolverá um link para o qual o utilizador deverá ser redirecionado para realizar o 3DS. Este tipo de pagamentos também são conhecidos como pagamentos por webservice ou pagamentos MIT (Merchant Initiated Transactions).
+* Se o usuário estiver presente ([pagamento através da página de pagamento](/reference/#operation/redirection-payment)) o usuário será redirecionado ao 3DS.
+* Se o usuário não estiver presente ([pagamento direto](/reference/#operation/webservice-payment)) a API retornará um link para o qual o usuário deverá ser redirecionado para realizar o 3DS. Este tipo de pagamento também é conhecido como pagamento por webservice ou pagamentos MIT (Merchant Initiated Transactions)
 
-Recomendamos utilizar [pagamentos tokenizados](/reference/#operation/3ds-tokenized) uma vez que o cartão tenha sido tokenizado, já que estes utilizam sempre 3DS e permitem aproveitar todas as vantagens oferecidas pela PSD2. Os pagamentos não seguros através de webservice devem ser utilizados apenas quando o utilizador não está presente, por exemplo, para cobrar uma subscrição.
+Recomendamos utilizar [pagamentos tokenizados](/reference/#operation/3ds-tokenized) uma vez que o cartão tenha sido tokenizado, pois estes sempre utilizam 3DS e permitem aproveitar todas as vantagens que a PSD2 oferece. Os pagamentos não seguros por webservice devem ser utilizados apenas quando o usuário não estiver presente, por exemplo, para cobrar uma assinatura.
 
 ### Vantagens
 
-Até agora os pagamentos seguros utilizavam sempre a versão 3DS 1.0, a qual obriga o utilizador a introduzir um código que recebe no seu telemóvel, gerando uma fricção que podia resultar no abandono do processo de compra por parte do utilizador. As novas versões do protocolo 3DS versão 2 permitem saltar este passo em determinadas circunstâncias:
+Até agora os pagamentos seguros utilizavam sempre a versão 3DS 1.0, a qual obriga o usuário a inserir um código que recebe em seu telefone celular, gerando uma fricção que poderia resultar no abandono do processo de compra pelo usuário. As novas versões do protocolo 3DS versão 2 permitem pular esta etapa em determinadas circunstâncias:
 
-* O montante da operação é baixo (menos de 30€) ou o montante total das últimas 5 operações não ultrapassa os 100€.
-* O limiar de fraude do comerciante é baixo e a operação não ultrapassa os 100, 250 ou 500€.
-* São fornecidos dados pessoais suficientes do utilizador, como o nome e apelidos, email, morada de envio, número de telemóvel de contacto...
+* O valor da operação é baixo (menos de 30€) ou o valor total das últimas 5 operações não ultrapassa 100€.
+* O limite de fraude do comércio é baixo e a operação não ultrapassa 100, 250 ou 500€.
+* São fornecidos dados pessoais suficientes do usuário, como nome e sobrenome, email, endereço de envio, telefone celular de contato...
 
-As circunstâncias anteriores recebem o nome de isenções e a Paylands solicita-as sempre que possível para reduzir a fricção ao mínimo durante o 3DS.
+As circunstâncias anteriores recebem o nome de isenções e o Paylands as solicita sempre que possível para reduzir a fricção ao mínimo durante o 3DS.
 
-Se alguma das condições anteriores for cumprida, é possível que o pagamento seja concluído sem necessidade de intervenção do utilizador. Isto é conhecido como pagamento 3DS **frictionless**. Se, pelo contrário, as condições anteriores não forem cumpridas, o utilizador deverá realizar um *challenge*, que consiste numa das seguintes ações:
+Se alguma das condições anteriores for atendida, é possível que o pagamento seja finalizado sem necessidade de intervenção do usuário. Isso é conhecido como pagamento 3DS **frictionless**. Se, por outro lado, as condições anteriores não forem atendidas, o usuário deverá realizar um *challenge*, que consiste em uma das seguintes ações:
 
-* Introduzir um código que recebe no seu telemóvel, conhecido como OTP (One Time Password).
-* Confirmar a cobrança a partir da aplicação móvel do seu banco.
+* Inserir um código que recebe em seu telefone celular, conhecido como OTP (One Time Password).
+* Confirmar a cobrança pelo aplicativo móvel do seu banco.
 
-Independentemente do que aconteça, o pagamento será considerado autenticado através de 3DS.
+Independentemente do que aconteça, o pagamento será considerado autenticado mediante 3DS.
 
-### Pagamentos sem a presença do utilizador
+### Pagamentos sem a presença do usuário
 
-Em geral, o utilizador deve estar presente no momento do pagamento e este deve ser realizado obrigatoriamente de forma segura com 3DS. Então, como podem ser realizados pagamentos sem que o utilizador esteja presente, como por exemplo subscrições? A PSD2 contempla exceções desde que o cartão tenha sido utilizado anteriormente num pagamento seguro.
+Em geral, o usuário deve estar presente no momento do pagamento e este deve ser realizado obrigatoriamente de forma segura com 3DS. Então, como é possível realizar pagamentos sem que o usuário esteja presente, como por exemplo assinaturas? A PSD2 contempla exceções desde que o cartão tenha sido utilizado anteriormente em um pagamento seguro.
 
-Apenas alguns pagamentos podem ser realizados sem a presença do utilizador:
+Apenas alguns pagamentos podem ser realizados sem a presença do usuário:
 
-* Pagamentos recorrentes ou a prestações (subscrições, empréstimos...)
+* Pagamentos recorrentes ou parcelados (assinaturas, empréstimos...)
 * No-show em hotéis
 
-Estes pagamentos serão realizados por WebService. Recomendamos indicar o motivo da cobrança ao criar a ordem no parâmetro **extra\_data.cof.reason**. Estes são os valores possíveis para esse campo:
+Estes pagamentos serão realizados por WebService. Recomendamos indicar o motivo da cobrança ao criar a ordem no parâmetro **extra\_data.cof.reason**. Estes são os possíveis valores desse campo:
 
-* RECURRING (pagamentos recorrentes, subscrições...)
-* INSTALLMENTS (pagamentos a prestações, empréstimos...)
-* NO\_SHOW (quando uma pessoa não se apresenta no dia da reserva no hotel)
-* DELAYED (pagamentos por serviços prestados cuja quantia é desconhecida inicialmente: minibar, reparações, multas...)
-* OTHER (quando não se sabe à partida o motivo da cobrança. Por exemplo, no caso de um hotel que não sabe se terá que cobrar a reserva quando o utilizador se apresentar, o que seria RECURRING, ou um NO-SHOW se não se apresentar)
+* RECURRING (pagamentos recorrentes, assinaturas...)
+* INSTALLMENTS (pagamentos parcelados, empréstimos...)
+* NO\_SHOW (quando uma pessoa não comparece no dia da reserva no hotel)
+* DELAYED (pagamentos por serviços prestados cujo valor é desconhecido inicialmente: minibar, reparos, multas...)
+* OTHER (quando não se sabe previamente o motivo da cobrança. Por exemplo, no caso de um hotel que não sabe se terá que cobrar a reserva quando o usuário se apresentar, o que seria RECURRING, ou um NO-SHOW se não comparecer)
 
-Se as condições mencionadas forem cumpridas, o pagamento será concluído normalmente sem necessidade de intervenção do utilizador. Se, pelo contrário, alguma dessas condições não for cumprida ou for imprescindível que o utilizador se autentique, [a API devolverá um link de pagamento que pode ser enviado ao utilizador para que conclua o pagamento através de 3DS](/#reference/pagos/realizar-el-pago/por-webservice). A decisão sobre se o utilizador deve autenticar uma operação MIT é 100% do banco, e é tomada com base nas suas próprias regras internas. A Paylands enviará sempre o máximo de informação possível ao banco emissor para que tente concluir a operação sem que seja necessária a intervenção do utilizador, mas a decisão final será do próprio banco do utilizador.
+Se as condições mencionadas forem atendidas, o pagamento será finalizado normalmente sem necessidade de intervenção do usuário. Se, por outro lado, alguma dessas condições não for atendida ou for imprescindível que o usuário se autentique, [a API retornará um link de pagamento que pode ser enviado ao usuário para que finalize o pagamento mediante 3DS](/reference/#operation/webservice-payment). Esta decisão sobre se o usuário deve autenticar uma operação MIT é 100% do banco, e é tomada com base em suas próprias regras internas. O Paylands sempre enviará o máximo de informação possível ao banco emissor para que tente finalizar a operação sem que seja necessária a intervenção do usuário, mas a decisão final será do próprio banco do usuário.
 
-**O primeiro pagamento com um cartão deve ser sempre realizado através da página de pagamento ou de forma tokenizada** para que o utilizador se autentique pela primeira vez e possa aceder a esta modalidade em pagamentos posteriores. Os pagamentos sem a presença do utilizador estão reservados exclusivamente para pagamentos iniciados pelo comerciante, também conhecidos como MIT (Merchant Initiated Transaction).
+**O primeiro pagamento com um cartão sempre deverá ser realizado através da página de pagamento ou de forma tokenizada** para que o usuário se autentique pela primeira vez e possa optar por esta modalidade em pagamentos posteriores. Os pagamentos sem a presença do usuário estão reservados unicamente para pagamentos iniciados pelo comércio, também conhecidos como MIT (Merchant Initiated Transaction).
 
-### Como adaptar-se às mudanças
+### Como se adaptar às mudanças
 
-Se o seu comércio realiza apenas [pagamentos seguros através de 3DS](#reference/pagos/realizar-el-pago/tokenizado-por-3ds), não é necessário fazer nada. Quando a data chegar, a Paylands alterará a forma como os pagamentos são processados. Os clientes notarão que o processo é ligeiramente diferente dependendo do banco emissor do seu cartão; no entanto, como comerciante, não notará qualquer diferença.
+Se o seu comércio realiza unicamente [pagamentos seguros mediante 3DS](/reference/#operation/3ds-tokenized) não é necessário fazer nada. Quando a data chegar, o Paylands mudará a forma como os pagamentos são processados. Os clientes perceberão que o processo é ligeiramente diferente dependendo do banco emissor do seu cartão, no entanto, como comércio, você não notará nenhuma diferença.
 
-Se, pelo contrário, realiza [pagamentos não seguros através de WebService](/#reference/pagos/realizar-el-pago/por-webservice) quando os utilizadores não estão presentes no momento do pagamento, será necessário suportar modalidades de pagamento seguras, como a página de pagamento ou pagamento tokenizado. Também deverá tratar corretamente a resposta do pagamento por WebService quando o link de pagamento é devolvido.
+Se, por outro lado, você realiza [pagamentos não seguros mediante WebService](/reference/#operation/webservice-payment) quando os usuários não estão presentes no momento do pagamento, será necessário que você suporte modalidades de pagamento seguras, como a página de pagamento ou pagamento tokenizado. Também deverá tratar corretamente a resposta do pagamento via WebService quando o link de pagamento for retornado.
 
-Todos os comerciantes começarão a operar com a nova regulamentação a partir de 1 de janeiro, sem necessidade de realizar qualquer ação. No entanto, se quiser antecipar-se e que o seu comércio comece a operar com PSD2 antes da data limite, pode enviar um email para [soporte@paylands.com](mailto:soporte@paylands.com) indicando o seu FUC (Código de comerciante de 8-9 dígitos) e o banco através do qual o seu comércio opera.
+Todos os comércios começarão a operar com a nova normativa a partir de 1 de janeiro, sem necessidade de realizar nenhuma ação. No entanto, se quiser se antecipar e que o seu comércio comece a operar com PSD2 antes da data limite, você pode enviar um e-mail para [soporte@paylands.com](mailto:soporte@paylands.com) indicando o seu FUC (Código de comércio de 8-9 dígitos) e o banco através do qual o seu comércio opera.
 
-### Dados extra
+### Dados extras
 
-Para aumentar as probabilidades de que não seja necessário o utilizador autenticar-se para concluir o pagamento, podem ser enviados opcionalmente dados extra. Estes dados devem ser incluídos no campo `extra_data` ao criar uma ordem com o formato detalhado na secção "Pagamentos > Ordem de pagamento".
+Para aumentar as probabilidades de que não seja necessário que o usuário se autentique para finalizar o pagamento, podem ser enviados opcionalmente dados extras. Estes dados devem ser incluídos no campo `extra_data` ao criar uma ordem com o formato detalhado na seção "Pagamentos > Ordem de pagamento".
 
 ### Perguntas frequentes (FAQ)
 
-Poderei realizar pagamentos sem a presença do utilizador se o pagamento seguro teve lugar antes da entrada em vigor da regulamentação?
+Poderei realizar pagamentos sem a presença do usuário se o pagamento seguro tiver ocorrido antes da entrada em vigor da normativa?
 
-> Sim, nos serviços REDSYS e EVOSNAP. Nos outros serviços, será necessário realizar novamente uma cobrança segura antes de poder voltar a iniciar cobranças sem a presença do utilizador.
+> Sim, nos serviços REDSYS e EVOSNAP. Nos outros serviços será necessário realizar uma nova cobrança segura antes de poder iniciar cobranças sem a presença do usuário.
 
-Posso iniciar um pagamento 3DS para autenticar o utilizador num serviço e depois iniciar um pagamento sem a presença do utilizador por outro?
+Posso iniciar um pagamento 3DS para autenticar o usuário em um serviço e depois iniciar um pagamento sem a presença do usuário por outro?
 
-> Não. É necessário autenticar o utilizador pelo menos uma vez por serviço de pagamento. Os serviços podem ser diferentes desde que sejam do mesmo tipo.
+> Não. É necessário autenticar o usuário pelo menos uma vez por serviço de pagamento. Os serviços podem ser diferentes desde que sejam do mesmo tipo.
 
 ## Isenções
 
-Atualmente suportamos as isenções de **Análise de Risco (TRA)** e de **Baixo valor (LV)** no serviço de pagamento **Redsys**. Para solicitá-las, basta fornecer a seguinte informação no campo `extra_data` ao criar a ordem:
+Atualmente suportamos as isenções de **Análise de Risco (TRA)** e de **Baixo valor (LV)** no serviço de pagamento **Redsys**. Para solicitá-las, basta fornecer as seguintes informações no campo `extra_data` ao criar a ordem:
 
 ```
 "extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
@@ -104,39 +104,39 @@ Também é possível solicitar que **nenhuma isenção seja aplicada** deixando 
 "extra_data": {        ...        "sca": {            "exemptions": []        },    }
 ```
 
-Se o valor de `exemptions` não for indicado explicitamente, por defeito será solicitada a isenção de **Baixo valor (LV)** se esta cumprir os requisitos estabelecidos. Após o pagamento, se alguma isenção tiver sido solicitada, o seu nome será incluído sob a chave `order.threeds_data.exemption`. Se nenhuma isenção foi solicitada, ou não foi possível solicitar nenhuma isenção, o seu valor será `null`.
+Se o valor de `exemptions` não for indicado explicitamente, por padrão será solicitada a isenção de **Baixo valor (LV)** se esta cumprir os requisitos estabelecidos. Após o pagamento, se alguma isenção tiver sido solicitada, seu nome será incluído na chave `order.threeds_data.exemption`. Se não foi solicitada, ou não foi possível solicitar nenhuma isenção, seu valor será `null`.
 
 ```
 "threeds_data": {      "version": "...",      "flow": "...",      "sca_requested": ...,      "status": "...",      "eci": "...",      "exemption": "TRA"  }
 ```
 
-Finalmente, o facto de uma isenção ter sido solicitada não implica que tenha sido aceite. Para compreender melhor se uma isenção foi aceite ou não, pode consultar o campo `threeds_data.flow`. Se a isenção foi solicitada mas o seu valor é CHALLENGE\_ONLY ou FULL, significa que não foi aceite. Se o seu valor é FRICTIONLESS ou FINGERPRINTING\_ONLY, significa que pode ter sido aceite. Não há forma de saber com 100% de certeza se uma isenção foi aceite, apenas se foi rejeitada.
+Finalmente, o fato de uma isenção ter sido solicitada não implica que tenha sido aceita. Para entender melhor se uma isenção foi aceita ou não, pode-se verificar o campo `threeds_data.flow`. Se a isenção foi solicitada mas seu valor é CHALLENGE\_ONLY ou FULL, significa que não foi aceita. Se seu valor é FRICTIONLESS ou FINGERPRINTING\_ONLY, significa que pode ter sido aceita. Não há forma de saber com 100% de certeza se uma isenção foi aceita, apenas se foi rejeitada.
 
-Também não é possível saber se uma isenção foi aceite pelo issuer (banco do utilizador) ou pelo acquirer (banco do comerciante).
+Também não é possível saber se uma isenção foi aceita pelo issuer (banco do usuário) ou pelo acquirer (banco do comércio).
 
 ### Requisitos
 
-As isenções devem cumprir certos requisitos antes de poderem ser solicitadas. Podem ser solicitadas até 2 isenções, das quais no máximo uma será aplicada. As isenções são solicitadas na ordem em que são indicadas no pedido. Os requisitos para solicitar cada isenção são:
+As isenções devem cumprir certos requisitos antes de poderem ser solicitadas. Podem ser solicitadas até 2 isenções, das quais no máximo uma será solicitada. As isenções são solicitadas na ordem em que são indicadas na requisição. Os requisitos para solicitar cada isenção são:
 
 #### Requisitos gerais
 
-* O cartão deve pertencer à zona económica europeia (EEA).
-* O serviço de pagamento deve suportar o pedido de isenções (por enquanto apenas suportado pelo Redsys).
-* O terminal associado ao serviço de pagamento utilizado deve ter ativa a isenção a solicitar.
+* O cartão deve pertencer à zona econômica europeia (EEA).
+* O serviço de pagamento deve suportar a solicitação de isenções (por enquanto apenas o Redsys suporta).
+* O terminal associado ao serviço de pagamento utilizado deve ter a isenção a ser solicitada ativada.
 * A moeda utilizada deve ser o Euro.
 * O pagamento deve ser seguro e a versão do 3DS deve ser 2.1 ou 2.2.
 * O cartão deve ter pelo menos um pagamento bem-sucedido no último ano.
 
 #### Análise de risco (TRA)
 
-* O montante deve ser igual ou inferior a 500€, 250€ ou 100€ dependendo da taxa de fraude média do comerciante ser igual ou inferior a 0.01%, 0.06% ou 0.13%, respetivamente.
+* O valor deve ser igual ou menor a 500€, 250€ ou 100€ dependendo da taxa de fraude média do comércio igual ou inferior a 0,01%, 0,06% ou 0,13%, respectivamente.
 
-* Para aproveitar ao máximo esta isenção, recomenda-se indicar a seguinte informação no campo `extra_data`:
+* Para aproveitar ao máximo esta isenção, recomenda-se indicar as seguintes informações no campo `extra_data`:
 
   * Email
   * Número de telefone
-  * Morada de cobrança e de envio (podem ser a mesma).
+  * Endereço de cobrança e de envio (podem ser o mesmo).
 
 #### Baixo valor (LV)
 
-* O montante deve ser igual ou inferior a 30€.
+* O valor deve ser igual ou menor a 30€.

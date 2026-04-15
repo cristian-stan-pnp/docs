@@ -12,7 +12,7 @@ Pagsmile es un servicio que permite realizar pagos por tarjeta o mediante los m�
 Pagsmile espera recibir la siguiente información en el campo `extra_data` al crear la orden. Los campos a enviar varían dependiendo del método de pago escogido.
 
 ```
-"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "11032341882",        "phone": {            "number": "700000000",            "prefix": "351"        }     },    "billing_address": {        "address1": "calle test",        "city": "",        "state_code": "",        "zip_code": "38082365",        "country": "BRL"    }}
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "11032341882",        "phone": {            "number": "700000000",            "prefix": "351"        }     },    "billing_address": {        "address1": "calle test",        "city": "",        "state_code": "",        "zip_code": "38082365",        "country": "BRA"    }}
 ```
 
 * Pago con tarjeta: no necesita `extra_data`
@@ -88,7 +88,7 @@ Campos obligatorios:
 
 * **Nombre y apellidos** (`profile.first_name` y `profile.last_name`)
 * **Número de documento de identificación** (`profile.document_identification_number`)
-* **Tipo documento de identificación** (`profile.document_identification_type`) [Ver tipos de documento de identificación](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Tipo documento de identificación** (`profile.document_identification_type`) [Ver tipos de documento de identificación](#tipo-de-documento-de-identificación).
 * **País** (`billing_address.country`): valor fijo `COL`
 * **Número de teléfono** (`profile.phone.number`)
 * **Tipo de cuenta** (`payment.account_type`): valor fijo `PHONE`
@@ -103,7 +103,7 @@ Campos obligatorios:
 
 * **Nombre y apellidos** (`profile.first_name` y `profile.last_name`)
 * **Número de documento de identificación** (`profile.document_identification_number`)
-* **Tipo documento de identificación** (`profile.document_identification_type`) [Ver tipos de documento de identificación](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Tipo documento de identificación** (`profile.document_identification_type`) [Ver tipos de documento de identificación](#tipo-de-documento-de-identificación).
 * **País** (`billing_address.country`): valor fijo `COL`
 * **Código de banco** (`payment.bank_code`) [Ver códigos de banco de Colombia](https://docs.pagsmile.com/payout/bank-code/bank-in-colombia)
 * **Número de cuenta** (`payment.account`)
@@ -136,7 +136,7 @@ Campos obligatorios:
 
 * **Nombre y apellidos** (`profile.first_name` y `profile.last_name`)
 * **Número de documento de identificación** (`profile.document_identification_number`)
-* **Tipo documento de identificación** (`profile.document_identification_type`) [Ver tipos de documento de identificación](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Tipo documento de identificación** (`profile.document_identification_type`) [Ver tipos de documento de identificación](#tipo-de-documento-de-identificación).
 * **País** (`billing_address.country`): valor fijo `CHL`
 * **Código de banco** (`payment.bank_code`) [Ver códigos de banco de Chile](https://docs.pagsmile.com/payout/bank-code/bank-in-chile)
 * **Número de cuenta** (`payment.account`)
@@ -154,7 +154,7 @@ Campos obligatorios:
 
 * **Nombre y apellidos** (`profile.first_name` y `profile.last_name`)
 * **Número de documento de identificación** (`profile.document_identification_number`)
-* **Tipo documento de identificación** (`profile.document_identification_type`) [Ver tipos de documento de identificación](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n)
+* **Tipo documento de identificación** (`profile.document_identification_type`) [Ver tipos de documento de identificación](#tipo-de-documento-de-identificación)
 * **País** (`billing_address.country`): valor fijo `MEX`
 * **Tipo de cuenta** (`payment.account_type`): valores `DEBIT`, `PHONE` o `CLABE`
 * **Número de cuenta** (`payment.account`) Requerido si `account_type` es **distinto** de `PHONE`
@@ -183,7 +183,9 @@ A continuación se muestran los posibles valores de ese campo y sus equivalencia
 La tarjeta de prueba es la siguiente. En general, la fecha de caducidad y CVV no importan siempre y cuando la fecha sea posterior a la fecha actual, y el CVV tenga 3 cifras.
 
 ```
-- número de tarjeta: 4111 1111 1111 1111- CVV: 123- fecha de expiración: 12/34
+- número de tarjeta: 4111 1111 1111 1111
+- CVV: 123
+- fecha de expiración: 12/34
 ```
 
 ## Moneda

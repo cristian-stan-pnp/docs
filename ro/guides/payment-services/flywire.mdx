@@ -1,0 +1,146 @@
+---
+title: 'Flywire'
+description: 'Configurarea și integrarea serviciului de plată Flywire în Paylands'
+---
+
+## Introducere
+
+Flywire este o soluție specializată în **procesarea plăților transfrontaliere de valoare mare**, în special în sectoare precum educație, sănătate și turism.
+
+Prin acest serviciu sunt acceptate **plăți unice cu card de credit și debit**. Utilizatorul poate plăti în **moneda sa locală**, în timp ce sistemul gestionează **conversia valutară**, garantând că comerciantul primește **suma netă exactă** și simplificând reconcilierea plăților internaționale.
+
+***
+
+## Integrare prin redirecționare
+
+Flywire acceptă doar **integrare prin redirecționare**. Plătitorul trebuie să fie prezent în timpul procesului de plată, care se va efectua prin browser.
+
+În primul rând trebuie să [generezi o comandă de plată](/reference/#operation/generate-payment-order).
+
+Ca identificator de serviciu, trebuie să indici **service\_uuid**-ul serviciului **Flywire** pe care îl ai activat în **Backend-ul Paylands → Administrare → Servicii de plată → Listă**.
+
+În cele din urmă, construiește URL-ul de redirecționare înlocuind **token**-ul cu valoarea returnată în apelul anterior:
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}
+```
+
+***
+
+## Limba paginii de plată
+
+Poți indica limba paginii de plată prin parametrul `lang` în URL-ul de redirecționare:
+
+```
+?lang=en
+```
+
+Limbi suportate:
+
+| Cod    | Limbă                   |
+| ------ | ----------------------- |
+| en     | Engleză                 |
+| zh     | Chineză (Simplificată)  |
+| ko     | Coreeană                |
+| pt     | Portugheză              |
+| ja     | Japoneză                |
+| fr     | Franceză                |
+| id     | Indoneziană             |
+| ar     | Arabă                   |
+| vi     | Vietnameză              |
+| it     | Italiană                |
+| de     | Germană                 |
+| es     | Spaniolă (implicit)     |
+
+Dacă parametrul `lang` nu este indicat, pagina de plată va fi afișată în **spaniolă (es-ES)** implicit.
+
+***
+
+## Monedă suportată
+
+* **EUR (Euro)**
+
+***
+
+## Date suplimentare
+
+### Datele plătitorului
+
+Pentru a procesa plăți cu Flywire este necesar să se furnizeze **datele plătitorului**. Aceste date trebuie să corespundă **întotdeauna persoanei care efectuează plata**, nu beneficiarului serviciului.
+
+De exemplu, în cazul centrelor educaționale, dacă plata este efectuată de tatăl sau mama unui elev, **datele trebuie să fie ale tatălui sau mamei**, niciodată ale elevului.
+
+Aceste date se trimit prin câmpul `extra_data` la crearea comenzii de plată, în cadrul câmpurilor *profile* și *billing\_address*:
+
+```
+{  "extra_data": {    "profile": {      "first_name": "Peter",      "last_name": "Payer",      "email": "peterpayer@example.com",      "phone": {        "number": "625439533",        "prefix": "34"      }    },    "billing_address": {      "country": "ESP",      "address1": "Avenida del Mar",      "city": "Castellon",      "state_code": "CT",      "zip_code": "12006"    }  }}
+```
+
+> Aceste câmpuri **nu sunt obligatorii** la crearea comenzii de plată. Dacă vreunul nu este trimis, va fi solicitat automat utilizatorului în timpul fluxului de plată printr-un formular pe pagina Flywire.
+
+### Câmpuri dinamice ale comerciantului (context\_fields)
+
+Unii comercianți Flywire necesită **câmpuri dinamice suplimentare**. Aceste câmpuri **depind de comerciantul configurat** și pot varia în funcție de caz (de exemplu: datele elevului, număr de înmatriculare, referință internă, număr de dosar, etc.).
+
+Când un comerciant le necesită, trebuie trimise **obligatoriu la crearea comenzii de plată**. Spre deosebire de datele plătitorului, **dacă lipsesc aceste date suplimentare, crearea comenzii va eșua** și nu se va putea iniția fluxul de plată.
+
+Pentru a le trimite, include câmpurile în `extra_data.payment.context_fields`. Exemplu pentru un comerciant de tip educațional:
+
+```
+{  "extra_data": {    "payment": {      "context_fields": {        "student_email": "al123456@uni.es",        "student_first_name": "Victor",        "student_last_name": "Test",        "student_id": "123456"      }    }  }}
+```
+
+> Câmpurile dinamice depind de comerciant și de configurația sa în Flywire. Dacă nu le cunoști, contactează-ne. Dacă comerciantul tău nu necesită câmpuri dinamice, poți omite `context_fields`.
+
+***
+
+## Teste în sandbox
+
+### Scenarii de testare
+
+În sandbox, Flywire permite forțarea diferitelor rezultate în funcție de combinația `first_name` + `last_name` a plătitorului.
+
+Aceste valori corespund la:
+
+* `extra_data.profile.first_name`
+* `extra_data.profile.last_name`
+
+Dacă decizi să trimiți `extra_data.profile` la crearea comenzii, poți utiliza următoarele valori pentru a simula fiecare scenariu:
+
+| first\_name | last\_name         | Rezultat                                                                                         |
+| ----------- | ------------------ | ------------------------------------------------------------------------------------------------ |
+| MAGICVALUE  | AUTH               | Plată permisă (simulează flux **3DS**)                                                           |
+| MAGICVALUE  | APPROVED           | Plată permisă (simulează plată **fără 3DS**)                                                     |
+| PAYMENT     | DELIVERED          | Plată permisă și simulează o plată lichidată (din acest punct se pot efectua rambursări)          |
+| MAGICVALUE  | EXPIRED            | Plată respinsă (card expirat)                                                                    |
+| MAGICVALUE  | FRAUD              | Plată respinsă (card respins)                                                                    |
+| MAGICVALUE  | NOT ENOUGH BALANCE | Plată respinsă (sold insuficient)                                                                |
+
+> Notă: Cardurile de test trebuie utilizate împreună cu aceste combinații de valori.
+
+### Carduri de test
+
+#### Visa
+
+| Număr               | Expirare   | CVV | Monedă | Țara emitentă | Tip    |
+| ------------------- | ---------- | --- | ------ | -------------- | ------ |
+| 4010 1000 0000 0016 | 03/30      | 737 | EUR    | DE             | Debit  |
+| 4988 4388 4000 0012 | 03/30      | 737 | EUR    | ES             | Debit  |
+| 4242 4201 0000 0017 | 03/30      | 737 | GBP    | GB             | Credit |
+| 4761 3600 0000 0017 | 03/30      | 737 | INR    | IN             | Debit  |
+| 4111 1111 1111 1111 | 03/30      | 737 | USD    | US             | Credit |
+
+#### Mastercard
+
+| Număr               | Expirare   | CVV | Monedă | Țara emitentă | Tip    |
+| ------------------- | ---------- | --- | ------ | -------------- | ------ |
+| 2222 4000 1000 0016 | 03/30      | 737 | CAD    | CA             | Credit |
+| 5163 6136 0000 0014 | 03/30      | 737 | AUD    | AU             | Debit  |
+| 5252 5202 0000 0017 | 03/30      | 737 | JPY    | JP             | Debit  |
+| 5454 5454 5454 5454 | 03/30      | 737 | USD    | US             | Credit |
+
+#### American Express (Amex)
+
+| Număr              | Expirare   | CVV  | Monedă | Țara emitentă | Tip    |
+| ------------------ | ---------- | ---- | ------ | -------------- | ------ |
+| 3700 0000 0000 002 | 03/30      | 7373 | USD    | US             | Credit |

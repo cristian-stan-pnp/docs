@@ -52,8 +52,6 @@ Para inicializar la librería necesitas proporcionar el id del elemento DOM dond
 <button id="submit">Enviar</button>
 ```
 
-```
-
 ```js
 var proxyFields = new ProxyFields();
 proxyFields.init('::token::', { cardNumber: "pan" });
@@ -81,7 +79,7 @@ proxyFields.on("ready", function() {
 
 Una vez que el usuario ha completado el formulario de envío puedes llamar al método `submit`. El método `submit` recibe como único parámetro un objeto en el que tienes que proporcionar información adicional de la tarjeta. Estos datos pueden ser recogidos directamente por usted ya que no están sujetos a la normativa PCI.
 
-Una vez que hayas llamado al método `submit` se disparará un callback `validate` con un objeto de entrada que contiene información relacionada con el error si lo hubiera. Si la bandeja es válida, el envío se llevará a cabo y se disparará una llamada de retorno de éxito o de error. Después de que se dispare la llamada de retorno `success`, puedes llamar con seguridad al [método de la API REST](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) en tu servidor para obtener el token del pan.
+Una vez que hayas llamado al método `submit` se disparará un callback `validate` con un objeto de entrada que contiene información relacionada con el error si lo hubiera. Si el PAN es válido, el envío se llevará a cabo y se disparará una llamada de retorno de éxito o de error. Después de que se dispare la llamada de retorno `success`, puedes llamar con seguridad al [método de la API REST](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) en tu servidor para obtener el token del pan.
 
 ```js
 proxyFields.submit({
@@ -90,7 +88,7 @@ proxyFields.submit({
   cardHolder: "Name Displayed On Card"
 });
 proxyFields.on("validate", function(data) {
-  if(validate.hasErrors){
+  if(data.hasErrors){
     console.log("Card pan is not valid");
     proxyFields.setStyle("cardNumber","border: 1px solid red");
   }

@@ -12,7 +12,7 @@ Hay dos formas de integrarlo: mediante redirección o pago push.
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) indicando el nombre del usuario, email, número de identificación y número de teléfono para que el usuario no tenga que rellenarlos.
 
 ```
-  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882"    },    "phone": {       "number": "700000000",       "prefix": "351"    }  }
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882",      "phone": {          "number": "700000000",          "prefix": "351"      }    }  }
 ```
 
 Como identificador de servicio, debe indicarse el **service\_uuid** del servicio PAGSMILE que tengas activado en tu **Paylands Backend → Administrar → Servicios de Pago → [Listado](https://backend.paylands.com/payment-services/list)**.
@@ -34,7 +34,7 @@ Si por el contrario queremos que no sea necesario que el usuario esté presente 
 Para ello, en primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) **obligatoriamente** indicando el nombre del usuario, email, número de identificación y número de teléfono.
 
 ```
-  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882",      "phone": {          "number": "700000000",          "prefix": "351"      }    },  }
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "email": "test@gmail.com",      "document_identification_number": "11032341882",      "phone": {          "number": "700000000",          "prefix": "351"      }    }  }
 ```
 
 A continuación, se debe lanzar la petición del [pago push](/reference/#operation/push-payment) indicando el UUID de la orden. La respuesta contendrá el número identificador de banco y un número de código de barras. Estos campos se incluyen dentro de la transacción del pago, en el campo `payment_data`. A continuación se incluye un ejemplo:

@@ -7,7 +7,7 @@ description: 'Acepta pagos con Cofidis (4xCard y Cofidis Pay) en España a trav�
 
 Mediante este método de pago, el usuario será redirigido a la carta de pago de Cofidis, donde deberá aportar la información requerida, siendo necesario, en el caso de 4xcard, el documento de identidad y la tarjeta del titular, mientras que en el caso del producto Cofidis Pay se requerirá el documento de identidad y un justificante bancario de titularidad.
 
-El proceso de integración es [**similar al de la carta de pago por redirección**](/docs/integration/simple-integration).
+El proceso de integración es [**similar al de la carta de pago por redirección**](/guides/accept-payments/web-integration).
 
 ```
 /payment/process/{token}
@@ -31,7 +31,7 @@ Para hacer un pago en Cofidis debemos seguir los siguientes pasos:
 
 ### 1. Generar la orden de pago en tu servidor
 
-Crea la orden igual que harías para realizar una [**integración simple**](/docs/integration/simple-integration#1-generar-la-orden-de-pago-en-tu-servidor).
+Crea la orden igual que harías para realizar una [**integración simple**](/guides/accept-payments/web-integration).
 
 La orden será configurada con `secure=false`.
 
@@ -75,7 +75,7 @@ Al pulsar el botón, el usuario será redirigido a la pasarela de Cofidis.
 
 Una vez se ha redirigido al usuario a la página de Cofidis, necesitará introducir su información personal y, en el caso de Cofidis Pay, seleccionar el número de plazos deseado.
 
-Una vez completado el formulario, Cofidis determinará si aprueba o rechaza la financiación siendo el usuario redirigido a la URL OK/KO de vuelta, dependiendo del resultado.
+Una vez completado el formulario, Cofidis determinará si aprueba o rechaza la financiación, siendo el usuario redirigido a la URL OK/KO de vuelta, dependiendo del resultado.
 
 ### 4. Se notifica al servidor
 
@@ -94,7 +94,9 @@ Para el producto Cofidis Pay se pedirá completar un formulario rellenándolo co
 Para 4xcard se requerirá aportar la información de un usuario de Cofidis y una tarjeta. Podemos emplear las siguientes tarjetas:
 
 ```
-OK MC: 5132830960047108 03/24 462OK VISA: 4977830259527191 03/24 153KO: 5132830960047199 03/24 813
+OK MC: 5132830960047108 03/24 462
+OK VISA: 4977830259527191 03/24 153
+KO: 5132830960047199 03/24 813
 ```
 
 La URL de sandbox para los pagos Cofidis es la siguiente:

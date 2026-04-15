@@ -210,24 +210,24 @@ Acest tabel reflectă posibilele erori care pot apărea în procesul de plată:
 | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | PAYMENT\_METHOD\_NOT\_ALLOWED                   | The payment method ID used in the request is not active or enabled, and cannot be used.                                                                                                                                                  |
 | PAYMENT\_PSP\_ERROR                             | Generic error message received from the PSP, normally originated from a timeout on the PSP side in high traffic instances.                                                                                                               |
-| PERSONAL\_ID\_VALIDATION\_FAILED                | The PersonalID doesn't exist or belongs to a minor, deceased individuals or PEP and associates. Also the payment will be blocked if the PersonalID is related to any international lists of money laundering and/or terrorist financing. |
+| PERSONAL\_ID\_VALIDATION\_FAILED                | The PersonalID doesn't exist or belongs to a minor, a deceased individual, or a PEP and associates. Also the payment will be blocked if the PersonalID is related to any international lists of money laundering and/or terrorist financing. |
 | TRANSACTION\_INVALID\_FIELD\_LANGUAGE           | The "Language" field of the request contains an invalid language value.                                                                                                                                                                  |
 | TRANSACTION\_INVALID\_FIELD\_CURRENCY           | The "Currency" field contains an unsupported or invalid currency value.                                                                                                                                                                  |
 | TRANSACTION\_INVALID\_FIELD\_COUNTRY            | The "Country" field contains an unsupported or invalid country value.                                                                                                                                                                    |
-| TRANSACTION\_INVALID\_EMAIL                     | The "Email" field contains an invalid value(normally due to email syntax).                                                                                                                                                               |
+| TRANSACTION\_INVALID\_EMAIL                     | The "Email" field contains an invalid value (normally due to email syntax).                                                                                                                                                               |
 | TRANSACTION\_INVALID\_CPF                       | (Brazil only) the "personalID" field contains an invalid value.                                                                                                                                                                          |
 | TRANSACTION\_MIN\_AMOUNT                        | The "Amount" field contains a value that is below the minimum limit for the requested payment method.                                                                                                                                    |
 | TRANSACTION\_MAX\_AMOUNT                        | The "Amount" field contains a value that exceeds the maximum limit for the requested payment method.                                                                                                                                     |
 | INVALID\_AMOUNT                                 | The value sent for "amount" is not an integer.                                                                                                                                                                                           |
 | TRANSACTION\_REQUIRED\_COUNTRY                  | The "Country" parameter is empty.                                                                                                                                                                                                        |
 | TRANSACTION\_REQUIRED\_CURRENCY                 | The "Currency" parameter is empty.                                                                                                                                                                                                       |
-| TRANSACTION\_BLOCKED BY\_CUSTOMER\_LIMIT\_RULE  | The daily/monthly limit of transaction attempts for this customer has been reached, and no transactions can be generated for the customer until the next day/week/month.                                                                 |
+| TRANSACTION\_BLOCKED\_BY\_CUSTOMER\_LIMIT\_RULE  | The daily/monthly limit of transaction attempts for this customer has been reached, and no transactions can be generated for the customer until the next day/week/month.                                                                 |
 | CUSTOMER\_COMPLIANCE\_VALIDATION\_FAILED        | (Brazil only) the "personalID" field contains a non-existent CPF.                                                                                                                                                                        |
-| MERCHANT\_COMPLIANCE VALIDATION\_ERROR          | If one of your users is blocked with this error message please expose your case on our Freshdesk.                                                                                                                                        |
+| MERCHANT\_COMPLIANCE\_VALIDATION\_ERROR          | If one of your users is blocked with this error message please expose your case on our Freshdesk.                                                                                                                                        |
 | PAYMENT\_PSP\_ERROR                             | Generic error message received from the payment partner PSP, usually comes from a timeout on PSP's side in high traffic instances.                                                                                                       |
 | TRANSACTION\_CREATION\_ERROR                    | The payment method used in the request is not active and cannot be used. Shop credentials have been disabled.                                                                                                                            |
 | PAYMENT\_AMOUNT\_NOT\_EQUAL                     | The paid amount differs from the original amount or QR amount.                                                                                                                                                                           |
-| PAYER\_CPF\_NOT\_EQUAL                          | The payer's document number(CPF) does not match the buyer's document number.                                                                                                                                                             |
+| PAYER\_CPF\_NOT\_EQUAL                          | The payer's document number (CPF) does not match the buyer's document number.                                                                                                                                                             |
 | CORPORATE\_BANK\_ACCOUNT\_PAYMENT\_NOT\_ALLOWED | The transaction was paid from a corporate bank account.                                                                                                                                                                                  |
 | PAYMENT\_COMPLIANCE\_VALIDATION\_FAILED         | The transaction was paid from a corporate bank account.                                                                                                                                                                                  |
 | CUSTOMER\_INVALID\_AGE                          | Underaged.                                                                                                                                                                                                                               |
@@ -236,7 +236,7 @@ Acest tabel reflectă posibilele erori care pot apărea în procesul de plată:
 | CUSTOMER\_IS\_PEP                               | Politically exposed person.                                                                                                                                                                                                              |
 | CUSTOMER\_IS\_PEP\_RELATED                      | Family member of a politically exposed person.                                                                                                                                                                                           |
 | CUSTOMER\_IS\_IN\_INTERNATIONAL\_LISTS          | Customer is in the lavajato/laft list.                                                                                                                                                                                                   |
-| CUSTOMER\_SUSPENDED\_STATUS                     | CPF suspend by government triggered/criminal illegal activities.                                                                                                                                                                         |
+| CUSTOMER\_SUSPENDED\_STATUS                     | CPF suspended by government triggered/criminal illegal activities.                                                                                                                                                                         |
 | CUSTOMER\_POSSIBLE\_INVALID\_STATUS             | In process of losing CPF.                                                                                                                                                                                                                |
 | CUSTOMER\_NOT\_FOUND                            | No CPF data available.                                                                                                                                                                                                                   |
 
@@ -284,8 +284,8 @@ Există două metode de payout:
 
 **Dacă tipul de payout este `Transfer`:**
 
-* `bank_name` *(cu excepția Argentinei)* – Acest câmp trebuie să conțină **codul** băncii destinatarului. Consultă secțiunea [Coduri de bănci pe țară](#c%C3%B3digos-de-bancos-por-pa%C3%ADs) pentru a vedea valorile valide în funcție de țară.
-* `account` [Vezi specificațiile](#especificaciones-para-account-por-pa%C3%ADs-transfer)
+* `bank_name` *(cu excepția Argentinei)* – Acest câmp trebuie să conțină **codul** băncii destinatarului. Consultă secțiunea [Coduri de bănci pe țară](#coduri-de-bănci-pe-țară) pentru a vedea valorile valide în funcție de țară.
+* `account` [Vezi specificațiile](#specificații-pentru-account-pe-țară-transfer)
 * `account_type` *(cu excepția Argentinei și Mexicului)*
 * `account_agency_number` *(doar Brazilia, obligatoriu)* – Cod numeric al agenției bancare, furnizat de bancă. **Se folosesc doar cifrele de dinaintea cratimei** (ex: `"1234-5"` → se trimite `"1234"`).
 * `aba_swift` *(opțional și doar Brazilia)*
@@ -350,7 +350,7 @@ Câmpul `document_identification_type` se include în `profile`, este **opționa
 | CO (Columbia)  | 16                 | —                                                                                           |
 | MX (Mexic)     | 16, 18             | General (ACCOUNT\_CLABE): 18 cifre Număr de card de debit (CARD\_NUMBER): 16 cifre          |
 | EC (Ecuador)   | 12                 | —                                                                                           |
-| PE (Peru)      | 10, 13, 14, 18, 20 | Depinde de bancă. [Vezi detalii](#detalle-para-per%C3%BA-account)                           |
+| PE (Peru)      | 10, 13, 14, 18, 20 | Depinde de bancă. [Vezi detalii](#detalii-pentru-peru-account)                           |
 
 ##### Detalii pentru Peru (`account`)
 
@@ -369,7 +369,7 @@ Câmpul `document_identification_type` se include în `profile`, este **opționa
 | Tip cheie  | Format regex                                                   | Exemplu                                |
 | ---------- | -------------------------------------------------------------- | -------------------------------------- |
 | CPF        | `^[0-9]{11}$`                                                  | `12345678901`                          |
-| Telefon    | `^+[1-9][0-9]\d{1,14}$`                                        | `+5510998765432`                       |
+| Telefon    | `^\+[1-9][0-9]\d{1,14}$`                                        | `+5510998765432`                       |
 | Email      | `^[a-z0-9.!#$&'*+/=?^_{}~-]+@[a-z0-9.-]+$`                     | `pix@bcb.gov.br`                       |
 | Aleatoriu  | `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` | `123e4567-e89b-12d3-a456-426655440000` |
 
@@ -439,7 +439,7 @@ Poți consulta valorile valide ale câmpului `payment.bank_name` pentru fiecare 
 | 655    | Neon Pagamentos                           |
 | 077    | Banco Inter S.A.                          |
 | 121    | Banco Agibank S.A.                        |
-| 212    | Banco Original S.A                        |
+| 212    | Banco Original S.A.                       |
 | 260    | Nubank                                    |
 | 336    | Banco C6 S.A.                             |
 | 413    | Banco BV (Before Banco Votorantim)        |
