@@ -294,9 +294,16 @@
                 ]
               },
               {
+                "group": "Integration",
+                "pages": [
+                  "en/guides/accept-payments/email-sms-payments"
+                ]
+              },
+              {
                 "group": "Features",
                 "pages": [
                   "en/guides/features/tokenization",
+                  "en/guides/features/3ds",
                   "en/guides/features/subscriptions",
                   "en/guides/features/3ds",
                   "en/guides/features/security",
@@ -306,6 +313,14 @@
                 ]
               },
               {
+                "group": "Tools",
+                "pages": [
+                  {
+                    "group": "Proxy PCI",
+                    "pages": [
+                      "en/guides/tools/proxipci/javascript-library"
+                    ]
+                  }
                 "group": "Payment Services",
                 "pages": [
                   "en/guides/payment-services/payretailers",
@@ -332,6 +347,15 @@
                   "en/guides/apm/servipag",
                   "en/guides/apm/webpay",
                   "en/guides/apm/spei"
+                ]
+              },
+              {
+                "group": "Payment Services",
+                "pages": [
+                  "en/guides/payment-services/redsys",
+                  "en/guides/payment-services/cecabank",
+                  "en/guides/payment-services/credorax",
+                  "en/guides/payment-services/firepay"
                 ]
               },
               {
@@ -456,9 +480,16 @@
                 ]
               },
               {
+                "group": "Integração",
+                "pages": [
+                  "pt/guides/accept-payments/email-sms-payments"
+                ]
+              },
+              {
                 "group": "Funcionalidades",
                 "pages": [
                   "pt/guides/features/tokenization",
+                  "pt/guides/features/3ds",
                   "pt/guides/features/subscriptions",
                   "pt/guides/features/3ds",
                   "pt/guides/features/security",
@@ -494,6 +525,15 @@
                   "pt/guides/apm/servipag",
                   "pt/guides/apm/webpay",
                   "pt/guides/apm/spei"
+                ]
+              },
+              {
+                "group": "Serviços de Pagamento",
+                "pages": [
+                  "pt/guides/payment-services/redsys",
+                  "pt/guides/payment-services/cecabank",
+                  "pt/guides/payment-services/credorax",
+                  "pt/guides/payment-services/firepay"
                 ]
               },
               {
@@ -618,9 +658,16 @@
                 ]
               },
               {
+                "group": "Integrare",
+                "pages": [
+                  "ro/guides/accept-payments/email-sms-payments"
+                ]
+              },
+              {
                 "group": "Funcționalități",
                 "pages": [
                   "ro/guides/features/tokenization",
+                  "ro/guides/features/3ds",
                   "ro/guides/features/subscriptions",
                   "ro/guides/features/3ds",
                   "ro/guides/features/security",
@@ -656,6 +703,15 @@
                   "ro/guides/apm/servipag",
                   "ro/guides/apm/webpay",
                   "ro/guides/apm/spei"
+                ]
+              },
+              {
+                "group": "Servicii de Plată",
+                "pages": [
+                  "ro/guides/payment-services/redsys",
+                  "ro/guides/payment-services/cecabank",
+                  "ro/guides/payment-services/credorax",
+                  "ro/guides/payment-services/firepay"
                 ]
               },
               {
