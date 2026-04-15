@@ -1,0 +1,138 @@
+---
+title: 'CECA Bank'
+description: 'Configuration and integration of the CECA Bank payment service in Paylands'
+---
+
+## Error codes
+
+The error structure can have the following forms:
+
+```
+Código - Mensaje
+```
+
+For example:
+
+```
+ERR-190190 - Operación no realizable (resto de casos)
+```
+
+| Code   | Message                                                                                                                                                                                                   |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0      | Operation approved                                                                                                                                                                                        |
+| 1      | INCORRECT ONLINE COMMUNICATION                                                                                                                                                                            |
+| 2      | ERROR CALCULATING SIGNATURE                                                                                                                                                                               |
+| 5      | ERROR. Error in SELECT MERCHANTS                                                                                                                                                                          |
+| 6      | ERROR. Required fields missing                                                                                                                                                                            |
+| 7      | ERROR. Non-existent MerchantID                                                                                                                                                                            |
+| 9      | ERROR. Could not connect to ORACLE                                                                                                                                                                        |
+| 10     | ERROR. Invalid card                                                                                                                                                                                       |
+| 12     | SIGNATURE:                                                                                                                                                                                                |
+| 13     | INCORRECT OPERATION                                                                                                                                                                                       |
+| 14     | ERROR. Error in SELECT OPERATIONS                                                                                                                                                                         |
+| 15     | ERROR. Non-existent operation                                                                                                                                                                             |
+| 16     | ERROR. Operation already voided                                                                                                                                                                           |
+| 17     | ERROR OBTAINING KEY                                                                                                                                                                                       |
+| 18     | ERROR. The ETILL does not accept the order                                                                                                                                                                |
+| 19     | ERROR. Non-numeric data                                                                                                                                                                                   |
+| 20     | ERROR. Non-alphanumeric data                                                                                                                                                                              |
+| 21     | ERROR in MAC calculation                                                                                                                                                                                  |
+| 22     | ERROR in MAC calculation                                                                                                                                                                                  |
+| 23     | ERROR. Invalid username or password.                                                                                                                                                                      |
+| 24     | ERROR. Invalid currency type. The operation must be performed in Euros.                                                                                                                                   |
+| 25     | ERROR. Amount not Integer.                                                                                                                                                                                |
+| 26     | ERROR. Operation not executable 100.                                                                                                                                                                      |
+| 27     | ERROR. Invalid CVV2/CVC2 format.                                                                                                                                                                          |
+| 28     | ERROR. You must specify the CVV2/CVC2 of your card.                                                                                                                                                       |
+| 29     | ERROR. CVV2 not Integer.                                                                                                                                                                                  |
+| 30     | ERROR. At this time it is not possible to continue without cvc2/cvv2                                                                                                                                      |
+| 31     | ERROR. ERROR in the merchant's operations.                                                                                                                                                                |
+| 32     | ERROR. Invalid currency type. The operation must be performed in Euros.                                                                                                                                   |
+| 33     | ERROR. The merchant can only process payments in Euros                                                                                                                                                    |
+| 34     | ERROR. Invalid currency or conversion for this card.                                                                                                                                                      |
+| 35     | ERROR. Invalid currency or conversion.                                                                                                                                                                    |
+| 36     | ERROR. Invalid conversion to Euros.                                                                                                                                                                       |
+| 37     | ERROR. The merchant does not have this option.                                                                                                                                                            |
+| 38     | ERROR. Erroneous response from the operations manager.                                                                                                                                                    |
+| 39     | ERROR. It is not possible to continue with the pre-authorization.                                                                                                                                         |
+| 40     | ERROR. Communication error. It is not possible to complete the operation.                                                                                                                                 |
+| 41     | ERROR. SEP TimeOut. It is not possible to complete the operation.                                                                                                                                         |
+| 42     | ERROR. SEP returns a 20 ERROR. It is not possible to complete the operation.                                                                                                                              |
+| 43     | ERROR. Unexpected error. It is not possible to complete the operation.                                                                                                                                    |
+| 44     | ERROR. Erroneous SEP response. It is not possible to complete the operation.                                                                                                                              |
+| 45     | ERROR. It is not possible to continue with the pre-authorization.                                                                                                                                         |
+| 46     | ERROR. Error in the Authentication process. Do not go back in the browser. You must return to the merchant and retry the payment.                                                                         |
+| 48     | ERROR. Error in the Authentication process. Do not go back in the browser. You must return to the merchant and retry the payment.                                                                         |
+| 50     | ERROR. A negative response was received when querying the authentication status.                                                                                                                          |
+| 51     | ERROR. A negative response was received when querying the authentication status.                                                                                                                          |
+| 53     | ERROR. A negative response was received when querying the enrollment status. Card not enrolled.                                                                                                           |
+| 54     | ERROR. A negative response was received when querying the enrollment status and the amount exceeds the maximum allowed. Card not enrolled.                                                                |
+| 55     | ERROR. Temporary remote unavailability when querying the enrollment status at the merchant.                                                                                                               |
+| 56     | ERROR. Temporary remote unavailability when querying the enrollment status at the merchant and the amount exceeds the maximum allowed.                                                                    |
+| 57     | ERROR. Temporary remote unavailability when querying the enrollment status at the merchant, and the amount exceeds the maximum allowed.                                                                   |
+| 58     | ERROR. Remote system does not respond when querying enrollment status.                                                                                                                                    |
+| 62     | ERROR. The merchant has a filter that does not allow this operation.(Filter2:%d)                                                                                                                          |
+| 63     | ERROR. The ultra-secure merchant does not accept unauthenticated Visa payments. Please contact your institution.                                                                                          |
+| 64     | ERROR. The ultra-secure merchant does not accept unauthenticated MasterCard payments. Please contact your institution.                                                                                    |
+| 65     | ERROR. The ultra-secure merchant does not accept unauthenticated payments. Please contact your institution.                                                                                               |
+| 66     | ERROR. Ultra-secure process error. The merchant does not accept unauthenticated payments. Please contact your institution.                                                                                |
+| 67     | ERROR. Limit exceeded at mixed merchant.                                                                                                                                                                  |
+| 68     | ERROR. Erroneous response from the operations manager. Operation voided.                                                                                                                                  |
+| 69     | ERROR. Invalid UCAF operation. Please contact your merchant or institution.                                                                                                                               |
+| 70     | The merchant has a filter that does not allow this operation.`Bins by countries`.                                                                                                                         |
+| 71     | This merchant only accepts payment with EURO 6000 cards.                                                                                                                                                  |
+| 72     | The merchant has a filter that does not allow this operation.`Bin Manager`.                                                                                                                               |
+| 73     | The merchant has a filter that does not allow this operation.`Operations per day and IP`.                                                                                                                 |
+| 74     | The merchant has a filter that does not allow this operation.`Operations per day and card`.                                                                                                               |
+| 78     | Invalid token.                                                                                                                                                                                            |
+| 80     | ERROR. Required fields missing. `MerchantID`                                                                                                                                                              |
+| 81     | ERROR. Required fields missing. `AcquirerBIN`                                                                                                                                                             |
+| 82     | ERROR. Required fields missing. `TerminalID`                                                                                                                                                              |
+| 83     | ERROR. Required fields missing. `NumOperacion`                                                                                                                                                            |
+| 84     | ERROR. Required fields missing. `Importe`                                                                                                                                                                 |
+| 85     | ERROR. Required fields missing. `TipoMoneda`                                                                                                                                                              |
+| 86     | ERROR. Required fields missing. `Exponente`                                                                                                                                                               |
+| 87     | ERROR. Required fields missing. `UrlOK`                                                                                                                                                                   |
+| 88     | ERROR. Required fields missing. `UrlNOK`                                                                                                                                                                  |
+| 89     | ERROR. Required fields missing. `Firma`                                                                                                                                                                   |
+| 93     | Maximum allowed time to perform the operation expired                                                                                                                                                     |
+| 100    | Invalid card (in negatives)                                                                                                                                                                               |
+| 101    | Expired card                                                                                                                                                                                              |
+| 102    | Operation not performed                                                                                                                                                                                   |
+| 104    | Invalid card (electron)                                                                                                                                                                                   |
+| 106    | Invalid card (PIN retries)                                                                                                                                                                                |
+| 111    | Card number incorrectly entered (check)                                                                                                                                                                   |
+| 112    | Invalid card (PIN required)                                                                                                                                                                               |
+| 114    | Requested payment method not accepted                                                                                                                                                                     |
+| 116    | Insufficient balance                                                                                                                                                                                      |
+| 118    | Invalid card (not found in files)                                                                                                                                                                         |
+| 120    | Invalid card at this merchant                                                                                                                                                                             |
+| 121    | Available limit exceeded                                                                                                                                                                                  |
+| 123    | Maximum number of operations exceeded                                                                                                                                                                     |
+| 125    | The card is not yet operational                                                                                                                                                                           |
+| 180    | Card not supported by the system                                                                                                                                                                          |
+| 190    | Operation not executable (other cases)                                                                                                                                                                    |
+| 400    | Cancellation accepted                                                                                                                                                                                     |
+| 480    | Cancellation by TO accepted without finding the original operation                                                                                                                                        |
+| 721    | Incorrect response message received                                                                                                                                                                       |
+| 801    | Pre-authorization not allowed                                                                                                                                                                             |
+| 802    | Characters not allowed                                                                                                                                                                                    |
+| 803    | Error when attempting a deferred payment with this card                                                                                                                                                   |
+| 808    | There are errors in previous cancellations; for now we do not allow performing the cancellation again                                                                                                     |
+| 888    | Communication error. This operation is blocked until its status is reviewed. Please check its status again after 10 AM the following day. We apologize for the inconvenience.                              |
+| 900    | Refund accepted                                                                                                                                                                                           |
+| 904    | Operation not executable (format error)                                                                                                                                                                   |
+| 908    | Unknown card                                                                                                                                                                                              |
+| 909    | Operation not executable (system error)                                                                                                                                                                   |
+| 912    | Your institution is not available                                                                                                                                                                         |
+| 913    | Operation not executable (duplicate key)                                                                                                                                                                  |
+| 914    | The operation to be voided does not exist                                                                                                                                                                 |
+| 930    | Operation not executable (invalid merchant entity)                                                                                                                                                        |
+| 931    | Operation not executable (merchant not registered)                                                                                                                                                        |
+| 932    | Operation not executable (merchant bin does not exist)                                                                                                                                                    |
+| 933    | Operation not executable (unknown sector)                                                                                                                                                                 |
+| 940    | A cancellation has already been received                                                                                                                                                                  |
+| 944    | Operation not executable (invalid session)                                                                                                                                                                |
+| 948    | Operation not executable (invalid date/time)                                                                                                                                                              |
+| 950    | Refund not accepted                                                                                                                                                                                       |
+| 999    | Operation not executable (other cases)                                                                                                                                                                    |

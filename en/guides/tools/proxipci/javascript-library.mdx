@@ -1,0 +1,104 @@
+---
+title: 'JavaScript Library'
+description: 'Secure card data capture with the PROXY PCI JavaScript library'
+---
+
+<Info>
+  We will replace the card PAN with a tokenized version of it that can be stored along with the other card data.
+</Info>
+
+## How does it work?
+
+To work with the client tokenization approach you must follow the steps below:
+
+1. The first thing you need to do is generate a capture `token` using the [POST /tokenize/\{reference}](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/IssueTokenizationToken) in the REST API. During the generation of this token you need to provide a `reference`. This `reference` must be unique and can be the id of your booking, reservation, etc.
+2. Once you have the token you need to initialize the javascript library with this token. More details on this below.
+3. The javascript library initializes and displays a secure iframe input field on your website.
+4. The user enters their data in your web form and the pan number is entered in the secure iframe field.
+5. The user clicks submit, and you tell the library to send the data to our vault engine.
+6. You can then get the result on your server by initiating a call to the [GET /card/reference/\{reference}](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) method. The result will include the tokenized card pan among other details.
+7. This token can be used to send the card data to a third party or to issue a display token.
+
+<Warning>
+  The REST API must always be called directly from your server, never from the client side.
+</Warning>
+
+## Including the javascript library
+
+Please load the correct version of the javascript library directly from our PCI-compliant servers depending on the environment.
+
+SANDBOX
+
+```
+<script src="https://pci-proxy-api.paynopain.com/sandbox/client.js"></script>
+```
+
+PRODUCTION
+
+```
+<script src="https://pci-proxy-api.paynopain.com/prod/client.js"></script>
+```
+
+<Info>
+  You can check the [codepen example](https://codepen.io/bopechri/pen/dybqRqm) in action to see it working.
+</Info>
+
+### Initializing the library
+
+To initialize the library you need to provide the id of the DOM element where the library should inject the iframe with the pan input field along with the `token` issued with the REST API. Once the iframe has finished loading, a `ready` event will be fired.
+
+```html
+<div id="pan"></div>
+<button id="submit">Enviar</button>
+```
+
+```
+
+```js
+var proxyFields = new ProxyFields();
+proxyFields.init('::token::', { cardNumber: "pan" });
+proxyFields.on('ready', () => {
+    console.log('iframe ha terminado de cargarse');
+});
+```
+
+### Styling the input field
+
+The recommended method for styling the input field is to use the `setStyle` method. This should be done in the `ready` callback.
+
+```js
+proxyFields.on("ready", function() {
+  proxyFields.setStyle(
+    "cardNumber",
+    "width: 300px; border-radius: 4px; border: 1px solid black; padding:5px 10px;font-size:100%;"
+  );
+  proxyFields.setStyle("cardNumber::placeholder", "color: grey");
+  proxyFields.setPlaceholder("cardNumber", "4987806170805591");
+});
+```
+
+### Validation and data submission
+
+Once the user has completed the submission form you can call the `submit` method. The `submit` method receives as its only parameter an object in which you need to provide additional card information. This data can be collected directly by you since it is not subject to PCI regulations.
+
+Once you have called the `submit` method, a `validate` callback will be fired with an input object containing error-related information if any. If the pan is valid, the submission will take place and a success or error callback will be fired. After the `success` callback is fired, you can safely call the [REST API method](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) on your server to get the pan token.
+
+```js
+proxyFields.submit({
+  expiryMonth: "01",
+  expiryYear: "21",
+  cardHolder: "Name Displayed On Card"
+});
+proxyFields.on("validate", function(data) {
+  if(validate.hasErrors){
+    console.log("Card pan is not valid");
+    proxyFields.setStyle("cardNumber","border: 1px solid red");
+  }
+});
+proxyFields.on("success", function(data) {
+  console.log('Submission succeeded');
+});
+proxyFields.on("error", function(error) {
+  console.log('Ha ocurrido algo malo');
+});
+```

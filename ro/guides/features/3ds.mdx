@@ -1,0 +1,142 @@
+---
+title: '3D Secure (3DS)'
+description: 'Ghid de autentificare 3D Secure pentru plăți sigure cu Paylands'
+---
+
+## PSD2
+
+A doua Directivă privind Serviciile de Plată (PSD2) va fi **obligatorie începând cu 31 decembrie 2020**. Această directivă afectează plățile efectuate în zona economică europeană și impune ca toate plățile în care utilizatorul este prezent să fie efectuate în mod securizat prin 3DS. În plus, nu vor mai putea fi inițiate plăți nesecurizate fără prezența utilizatorului, cu excepția cazului în care cardul a efectuat cel puțin o plată securizată prin 3DS anterior.
+
+Următoarele tipuri de servicii de plată vor fi afectate de PSD2 începând cu 31 decembrie 2020:
+
+* REDSYS
+* EVOSNAP
+* CREDORAX
+* CLEARHAUS
+
+### Reglementare
+
+PSD2 va fi obligatorie atât timp cât sunt îndeplinite două condiții:
+
+* Serviciul de plată este localizat în Zona Euro.
+* Cardul a fost emis dintr-o țară din Zona Euro.
+
+Prima condiție va fi întotdeauna îndeplinită pentru serviciile de plată menționate anterior, astfel încât singurul factor care poate influența aplicarea reglementării PSD2 este țara de origine a cardului. Cardurile provenind dintr-o țară din afara Zonei Euro sunt scutite de conformitatea cu PSD2. Cu toate acestea, deoarece nu se poate ști până în momentul încasării dacă cardul este scutit sau nu, **recomandăm ca toate plățile să fie efectuate în mod securizat prin 3DS atunci când utilizatorul este prezent**.
+
+Dacă se încearcă o plată nesecurizată și aceasta nu poate fi procesată din cauza PSD2:
+
+* Dacă utilizatorul este prezent ([plată prin pagina de plată](/reference/#operation/redirection-payment)) utilizatorul va fi redirecționat către 3DS.
+* Dacă utilizatorul nu este prezent ([plată directă](/reference/#operation/webservice-payment)) API-ul va returna un link către care utilizatorul trebuie redirecționat pentru a finaliza 3DS. Aceste tipuri de plăți sunt cunoscute și ca plăți prin webservice sau plăți MIT (Merchant Initiated Transactions).
+
+Recomandăm utilizarea [plăților tokenizate](/reference/#operation/3ds-tokenized) odată ce cardul a fost tokenizat, deoarece acestea utilizează întotdeauna 3DS și permit valorificarea tuturor avantajelor oferite de PSD2. Plățile nesecurizate prin webservice trebuie utilizate doar atunci când utilizatorul nu este prezent, de exemplu, pentru a încasa un abonament.
+
+### Avantaje
+
+Până acum, plățile securizate utilizau întotdeauna versiunea 3DS 1.0, care obligă utilizatorul să introducă un cod primit pe telefonul mobil, generând o fricțiune care putea duce la abandonarea procesului de cumpărare de către utilizator. Noile versiuni ale protocolului 3DS versiunea 2 permit omiterea acestui pas în anumite circumstanțe:
+
+* Suma operațiunii este mică (mai puțin de 30€) sau suma totală a ultimelor 5 operațiuni nu depășește 100€.
+* Pragul de fraudă al comerciantului este scăzut și operațiunea nu depășește 100, 250 sau 500€.
+* Se furnizează suficiente date personale ale utilizatorului, precum numele și prenumele, email, adresa de livrare, numărul de telefon mobil de contact...
+
+Circumstanțele de mai sus poartă numele de excepții, iar Paylands le solicită ori de câte ori este posibil pentru a reduce fricțiunea la minimum în timpul 3DS.
+
+Dacă oricare dintre condițiile de mai sus este îndeplinită, este posibil ca plata să se finalizeze fără a fi necesară intervenția utilizatorului. Aceasta este cunoscută ca plată 3DS **frictionless**. Dacă, dimpotrivă, condițiile de mai sus nu sunt îndeplinite, utilizatorul va trebui să efectueze un *challenge*, care constă în una dintre următoarele acțiuni:
+
+* Introducerea unui cod primit pe telefonul mobil, cunoscut ca OTP (One Time Password).
+* Confirmarea plății din aplicația mobilă a băncii sale.
+
+Indiferent de ce se întâmplă, plata va fi considerată autentificată prin 3DS.
+
+### Plăți fără prezența utilizatorului
+
+În general, utilizatorul trebuie să fie prezent în momentul plății, iar aceasta trebuie efectuată obligatoriu în mod securizat cu 3DS. Atunci, cum pot fi efectuate plăți fără ca utilizatorul să fie prezent, cum ar fi abonamentele? PSD2 prevede excepții atât timp cât cardul a fost utilizat anterior într-o plată securizată.
+
+Doar anumite plăți pot fi efectuate fără prezența utilizatorului:
+
+* Plăți recurente sau în rate (abonamente, împrumuturi...)
+* No-show la hoteluri
+
+Aceste plăți vor fi efectuate prin WebService. Recomandăm indicarea motivului încasării la crearea comenzii în parametrul **extra\_data.cof.reason**. Acestea sunt valorile posibile pentru acel câmp:
+
+* RECURRING (plăți recurente, abonamente...)
+* INSTALLMENTS (plăți în rate, împrumuturi...)
+* NO\_SHOW (când o persoană nu se prezintă în ziua rezervării la hotel)
+* DELAYED (plăți pentru servicii prestate a căror sumă este necunoscută la început: minibar, reparații, amenzi...)
+* OTHER (când motivul încasării nu este cunoscut dinainte. De exemplu, în cazul unui hotel care nu știe dacă va trebui să încaseze rezervarea când utilizatorul se prezintă, ceea ce ar fi RECURRING, sau un NO-SHOW dacă nu se prezintă)
+
+Dacă condițiile menționate sunt îndeplinite, plata se va finaliza normal fără a fi necesară intervenția utilizatorului. Dacă, dimpotrivă, oricare dintre aceste condiții nu este îndeplinită sau este esențial ca utilizatorul să se autentifice, [API-ul va returna un link de plată care poate fi trimis utilizatorului pentru a finaliza plata prin 3DS](/#reference/pagos/realizar-el-pago/por-webservice). Decizia dacă utilizatorul trebuie să autentifice o operațiune MIT aparține 100% băncii și este luată pe baza propriilor reguli interne. Paylands va trimite întotdeauna cât mai multe informații posibil băncii emitente pentru ca aceasta să încerce să finalizeze operațiunea fără a necesita intervenția utilizatorului, dar decizia finală aparține băncii utilizatorului.
+
+**Prima plată cu un card trebuie efectuată întotdeauna prin pagina de plată sau în mod tokenizat** pentru ca utilizatorul să se autentifice pentru prima dată și să poată beneficia de această modalitate la plățile ulterioare. Plățile fără prezența utilizatorului sunt rezervate exclusiv pentru plățile inițiate de comerciant, cunoscute și ca MIT (Merchant Initiated Transaction).
+
+### Cum să vă adaptați la schimbări
+
+Dacă comerciantul dumneavoastră efectuează doar [plăți securizate prin 3DS](#reference/pagos/realizar-el-pago/tokenizado-por-3ds), nu este necesar să faceți nimic. Odată ce data sosește, Paylands va schimba modul în care plățile sunt procesate. Clienții vor observa că procesul este ușor diferit în funcție de banca emitentă a cardului lor; cu toate acestea, ca comerciant, nu veți observa nicio diferență.
+
+Dacă, dimpotrivă, efectuați [plăți nesecurizate prin WebService](/#reference/pagos/realizar-el-pago/por-webservice) atunci când utilizatorii nu sunt prezenți în momentul plății, va fi necesar să suportați modalități de plată securizate, precum pagina de plată sau plata tokenizată. De asemenea, va trebui să gestionați corect răspunsul plății prin WebService atunci când este returnat linkul de plată.
+
+Toți comercianții vor începe să opereze conform noii reglementări începând cu 1 ianuarie, fără a fi necesară nicio acțiune. Cu toate acestea, dacă doriți să vă anticipați și comerciantul dumneavoastră să înceapă să opereze cu PSD2 înainte de termenul limită, puteți trimite un email la [soporte@paylands.com](mailto:soporte@paylands.com) indicând FUC-ul dumneavoastră (Codul de comerciant de 8-9 cifre) și banca prin care operează comerciantul dumneavoastră.
+
+### Date suplimentare
+
+Pentru a crește probabilitatea ca utilizatorul să nu fie nevoit să se autentifice pentru a finaliza plata, pot fi trimise opțional date suplimentare. Aceste date trebuie incluse în câmpul `extra_data` la crearea unei comenzi cu formatul detaliat în secțiunea "Plăți > Comanda de plată".
+
+### Întrebări frecvente (FAQ)
+
+Voi putea efectua plăți fără prezența utilizatorului dacă plata securizată a avut loc înainte de intrarea în vigoare a reglementării?
+
+> Da, pentru serviciile REDSYS și EVOSNAP. Pentru celelalte servicii, va fi necesar să se efectueze din nou o încasare securizată înainte de a putea iniția încasări fără prezența utilizatorului.
+
+Pot iniția o plată 3DS pentru a autentifica utilizatorul pe un serviciu și apoi iniția o plată fără prezența utilizatorului pe altul?
+
+> Nu. Este necesar să autentificați utilizatorul cel puțin o dată per serviciu de plată. Serviciile pot fi diferite atât timp cât sunt de același tip.
+
+## Excepții
+
+În prezent suportăm excepțiile de **Analiză de Risc (TRA)** și de **Valoare scăzută (LV)** în serviciul de plată **Redsys**. Pentru a le solicita, este suficient să furnizați următoarele informații în câmpul `extra_data` la crearea comenzii:
+
+```
+"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
+```
+
+De asemenea, este posibil să solicitați ca **nicio excepție să nu fie aplicată** lăsând valoarea `exemptions` ca o listă goală:
+
+```
+"extra_data": {        ...        "sca": {            "exemptions": []        },    }
+```
+
+Dacă valoarea `exemptions` nu este indicată explicit, implicit va fi solicitată excepția de **Valoare scăzută (LV)** dacă aceasta îndeplinește cerințele stabilite. După plată, dacă a fost solicitată vreo excepție, numele acesteia va fi inclus sub cheia `order.threeds_data.exemption`. Dacă nu a fost solicitată nicio excepție sau nu a putut fi solicitată nicio excepție, valoarea sa va fi `null`.
+
+```
+"threeds_data": {      "version": "...",      "flow": "...",      "sca_requested": ...,      "status": "...",      "eci": "...",      "exemption": "TRA"  }
+```
+
+În cele din urmă, faptul că o excepție a fost solicitată nu implică faptul că a fost acceptată. Pentru a înțelege mai bine dacă o excepție a fost acceptată sau nu, se poate consulta câmpul `threeds_data.flow`. Dacă excepția a fost solicitată dar valoarea sa este CHALLENGE\_ONLY sau FULL, înseamnă că nu a fost acceptată. Dacă valoarea sa este FRICTIONLESS sau FINGERPRINTING\_ONLY, înseamnă că este posibil să fi fost acceptată. Nu există nicio modalitate de a ști cu 100% certitudine dacă o excepție a fost acceptată, ci doar dacă a fost respinsă.
+
+De asemenea, nu se poate ști dacă o excepție a fost acceptată de issuer (banca utilizatorului) sau de acquirer (banca comerciantului).
+
+### Cerințe
+
+Excepțiile trebuie să îndeplinească anumite cerințe înainte de a putea fi solicitate. Se pot solicita până la 2 excepții, dintre care cel mult una va fi aplicată. Excepțiile sunt solicitate în ordinea în care sunt indicate în cerere. Cerințele pentru solicitarea fiecărei excepții sunt:
+
+#### Cerințe generale
+
+* Cardul trebuie să aparțină zonei economice europene (EEA).
+* Serviciul de plată trebuie să suporte solicitarea de excepții (deocamdată doar Redsys suportă acest lucru).
+* Terminalul asociat serviciului de plată utilizat trebuie să aibă activată excepția de solicitat.
+* Moneda utilizată trebuie să fie Euro.
+* Plata trebuie să fie securizată și versiunea 3DS trebuie să fie 2.1 sau 2.2.
+* Cardul trebuie să aibă cel puțin o plată reușită în ultimul an.
+
+#### Analiză de risc (TRA)
+
+* Suma trebuie să fie egală sau mai mică de 500€, 250€ sau 100€ în funcție de rata medie de fraudă a comerciantului egală sau inferioară la 0.01%, 0.06% sau 0.13%, respectiv.
+
+* Pentru a valorifica la maximum această excepție, se recomandă indicarea următoarelor informații în câmpul `extra_data`:
+
+  * Email
+  * Număr de telefon
+  * Adresa de facturare și de livrare (pot fi aceeași).
+
+#### Valoare scăzută (LV)
+
+* Suma trebuie să fie egală sau mai mică de 30€.
