@@ -1,0 +1,527 @@
+---
+title: 'PayRetailers'
+description: 'PayRetailers payment service configuration and integration in Paylands'
+---
+
+## PayRetailers integration[​](#payretailers-integration "Direct link to PayRetailers integration")
+
+PayRetailers allows processing **pay-ins** through local payment methods in LATAM (PSE, EFECTY, Pago Fácil, Khipu, SPEI, PIX, Transfer and Card Colombia), as well as **pay-outs**. Payments can be made through **checkout** or **redirect**.
+
+***
+
+## Pay-ins with PayRetailers[​](#pay-ins-with-payretailers "Direct link to Pay-ins with PayRetailers")
+
+### General requirements[​](#general-requirements "Direct link to General requirements")
+
+#### Supported currencies[​](#supported-currencies "Direct link to Supported currencies")
+
+Currently PayRetailers only supports the following currencies:
+
+* USD
+* ARS
+* COP
+* PEN
+* MXN
+* BRL
+
+#### Required fields (`extra_data`)[​](#required-fields-extra_data "Direct link to required-fields-extra_data")
+
+All payment methods require including the following information within `extra_data`:
+
+* **profile**
+* `first_name`
+* `last_name`
+* `email`
+* `document_identification_number`
+* `phone.number`, `phone.prefix` (if applicable)
+
+* **billing\_address**
+* `city`, `country`, `zip_code`, `address1`, `state_code`
+
+Example:
+
+```
+"extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@gmail.com",        "document_identification_number": "92309089",        "phone": {            "number": "02614235138",            "prefix": "54"        }    },    "billing_address": {        "city": "Bogota",        "country": "COL",        "address1": "Calle Mayor, 23",        "zip_code": "111611",        "state_code": ""    }}
+```
+
+#### Additional URL parameters[​](#additional-url-parameters "Direct link to Additional URL parameters")
+
+| Parameter | Description              | Examples                                |
+| --------- | ------------------------ | --------------------------------------- |
+| `apm`     | Payment method selection | `?apm=PSE`, `?apm=PIX`, `?apm=TRANSFER` |
+| `lang`    | Flow language            | `?lang=es`, `?lang=en`, `?lang=pt`      |
+
+Default language: `es` (Spanish).
+
+#### Sandbox environment behavior[​](#sandbox-environment-behavior "Direct link to Sandbox environment behavior")
+
+The PayRetailers **sandbox** environment may not fully reflect the real behavior of payment methods.
+
+To simulate different final states in sandbox, you can use the following `amount` values:
+
+| `amount`         | Status              | Detail           |
+| ---------------- | ------------------- | ---------------- |
+| `11111`          | Paid                | Payment accepted |
+| `44444`          | Rejected            | Payment canceled |
+| `55555`          | Rejected            | Payment expired  |
+| `66666`          | Rejected            | Payment error    |
+| Any other value  | Waiting for response| Payment pending  |
+
+***
+
+### Payment methods[​](#payment-methods "Direct link to Payment methods")
+
+#### PSE (Colombia)[​](#pse-colombia "Direct link to PSE (Colombia)")
+
+* **Country:** `COL`
+* **Currencies:** COP, USD
+* **APM:** PSE
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@example.com",        "document_identification_number": "92309089",        "phone": { "number": "02614235138", "prefix": "54" }    },    "billing_address": {        "city": "Bogota",        "country": "COL",        "address1": "Calle 12",        "zip_code": "111611",        "state_code": ""    }}
+```
+
+***
+
+#### EFECTY (Colombia)[​](#efecty-colombia "Direct link to EFECTY (Colombia)")
+
+* **Country:** `COL`
+* **Currencies:** COP, USD
+* **APM:** EFECTY
+
+*(Same example as PSE)*
+
+***
+
+#### Pago Fácil (Argentina)[​](#pago-fácil-argentina "Direct link to Pago Fácil (Argentina)")
+
+* **Country:** `ARG`
+* **Currencies:** ARS, USD
+* **APM:** PAGO\_FACIL
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@example.com",        "document_identification_number": "92309089"    },    "billing_address": {        "city": "Buenos Aires",        "country": "ARG",        "address1": "Av. Libertador 123",        "zip_code": "1000",        "state_code": ""    }}
+```
+
+***
+
+#### Khipu (Argentina and Peru)[​](#khipu-argentina-and-peru "Direct link to Khipu (Argentina and Peru)")
+
+* **Countries:** `ARG`, `PER`
+* **Currencies:** ARS, PEN, USD
+* **APM:** KHIPU
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@example.com",        "document_identification_number": "92309089"    },    "billing_address": {        "city": "Lima",        "country": "PER",        "address1": "Av. Arequipa 123",        "zip_code": "15046",        "state_code": ""    }}
+```
+
+***
+
+#### SPEI (Mexico)[​](#spei-mexico "Direct link to SPEI (Mexico)")
+
+* **Country:** `MEX`
+* **Currencies:** MXN, USD
+* **APM:** SPEI
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "PERM850515MDFPRD32"    },    "billing_address": {        "city": "Ciudad de Mexico",        "country": "MEX",        "address1": "Calle Mayor 12",        "zip_code": "06010",        "state_code": ""    }}
+```
+
+***
+
+#### PIX (Brazil)[​](#pix-brazil "Direct link to PIX (Brazil)")
+
+* **Country:** `BRA`
+* **Currencies:** BRL, USD
+* **APM:** PIX
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "310.535.927-36"    },    "billing_address": {        "city": "Sao Paulo",        "country": "BRA",        "address1": "R. Sao Joaquim, 596",        "zip_code": "01508001",        "state_code": ""    }}
+```
+
+***
+
+#### TRANSFER (Ecuador and Brazil)[​](#transfer-ecuador-and-brazil "Direct link to TRANSFER (Ecuador and Brazil)")
+
+* **Country:** `ECU`, `BRA`
+* **Currencies:** USD, BRL
+* **APM:** TRANSFER
+
+##### Supported banks (`payment.bank_name`)[​](#supported-banks-paymentbank_name "Direct link to supported-banks-paymentbank_name")
+
+| Country | Allowed values                       |
+| ------- | ------------------------------------ |
+| Ecuador | `BANCO_PICHINCHA`, `BANCO_GUAYAQUIL` |
+| Brazil  | `SANTANDER_BRASIL`                   |
+
+###### Default values[​](#default-values "Direct link to Default values")
+
+If `payment.bank_name` is **not** sent:
+
+* Ecuador → `BANCO_PICHINCHA`
+* Brazil → `SANTANDER_BRASIL`
+
+##### Example (Ecuador, Banco Guayaquil)[​](#example-ecuador-banco-guayaquil "Direct link to Example (Ecuador, Banco Guayaquil)")
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "00113562600"    },    "billing_address": {        "city": "Quito",        "country": "ECU",        "address1": "Av. Amazonas 123",        "zip_code": "170102",        "state_code": ""    },    "payment": {        "bank_name": "BANCO_GUAYAQUIL"    }}
+```
+
+***
+
+#### Card (Colombia)[​](#card-colombia "Direct link to Card (Colombia)")
+
+* **Country:** `COL`
+* **Currencies:** COP, USD
+* **APM:** CARD
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@payretailers.com",        "document_identification_number": "00113562600",        "phone": { "number": "579999999999" }    },    "billing_address": {        "city": "Bogota",        "country": "COL",        "address1": "Calle Mayor 12",        "zip_code": "111611",        "state_code": ""    }}
+```
+
+***
+
+## Transaction limits[​](#transaction-limits "Direct link to Transaction limits")
+
+This table shows the limits by merchant type, user and country:
+
+| Country     | Cash limit per user per day | Cash limit per user per month | Online limit per user per day | Online limit per user per month | Credit card limit per user per day | Credit card limit per user per month |
+| ----------- | --------------------------- | ----------------------------- | ----------------------------- | ------------------------------- | ---------------------------------- | ------------------------------------ |
+| Ecuador     | 2,000 USD                   | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | Not available                      | Not available                        |
+| Peru        | 2,000 USD                   | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | Not available                      | Not available                        |
+| Mexico      | 2,000 USD                   | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | Not available                      | Not available                        |
+| Panama      | 2,000 USD                   | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | Not available                      | Not available                        |
+| El Salvador | 2,000 USD                   | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | Not available                      | Not available                        |
+| Nicaragua   | 2,000 USD                   | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | Not available                      | Not available                        |
+| Costa Rica  | 2,000 USD                   | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | 2,500 USD                          | 7,000 USD                            |
+| Chile       | 2,000 USD                   | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | 35,000 USD                         | 80,000 USD                           |
+| Brazil      | 10,000 USD                  | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | Not available                      | Not available                        |
+| Guatemala   | 2,000 USD                   | 8,000 USD                     | Not available                 | Not available                   | Not available                      | Not available                        |
+| Colombia    | 10,000 USD                  | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | 2,500 USD                          | 7,000 USD                            |
+| Argentina   | 10,000 USD                  | 30,000 USD                    | 35,000 USD                    | 80,000 USD                      | 2,500 USD                          | 7,000 USD                            |
+
+***
+
+## Transaction errors[​](#transaction-errors "Direct link to Transaction errors")
+
+This table shows possible errors that may occur during the payment process:
+
+| Error message                                   | Meaning                                                                                                                                                                                                                                  |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PAYMENT\_METHOD\_NOT\_ALLOWED                   | The payment method ID used in the request is not active or enabled, and cannot be used.                                                                                                                                                  |
+| PAYMENT\_PSP\_ERROR                             | Generic error message received from the PSP, normally originated from a timeout on the PSP side in high traffic instances.                                                                                                               |
+| PERSONAL\_ID\_VALIDATION\_FAILED                | The PersonalID doesn't exist or belongs to a minor, deceased individuals or PEP and associates. Also the payment will be blocked if the PersonalID is related to any international lists of money laundering and/or terrorist financing. |
+| TRANSACTION\_INVALID\_FIELD\_LANGUAGE           | The "Language" field of the request contains an invalid language value.                                                                                                                                                                  |
+| TRANSACTION\_INVALID\_FIELD\_CURRENCY           | The "Currency" field contains an unsupported or invalid currency value.                                                                                                                                                                  |
+| TRANSACTION\_INVALID\_FIELD\_COUNTRY            | The "Country" field contains an unsupported or invalid country value.                                                                                                                                                                    |
+| TRANSACTION\_INVALID\_EMAIL                     | The "Email" field contains an invalid value(normally due to email syntax).                                                                                                                                                               |
+| TRANSACTION\_INVALID\_CPF                       | (Brazil only) the "personalID" field contains an invalid value.                                                                                                                                                                          |
+| TRANSACTION\_MIN\_AMOUNT                        | The "Amount" field contains a value that is below the minimum limit for the requested payment method.                                                                                                                                    |
+| TRANSACTION\_MAX\_AMOUNT                        | The "Amount" field contains a value that exceeds the maximum limit for the requested payment method.                                                                                                                                     |
+| INVALID\_AMOUNT                                 | The value sent for "amount" is not an integer.                                                                                                                                                                                           |
+| TRANSACTION\_REQUIRED\_COUNTRY                  | The "Country" parameter is empty.                                                                                                                                                                                                        |
+| TRANSACTION\_REQUIRED\_CURRENCY                 | The "Currency" parameter is empty.                                                                                                                                                                                                       |
+| TRANSACTION\_BLOCKED BY\_CUSTOMER\_LIMIT\_RULE  | The daily/monthly limit of transaction attempts for this customer has been reached, and no transactions can be generated for the customer until the next day/week/month.                                                                 |
+| CUSTOMER\_COMPLIANCE\_VALIDATION\_FAILED        | (Brazil only) the "personalID" field contains a non-existent CPF.                                                                                                                                                                        |
+| MERCHANT\_COMPLIANCE VALIDATION\_ERROR          | If one of your users is blocked with this error message please expose your case on our Freshdesk.                                                                                                                                        |
+| PAYMENT\_PSP\_ERROR                             | Generic error message received from the payment partner PSP, usually comes from a timeout on PSP's side in high traffic instances.                                                                                                       |
+| TRANSACTION\_CREATION\_ERROR                    | The payment method used in the request is not active and cannot be used. Shop credentials have been disabled.                                                                                                                            |
+| PAYMENT\_AMOUNT\_NOT\_EQUAL                     | The paid amount differs from the original amount or QR amount.                                                                                                                                                                           |
+| PAYER\_CPF\_NOT\_EQUAL                          | The payer's document number(CPF) does not match the buyer's document number.                                                                                                                                                             |
+| CORPORATE\_BANK\_ACCOUNT\_PAYMENT\_NOT\_ALLOWED | The transaction was paid from a corporate bank account.                                                                                                                                                                                  |
+| PAYMENT\_COMPLIANCE\_VALIDATION\_FAILED         | The transaction was paid from a corporate bank account.                                                                                                                                                                                  |
+| CUSTOMER\_INVALID\_AGE                          | Underaged.                                                                                                                                                                                                                               |
+| CUSTOMER\_INVALID\_AGE\_NULL                    | Payer age not available.                                                                                                                                                                                                                 |
+| CUSTOMER\_INVALID\_STATUS                       | CPF is not valid/ active (deceased customer).                                                                                                                                                                                            |
+| CUSTOMER\_IS\_PEP                               | Politically exposed person.                                                                                                                                                                                                              |
+| CUSTOMER\_IS\_PEP\_RELATED                      | Family member of a politically exposed person.                                                                                                                                                                                           |
+| CUSTOMER\_IS\_IN\_INTERNATIONAL\_LISTS          | Customer is in the lavajato/laft list.                                                                                                                                                                                                   |
+| CUSTOMER\_SUSPENDED\_STATUS                     | CPF suspend by government triggered/criminal illegal activities.                                                                                                                                                                         |
+| CUSTOMER\_POSSIBLE\_INVALID\_STATUS             | In process of losing CPF.                                                                                                                                                                                                                |
+| CUSTOMER\_NOT\_FOUND                            | No CPF data available.                                                                                                                                                                                                                   |
+
+***
+
+## Pay-outs with PayRetailers[​](#pay-outs-with-payretailers "Direct link to Pay-outs with PayRetailers")
+
+PayRetailers allows **payouts** (fund transfers) in the following countries:
+
+| Country  | Currency |
+| -------- | -------- |
+| Brazil   | BRL      |
+| Mexico   | MXN      |
+| Chile    | CLP      |
+| Colombia | COP      |
+| Peru     | PEN      |
+| Ecuador  | USD      |
+
+There are two payout methods:
+
+| Method   | Description                        | Compatible countries |
+| -------- | ---------------------------------- | -------------------- |
+| Transfer | Traditional bank transfer          | All of the above     |
+| PIX      | Instant transfer via PIX key       | Brazil only          |
+
+***
+
+### Required fields in `extra_data`[​](#required-fields-in-extra_data "Direct link to required-fields-in-extra_data")
+
+#### `profile` (always required):[​](#profile-always-required "Direct link to profile-always-required")
+
+* `first_name`
+* `last_name`
+* `email`
+* `document_identification_number`
+* `document_identification_type` *(optional; only for COL, ECU and PER. Possible values: `NATIONAL_IDENTITY_DOCUMENT`, `FOREIGN_IDENTIFICATION_DOCUMENT`, `FISCAL_IDENTIFICATION_CODE`, `VALID_PASSPORT`)*
+* `phone.number` *(required only if `country` is BRA, PER or ECU)*
+
+#### `billing_address`:[​](#billing_address "Direct link to billing_address")
+
+* `address1`
+* `country`
+
+#### `payment` (depending on payout type):[​](#payment-depending-on-payout-type "Direct link to payment-depending-on-payout-type")
+
+**If the payout type is `Transfer`:**
+
+* `bank_name` *(except Argentina)* – This field must contain the recipient bank's **code**. See the [Bank codes by country](#bank-codes-by-country) section for valid values per country.
+* `account` [See specifications](#account-specifications-by-country-transfer)
+* `account_type` *(except Argentina and Mexico)*
+* `account_agency_number` *(Brazil only, required)* – Numeric code of the bank branch, provided by the bank. **Use only the numbers before the hyphen** (e.g.: `"1234-5"` → send `"1234"`).
+* `aba_swift` *(optional, Brazil only)*
+* `payout_beneficiary_type_code` *(optional, Chile only. Values: `PERSON` (default), `COMPANY`)*
+
+**If the payout type is `PIX` (Brazil only):**
+
+* `recipient_pix_key` *(optional. If not specified, the CPF is used as the PIX key)*
+
+***
+
+### `document_identification_type` values by country[​](#document_identification_type-values-by-country "Direct link to document_identification_type-values-by-country")
+
+The `document_identification_type` field is included within `profile`, is **optional** and **can only be used for Colombia, Ecuador and Peru**. If not specified, `NATIONAL_IDENTITY_DOCUMENT` is used by default. For other countries, this field should not be sent.
+
+| Country | `document_identification_type` value | Equivalent document type     |
+| ------- | ------------------------------------ | ---------------------------- |
+| ARG     |                                      | DNI                          |
+| BR      |                                      | CPF                          |
+| CL      |                                      | RUT                          |
+| MX      |                                      | CURP                         |
+| COL     | `NATIONAL_IDENTITY_DOCUMENT`         | Citizenship card             |
+| COL     | `FOREIGN_IDENTIFICATION_DOCUMENT`    | Foreign document             |
+| ECU     | `NATIONAL_IDENTITY_DOCUMENT`         | DNI                          |
+| ECU     | `FISCAL_IDENTIFICATION_CODE`         | RUC                          |
+| ECU     | `VALID_PASSPORT`                     | Passport                     |
+| PER     | `NATIONAL_IDENTITY_DOCUMENT`         | DNI                          |
+| PER     | `FOREIGN_IDENTIFICATION_DOCUMENT`    | Foreign residency card       |
+| PER     | `FISCAL_IDENTIFICATION_CODE`         | RUC                          |
+| PER     | `VALID_PASSPORT`                     | Passport                     |
+
+***
+
+### `account_type` values by country (Transfer)[​](#account_type-values-by-country-transfer "Direct link to account_type-values-by-country-transfer")
+
+| account\_type  | BR | CO | CL | PE | EC | MX |
+| -------------- | -- | -- | -- | -- | -- | -- |
+| CHECKING       | ✓  | ✓  | ✓  | ✓  | ✓  |    |
+| SAVINGS        | ✓  | ✓  | ✓  | ✓  | ✓  |    |
+| RUT            |    |    | ✓  |    |    |    |
+| ACCOUNT\_CLABE |    |    |    |    |    | ✓  |
+| CARD\_NUMBER   |    |    |    |    |    | ✓  |
+
+> Argentina and Mexico do not require specifying `account_type`, a default internal value is applied:
+>
+> * Argentina: CBU or CVU
+> * Mexico: General type (ACCOUNT\_CLABE)
+
+***
+
+### Account specifications by country (Transfer)[​](#account-specifications-by-country-transfer "Direct link to account-specifications-by-country-transfer")
+
+#### Expected length / format[​](#expected-length--format "Direct link to Expected length / format")
+
+> **Data validation:** `^[0-9]+$` (only digits are allowed in `account`)
+
+| Country        | Expected length    | Additional comments                                                                         |
+| -------------- | ------------------ | ------------------------------------------------------------------------------------------- |
+| AR (Argentina) | 22                 | CBU or CVU                                                                                  |
+| BR (Brazil)    | 13                 | —                                                                                           |
+| CL (Chile)     | 16                 | —                                                                                           |
+| CO (Colombia)  | 16                 | —                                                                                           |
+| MX (Mexico)    | 16, 18             | General (ACCOUNT\_CLABE): 18 digits Debit card number (CARD\_NUMBER): 16 digits             |
+| EC (Ecuador)   | 12                 | —                                                                                           |
+| PE (Peru)      | 10, 13, 14, 18, 20 | Depends on the bank. [See details](#peru-account-details)                                   |
+
+##### Peru account details[​](#peru-account-details "Direct link to Peru account details")
+
+| Bank / Institution       | Expected length | Comments / Examples                                      |
+| ------------------------ | --------------- | -------------------------------------------------------- |
+| Banco de Crédito (BCP)   | 13 / 14         | 13 = checking/master. 14 = savings                       |
+| Interbank                | 13              | —                                                        |
+| Banco Continental (BBVA) | 18 / 20         | E.g.: 18: `001106660100012345` 20: `00110666010001234512` |
+| Scotiabank               | 10              | 3 branch digits + 7 account. E.g.: `0037651234`          |
+| Other banks / FIs        | 20              | CCI required. E.g.: `00219400254640654321`               |
+
+***
+
+### PIX key format (`recipient_pix_key`)[​](#pix-key-format-recipient_pix_key "Direct link to pix-key-format-recipient_pix_key")
+
+| Key type | Regex format                                                   | Example                                |
+| -------- | -------------------------------------------------------------- | -------------------------------------- |
+| CPF      | `^[0-9]{11}$`                                                  | `12345678901`                          |
+| Phone    | `^+[1-9][0-9]\d{1,14}$`                                        | `+5510998765432`                       |
+| Email    | `^[a-z0-9.!#$&'*+/=?^_{}~-]+@[a-z0-9.-]+$`                     | `pix@bcb.gov.br`                       |
+| Random   | `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` | `123e4567-e89b-12d3-a456-426655440000` |
+
+> Note: If the `recipient_pix_key` field is not explicitly provided within `extra_data.payment`, the value of the `document_identification_number` field will automatically be used as the PIX key, as long as it represents a valid CPF, simplifying integration in the most common cases.
+
+***
+
+### `extra_data` examples for Transfer payouts[​](#extra_data-examples-for-transfer-payouts "Direct link to extra_data-examples-for-transfer-payouts")
+
+#### Ecuador[​](#ecuador "Direct link to Ecuador")
+
+```
+"extra_data": {  "profile": {    "first_name": "John",    "last_name": "Doe",    "email": "jon.doe@test.com",    "document_identification_number": "00113562600",    "document_identification_type": "NATIONAL_IDENTITY_DOCUMENT",    "phone": {      "number": "572222222222"    }  },  "billing_address": {    "city": "Quito",    "country": "ECU",    "address1": "Portete E19-151",    "address2": null,    "address3": null,    "zip_code": "",    "state_code": ""  },  "payment": {    "bank_name": "0001",    "account": "123123123124",    "account_type": "CHECKING"  }}
+```
+
+#### Brazil[​](#brazil "Direct link to Brazil")
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "john.doe@test.com",        "document_identification_number": "00113562600",        "phone": {            "number": "5511999999999"        }     },    "billing_address": {    "city": "Sao Paulo",    "country": "BRA",    "address1": "R. Sao Joaquim, 596",    "address2": null,    "address3": null,    "zip_code": "",    "state_code": ""},    "payment": {        "bank_name": "341",        "account": "0001",        "account_type": "CHECKING",        "account_agency_number": "8585",        "aba_swift": "ERDSAD"    }}
+```
+
+***
+
+### Sandbox environment testing[​](#sandbox-environment-testing "Direct link to Sandbox environment testing")
+
+In the sandbox environment, you can simulate different payout results using the `amount` field value that you specify when [**generating the payment order**](/reference/#operation/generate-payment-order):
+
+* **Any value other than `666`** simulates a **successful payout**.
+* The value **`666`** simulates a **rejected payout**.
+
+***
+
+## Payout limits[​](#payout-limits "Direct link to Payout limits")
+
+This table shows the limits by merchant type, user and country:
+
+| Country  | Daily limit    | Weekly limit      | Monthly limit  | Annual limit   | Per transaction limit |
+| -------- | -------------- | ----------------- | -------------- | -------------- | --------------------- |
+| Brazil   | 10,000 USD     | 70,000 BRL        | 150,000.00 BRL | None           | None                  |
+| Mexico   | 5,000 USD      | None              | 20,000 USD     | None           | None                  |
+| Chile    | 5,000 USD      | None              | 20,000 USD     | None           | None                  |
+| Colombia | 5,000 USD      | None              | 20,000 USD     | None           | 10,000,000 COP        |
+| Peru     | 3,500 USD      | None              | 7,000 USD      | 84,000 USD     | None                  |
+| Ecuador  | 3,500 USD      | None              | 7,000 USD      | 84,000 USD     | None                  |
+
+***
+
+## Bank codes by country[​](#bank-codes-by-country "Direct link to Bank codes by country")
+
+You can check the valid values for the `payment.bank_name` field for each country in the following section. This value will consist of a numeric code.
+
+### Brazil[​](#brazil-1 "Direct link to Brazil")
+
+> You can check the complete list of banks at [conta-corrente.com](https://www.conta-corrente.com)
+
+| Code   | Bank                                      |
+| ------ | ----------------------------------------- |
+| 001    | Banco do Brasil S.A.                      |
+| 341    | Banco Itaú S.A.                           |
+| 033    | Banco Santander (Brasil) S.A.             |
+| 237    | Banco Bradesco S.A. / Next                |
+| 104    | Caixa Econômica Federal                   |
+| 422    | Banco Safra S.A.                          |
+| 748    | Banco Cooperativo Sicredi S.A.            |
+| 041    | Banco do Estado do Rio Grande do Sul S.A. |
+| 208    | BANCO BTG PACTUAL S.A.                    |
+| 655    | Neon Pagamentos                           |
+| 077    | Banco Inter S.A.                          |
+| 121    | Banco Agibank S.A.                        |
+| 212    | Banco Original S.A                        |
+| 260    | Nubank                                    |
+| 336    | Banco C6 S.A.                             |
+| 413    | Banco BV (Before Banco Votorantim)        |
+
+### Chile[​](#chile "Direct link to Chile")
+
+| Code   | Bank                                           |
+| ------ | ---------------------------------------------- |
+| 012    | Banco Del Estado De Chile                      |
+| 001    | Banco De Chile / Banco A. Edwards / Credichile |
+| 028    | Banco Bice                                     |
+| 051    | Banco Falabella                                |
+| 053    | Banco Ripley                                   |
+| 037    | Banco Santander – Santiago                     |
+| 049    | Banco Security                                 |
+| 014    | Scotiabank / Sud – Americano                   |
+| 016    | BCI / Tbanc                                    |
+
+### Mexico[​](#mexico "Direct link to Mexico")
+
+| Code   | Bank               |
+| ------ | ------------------ |
+| 40012  | BBVA Bancomer      |
+| 40021  | HSBC               |
+| 40014  | Santander          |
+| 40072  | Banorte            |
+| 40127  | Banco Azteca       |
+| 40137  | Bancoppel          |
+| 40131  | Banco Famsa        |
+| 40138  | ABC Capital        |
+| 40150  | Banco Inmobiliario |
+
+> For the complete list of banks in Mexico, see: [Banks in Mexico - PayRetailers](https://www.payretailers.dev/reference/payout-parameters#bank-name-2)
+
+### Colombia[​](#colombia "Direct link to Colombia")
+
+| Code   | Bank                  |
+| ------ | --------------------- |
+| 0001   | Banco de Bogotá       |
+| 0007   | Bancolombia           |
+| 0013   | BBVA Colombia         |
+| 0014   | Itaú                  |
+| 0019   | Banco Colpatria       |
+| 0023   | Banco de Occidente    |
+| 0051   | Banco Davivienda S.A. |
+| 0052   | Banco AV Villas       |
+| 0062   | Banco Falabella S.A.  |
+| 0070   | Lulo Bank             |
+| 0507   | Nequi                 |
+| 0801   | MOVii                 |
+
+### Ecuador[​](#ecuador-1 "Direct link to Ecuador")
+
+| Code   | Bank                      |
+| ------ | ------------------------- |
+| 0001   | Banco Amazonas            |
+| 0002   | Banco Bolivariano         |
+| 0004   | Banco Central del Ecuador |
+| 0010   | Banco de Guayaquil        |
+| 0011   | Banco de la Producción    |
+| 0016   | Banco del Pacífico        |
+| 0023   | Banco Pichincha           |
+| 0025   | Banco Promerica           |
+| 0026   | Banco Solidario           |
+
+### Peru[​](#peru "Direct link to Peru")
+
+| Code   | Bank               |
+| ------ | ------------------ |
+| 0001   | Interbank          |
+| 0002   | BBVA Perú          |
+| 0003   | BCP Perú           |
+| 0004   | Scotiabank Perú    |
+| 0006   | Banco Pichincha    |
+| 0007   | Mibanco            |
+| 0008   | Banco de la Nación |
+| 0010   | Banco Santander    |
+| 0012   | Banco Falabella    |
+| 0013   | Banco Ripley       |
+| 0014   | Banco GNB          |
+| 0015   | Banco Azteca       |
+| 0016   | Banco Cencosud     |
+| 0019   | Caja Arequipa      |
+| 0025   | Caja Piura         |
+| 0027   | Caja Tacna         |

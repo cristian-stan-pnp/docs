@@ -1,0 +1,189 @@
+---
+title: 'Canale'
+description: 'Configurarea canalelor în PROXY PCI de la Paylands'
+---
+
+<Info>
+  Canalele sunt configurate de echipa dumneavoastră de dezvoltatori utilizând [REST API](https://pci-proxy-api.paynopain.com/docs)-ul nostru.
+</Info>
+
+# Atribute
+
+Un canal este întotdeauna compus din următoarele atribute:
+
+| NUMELE CÂMPULUI  | VALORI DISPONIBILE                         | DESCRIERE                                                                                                                    |
+| ---------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| endpoint         |                                            | Endpoint-ul către sau de la care este transmis corpul cererii                                                                 |
+| action           | tokenize, detokenize                       | Specifică dacă datele cardului sunt mascate sau demascate.                                                                   |
+| direction        | pull, push                                 | Indică dacă corpul încărcăturii utile care trebuie procesat este trimis către canal sau este obținut de la canal.             |
+| contentType      | json,xml                                   | Formatul corpului încărcăturii utile din care trebuie extrase datele pentru procesul de tokenizare sau detokenizare.          |
+| encoding         | utf8, ascii, utf16le, ucs2, base64, latin1 | Codificarea corpului cererii                                                                                                 |
+| fieldMapping     |                                            | Indică proxy-ului PCI cum vor fi extrase datele din corp                                                                     |
+
+Un `fieldMapping` este compus din următoarele câmpuri:
+
+| NUME        | DESCRIERE                                                                                                                                                                                                                                          |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| referencia  | Opțional. Poate fi utilizat pentru a asocia datele cardului cu o referință din software-ul dumneavoastră. De exemplu, un identificator de rezervare.                                                                                                |
+| pan         | Numărul cardului sau token-ul cardului.                                                                                                                                                                                                            |
+| cardHolder  | Numele titularului cardului.                                                                                                                                                                                                                       |
+| expiry      | Data de expirare a cardului. Formatele valide sunt MM-YYYY, MM-YY, YYYY-MM, YY-MM, MM/YYYY, YYYY/MM, MM/YY, YY/MM, MMYY. Dacă data de expirare este împărțită în două câmpuri separate, utilizați în schimb expiryMonth și expiryYear.             |
+| expiryMonth | Se utilizează dacă data de expirare a cardului este împărțită în două câmpuri.                                                                                                                                                                     |
+| expiryYear  | Se utilizează dacă data de expirare a cardului este împărțită în două câmpuri.                                                                                                                                                                     |
+| cardCVV     | Numărul CVV al cardului                                                                                                                                                                                                                            |
+
+Maparea câmpurilor este specificată ca atribute XPATH sau JSONPATH în funcție de contentType-ul corpului. Pentru a înțelege mai bine aceste limbaje de interogare, vizitați resursele [XPATH](https://www.w3schools.com/xml/xml_xpath.asp) și [JSONPATH](https://goessner.net/articles/JsonPath/index.html#e2).
+
+<Info>
+  Pentru a testa expresiile dumneavoastră XPATH recomandăm acest [Instrument de testare XPATH online](https://www.freeformatter.com/xpath-tester.html). Pentru a testa expresiile dumneavoastră JSONPATH recomandăm acest [Instrument de testare JSONPATH online](https://jsonpath.com/).
+</Info>
+
+# Când să folosiți fiecare configurație de canal
+
+Principala diferență între configurațiile canalelor sunt câmpurile **direcție** și **acțiune**. Pentru a clarifica lucrurile, să analizăm câteva scenarii din lumea reală:
+
+## PUSH + TOKENIZARE[​](#push--tokenización "Enlace directo al PUSH + TOKENIZACIÓN")
+
+![PUSH + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_tokenization.png)
+
+Sunteți un PMS și un channel manager trimite rezervări noi către software-ul dumneavoastră de backend (de exemplu: SOAP API). Aceste rezervări includ date sensibile ale cardurilor de plată pe care nu doriți să le stocați direct în baza de date, ci să le delegați către seiful securizat PCI al PROXY-ului.
+
+În acest caz ar trebui să creați un channel de tip **PUSH + TOKENIZATION**. În câmpul *endpoint* veți adăuga punctul de intrare al API-ului SOAP (de exemplu: `http://somehost.com/xmlsoapinterface`).
+
+Odată ce ați creat channel-ul utilizând API-ul REST al PROXY PCI, puteți actualiza configurația channel manager-ului și înlocui endpoint-ul dumneavoastră cu endpoint-ul de invocare al channel-ului proxy pci (de ex: `https://pci-proxy-api.paynopain.com/production/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke`).
+
+În acest mod, channel manager-ul va invoca PROXY PCI, care își va face magia și în final va redirecționa rezervările către endpoint-ul dumneavoastră configurat, înlocuind toate PAN-urile cardului cu o versiune token a acestora. Acest token poate fi stocat de dumneavoastră și utilizat pentru a emite o plată sau redirecționat către un alt terț.
+
+## PULL + TOKENIZARE[​](#pull--tokenización "Enlace directo al PULL + TOKENIZACIÓN")
+
+![PULL + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_tokenization.png)
+
+Sunteți un PMS, dar încă aveți nevoie de rezervările de la un channel manager. Însă în acest caz channel manager-ul nu vă trimite datele. Dumneavoastră sunteți cel care inițiază o solicitare către channel manager și apoi channel manager-ul răspunde cu ultimele rezervări.
+
+În acest caz aveți nevoie de un channel de tip **PULL + TOKENIZATION** unde atributul endpoint al channel-ului este endpoint-ul API al channel manager-ului. Puteți apoi să inițiați solicitarea către endpoint-ul de invocare al channel-ului, apoi PROXY PCI va obține noile rezervări de la endpoint-ul API al channel manager-ului, își va face magia și va răspunde cu noile rezervări.
+
+<Info>
+  Metoda de invocare a canalului PROXY PCI redirecționează toate QUERY și HTTP HEADERS către endpoint-ul configurat.
+</Info>
+
+## PUSH + DETOKENIZATION[​](#push--detokenization "Enlace directo al PUSH + DETOKENIZATION")
+
+![PUSH + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_detokenization.png)
+
+În acest caz dorim să trimitem datele PAN ale cardului colectate către un PAYMENT GATEWAY terț pentru a procesa plata. PAYMENT GATEWAY-ul oferă un endpoint pentru aceasta, unde trebuie trimise datele cardului în formatul JSON specificat de acesta. În acest scenariu vom avea nevoie de un channel de tip **PUSH + DETOKENIZATION**. Endpoint-ul channel-ului va fi endpoint-ul API al PAYMENT GATEWAY-ului. Veți trimite detaliile cardului, cu excepția PAN-ului, către endpoint-ul de invocare al channel-ului PROXY PCI, iar PROXY PCI va înlocui token-ul cardului cu PAN-ul real al cardului.
+
+## PULL + DETOKENIZATION[​](#pull--detokenization "Enlace directo al PULL + DETOKENIZATION")
+
+![PULL + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_detokenization.png)
+
+În acest caz de utilizare final, sunteți un channel manager și ați colectat detaliile cardului unui viitor oaspete utilizând biblioteca JavaScript de pe partea clientului. Așadar, acum un sistem PMS compatibil PCI dorește să descarce detaliile complete ale cardului de la channel manager-ul dumneavoastră. În acest caz, pur și simplu ați configura un channel de tip **PULL + DETOKENIZATION**. În atributul endpoint veți specifica endpoint-ul dumneavoastră API și veți furniza endpoint-ul de invocare PROXY PCI rezultat sistemului PMS, care va iniția solicitarea. Noi vom redirecționa solicitarea către API-ul dumneavoastră, iar dumneavoastră veți răspunde cu rezervarea. Vom înlocui token-ul cardului cu PAN-ul real și vom răspunde PMS-ului.
+
+<Warning>
+  Când se utilizează acțiunea DETOKENIZATION, PROXY PCI va înlocui doar token-ul și CVV-ul cardului cu valorile lor reale. Toate celelalte câmpuri trebuie furnizate în payload așa cum sunt. Puteți stoca în siguranță data de expirare și titularul cardului de unul singur.
+
+  CVV-ul va fi înlocuit doar dacă există în sistemul Paylands. Adică, dacă cardul a fost utilizat într-o plată sau dacă detaliile sale au fost consultate (inclusiv CVV-ul), CVV-ul a fost consumat și, conform cerințelor PCI, acesta este eliminat din sistem și, prin urmare, nu va fi înlocuit în payload-ul de intrare.
+</Warning>
+
+# Exemple
+
+Pentru o mai bună înțelegere, am pregătit câteva canale pe care le puteți invoca. Există un endpoint de tokenizare JSON PUSH și un exemplu de detokenizare XML PUSH pe care le puteți testa.
+
+## Exemplu JSON[​](#ejemplo-json "Enlace directo al Ejemplo JSON")
+
+Exemplu JSON
+
+```
+{  "bookings": [    {      "id": "BK-213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4442330588722461",          "cvv": "123",          "expiry": "12/21",          "holder": "John Doe"        }      }    },    {      "id": "BK-3213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4701731341611394",          "expiry": "06-2025",          "holder": "Patma Patill"        }      }    }  ]}
+```
+
+## MAPAREA CÂMPURILOR[​](#mapeo-de-campos "Enlace directo al MAPEO DE CAMPOS")
+
+| NUMELE CÂMPULUI  | VALOARE                                   |
+| ---------------- | ----------------------------------------- |
+| reference        | $.bookings\[\*].id                        |
+| cardHolder       | $.bookings\[\*].payment\_data.card.holder |
+| expiry           | $.bookings\[\*].payment\_data.card.expiry |
+| pan              | $.bookings\[\*].payment\_data.card.pan    |
+| cardCVV          | $.bookings\[\*].payment\_data.card.cvv    |
+
+## EXEMPLU DE CANAL ÎN FUNCȚIONARE[​](#ejemplo-de-canal-en-funcionamiento "Enlace directo al EJEMPLO DE CANAL EN FUNCIONAMIENTO")
+
+Am configurat un canal cu exact această mapare a câmpurilor. Aceasta este configurația exactă a canalului:
+
+```
+{  "action": "tokenize",  "direction": "push",  "endpoint": "https://pciproxypnp.free.beeceptor.com/push/json/tokenize",  "contentType": "json",  "fieldMapping": {    "reference": "$.bookings[*].id",    "cardHolder": "$.bookings[*].payment_data.card.holder",    "expiry": "$.bookings[*].payment_data.card.expiry",    "pan": "$.bookings[*].payment_data.card.pan",    "cardCVV": "$.bookings[*].payment_data.card.cvv"  },  "encoding": "utf8"}
+```
+
+Aceasta înseamnă că, dacă este invocat, corpul (*body*) transmis va fi analizat și câmpurile mapate vor fi extrase și salvate. Apoi, PAN-ul este înlocuit cu o versiune token a acestuia. În cele din urmă, noul *body* este redirecționat către endpoint-ul furnizat, incluzând toate anteturile și parametrii de interogare originali care au fost trimiși către endpoint-ul channel-ului.
+
+Accesați [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) și lăsați pagina deschisă. Apoi, executați următoarea comandă `curl`:
+
+```
+curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke \-H 'Content-Type: application/json' \-H 'SomeCustomHeader: SayHello!' \--data '{"bookings":[{"id":"BK-213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4442330588722461","cvv":"222","expiry":"12/28","holder":"John Doe"}}},{"id":"BK-3213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4701731341611394","cvv":"333", "expiry":"06-2025","holder":"Patma Patill"}}}]}'
+```
+
+După executarea comenzii, ar trebui să vedeți cererea în consola beeceptor. Nu ezitați să inspectați corpul primit și să verificați câmpul pan al obiectului card.
+
+## Exemplu XML[​](#ejemplo-de-xml "Enlace directo al Ejemplo de XML")
+
+Exemplu XML
+
+```
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05">    <SOAP-ENV:Header>        <wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1">            <wsse:UsernameToken>                <wsse:Username>::someUsername</wsse:Username>                <wsse:Password>::somePassword::</wsse:Password>            </wsse:UsernameToken>        </wsse:Security>    </SOAP-ENV:Header>    <SOAP-ENV:Body>        <ota:OTA_HotelResNotifRQ>            <ota:HotelReservations>                <ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit">                    <ota:UniqueID ID="M5304934-86503" Type="14"/>                    <ota:ResGlobalInfo>                        <ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/>                        <ota:Guarantee>                            <ota:GuaranteesAccepted>                                <ota:GuaranteeAccepted>                                    <ota:PaymentCard CardCode="335" CardCVV="123" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022">                                        <ota:CardHolderName>John Doe</ota:CardHolderName>                                    </ota:PaymentCard>                                </ota:GuaranteeAccepted>                            </ota:GuaranteesAccepted>                        </ota:Guarantee>                    </ota:ResGlobalInfo>                </ota:HotelReservation>            </ota:HotelReservations>        </ota:OTA_HotelResNotifRQ>    </SOAP-ENV:Body></SOAP-ENV:Envelope>
+```
+
+<Info>
+  Acest payload a fost parțial extras din channel manager-ul [Siteminder](https://www.siteminder.com/).
+</Info>
+
+### Namespaces[​](#namespaces "Enlace directo al Namespaces")
+
+<Warning>
+  Înțelegerea modului în care funcționează xpath și namespaces este crucială pentru maparea câmpurilor XML.
+</Warning>
+
+**Spații de nume cu prefix**
+
+Un spațiu de nume este compus dintr-un nume și o specificație URI. Domeniul de aplicare al corespondenței prefix-spațiu de nume este cel al elementului în care apare declarația spațiului de nume, precum și cel al tuturor copiilor săi.
+
+```
+<bk:bookstore xmlns:bk="urn:xmlns:25hoursaday-com:bookstore"> <bk:book>    <bk:title>Lord of the Rings</bk:title>    <bk:author>J.R.R. Tolkien</bk:author>    <inv:inventory status="in-stock" isbn="0345340426"        xmlns:inv="urn:xmlns:25hoursaday-com:inventory-tracking" /> </bk:book></bk:bookstore>
+```
+
+Exemplu: `//bk:author`
+
+**Spații de nume nedeclarate**
+
+Dacă un element are spațiul de nume gol (xmlns=""), atunci acesta este un spațiu de nume nedeclarat și orice element copil fără un prefix de spațiu de nume este asociat cu acel spațiu de nume nedeclarat.
+
+```
+<bookstore xmlns="urn:xmlns:25hoursaday-com:bookstore"> <book xmlns="">    <title>Lord of the Rings</title>    <author>J.R.R. Tolkien</author>    <inv:inventory status="in-stock" isbn="0345340426"        xmlns:inv="urn:xmlns:25hoursaday-com:inventory-tracking" /> </book></bookstore>
+```
+
+Exemplu: `//title`
+
+### Maparea câmpurilor[​](#mapeo-de-campos-1 "Enlace directo al Mapeo de campos")
+
+| NUMELE CÂMPULUI  | VALOARE                       |
+| ---------------- | ----------------------------- |
+| referencia       | //ota:UniqueID/@ID            |
+| cardHolder       | //ota:CardHolderName          |
+| caducidad        | //ota:PaymentCard/@ExpireDate |
+| pan              | //ota:PaymentCard/@CardNumber |
+| cardCVV          | //ota:PaymentCard/@CardCVV    |
+
+Am configurat un canal cu exact această mapare a câmpurilor. Aceasta este configurația exactă a canalului:
+
+```
+{    "action": "detokenize",    "direction": "push",    "endpoint": "https://pciproxypnp.free.beeceptor.com/push/xml/detokenize",    "contentType": "xml",    "fieldMapping": {        "reference": "//ota:UniqueID/@ID",        "cardHolder": "//ota:CardHolderName",        "expiry": "//ota:PaymentCard/@ExpireDate",        "pan": "//ota:PaymentCard/@CardNumber",        "cardCVV": "//ota:PaymentCard/@CardCVV"    },    "encoding": "utf8"}
+```
+
+Aceasta înseamnă că, dacă este invocat, corpul transmis va fi analizat și câmpurile mapate vor fi extrase și salvate. Apoi, PAN-ul este înlocuit cu o versiune token a acestuia. În cele din urmă, noul corp este redirecționat către endpoint-ul furnizat, incluzând toate anteturile și parametrii de interogare originali care au fost trimiși către endpoint-ul channel-ului.
+
+Accesați [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) și lăsați pagina deschisă. Apoi, executați următoarea comandă curl:
+
+```
+curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/da3e2c5b-8e3d-44f3-a56e-0491b949d7f7/invoke \-H 'Content-Type: application/xml' \-H 'SomeCustomHeader: SayHello!' \--data '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05"><SOAP-ENV:Header><wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1"><wsse:UsernameToken><wsse:Username>::someUsername</wsse:Username><wsse:Password>::somePassword::</wsse:Password></wsse:UsernameToken></wsse:Security></SOAP-ENV:Header><SOAP-ENV:Body><ota:OTA_HotelResNotifRQ><ota:HotelReservations><ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit"><ota:UniqueID ID="M5304934-86503" Type="14"/><ota:ResGlobalInfo><ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/><ota:Guarantee><ota:GuaranteesAccepted><ota:GuaranteeAccepted><ota:PaymentCard CardCode="335" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022"><ota:CardHolderName>John Doe</ota:CardHolderName></ota:PaymentCard></ota:GuaranteeAccepted></ota:GuaranteesAccepted></ota:Guarantee></ota:ResGlobalInfo></ota:HotelReservation></ota:HotelReservations></ota:OTA_HotelResNotifRQ></SOAP-ENV:Body></SOAP-ENV:Envelope>'
+```
+
+După executarea comenzii, ar trebui să vedeți solicitarea în consola beeceptor. Nu ezitați să inspectați corpul primit și să verificați câmpul pan al obiectului card.

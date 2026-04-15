@@ -1,0 +1,12 @@
+---
+title: 'Pagamentos com PROXY PCI'
+description: 'Como processar pagamentos através do PROXY PCI do Paylands'
+---
+
+Para emitir uma cobrança a um cartão guardado, primeiro tem de gerar uma ordem de pagamento. Isto é feito utilizando [o método de geração de ordens](https://docs.paylands.com/reference/#operation/generate-payment-order). Tem de utilizar o token do cartão obtido durante o processo de tokenização e enviá-lo como valor do campo `source_uuid`. Depois disso, pode [redirecionar o utilizador para um formulário de pagamento](https://docs.paylands.com/reference/#operation/redirection-payment) ou [utilizar o serviço web diretamente](https://docs.paylands.com/reference/#operation/webservice-payment).
+
+<Info>
+  Por favor, consulte a documentação completa do PAYMENT GATEWAY: [https://docs.paylands.com](https://docs.paylands.com)
+</Info>
+
+Para mais informações e preços, contacte [soporte@paylands.com](mailto:soporte@paylands.com).
