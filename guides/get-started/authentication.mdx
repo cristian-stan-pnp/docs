@@ -14,7 +14,7 @@ Puedes encontrar tu API Key de comercio en tu panel del Backend de Paylands. Pul
 ## Método de Autenticación
 La autenticación de la API se realiza mediante **HTTP Basic Auth**. Provee tu API Key como valor para el campo username (nombre de usuario). No es necesario proveer valor para el campo password (contraseña). Si se establece la cabecera Basic Auth manualmente (como por ejemplo, al hacer una prueba con curl), la API Key debe ir codificada en base64. Si se usa Postman, Insomnia o cualquier otra aplicación similar, estas ya la codifican en base64 automáticamente al enviar la petición.
 
-Si necesitas autenticar via **Bearer authentication** (como por ejemplo, para una petición cross-origin), usa el modificador `-H "Authorization: Bearer <API Key>"` en lugar de `-u <API Key>:`.
+Si necesitas autenticar vía **Bearer authentication** (como por ejemplo, para una petición cross-origin), usa el modificador `-H "Authorization: Bearer <API Key>"` en lugar de `-u <API Key>:`.
 
 Por ejemplo, si tu API Key es `5d66a96f460f4109b24c2243fb1c43e1`, las siguientes cabeceras serán válidas:
 
