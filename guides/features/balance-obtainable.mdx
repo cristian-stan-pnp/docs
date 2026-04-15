@@ -7,9 +7,9 @@ description: 'Cómo consultar el balance disponible en Paylands'
 
 Para consultar el saldo disponible en cuenta desde el panel, tenemos que acceder al cliente, detalle y saldo de cuentas. ![Listado de saldos](/images/docs/guides/assets/images/balance-a7447b22537df99f591154a00012e40c.png)
 
-## Api
+## API
 
-Vía api tendremos que lanzar una petición al siguiente endpoint:
+Vía API tendremos que lanzar una petición al siguiente endpoint:
 
 ```
 curl --request GET 'https://api.paylands.com/v1/sandbox/balance/{client_uuid}' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \
