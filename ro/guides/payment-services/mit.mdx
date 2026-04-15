@@ -1,0 +1,53 @@
+---
+title: 'MIT'
+description: 'Configurarea și integrarea serviciului de plată MIT în Paylands'
+---
+
+## Monedă
+
+Moneda suportată pentru acest serviciu este peso-ul mexican.
+
+## Carduri pentru mediul de test
+
+Pentru a efectua operațiuni cu și fără 3DS, trebuie furnizate următoarele date:
+
+```
+- număr card: 4111 1111 1111 1111
+- CVV: 123
+- data de expirare: 12-34
+```
+
+După introducerea datelor cardului, procesul va solicita codul de securitate și trebuie introdus valoarea 555. Ambele fluxuri ar trebui să fie reușite.
+
+## Coduri de eroare
+
+Structura mesajului de eroare poate avea următoarele formate:
+
+```
+Cod: Mesaj
+```
+
+| Cod | Mesaj                                                                                                              |
+| --- | ------------------------------------------------------------------------------------------------------------------ |
+| 01  | Documentul XML nu respectă schema definită                                                                         |
+| 02  | Documentul XML nu respectă restricțiile                                                                            |
+| 03  | Datele companiei, sucursalei sau utilizatorului sunt incorecte                                                      |
+| 04  | Număr de card invalid                                                                                              |
+| 05  | Erori multiple cu configurarea sucursalei                                                                          |
+| 06  | Eroare de validare a cardului (VISA, MASTERCARD sau AMEX)                                                          |
+| 07  | Nu se poate percepe în rate cu această bancă, sau banca nu corespunde cu banca cardului                             |
+| 08  | Suma minimă furnizată este mai mică decât suma definită pentru afiliere                                            |
+| 09  | Suma furnizată nu poate fi percepută de acest utilizator                                                           |
+| 10  | Data tranzacției este în afara intervalului de date al afilierii necesare                                           |
+| 11  | Suma furnizată nu poate fi percepută de această afiliere, motiv tranzacție aprobată sau respinsă                   |
+| 12  | Cardul nu poate fi procesat cu această afiliere                                                                    |
+| 13  | Cod de securitate CVV incorect                                                                                     |
+| 14  | Referință invalidă, această operațiune poate fi efectuată doar de utilizator în aceeași zi                          |
+| 15  | Datele companiei sunt incorecte                                                                                    |
+| 16  | Datele sumei sunt incorecte                                                                                        |
+| 17  | Numărul de autorizare nu se potrivește, suma 0.0 nu este validă                                                   |
+| 18  | Tranzacția originală nu a fost aprobată                                                                            |
+| 19  | American Express nu poate efectua rambursări                                                                       |
+| 20  | Operațiunea a fost deja efectuată în ziua dd / mm / yyyy                                                           |
+| 21  | Cod de utilizator incorect                                                                                         |
+| 22  | Nu aveți permisiuni pentru a efectua acea operațiune                                                               |

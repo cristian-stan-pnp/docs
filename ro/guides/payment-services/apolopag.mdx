@@ -1,0 +1,68 @@
+---
+title: 'Apolopag'
+description: 'Configurarea și integrarea serviciului de plată Apolopag în Paylands'
+---
+
+## Introducere
+
+Apolopag este un serviciu care permite efectuarea plăților cu cardul sau prin metodele de plată alternative PIX și PicPay. De asemenea, permite PIX Payouts. Poate fi utilizat atât în checkout-ul Paylands, cât și prin redirecționare, precum și cu plăți push.
+
+## Date suplimentare obligatorii
+
+Apolopag necesită trimiterea obligatorie a următoarelor informații în câmpul `extra_data` la crearea comenzii, pentru plăți cu cardul sau plăți PUSH cu PIX și PicPay:
+
+* Nume și prenume
+* Email
+* Document de identificare (CPF)
+* Telefon
+* Data nașterii (opțional pentru plăți cu cardul)
+
+Aceste câmpuri pot fi furnizate cu următoarea structură în `extra_data`:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "659.516.937-13",        "birthdate": "1996-01-01",        "phone": {            "number": "5151428089"        }     }}
+```
+
+## Payouts
+
+Pentru a utiliza PIX Payouts cu Apolopag este necesar să trimiteți următoarele informații în `extra_data`:
+
+* Nume și prenume
+* Document de identificare (CPF)
+* Telefon
+* Cod bancă
+* Număr sucursală bancară
+* Număr cont
+* Tip cont (current/saving/salary/payment)
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "document_identification_number": "842.359.516-10"     },    "payment": {        "bank_code": "218",        "branch": "0944",        "account": "091234-5",        "account_type": "current"    }}
+```
+
+## Metode de plată în Sandbox
+
+Cardul de test este următorul. În general, data de expirare și CVV-ul nu contează atâta timp cât data este ulterioară datei curente, iar CVV-ul are 3 cifre.
+
+```
+- număr card: 4111 1111 1111 1111
+- CVV: 123
+- data de expirare: 12/34
+```
+
+## Monedă
+
+Moneda suportată pentru acest serviciu este realul brazilian (BRL).
+
+## Coduri de eroare
+
+Structura erorii are următorul format:
+
+```
+Cod - Mesaj
+```
+
+De exemplu:
+
+```
+400 - first and last name are required
+```

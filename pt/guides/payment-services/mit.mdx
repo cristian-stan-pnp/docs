@@ -1,0 +1,53 @@
+---
+title: 'MIT'
+description: 'Configuração e integração do serviço de pagamento MIT no Paylands'
+---
+
+## Moeda
+
+A moeda suportada para este serviço é o peso mexicano.
+
+## Cartões para ambiente de teste
+
+Para realizar operações com e sem 3DS, devem ser fornecidos os seguintes dados:
+
+```
+- número do cartão: 4111 1111 1111 1111
+- CVV: 123
+- data de validade: 12-34
+```
+
+Após inserir os dados do cartão, o processo solicitará o código de segurança e deverá ser inserido o valor 555. Ambos os fluxos devem ser bem-sucedidos.
+
+## Códigos de erro
+
+A estrutura da mensagem de erro pode ter os seguintes formatos:
+
+```
+Código: Mensagem
+```
+
+| Código | Mensagem                                                                                                          |
+| ------ | ----------------------------------------------------------------------------------------------------------------- |
+| 01     | O documento XML não cumpre com o esquema definido                                                                 |
+| 02     | O documento XML não cumpre com as restrições                                                                      |
+| 03     | Os dados da empresa, sucursal ou usuário estão incorretos                                                         |
+| 04     | Número de cartão inválido                                                                                         |
+| 05     | Múltiplos erros com a configuração da sucursal                                                                    |
+| 06     | Erro de validação do cartão (VISA, MASTERCARD ou AMEX)                                                            |
+| 07     | Não é possível cobrar em parcelas com este banco, ou o banco não corresponde ao banco do cartão                   |
+| 08     | O valor mínimo fornecido é menor que o valor definido para a afiliação                                            |
+| 09     | O valor fornecido não pode ser cobrado por este usuário                                                           |
+| 10     | A data da transação está fora do período da afiliação requerida                                                   |
+| 11     | O valor fornecido não pode ser cobrado por esta afiliação, motivo de transação aprovada ou recusada               |
+| 12     | O cartão não pode ser processado com esta afiliação                                                               |
+| 13     | Código de segurança CVV incorreto                                                                                 |
+| 14     | Referência inválida, esta operação só pode ser realizada pelo usuário no mesmo dia                                |
+| 15     | Os dados da empresa estão incorretos                                                                              |
+| 16     | Os dados do valor estão incorretos                                                                                |
+| 17     | O número de autorização não coincide, valor 0.0 não é válido                                                      |
+| 18     | A transação original não foi aprovada                                                                             |
+| 19     | American Express não pode realizar devoluções                                                                     |
+| 20     | A operação já foi realizada no dia dd / mm / yyyy                                                                 |
+| 21     | Código de usuário incorreto                                                                                       |
+| 22     | Não tem permissões para realizar essa operação                                                                    |

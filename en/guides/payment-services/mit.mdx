@@ -1,0 +1,53 @@
+---
+title: 'MIT'
+description: 'Configuration and integration of the MIT payment service in Paylands'
+---
+
+## Currency
+
+The supported currency for this service is Mexican pesos.
+
+## Test cards for sandbox environment
+
+To perform operations with and without 3DS, the following data must be provided:
+
+```
+- card number: 4111 1111 1111 1111
+- CVV: 123
+- expiration date: 12-34
+```
+
+After entering the card data, the process will request a security code and you must enter the value 555. Both flows should be successful.
+
+## Error codes
+
+The error message structure can have the following formats:
+
+```
+Code: Message
+```
+
+| Code | Message                                                                                                        |
+| ---- | -------------------------------------------------------------------------------------------------------------- |
+| 01   | The XML document does not comply with the defined schema                                                       |
+| 02   | The XML document does not comply with the restrictions                                                         |
+| 03   | The company, branch, or user data is incorrect                                                                 |
+| 04   | Invalid card number                                                                                            |
+| 05   | Multiple errors with branch configuration                                                                      |
+| 06   | Card validation error (VISA, MASTERCARD, or AMEX)                                                              |
+| 07   | Cannot charge in installments with this bank, or the bank does not match the card's bank                       |
+| 08   | The minimum amount provided is less than the amount defined for the affiliation                                |
+| 09   | The amount provided cannot be charged by this user                                                             |
+| 10   | The transaction date is outside the required affiliation date range                                            |
+| 11   | The amount provided cannot be charged by this affiliation, reason for approved or declined transaction         |
+| 12   | The card cannot be processed with this affiliation                                                             |
+| 13   | Incorrect CVV security code                                                                                    |
+| 14   | Invalid reference, this operation can only be performed by the user on the same day                            |
+| 15   | The company data is incorrect                                                                                  |
+| 16   | The amount data is incorrect                                                                                   |
+| 17   | The authorization number does not match, amount 0.0 is not valid                                               |
+| 18   | The original transaction was not approved                                                                      |
+| 19   | American Express cannot process refunds                                                                        |
+| 20   | The operation has already been performed on dd / mm / yyyy                                                     |
+| 21   | Incorrect user code                                                                                            |
+| 22   | You do not have permissions to perform that operation                                                           |
