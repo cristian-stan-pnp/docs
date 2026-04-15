@@ -24,12 +24,12 @@ The `dynamic_descriptor` field is optional and, if provided, must comply with a 
 
 Credorax can return up to two different error codes, one from the processor and another from the scheme (VISA, MC...).
 
-### Processor errors[​](#errores-de-la-procesadora "Direct link to Processor errors")
+### Processor errors[​](#processor-errors "Direct link to Processor errors")
 
 The error structure has the following form:
 
 ```
-Código procesadora Mensaje procesadora
+Processor code Processor message
 ```
 
 For example:
@@ -85,7 +85,7 @@ For example:
 If the operation was attempted but an error occurred, the error has the following structure:
 
 ```
-Código procesadora Mensaje procesadora [Código esquema Mensaje esquema]
+Processor code Processor message [Scheme code Scheme message]
 ```
 
 For example:
