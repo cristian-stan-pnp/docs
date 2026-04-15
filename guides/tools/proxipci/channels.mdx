@@ -18,7 +18,7 @@ Un canal siempre consta de los siguientes atributos:
 | direction        | pull, push                                 | Indica si el cuerpo de la carga útil que debe procesarse se envía al canal o se obtiene del canal.                       |
 | contentType      | json,xml                                   | Formato del cuerpo de la carga útil del que hay que extraer los datos para el proceso de tokenización o destokenización. |
 | encoding         | utf8, ascii, utf16le, ucs2, base64, latin1 | Codificación del cuerpo de la petición                                                                                   |
-| fieldMapping     |                                            | Indica al proxy PCI cómo se van a extraer los datos del cuerpo                                                           |
+| fieldMapping     |                                            | Indica al proxy PCI cómo se van a extraer los datos del cuerpo.                                                          |
 
 Un `fieldMapping` consta de los siguientes campos:
 
@@ -30,7 +30,7 @@ Un `fieldMapping` consta de los siguientes campos:
 | expiry      | Fecha de caducidad de la tarjeta. Los formatos válidos son MM-YYYY, MM-YY, YYYY-MM, YY-MM, MM/YYYY, YYYY/MM, MM/YY, YY/MM, MMYY. Si la fecha de caducidad está dividida en dos campos separados, utilice en su lugar expiryMonth y expiryYear. |
 | expiryMonth | Se utiliza si la fecha de caducidad de la tarjeta está dividida en dos campos.                                                                                                                                                                 |
 | expiryYear  | Se utiliza si la fecha de caducidad de la tarjeta está dividida en dos campos.                                                                                                                                                                 |
-| cardCVV     | Número CVV de la tarjeta                                                                                                                                                                                                                       |
+| cardCVV     | Número CVV de la tarjeta.                                                                                                                                                                                                                      |
 
 El mapeo de campos se especifica como atributos XPATH o JSONPATH dependiendo del contentType del cuerpo. Para comprender mejor estos lenguajes de consulta, visite los recursos [XPATH](https://www.w3schools.com/xml/xml_xpath.asp) y [JSONPATH](https://goessner.net/articles/JsonPath/index.html#e2).
 
