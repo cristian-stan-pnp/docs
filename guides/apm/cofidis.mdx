@@ -13,7 +13,7 @@ El proceso de integración es [**similar al de la carta de pago por redirección
 /payment/process/{token}
 ```
 
-Cofidis espera recibir un email obligatoriamente en el campo extra\_data al crear la orden:
+Cofidis espera recibir un email obligatoriamente en el campo `extra_data` al crear la orden:
 
 ```json
 "extra_data": {
@@ -75,7 +75,7 @@ Al pulsar el botón, el usuario será redirigido a la pasarela de Cofidis.
 
 Una vez se ha redirigido al usuario a la página de Cofidis, necesitará introducir su información personal y, en el caso de Cofidis Pay, seleccionar el número de plazos deseado.
 
-Una vez completado el formulario, Cofidis determinará si aprueba o rechaza la financiación siendo el usuario redirigido a la URL OK/KO de vuelta, dependiendo del resultado.
+Una vez completado el formulario, Cofidis determinará si aprueba o rechaza la financiación, siendo el usuario redirigido a la URL OK/KO de vuelta, dependiendo del resultado.
 
 ### 4. Se notifica al servidor
 
@@ -87,7 +87,7 @@ Una vez completado el proceso de pago, se recibirá la notificación POST, que s
 
 ## Testing
 
-Para realizar pruebas en el entorno sandbox y forzar que la operación sea OK/KO hay que tener en cuenta cuál es el producto de COFIDIS que estamos empleando.
+Para realizar pruebas en el entorno sandbox y forzar que la operación sea OK/KO, hay que tener en cuenta cuál es el producto de COFIDIS que estamos empleando.
 
 Para el producto Cofidis Pay se pedirá completar un formulario rellenándolo con la información del usuario que solicita la financiación. Para completar con éxito las pruebas en el entorno sandbox se recomienda emplear importes específicos, como 50000 (500.00€), así como introducir en el campo del primer apellido "IP+Apellido" (IPEjemplo), con el fin de evitar la solicitud de documentación real en este entorno de pruebas.
 

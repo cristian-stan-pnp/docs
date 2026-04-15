@@ -9,7 +9,7 @@ Usando este método de pago, el usuario recibirá una notificación PUSH en su t
 
 ## Integración mediante redirección
 
-Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) opcionalmente indicando el número de teléfono del usuario para que el usuario no tenga que rellenarlo.
+Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) opcionalmente indicando el número de teléfono del usuario para que no tenga que rellenarlo.
 
 ```
   "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }

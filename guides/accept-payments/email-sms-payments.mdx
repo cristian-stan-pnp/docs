@@ -29,7 +29,7 @@ A continuación se describen todos los campos que se pueden configurar para lanz
 * **Cantidad**: Importe a cobrar en céntimos.
 * **Destino**: El email o número de móvil del destinatario si es SMS. Si se indica un teléfono, debe contener el prefijo (+34 para España). Si el método de envío es manual el formato es libre.
 * **Operativa**: AUTHORIZATION o DEFERRED. Determina si la cantidad cobrada es liquidada o no al día siguiente, respectivamente.
-* **Pago seguro?**: Indica si se llevará a cabo el proceso 3D Secure para autenticar la operación.
+* **¿Pago seguro?**: Indica si se llevará a cabo el proceso 3D Secure para autenticar la operación.
 * **ID externo**: ID externo que identifica el cliente que realiza el pago.
 * **Adicional**: Campo libre que se devolverá en la notificación del pago.
 * **UUID de tarjeta**: Si se indica la tarjeta, el usuario no necesitará volverla a introducir. Obligatorio que el campo "Pago seguro" sea "Sí".
@@ -99,7 +99,7 @@ Se puede descargar el certificado de apertura del enlace de pago de un pago a tr
 
 La herramienta soporta plantillas específicas para enviarlas por SMS o e-mail. Para utilizar una plantilla personalizada, deberás enviar un e-mail a *[soporte@paylands.com](mailto:soporte@paylands.com)*.
 
-Se pueden incluir campos personalizados en las plantillas de email y SMS. Para ello, el formato que se debe enviar, ya sea desde formulario del panel o enviándolas mediante API deberá ser:
+Se pueden incluir campos personalizados en las plantillas de email y SMS. Para ello, el formato que se debe enviar, ya sea desde el formulario del panel o enviándolas mediante API deberá ser:
 
 
 ```
