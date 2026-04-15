@@ -41,14 +41,56 @@ Una vez tenemos guardadas las tarjetas de nuestros clientes en Paylands podemos 
 
 La forma más habitual de recuperar la tarjeta de un cliente es realizando una llamada al método del API de Paylands [para obtener las tarjetas de un cliente](/reference/#operation/get-customer-cards). Mediante este método se obtiene el listado de tarjetas almacenadas en el sistema para un cliente `customer_ext_id` dado. El customer\_ext\_id debe coincidir con el que se utilizó al guardar la tarjeta en el sistema o al crear la orden de pago para el cliente.
 
-```
-curl --request GET 'https://api.paylands.com/v1/sandbox/customer/{customer_ext_id}/cards?unique=true' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \
+```bash
+curl --request GET 'https://api.paylands.com/v1/sandbox/customer/{customer_ext_id}/cards?unique=true' \
+--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \
+--header 'Content-Type: application/json'
 ```
 
 Obtendremos como respuesta el listado de tarjetas del cliente con el `uuid` de cada una de ellas.
 
-```
-{  "message": "OK",  "code": 200,  "current_time": "2017-01-12T09:12:58+0100",  "cards": [    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 454881,      "brand": "VISA",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "12",      "expire_year": "21",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ebc9b5ffa2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d5851884c",      "type": "C",      "uuid": "90F358C9-7D3F-4334-A60D-1717CC1FBF5B"    },    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 533821,      "brand": "MASTERCARD",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "04",      "expire_year": "23",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ad49b5b1a2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d58516cba",      "type": "C",      "uuid": "0FDE261B-0E76-499D-A394-B6DCF6C03C56"    }  ]}
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "current_time": "2017-01-12T09:12:58+0100",
+  "cards": [
+    {
+      "additional": null,
+      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",
+      "bin": 454881,
+      "brand": "VISA",
+      "country": "724",
+      "creation_date": "2020-02-18 17:22:56",
+      "expire_month": "12",
+      "expire_year": "21",
+      "holder": "Test user",
+      "is_saved": true,
+      "last4": "0004",
+      "object": "CARD",
+      "token": "ebc9b5ffa2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d5851884c",
+      "type": "C",
+      "uuid": "90F358C9-7D3F-4334-A60D-1717CC1FBF5B"
+    },
+    {
+      "additional": null,
+      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",
+      "bin": 533821,
+      "brand": "MASTERCARD",
+      "country": "724",
+      "creation_date": "2020-02-18 17:22:56",
+      "expire_month": "04",
+      "expire_year": "23",
+      "holder": "Test user",
+      "is_saved": true,
+      "last4": "0004",
+      "object": "CARD",
+      "token": "ad49b5b1a2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d58516cba",
+      "type": "C",
+      "uuid": "0FDE261B-0E76-499D-A394-B6DCF6C03C56"
+    }
+  ]
+}
 ```
 
 ## Cómo usar la tarjeta
@@ -61,20 +103,99 @@ El método de [**pago directo por webservice**](/reference/#operation/webservice
 
 Para ello se necesita el uuid de la orden de pago `order_uuid` y el uuid de una tarjeta `card_uuid` previamente almacenada en el sistema. Para generar una nueva orden podemos hacerlo llamando al método [Generar orden de pago](/reference/#operation/generate-payment-order). La respuesta nos devolverá el `order_uuid`. Por seguridad se solicita la IP del usuario `customer_ip` que solicita el pago pudiéndose indicar en formato IPv4 o IPv6.
 
-```
-curl --request POST 'https://api.paylands.com/v1/sandbox/payment/direct' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "order_uuid": "1F405EA3-9798-42A6-9E87-BD347EF67F55",  "card_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",  "customer_ip": "62.43.214.55"}'
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment/direct' \
+--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "signature": "121149a0ba5361191d740fa898784a8b",
+  "order_uuid": "1F405EA3-9798-42A6-9E87-BD347EF67F55",
+  "card_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",
+  "customer_ip": "62.43.214.55"
+}'
 ```
 
 Al ejecutar este método se realizará el pago sin la intervención del usuario devolviendo la siguiente respuesta.
 
-```
-{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 1,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "DEFERRED",        "amount": 1,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": null,    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "current_time": "2021-12-28T13:51:27+0100",
+  "order": {
+    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",
+    "created": "2021-12-28T13:51:18+0100",
+    "created_from_client_timezone": "2021-12-28T14:51:18+0200",
+    "amount": 1,
+    "currency": "978",
+    "paid": false,
+    "status": "PENDING_CONFIRMATION",
+    "safe": false,
+    "refunded": 0,
+    "additional": "",
+    "service": "CREDORAX",
+    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+    "customer": "test",
+    "cof_txnid": "887001863998888",
+    "transactions": [
+      {
+        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",
+        "created": "2021-12-28T13:51:22+0100",
+        "created_from_client_timezone": "2021-12-28T14:51:22+0200",
+        "operative": "DEFERRED",
+        "amount": 1,
+        "authorization": "055005",
+        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",
+        "status": "SUCCESS",
+        "error": "NONE",
+        "source": {
+          "object": "CARD",
+          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",
+          "type": "",
+          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",
+          "brand": "VISA",
+          "country": "US",
+          "holder": "Paco",
+          "bin": 476173,
+          "last4": "0016",
+          "is_saved": true,
+          "expire_month": "09",
+          "expire_year": "23",
+          "additional": null,
+          "bank": "",
+          "prepaid": "",
+          "validation_date": "2021-12-28 13:51:26",
+          "creation_date": "2021-12-28 13:50:45",
+          "brand_description": null
+        },
+        "antifraud": null,
+        "device": null
+      }
+    ],
+    "token": null,
+    "ip": "127.0.0.1",
+    "reference": null,
+    "dynamic_descriptor": null,
+    "threeds_data": null
+  },
+  "client": {
+    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"
+  }
+}
 ```
 
 Si como comercio tienes el sistema antifraude activado, podría darse el caso que alguna regla se activase y fuese necesario finalizar el cobro por [3DS](/guides/resources/glossary#3ds-2). De ser así, la respuesta devuelta contendrá en el campo `details` la URL a la que debe redirigirse al usuario para autenticarse y poder finalizar el cobro.
 
-```
-{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "details": "URL_3DS",  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "current_time": "2021-12-28T13:51:27+0100",
+  "details": "URL_3DS",
+  "client": {
+    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"
+  }
+}
 ```
 
 <Warning>
@@ -93,14 +214,99 @@ Si para una tarjeta no se ha realizado todavía un pago [3DS](/guides/resources/
 
 Deberemos generar una nueva orden de pago con el método [**Generar orden de pago**](/reference/#operation/generate-payment-order) indicando en el campo `source_uuid` el uuid de la tarjeta que deseamos autorizar y en el campo `amount` indicar el valor `0`. También es preciso indicar el campo `operative` con el valor `AUTHORIZATION`.
 
-```
-curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 0,  "operative": "AUTHORIZATION",  "source_uuid": "UUID_TARJETA",  "secure": false,  "customer_ext_id": "test",  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*NombreComercio",  "expires_in": 3600}'
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 0,
+  "operative": "AUTHORIZATION",
+  "source_uuid": "UUID_TARJETA",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+  "description": "Payment #1",
+  "additional": null,
+  "url_post": "https://my.website.com/process",
+  "url_ok": "https://my.website.com/ok",
+  "url_ko": "https://my.website.com/ko",
+  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",
+  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",
+  "save_card": true,
+  "reference": "50620",
+  "dynamic_descriptor": "PNP*NombreComercio",
+  "expires_in": 3600
+}'
 ```
 
 Al lanzar la orden de autorización 3DS obtendremos la siguiente respuesta y la tarjeta estará autorizada para emitir futuros cobros.
 
-```
-{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 0,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "AUTHORIZATION",        "amount": 0,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": "34f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec9",    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "current_time": "2021-12-28T13:51:27+0100",
+  "order": {
+    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",
+    "created": "2021-12-28T13:51:18+0100",
+    "created_from_client_timezone": "2021-12-28T14:51:18+0200",
+    "amount": 0,
+    "currency": "978",
+    "paid": false,
+    "status": "PENDING_CONFIRMATION",
+    "safe": false,
+    "refunded": 0,
+    "additional": "",
+    "service": "CREDORAX",
+    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+    "customer": "test",
+    "cof_txnid": "887001863998888",
+    "transactions": [
+      {
+        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",
+        "created": "2021-12-28T13:51:22+0100",
+        "created_from_client_timezone": "2021-12-28T14:51:22+0200",
+        "operative": "AUTHORIZATION",
+        "amount": 0,
+        "authorization": "055005",
+        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",
+        "status": "SUCCESS",
+        "error": "NONE",
+        "source": {
+          "object": "CARD",
+          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",
+          "type": "",
+          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",
+          "brand": "VISA",
+          "country": "US",
+          "holder": "Paco",
+          "bin": 476173,
+          "last4": "0016",
+          "is_saved": true,
+          "expire_month": "09",
+          "expire_year": "23",
+          "additional": null,
+          "bank": "",
+          "prepaid": "",
+          "validation_date": "2021-12-28 13:51:26",
+          "creation_date": "2021-12-28 13:50:45",
+          "brand_description": null
+        },
+        "antifraud": null,
+        "device": null
+      }
+    ],
+    "token": "34f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec9",
+    "ip": "127.0.0.1",
+    "reference": null,
+    "dynamic_descriptor": null,
+    "threeds_data": null
+  },
+  "client": {
+    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"
+  }
+}
 ```
 
 ## Tarjetas dinámicas
