@@ -35,7 +35,7 @@ Câmpuri obligatorii:
 
 Payouts-urile PIX se vor efectua folosind CPF-ul ca tip de cont implicit. Dacă se dorește utilizarea unui alt tip de cont, acesta trebuie indicat la crearea comenzii, trimițând câmpul `extra_data.payment.account_type`, împreună cu câmpul asociat pentru fiecare tip, unde se va indica valoarea contului corespunzător:
 
-| Tipo de cuenta | Cuenta                                               | Descriere                                                               | Ejemplo                                               |
+| Tip de cont    | Cont                                                 | Descriere                                                               | Exemplu                                               |
 | -------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------- |
 | CPF            | extra\_data.profile.document\_identification\_number | CPF. 11 cifre.                                                          | 22\*\*\*\*\*\*\*99                                    |
 | PHONE          | extra\_data.profile.phone.number                     | Număr de telefon, fără prefix telefonic.                                | 11987654321                                           |
@@ -88,7 +88,7 @@ Câmpuri obligatorii:
 
 * **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
 * **Număr document de identificare** (`profile.document_identification_number`)
-* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](#tipul-documentului-de-identificare).
 * **Țară** (`billing_address.country`): valoare fixă `COL`
 * **Număr de telefon** (`profile.phone.number`)
 * **Tip de cont** (`payment.account_type`): valoare fixă `PHONE`
@@ -103,7 +103,7 @@ Câmpuri obligatorii:
 
 * **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
 * **Număr document de identificare** (`profile.document_identification_number`)
-* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](#tipul-documentului-de-identificare).
 * **Țară** (`billing_address.country`): valoare fixă `COL`
 * **Cod bancă** (`payment.bank_code`) [Vezi coduri de bancă din Columbia](https://docs.pagsmile.com/payout/bank-code/bank-in-colombia)
 * **Număr de cont** (`payment.account`)
@@ -136,7 +136,7 @@ Câmpuri obligatorii:
 
 * **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
 * **Număr document de identificare** (`profile.document_identification_number`)
-* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](#tipul-documentului-de-identificare).
 * **Țară** (`billing_address.country`): valoare fixă `CHL`
 * **Cod bancă** (`payment.bank_code`) [Vezi coduri de bancă din Chile](https://docs.pagsmile.com/payout/bank-code/bank-in-chile)
 * **Număr de cont** (`payment.account`)
@@ -154,7 +154,7 @@ Câmpuri obligatorii:
 
 * **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
 * **Număr document de identificare** (`profile.document_identification_number`)
-* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n)
+* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](#tipul-documentului-de-identificare)
 * **Țară** (`billing_address.country`): valoare fixă `MEX`
 * **Tip de cont** (`payment.account_type`): valori `DEBIT`, `PHONE` sau `CLABE`
 * **Număr de cont** (`payment.account`) Obligatoriu dacă `account_type` este **diferit** de `PHONE`
@@ -171,7 +171,7 @@ Tipul documentului de identificare trebuie indicat în `extra_data` în câmpul 
 
 Mai jos sunt prezentate valorile posibile ale acelui câmp și echivalențele lor pentru diferitele tipuri de documente din fiecare țară:
 
-|                                       | Brasil | Colombia | Chile | México |
+|                                       | Brazilia | Columbia | Chile | Mexic |
 | ------------------------------------- | ------ | -------- | ----- | ------ |
 | **NATIONAL\_IDENTITY\_DOCUMENT**      | CPF    | CC       | RUN   | CURP   |
 | **FOREIGN\_IDENTIFICATION\_DOCUMENT** | -      | CE       | CE    | -      |
