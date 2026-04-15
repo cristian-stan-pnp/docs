@@ -23,8 +23,30 @@ Para habilitar la autorización parcial debes utilizar la operativa **`PARTIAL_A
 
 Ejemplo de petición para crear una orden utilizando la operativa de autorización parcial:
 
-```
-curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: pk_test_************************' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 600,  "operative": "PARTIAL_AUTHORIZATION",  "secure": false,  "customer_ext_id": "test",  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",  "source_uuid": null,  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*MerchantName",  "expires_in": 3600}'
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+--header 'Authorization: pk_test_************************' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 600,
+  "operative": "PARTIAL_AUTHORIZATION",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+  "description": "Payment #1",
+  "additional": null,
+  "url_post": "https://my.website.com/process",
+  "url_ok": "https://my.website.com/ok",
+  "url_ko": "https://my.website.com/ko",
+  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",
+  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",
+  "source_uuid": null,
+  "save_card": true,
+  "reference": "50620",
+  "dynamic_descriptor": "PNP*MerchantName",
+  "expires_in": 3600
+}'
 ```
 
 ***
@@ -33,8 +55,34 @@ curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Aut
 
 A continuación, se muestra la respuesta de un pago exitoso en el que se ha llevado a cabo una autorización parcial.
 
-```
-{  "message": "OK",  "code": 200,  "order": {    "uuid": "6E317E9E-1508-487A-98CB-389F7054B9CF",    "amount": 600,    "currency": "986",    "paid": true,    "status": "SUCCESS",    "transactions": [      {        "uuid": "1EAC092C-5A96-49E3-8FDB-D2374DE2F3B9",        "operative": "PARTIAL_AUTHORIZATION",        "amount": 420,        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "brand": "VISA",          "last4": "0071"        },        "...": "Otros campos de la transacción omitidos para mayor claridad"      }    ]  },  "...": "Campos adicionales de la respuesta omitidos para mayor claridad"}
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "order": {
+    "uuid": "6E317E9E-1508-487A-98CB-389F7054B9CF",
+    "amount": 600,
+    "currency": "986",
+    "paid": true,
+    "status": "SUCCESS",
+    "transactions": [
+      {
+        "uuid": "1EAC092C-5A96-49E3-8FDB-D2374DE2F3B9",
+        "operative": "PARTIAL_AUTHORIZATION",
+        "amount": 420,
+        "status": "SUCCESS",
+        "error": "NONE",
+        "source": {
+          "object": "CARD",
+          "brand": "VISA",
+          "last4": "0071"
+        },
+        "...": "Otros campos de la transacción omitidos para mayor claridad"
+      }
+    ]
+  },
+  "...": "Campos adicionales de la respuesta omitidos para mayor claridad"
+}
 ```
 
 > 💡 **Comportamiento clave:** La orden mantiene el importe original solicitado (**600**), mientras que la transacción muestra el importe finalmente autorizado (**420**).
