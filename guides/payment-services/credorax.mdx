@@ -3,7 +3,7 @@ title: 'Credorax'
 description: 'Configuración e integración del servicio de pago Credorax en Paylands'
 ---
 
-## Métodos de pago en Sandbox[​](#métodos-de-pago-en-sandbox "Enlace directo al Métodos de pago en Sandbox")
+## Métodos de pago en Sandbox
 
 | Resultado                  | Tarjeta                    | Notas                              |
 | -------------------------- | -------------------------- | ---------------------------------- |
@@ -13,14 +13,14 @@ description: 'Configuración e integración del servicio de pago Credorax en Pay
 | 3DS2.x Full flow           | 4018810000190011 12/34 123 | Código 0101 para OK y 3333 para KO |
 | Pago rechazado             | 4548812049400004 12/34 123 |                                    |
 
-### Dynamic descriptor[​](#dynamic-descriptor "Enlace directo al Dynamic descriptor")
+### Dynamic descriptor
 
 El campo `dynamic_descriptor` es opcional y en caso de indicarse deberá cumplir una serie de reglas específicas:
 
 * Tendrá un máximo de 13 caracteres.
 * Debe empezar por el nombre del comercio, seguido de un asterisco y la información deseada por el comercio.
 
-## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+## Códigos de error
 
 Credorax puede devolver hasta dos códigos de error diferentes, uno de la procesadora y otro del esquema (VISA, MC...).
 
@@ -80,12 +80,12 @@ Por ejemplo:
 | 13     | Rejected. The fraud-protection service is unavailable.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 15     | Rejected. Risk score is above limit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
-### Errores del esquema[​](#errores-del-esquema "Enlace directo al Errores del esquema")
+### Errores del esquema
 
 Si la operación se ha intentado realizar pero se ha producido un error, el error tiene la siguiente estructura:
 
 ```
-Código procesadora Mensaje procesadora [Codigo esquema Mensaje esquema]
+Código procesadora Mensaje procesadora [Código esquema Mensaje esquema]
 ```
 
 Por ejemplo:

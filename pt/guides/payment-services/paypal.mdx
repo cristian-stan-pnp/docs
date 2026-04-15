@@ -1,0 +1,78 @@
+---
+title: 'PayPal'
+description: 'Configuração e integração do serviço de pagamento PayPal no Paylands'
+---
+
+## Introdução
+
+PayPal é um serviço de pagamento que permite realizar cobranças utilizando o checkout do Paylands ou através de um redirecionamento.
+
+## Restrições e requisitos
+
+Atualmente apenas a moeda EUR é suportada.
+
+Ao gerar a ordem de pagamento, devem ser enviados, no mínimo, os campos de *profile* e *billing\_address* para poder conciliar os pagamentos via PayPal.
+
+```
+"extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@gmail.com",        "phone": {            "number": "666666666",            "prefix": "34"        }    },    "billing_address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }}
+```
+
+***
+
+## STC (Set Transaction Context)
+
+O envio de dados STC permite enriquecer a informação da transação com informações adicionais do comprador e do serviço contratado.
+
+No pedido utilizado para [**gerar a ordem de pagamento**](/reference/#operation/generate-payment-order):
+
+* Os dados do comprador são enviados em `extra_data.profile` e `extra_data.billing_address`
+* Os dados do contexto OTA (Online Travel Agency), relacionados com a reserva ou serviço de viagem, são enviados em `extra_data.payment`
+
+Os dados OTA só são necessários para determinadas indústrias, como hotéis.
+
+### OTA - Hotéis (MCC 7011)
+
+Os seguintes campos correspondem ao contexto OTA para hotéis.
+
+Todos os campos OTA devem ser enviados dentro de **`extra_data.payment`**.
+
+| Campo                    | Tipo                         | Descrição                                                | Exemplo                         |
+| ------------------------ | ---------------------------- | -------------------------------------------------------- | ------------------------------- |
+| `buyer_creation_date`    | `string (ISO 8601 datetime)` | Data de registo do utilizador no sistema do comerciante  | `2012-12-09T19:14:55.277+00:00` |
+| `ota_type`               | `string`                     | Tipo de indústria OTA. Para hotéis deve ser `"hotel"`    | `"hotel"`                       |
+| `ota_service_start_date` | `string (ISO 8601 datetime)` | Data de início da estadia (check-in)                     | `2026-06-01T15:00:00+00:00`     |
+| `ota_service_end_date`   | `string (ISO 8601 datetime)` | Data de fim da estadia (check-out)                       | `2026-06-05T12:00:00+00:00`     |
+| `ota_change_guest`       | `boolean`                    | Indica se o titular da reserva pode ser alterado         | `false`                         |
+| `ota_start_country`      | `string (ISO Alpha-2)`       | Código do país onde começa a estadia                     | `"ES"`                          |
+| `ota_start_city`         | `string`                     | Cidade onde começa a estadia                             | `"Madrid"`                      |
+| `ota_start_zipcode`      | `string`                     | Código postal onde começa a estadia                      | `"28080"`                       |
+
+#### Exemplo
+
+```
+{    "extra_data": {        "profile": {            "first_name": "John",            "last_name": "Doe",            "email": "john@doe.com",            "birthdate": "1984-11-28",            "phone": {                "number": "678767878",                "prefix": "+34"            }        },        "billing_address": {            "city": "Madrid",            "country": "ESP",            "address1": "Avenida principal, 24",            "zip_code": "12345",            "state_code": "ESP"        },        "payment": {            "buyer_creation_date": "2012-12-09T19:14:55.277+00:00",            "ota_type": "hotel",            "ota_service_start_date": "2012-12-09T19:14:55.277+00:00",            "ota_service_end_date": "2012-12-14T19:14:55.277+00:00",            "ota_change_guest": false,            "ota_start_country": "ES",            "ota_start_city": "Madrid",            "ota_start_zipcode": "28080"        }    }}
+```
+
+***
+
+## Sandbox
+
+Fazer um pagamento com PayLater e PayPal:
+
+* utilizador: [sb-uto4v27115289@personal.example.com](mailto:sb-uto4v27115289@personal.example.com)
+* palavra-passe: 3T9gvRX>
+
+Fazer um pagamento com PayPal:
+
+* utilizador: [sb-y94a925372648@business.example.com](mailto:sb-y94a925372648@business.example.com)
+* palavra-passe: U\@2!S\[gZ
+
+# Restrições de montante para PayLater
+
+O PayLater é suportado em vários países, cada um com condições específicas em função do montante e prestações de pagamento:
+
+* Espanha, Itália e Reino Unido: montante entre 30 e 2.000 euros (EUR), pagamento em 3 prestações.
+* Alemanha: montante entre 99 e 5.000 euros (EUR), o pagamento pode ser em 3, 6, 12 ou 24 prestações. Além disso, podem optar por pagar 30 dias após a compra se o montante estiver entre 1 e 1.000 euros (EUR).
+* França e Austrália: montante entre 30 e 2.000 euros (EUR), pagamento em 4 prestações.
+* Reino Unido: se o montante for superior a 99 euros (EUR), pode ser aplicada uma taxa de juro de 0% na compra.
+* Estados Unidos: montante entre 30 e 1.500 euros (EUR), pagamento em 4 prestações com data de cobrança a cada duas semanas. Existe opção de pagamento mensal, mas as prestações devem ser de 6, 12 ou 24 e o montante deve estar entre 199 e 10.000 euros (EUR).

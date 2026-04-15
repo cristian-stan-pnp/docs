@@ -1,0 +1,310 @@
+---
+title: 'Anti-fraud and security'
+description: 'Paylands anti-fraud system and security lists: rules, whitelist, blacklist and grey lists'
+---
+
+## Anti-fraud
+
+Paylands offers a powerful anti-fraud system that allows you to redirect suspicious transactions to 3DS or reject them directly, without the payment being processed.
+
+To do this, there are a series of available checks that can be grouped to form anti-fraud rules, each with its own score. The sum of the scores of all triggered rules will determine the score for the current operation.
+
+### Anti-fraud configuration and creation
+
+First, you need to go to the Security -> Anti Fraud tab in the panel. Here you will see a list of all available anti-fraud configurations and the number of associated services.
+
+In the `Total Services` column, you can click on the number to see the services associated with the anti-fraud configuration. Remember that you need to associate the services that will use this anti-fraud configuration. A service can only be associated with one anti-fraud configuration.
+
+![Anti fraud list](/images/docs/assets/images/antifraud_list-28332c37709f7d7da5e1caf87c100030.png)
+
+To assign a service, go to Administration -> Service List -> Listing. Access the details of the service you want to associate with an Anti Fraud configuration. In the Anti Fraud tab, choose the desired one and update.
+
+![Anti fraud service](/images/docs/assets/images/associate_antifraud_service-af03a69630483f7eaa9c50e4f4e49680.png)
+
+The available validations are:
+
+<AccordionGroup>
+  <Accordion title="maximumCorrectPaymentsByCard">
+    * Number of successful transactions with a card in the last X days
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumCorrectPaymentsByIp">
+    * Number of successful transactions from an IP in the last X days
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumCorrectPaymentsByExternalId">
+    * Number of successful transactions associated with a user in the last X days
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByCard">
+    * Number of rejected transactions with a card in the last X days
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByIp">
+    * Number of rejected transactions associated with an IP in the last X days
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByExternalId">
+    * Number of rejected transactions associated with a user in the last X days
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByCard">
+    * Number of charges with a card in the last X minutes
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in minutes)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByIp">
+    * Number of charges from an IP in the last X minutes
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in minutes)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByExternalId">
+    * Number of charges associated with a user in the last X minutes
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in minutes)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsFromCardFromDifferentIPs">
+    * Number of charges with different IPs from which the card has been used in the last X days in the current payment service
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsFromIPFromDifferentCards">
+    * Number of charges with different cards from an IP in the last X days in the current payment service
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumRetriesFromCardUsedByOtherUser">
+    * Number of charges from different users who have used the card in the current payment service
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumRetriesFromSameIpUsedByOtherUsers">
+    * Number of charges from different users who have used the card from the same IP in the current payment service
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="successivePaymentsWithSimilarCards">
+    * Number of payments in the last days from the same IP with similar cards
+    * Parameters:
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumAmountPayment">
+    * Maximum payment amount
+    * Parameters:
+      * *amount*: number
+  </Accordion>
+
+  <Accordion title="maximumUsedCardsByExternalId">
+    * Number of charges with different cards used by the same user in the last X days
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="paymentFromProxy">
+    * Checks if any proxy header exists
+  </Accordion>
+
+  <Accordion title="paymentFromTor">
+    * Checks whether the IP matches a list of the latest IPs used by TOR
+  </Accordion>
+
+  <Accordion title="lastAmountsSum">
+    * Sum of the amounts of successful transactions in the last X days
+
+    * Parameters:
+
+      * *amount*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="minimumAmountPayment">
+    * Minimum payment amount
+    * Parameters:
+      * *amount*: number
+  </Accordion>
+
+  <Accordion title="datesRange">
+    * Compares the transaction time with the provided date range
+
+    * Parameters:
+
+      * *from*: date
+      * *to*: date
+  </Accordion>
+
+  <Accordion title="matchingIpFromCountry">
+    * Compares the card country with the user's country
+
+    * Parameters:
+
+      * *operator*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="matchingBrand">
+    * Checks whether the card belongs to a specific brand
+    * Parameters:
+      * *brand*: string
+  </Accordion>
+
+  <Accordion title="matchingBrandAndCountry">
+    * Checks whether the card belongs to a specific brand and country
+
+    * Parameters:
+
+      * *brand*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="matchingSourceCountry">
+    * Checks whether the card belongs to a specific country
+
+    * Parameters:
+
+      * *operator*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="maximumAmountCorrectPaymentsByCard">
+    * Maximum number of successful payments with the same card
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumCorrectUsedCardsByExternalId">
+    * Maximum cards used in successful payments by External ID
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectUsedCardsByExternalId">
+    * Maximum cards used in unsuccessful payments by External ID
+
+    * Parameters:
+
+      * *retries*: number
+      * *interval*: number (in days)
+  </Accordion>
+</AccordionGroup>
+
+## Security lists
+
+Within the security lists, you can configure elements (IP, BIN, UUID, EXTERNAL\_ID and TOKEN) to be marked as safe, risky, or blocked.
+
+To access each security list, simply go to **Security** and click on the desired list.
+
+In this section, you can see each available list where you can enable or disable them and check the services associated with them. You can even unlink the services you want from that list.
+
+![ColorList table](/images/docs/assets/images/colorlist_table-ec48062c05b366a4785978833e314c1e.png)
+
+![ColorList services](/images/docs/assets/images/colorlist_services-5d2d074e0b68dd664ee3e6f76f2608db.png)
+
+In the detail of each list, you can create, modify and delete elements. Remember that you will also need to associate as many services as you want to use this list.
+
+![ColorList detail](/images/docs/assets/images/colorlist_detail-ed1a5fc228afbaf082d9de64dc48f594.png)
+
+![ColorList add service](/images/docs/assets/images/colorlist_add_service-77491fc9efcb98ef490ee2cae1f8299f.png)
+
+### Whitelists
+
+From this section, you can configure whitelists that can be associated with existing services.
+
+These lists allow you to configure checks to prevent a trusted operation from entering risk or fraud evaluation. The parameters that can be checked to validate that the operation is trusted are the following:
+
+* IP: IP address from which the operation is performed.
+* BIN: First 6 digits of the card number.
+* UUID: Card identifier.
+* EXTERNAL\_ID: Customer identifier.
+* TOKEN: Card identifier token.
+
+### Blacklists
+
+From this section, you can configure blacklists that can be associated with existing services.
+
+These lists allow you to configure checks to prevent a suspicious operation from being processed. The parameters that can be checked to validate that the operation should be blocked are the following:
+
+* IP: IP address from which the operation is performed.
+* BIN: First 6 digits of the card number.
+* UUID: Card identifier.
+* EXTERNAL\_ID: Customer identifier.
+* TOKEN: Card identifier token.
+
+### Grey lists
+
+From this section, you can configure grey lists that can be associated with existing services.
+
+These lists allow you to configure checks to force a suspicious operation to be processed as a secure order (3DS). The parameters that can be checked to validate that the operation's security level should be increased are the following:
+
+* IP: IP address from which the operation is performed.
+* BIN: First 6 digits of the card number.
+* UUID: Card identifier.
+* EXTERNAL\_ID: Customer identifier.
+* TOKEN: Card identifier token.

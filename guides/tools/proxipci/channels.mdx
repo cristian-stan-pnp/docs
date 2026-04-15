@@ -40,9 +40,9 @@ El mapeo de campos se especifica como atributos XPATH o JSONPATH dependiendo del
 
 # Cuándo usar cada configuración de canal
 
-La principal diferencia entre las configuraciones de los canales son los campos **dirección** y **acción**. Para que quede más claro, veamos algunos escenarios del mundo real:
+La principal diferencia entre las configuraciones de los canales radica en los campos **dirección** y **acción**. Para que quede más claro, veamos algunos escenarios del mundo real:
 
-## PUSH + TOKENIZACIÓN[​](#push--tokenización "Enlace directo al PUSH + TOKENIZACIÓN")
+## PUSH + TOKENIZACIÓN
 
 ![PUSH + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_tokenization.png)
 
@@ -54,7 +54,7 @@ Una vez que haya creado el channel utilizando la API REST de PROXY PCI, puede ac
 
 De este modo, el channel manager invocará a PROXY PCI, que hará su magia y finalmente reenviará las reservas a su endpoint configurado, habiendo sustituido todos los panes de la tarjeta por una versión de token de la misma. Este token puede ser almacenado por usted y utilizarlo para emitir un pago o reenviarlo a otro tercero.
 
-## PULL + TOKENIZACIÓN[​](#pull--tokenización "Enlace directo al PULL + TOKENIZACIÓN")
+## PULL + TOKENIZACIÓN
 
 ![PULL + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_tokenization.png)
 
@@ -66,13 +66,13 @@ En este caso usted necesita un channel de tipo **PULL + TOKENIZATION** donde el 
   El método de invocación del canal PROXY PCI reenvía todas las QUERY y HTTP HEADERS al punto final configurado.
 </Info>
 
-## PUSH + DETOKENIZATION[​](#push--detokenization "Enlace directo al PUSH + DETOKENIZATION")
+## PUSH + DETOKENIZATION
 
 ![PUSH + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_detokenization.png)
 
 En este caso queremos enviar los datos recogidos de nuestra tarjeta pan a un PAYMENT GATEWAY de terceros para procesar el pago. El PAYMENT GATEWAY ofrece un endpoint para esto donde hay que enviar los datos de la tarjeta en su formato JSON especificado. En este escenario necesitaremos un channel de tipo **PUSH + DETOKENIZATION**. El endpoint del channel será el endpoint de la API PAYMENT GATEWAY. Usted enviará los detalles de la tarjeta, excepto el pan, al endpoint de invocación del channel PROXY PCI y el PROXY PCI reemplazará el token de la tarjeta con el pan real de la tarjeta.
 
-## PULL + DETOKENIZATION[​](#pull--detokenization "Enlace directo al PULL + DETOKENIZATION")
+## PULL + DETOKENIZATION
 
 ![PULL + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_detokenization.png)
 
@@ -88,15 +88,15 @@ En este caso de uso final usted es un channel manager y ha recogido los detalles
 
 Para su mejor comprensión hemos preparado algunos channels para que los invoque. Hay un endpoint de tokenización JSON PUSH y un ejemplo de destokenización XML PUSH para que lo pueda probar.
 
-## Ejemplo JSON[​](#ejemplo-json "Enlace directo al Ejemplo JSON")
+## Ejemplo JSON
 
-JSON example
+Ejemplo JSON
 
 ```
 {  "bookings": [    {      "id": "BK-213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4442330588722461",          "cvv": "123",          "expiry": "12/21",          "holder": "John Doe"        }      }    },    {      "id": "BK-3213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4701731341611394",          "expiry": "06-2025",          "holder": "Patma Patill"        }      }    }  ]}
 ```
 
-## MAPEO DE CAMPOS[​](#mapeo-de-campos "Enlace directo al MAPEO DE CAMPOS")
+## MAPEO DE CAMPOS
 
 | NOMBRE DEL CAMPO | VALOR                                     |
 | ---------------- | ----------------------------------------- |
@@ -106,7 +106,7 @@ JSON example
 | pan              | $.bookings\[\*].payment\_data.card.pan    |
 | cardCVV          | $.bookings\[\*].payment\_data.card.cvv    |
 
-## EJEMPLO DE CANAL EN FUNCIONAMIENTO[​](#ejemplo-de-canal-en-funcionamiento "Enlace directo al EJEMPLO DE CANAL EN FUNCIONAMIENTO")
+## EJEMPLO DE CANAL EN FUNCIONAMIENTO
 
 Hemos configurado un canal con este mapeo de campos exacto. Esta es la configuración exacta del canal:
 
@@ -119,14 +119,14 @@ Esto significa que si se invoca, el *body* transmitido será analizado y los cam
 Vaya y visite [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) y deje la página abierta. A continuación, emite el siguiente comando `curl`:
 
 ```
-curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke \-H 'Content-Type: application/json' \-H 'SomeCustomeHeader: SayHello!' \--data '{"bookings":[{"id":"BK-213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4442330588722461","cvv":"222","expiry":"12/28","holder":"John Doe"}}},{"id":"BK-3213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4701731341611394","cvv":"333", "expiry":"06-2025","holder":"Patma Patill"}}}]}'
+curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke \-H 'Content-Type: application/json' \-H 'SomeCustomHeader: SayHello!' \--data '{"bookings":[{"id":"BK-213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4442330588722461","cvv":"222","expiry":"12/28","holder":"John Doe"}}},{"id":"BK-3213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4701731341611394","cvv":"333", "expiry":"06-2025","holder":"Patma Patill"}}}]}'
 ```
 
-Después de ejecutar el comando deberías ver la petición en la consola de beeceptor. Siéntase libre de inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.
+Después de ejecutar el comando deberías ver la petición en la consola de beeceptor. Siéntete libre de inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.
 
-## Ejemplo de XML[​](#ejemplo-de-xml "Enlace directo al Ejemplo de XML")
+## Ejemplo de XML
 
-XML example
+Ejemplo XML
 
 ```
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05">    <SOAP-ENV:Header>        <wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1">            <wsse:UsernameToken>                <wsse:Username>::someUsername</wsse:Username>                <wsse:Password>::somePassword::</wsse:Password>            </wsse:UsernameToken>        </wsse:Security>    </SOAP-ENV:Header>    <SOAP-ENV:Body>        <ota:OTA_HotelResNotifRQ>            <ota:HotelReservations>                <ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit">                    <ota:UniqueID ID="M5304934-86503" Type="14"/>                    <ota:ResGlobalInfo>                        <ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/>                        <ota:Guarantee>                            <ota:GuaranteesAccepted>                                <ota:GuaranteeAccepted>                                    <ota:PaymentCard CardCode="335" CardCVV="123" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022">                                        <ota:CardHolderName>John Doe</ota:CardHolderName>                                    </ota:PaymentCard>                                </ota:GuaranteeAccepted>                            </ota:GuaranteesAccepted>                        </ota:Guarantee>                    </ota:ResGlobalInfo>                </ota:HotelReservation>            </ota:HotelReservations>        </ota:OTA_HotelResNotifRQ>    </SOAP-ENV:Body></SOAP-ENV:Envelope>
@@ -136,7 +136,7 @@ XML example
   Este payload fue parcialmente extraído del gestor de canales de [Siteminder](https://www.siteminder.com/).
 </Info>
 
-### Namespaces[​](#namespaces "Enlace directo al Namespaces")
+### Namespaces
 
 <Warning>
   Entender cómo funcionan xpath y namespaces es crucial para el mapeo de campos XML.
@@ -162,13 +162,13 @@ Si un elemento tiene el espacio de nombres en blanco (xmlns="") entonces es un e
 
 Ejemplo: `//title`
 
-### Mapeo de campos[​](#mapeo-de-campos-1 "Enlace directo al Mapeo de campos")
+### Mapeo de campos
 
 | NOMBRE DEL CAMPO | VALOR                         |
 | ---------------- | ----------------------------- |
-| referencia       | //ota:UniqueID/@ID            |
+| reference        | //ota:UniqueID/@ID            |
 | cardHolder       | //ota:CardHolderName          |
-| caducidad        | //ota:PaymentCard/@ExpireDate |
+| expiry           | //ota:PaymentCard/@ExpireDate |
 | pan              | //ota:PaymentCard/@CardNumber |
 | cardCVV          | //ota:PaymentCard/@CardCVV    |
 
@@ -178,12 +178,12 @@ Hemos configurado un canal con este mapeo de campos exacto. Esta es la configura
 {    "action": "detokenize",    "direction": "push",    "endpoint": "https://pciproxypnp.free.beeceptor.com/push/xml/detokenize",    "contentType": "xml",    "fieldMapping": {        "reference": "//ota:UniqueID/@ID",        "cardHolder": "//ota:CardHolderName",        "expiry": "//ota:PaymentCard/@ExpireDate",        "pan": "//ota:PaymentCard/@CardNumber",        "cardCVV": "//ota:PaymentCard/@CardCVV"    },    "encoding": "utf8"}
 ```
 
-Esto significa que si se invoca, el cuerpo transmitido será analizado y los campos mapeados serán extraídos y guardados. A continuación, se sustituye el PAN por una versión token del mismo. Finalmente, el nuevo cuerpo se reenvía al endpoint proporcionado, incluyendo todas las cabeceras y parámetros de consulta originales que se enviaron al endpoint del channel.
+Esto significa que si se invoca, el cuerpo transmitido será analizado y los campos mapeados serán extraídos. A continuación, se sustituye el token por el PAN real de la tarjeta. Finalmente, el nuevo cuerpo se reenvía al endpoint proporcionado, incluyendo todas las cabeceras y parámetros de consulta originales que se enviaron al endpoint del channel.
 
 Sigue adelante y visita [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) y deja la página abierta. A continuación, emite el siguiente comando curl:
 
 ```
-curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/da3e2c5b-8e3d-44f3-a56e-0491b949d7f7/invoke \-H 'Content-Type: application/xml' \-H 'SomeCustomeHeader: SayHello!' \--data '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05"><SOAP-ENV:Header><wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1"><wsse:UsernameToken><wsse:Username>::someUsername</wsse:Username><wsse:Password>::somePassword::</wsse:Password></wsse:UsernameToken></wsse:Security></SOAP-ENV:Header><SOAP-ENV:Body><ota:OTA_HotelResNotifRQ><ota:HotelReservations><ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit"><ota:UniqueID ID="M5304934-86503" Type="14"/><ota:ResGlobalInfo><ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/><ota:Guarantee><ota:GuaranteesAccepted><ota:GuaranteeAccepted><ota:PaymentCard CardCode="335" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022"><ota:CardHolderName>John Doe</ota:CardHolderName></ota:PaymentCard></ota:GuaranteeAccepted></ota:GuaranteesAccepted></ota:Guarantee></ota:ResGlobalInfo></ota:HotelReservation></ota:HotelReservations></ota:OTA_HotelResNotifRQ></SOAP-ENV:Body></SOAP-ENV:Envelope>'
+curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/da3e2c5b-8e3d-44f3-a56e-0491b949d7f7/invoke \-H 'Content-Type: application/xml' \-H 'SomeCustomHeader: SayHello!' \--data '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05"><SOAP-ENV:Header><wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1"><wsse:UsernameToken><wsse:Username>::someUsername</wsse:Username><wsse:Password>::somePassword::</wsse:Password></wsse:UsernameToken></wsse:Security></SOAP-ENV:Header><SOAP-ENV:Body><ota:OTA_HotelResNotifRQ><ota:HotelReservations><ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit"><ota:UniqueID ID="M5304934-86503" Type="14"/><ota:ResGlobalInfo><ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/><ota:Guarantee><ota:GuaranteesAccepted><ota:GuaranteeAccepted><ota:PaymentCard CardCode="335" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022"><ota:CardHolderName>John Doe</ota:CardHolderName></ota:PaymentCard></ota:GuaranteeAccepted></ota:GuaranteesAccepted></ota:Guarantee></ota:ResGlobalInfo></ota:HotelReservation></ota:HotelReservations></ota:OTA_HotelResNotifRQ></SOAP-ENV:Body></SOAP-ENV:Envelope>'
 ```
 
 Después de ejecutar el comando debería ver la solicitud en la consola de beeceptor. No dude en inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.

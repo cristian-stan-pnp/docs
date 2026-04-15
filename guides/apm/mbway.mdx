@@ -7,12 +7,12 @@ description: 'Acepta pagos con MB WAY en Portugal a través de la API de Payland
 
 Usando este método de pago, el usuario recibirá una notificación PUSH en su teléfono móvil que le permitirá llevar a cabo el pago a través de la aplicación de su banco. Existen dos formas de integrarlo: mediante redirección o pago push.
 
-## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+## Integración mediante redirección
 
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) opcionalmente indicando el número de teléfono del usuario para que el usuario no tenga que rellenarlo.
 
 ```
-  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno"      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }
 ```
 
 Como identificador de servicio, debe indicarse el **service\_uuid** del servicio de SIBS que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
@@ -27,18 +27,18 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=MBWAY
 
 Una vez el usuario sea redirigido a esta pantalla, recibirá la notificación en su teléfono móvil. Cuando complete el pago, será redirigido de vuelta a la URL OK o KO, dependiendo del resultado del pago.
 
-## Integración mediante pago push[​](#integración-mediante-pago-push "Enlace directo al Integración mediante pago push")
+## Integración mediante pago push
 
 Si por el contrario queremos que no sea necesario que el usuario esté presente en el momento del pago, este método de pago puede integrarse mediante un pago push.
 
 Para ello, en primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) **obligatoriamente** indicando el nombre, apellidos y número de teléfono del usuario. Si no se dispone del nombre y apellidos del usuario, se puede enviar una cadena vacía en estos campos.
 
 ```
-  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno"      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }
+  "extra_data": {    "profile": {      "first_name": "Carlos",      "last_name": "Moreno",      "phone": {        "number": "655655655",        "prefix": "351"      }    }  }
 ```
 
 A continuación, se debe lanzar la petición del [pago push](/reference/#operation/push-payment) indicando el UUID de la orden. A continuación el usuario recibirá la notificación push en su teléfono móvil, y una vez complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.
 
-## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+## Pruebas
 
 Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de SIBS.

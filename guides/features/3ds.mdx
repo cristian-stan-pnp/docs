@@ -3,18 +3,18 @@ title: '3D Secure (3DS)'
 description: 'Guía de autenticación 3D Secure para pagos seguros con Paylands'
 ---
 
-## PSD2[​](#psd2 "Enlace directo al PSD2")
+## PSD2
 
-La segunda Directiva de Servicios de Pago (PSD2) será de **cumplimiento obligatorio a partir del 31 de Diciembre de 2020**. Esta directiva afecta a los pagos realizados en la zona económica europea y obliga a que todos los pagos en los que el usuario esté presente se lleven a cabo de forma segura mediante 3DS. Adicionalmente, ya no podrán lanzarse pagos no seguros sin la presencia del usuario salvo que la tarjeta haya realizado al menos un pago seguro mediante 3DS anteriormente.
+La segunda Directiva de Servicios de Pago (PSD2) será de **cumplimiento obligatorio a partir del 31 de diciembre de 2020**. Esta directiva afecta a los pagos realizados en la zona económica europea y obliga a que todos los pagos en los que el usuario esté presente se lleven a cabo de forma segura mediante 3DS. Adicionalmente, ya no podrán lanzarse pagos no seguros sin la presencia del usuario salvo que la tarjeta haya realizado al menos un pago seguro mediante 3DS anteriormente.
 
-Los siguientes tipos de servicios de pago se verán afectados por a PSD2 a partir del día 31 de Diciembre de 2020:
+Los siguientes tipos de servicios de pago se verán afectados por la PSD2 a partir del día 31 de diciembre de 2020:
 
 * REDSYS
 * EVOSNAP
 * CREDORAX
 * CLEARHAUS
 
-### Normativa[​](#normativa "Enlace directo al Normativa")
+### Normativa
 
 La PSD2 será de obligado cumplimiento siempre y cuando se cumplan dos condiciones:
 
@@ -30,7 +30,7 @@ Si se intenta realizar un pago no seguro y éste no puede llevarse a cabo debido
 
 Recomendamos utilizar [pagos tokenizados](/reference/#operation/3ds-tokenized) una vez se haya tokenizado la tarjeta, ya que éstos siempre utilizan 3DS y permiten aprovechar todas las ventajas que ofrece la PSD2. Los pagos no seguros a través de webservice deben utilizarse solo cuando el usuario no está presente, por ejemplo, para cobrar una suscripción.
 
-### Ventajas[​](#ventajas "Enlace directo al Ventajas")
+### Ventajas
 
 Hasta ahora los pagos seguros utilizaban siempre la versión 3DS 1.0, la cual obliga a que el usuario introduzca un código que recibe en su teléfono móvil, dando lugar a una fricción que podía resultar en que el usuario abandonase el proceso de compra. Las nuevas versiones del protocolo 3DS versión 2 permiten saltarse este paso en determinadas circunstancias:
 
@@ -47,7 +47,7 @@ Si alguna de las anteriores condiciones se cumple, es posible que el pago finali
 
 Independientemente de lo que suceda, el pago se considerará autenticado mediante 3DS.
 
-### Pagos sin la presencia del usuario[​](#pagos-sin-la-presencia-del-usuario "Enlace directo al Pagos sin la presencia del usuario")
+### Pagos sin la presencia del usuario
 
 En general, el usuario debe estar presente en el momento del pago y éste debe realizarse obligatoriamente de forma segura con 3DS. Entonces, cómo se pueden realizar pagos sin que el usuario esté presente, como por ejemplo suscripciones? La PSD2 contempla excepciones siempre y cuando la tarjeta haya sido utilizada antes en un pago seguro.
 
@@ -64,23 +64,23 @@ Estos pagos se llevarán a cabo por WebService. Recomendamos indicar el motivo d
 * DELAYED (pagos por servicios ofrecidos cuya cantidad se desconoce al principio: minibar, reparaciones, multas...)
 * OTHER (cuando no se sabe a priori el motivo del cobro. Por ejemplo, en el caso de un hotel que no sabe si tendrá que cobrar la reserva cuando se presente el usuario, lo cual sería RECURRING, o un NO-SHOW si no se presenta)
 
-Si las condiciones mencionadas se cumplen, el pago finalizará normalmente sin necesidad de que intervenga el usuario. Si por lo contrario alguna de esas condiciones no se cumple o es imprescindible que el usuario se autentique, [la API devolverá un enlace de pago el cual puede enviarse al usuario para que finalice el pago mediante 3DS](/#reference/pagos/realizar-el-pago/por-webservice). Esta decisión de si el usuario debe autenticar una operación MIT es 100% del banco, y la toma en base a sus propias reglas internas. Desde Paylands siempre se enviará el máximo de información posible al banco emisor para que intente finalizar la operación sin que se requiera intervención del usuario, pero la decisión final será del propio banco del usuario.
+Si las condiciones mencionadas se cumplen, el pago finalizará normalmente sin necesidad de que intervenga el usuario. Si por el contrario alguna de esas condiciones no se cumple o es imprescindible que el usuario se autentique, [la API devolverá un enlace de pago el cual puede enviarse al usuario para que finalice el pago mediante 3DS](/#reference/pagos/realizar-el-pago/por-webservice). Esta decisión de si el usuario debe autenticar una operación MIT es 100% del banco, y la toma en base a sus propias reglas internas. Desde Paylands siempre se enviará el máximo de información posible al banco emisor para que intente finalizar la operación sin que se requiera intervención del usuario, pero la decisión final será del propio banco del usuario.
 
 **El primer pago con una tarjeta siempre se deberá realizar a través de la carta de pago o de forma tokenizada** para que el usuario se autentique por primera vez y poder optar a esta modalidad en pagos posteriores. Los pagos sin la presencia del usuario están reservados únicamente para pagos que inicia el comercio, también conocidos como MIT (Merchant Initiated Transaction).
 
-### Cómo adaptarse a los cambios[​](#cómo-adaptarse-a-los-cambios "Enlace directo al Cómo adaptarse a los cambios")
+### Cómo adaptarse a los cambios
 
 Si tu comercio realiza únicamente [pagos seguros mediante 3DS](#reference/pagos/realizar-el-pago/tokenizado-por-3ds) no es necesario que hagas nada. Una vez llegue la fecha, Paylands cambiará la forma en la que se procesan los pagos. Los clientes notarán que el proceso es ligeramente distinto en función del banco emisor de su tarjeta, sin embargo como comercio no notarás ninguna diferencia.
 
 Si por el contrario realizas [pagos no seguros mediante WebService](/#reference/pagos/realizar-el-pago/por-webservice) cuando los usuarios no están presentes en el momento del pago, será necesario que soportes modalidades de pago seguras, como la carta de pago o pago tokenizado. También deberás tratar correctamente la respuesta del pago mediante WebService cuando se devuelve el enlace de pago.
 
-Todos los comercios empezarán a operar con la nueva normativa a partir del día 1 de Enero, sin necesidad de llevar a cabo ninguna acción. Sin embargo, si quieres adelantarte y que tu comercio empiece a operar con PSD2 antes de la fecha límite, puedes enviar un correo a [soporte@paylands.com](mailto:soporte@paylands.com) indicando tu FUC (Código de comercio de 8-9 cifras) y el banco a través del cual opera tu comercio.
+Todos los comercios empezarán a operar con la nueva normativa a partir del día 1 de enero, sin necesidad de llevar a cabo ninguna acción. Sin embargo, si quieres adelantarte y que tu comercio empiece a operar con PSD2 antes de la fecha límite, puedes enviar un correo a [soporte@paylands.com](mailto:soporte@paylands.com) indicando tu FUC (Código de comercio de 8-9 cifras) y el banco a través del cual opera tu comercio.
 
-### Datos extra[​](#datos-extra "Enlace directo al Datos extra")
+### Datos extra
 
 Para aumentar las probabilidades de que no sea necesario que el usuario se autentique para finalizar el pago, se pueden enviar opcionalmente datos extra. Estos datos deben incluirse en el campo `extra_data` al crear una orden con el formato detallado en la sección "Pagos > Orden de pago".
 
-### Preguntas frecuentes (FAQ)[​](#preguntas-frecuentes-faq "Enlace directo al Preguntas frecuentes (FAQ)")
+### Preguntas frecuentes (FAQ)
 
 ¿Podré realizar pagos sin la presencia del usuario si el pago seguro tuvo lugar antes de la entrada en vigor de la normativa?
 
@@ -90,7 +90,7 @@ Para aumentar las probabilidades de que no sea necesario que el usuario se auten
 
 > No. Es necesario autenticar al usuario al menos una vez por servicio de pago. Los servicios pueden ser diferentes siempre y cuando sean del mismo tipo.
 
-## Exenciones[​](#exenciones "Enlace directo al Exenciones")
+## Exenciones
 
 Actualmente soportamos las exenciones de **Análisis de Riesgo (TRA)** y de **Bajo importe (LV)** en el servicio de pago **Redsys**. Para solicitarlas, basta aportar la siguiente información en el campo `extra_data` al crear la orden:
 
@@ -114,11 +114,11 @@ Finalmente, que una exención sea solicitada no implica que haya sido aceptada. 
 
 Tampoco puede saberse si una exención fue aceptada por el issuer (banco del usuario) o el acquirer (banco del comercio).
 
-### Requisitos[​](#requisitos "Enlace directo al Requisitos")
+### Requisitos
 
 Las exenciones deben cumplir ciertos requisitos antes de poder ser solicitadas. Se pueden solicitar hasta 2 exenciones, de las cuales como mucho se solicitará una. Las exenciones se solicitan en el orden en el que se indican en la petición. Los requisitos para solicitar cada exención son:
 
-#### Requisitos generales[​](#requisitos-generales "Enlace directo al Requisitos generales")
+#### Requisitos generales
 
 * La tarjeta debe pertenecer a la zona económica europea (EEA).
 * El servicio de pago debe soportar la solicitud de exenciones (por ahora solo lo soporta Redsys).
@@ -127,7 +127,7 @@ Las exenciones deben cumplir ciertos requisitos antes de poder ser solicitadas. 
 * El pago debe ser seguro y la versión del 3DS debe ser 2.1 o 2.2.
 * La tarjeta debe tener al menos un pago exitoso en el último año.
 
-#### Análisis de riesgo (TRA)[​](#análisis-de-riesgo-tra "Enlace directo al Análisis de riesgo (TRA)")
+#### Análisis de riesgo (TRA)
 
 * El importe debe ser igual o menor a 500€, 250€ o 100€ dependiendo de la tasa de fraude medio del comercio igual o inferior a 0.01%, 0.06% o 0.13%, respectivamente.
 
@@ -137,6 +137,6 @@ Las exenciones deben cumplir ciertos requisitos antes de poder ser solicitadas. 
   * Número de teléfono
   * Dirección de cobro y de envío (pueden ser la misma).
 
-#### Bajo importe (LV)[​](#bajo-importe-lv "Enlace directo al Bajo importe (LV)")
+#### Bajo importe (LV)
 
 * El importe debe ser igual o menor a 30€.

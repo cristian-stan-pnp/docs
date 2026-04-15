@@ -3,15 +3,15 @@ title: 'PayPal'
 description: 'Configuración e integración del servicio de pago PayPal en Paylands'
 ---
 
-## Introducción[​](#introducción "Enlace directo al Introducción")
+## Introducción
 
-Paypal es un servicio de pago que permite realizar cobros utilizando el checkout de Paylands o mediante una redirección.
+PayPal es un servicio de pago que permite realizar cobros utilizando el checkout de Paylands o mediante una redirección.
 
-## Restricciones y requisitos[​](#restricciones-y-requisitos "Enlace directo al Restricciones y requisitos")
+## Restricciones y requisitos
 
 Actualmente solo se soporta la moneda EUR.
 
-Al generar la orden de pago se deben enviar, al menos, los campos de *profile* y *billing\_address* para poder conciliar los pagos via PayPal.
+Al generar la orden de pago se deben enviar, al menos, los campos de *profile* y *billing\_address* para poder conciliar los pagos vía PayPal.
 
 ```
 "extra_data": {    "checkout": {        "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"    },    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@gmail.com",        "phone": {            "number": "666666666",            "prefix": "34"        }    },    "billing_address": {        "city": "Castellon",        "country": "ESP",        "address1": "Avinguda del Mar 23",        "zip_code": "12000",        "state_code": "CT"    }}
@@ -19,7 +19,7 @@ Al generar la orden de pago se deben enviar, al menos, los campos de *profile* y
 
 ***
 
-## STC (Set Transaction Context)[​](#stc-set-transaction-context "Enlace directo al STC (Set Transaction Context)")
+## STC (Set Transaction Context)
 
 El envío de datos STC permite enriquecer la información de la transacción mediante información adicional del comprador y del servicio contratado.
 
@@ -30,7 +30,7 @@ En la request empleada al [**generar la orden de pago**](/reference/#operation/g
 
 Los datos OTA solo son necesarios para determinadas industrias, como hoteles.
 
-### OTA - Hoteles (MCC 7011)[​](#ota---hoteles-mcc-7011 "Enlace directo al OTA - Hoteles (MCC 7011)")
+### OTA - Hoteles (MCC 7011)
 
 Los siguientes campos corresponden al contexto OTA para el caso de hoteles.
 
@@ -47,7 +47,7 @@ Todos los campos OTA deben enviarse dentro de **`extra_data.payment`**.
 | `ota_start_city`         | `string`                     | Ciudad donde comienza la estancia                        | `"Madrid"`                      |
 | `ota_start_zipcode`      | `string`                     | Código postal donde comienza la estancia                 | `"28080"`                       |
 
-#### Ejemplo[​](#ejemplo "Enlace directo al Ejemplo")
+#### Ejemplo
 
 ```
 {    "extra_data": {        "profile": {            "first_name": "John",            "last_name": "Doe",            "email": "john@doe.com",            "birthdate": "1984-11-28",            "phone": {                "number": "678767878",                "prefix": "+34"            }        },        "billing_address": {            "city": "Madrid",            "country": "ESP",            "address1": "Avenida principal, 24",            "zip_code": "12345",            "state_code": "ESP"        },        "payment": {            "buyer_creation_date": "2012-12-09T19:14:55.277+00:00",            "ota_type": "hotel",            "ota_service_start_date": "2012-12-09T19:14:55.277+00:00",            "ota_service_end_date": "2012-12-14T19:14:55.277+00:00",            "ota_change_guest": false,            "ota_start_country": "ES",            "ota_start_city": "Madrid",            "ota_start_zipcode": "28080"        }    }}
@@ -55,7 +55,7 @@ Todos los campos OTA deben enviarse dentro de **`extra_data.payment`**.
 
 ***
 
-## Sandbox[​](#sandbox "Enlace directo al Sandbox")
+## Sandbox
 
 Hacer un pago con PayLater y PayPal:
 
@@ -72,7 +72,7 @@ Hacer un pago con PayPal:
 PayLater se soporta en varios países, y cada uno tiene unas condiciones en función del importe y plazos a pagar:
 
 * España, Italia y Reino Unido: importe entre 30 y 2000 euros (EUR), pago en 3 plazos.
-* Alemania: importe entre 99 y 5000 euros (EUR), pago puede ser entre 3, 6, 12, y 24 plazos. Además pueden elegir pagar a los 30 dias de la compra si el importe oscila entre 1 y 1000 euros (EUR).
+* Alemania: importe entre 99 y 5000 euros (EUR), pago puede ser entre 3, 6, 12, y 24 plazos. Además pueden elegir pagar a los 30 días de la compra si el importe oscila entre 1 y 1000 euros (EUR).
 * Francia y Australia: importe entre 30 y 2000 euros (EUR), pago en 4 plazos.
 * Reino Unido: si el importe es mayor de 99 euros (EUR), se puede aplicar un 0% de interés en su compra.
-* Estados Unidos: importe entre 30 y 1500 euros (EUR), pago en 4 plazos pero con el dia de cobro cada dos semanas. Hay opción para pagar cada mes, pero los plazos deben ser de 6, 12 o 24 y el importe debe oscilar entre 199 y 10000 euros (EUR).
+* Estados Unidos: importe entre 30 y 1500 euros (EUR), pago en 4 plazos pero con el día de cobro cada dos semanas. Hay opción para pagar cada mes, pero los plazos deben ser de 6, 12 o 24 y el importe debe oscilar entre 199 y 10000 euros (EUR).

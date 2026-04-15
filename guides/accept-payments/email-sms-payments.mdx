@@ -7,9 +7,9 @@ Por cada pago a realizar será necesario indicar la cantidad a pagar y el email 
 
 ![Envío de pagos via email y sms](/images/docs/integration/assets/images/email-sms-campaigns-1-7d37b6bfe9da67f44f49b90ec0367392.png)
 
-## Funcionamiento a través del panel[​](#funcionamiento-a-través-del-panel "Enlace directo al Funcionamiento a través del panel")
+## Funcionamiento a través del panel
 
-Esta funcionalidad es accesible solamente a través del [panel de Paylands](https://backend.paylands.com) en la sección "Herramientas de pago" > "Pagos vía email y sms". En esta sección se listan los listados de pagos iniciados recientemente. Para crear un nuevo pago, haz clic en el botón **Nuevo pago**. El formulario acepta la creación de un solo pago o un fichero CSV con una lista de pagos.
+Esta funcionalidad es accesible solamente a través del [panel de Paylands](https://backend.paylands.com) en la sección "Herramientas de pago" > "Pagos vía email y sms". En esta sección se muestran los listados de pagos iniciados recientemente. Para crear un nuevo pago, haz clic en el botón **Nuevo pago**. El formulario acepta la creación de un solo pago o un fichero CSV con una lista de pagos.
 
 ![Envío de pago individual](/images/docs/integration/assets/images/email-sms-campaigns-2-81eb0f80c8dba4d6f12fc9dd0d991d14.png)
 
@@ -51,7 +51,7 @@ A continuación se describen todos los campos que se pueden configurar para lanz
 
 ![Envío de pagos mediante fichero](/images/docs/integration/assets/images/email-sms-campaigns-3-c09fba2e7e26d6907d9e5105d68b42d0.png)
 
-## Estructura del fichero de pagos[​](#estructura-del-fichero-de-pagos "Enlace directo al Estructura del fichero de pagos")
+## Estructura del fichero de pagos
 
 Para enviar múltiples enlaces de pago simultáneamente debe subirse un fichero CSV, que es un documento de texto cuya primera línea contiene la cabecera y el resto de líneas los datos de cada uno de los pagos. Esta es su estructura:
 
@@ -77,16 +77,17 @@ Para enviar múltiples enlaces de pago simultáneamente debe subirse un fichero 
 Los valores se delimitan con una coma: ",". Las cabeceras opcionales que no contengan ningún valor pueden omitirse. Los valores nulos o vacíos se indican dejando un hueco entre comas. Un ejemplo de CSV es el siguiente:
 
 ```
-AMOUNT,OPERATIVE,DESTINATION,SECURE,SOURCE_UUID,CUSTOMER_EXT_ID,ADDITIONAL,URL_POST,URL_OK,URL_KO,CARD_TEMPLATE,MOTO_TEMPLATE,DCC_TEMPLATE,CERTIFIED,LANGUAGE12035,AUTHORIZATION,+34666554411,false,,user_1234,additional_info_1234,http://google.es/notification,http://google.es/ok_payment,http://google.es/ko_payment,,90895BE4-F614-447A-AE7F-082B248FE3A3,,false,es
+AMOUNT,OPERATIVE,DESTINATION,SECURE,SOURCE_UUID,CUSTOMER_EXT_ID,ADDITIONAL,URL_POST,URL_OK,URL_KO,CARD_TEMPLATE,MOTO_TEMPLATE,DCC_TEMPLATE,CERTIFIED,LANGUAGE
+12035,AUTHORIZATION,+34666554411,false,,user_1234,additional_info_1234,http://google.es/notification,http://google.es/ok_payment,http://google.es/ko_payment,,90895BE4-F614-447A-AE7F-082B248FE3A3,,false,es
 ```
 
 En el ejemplo, se creará la orden para un pago no seguro de 120.35€, asociado al cliente 'user\_1234'. El campo 'SOURCE\_UUID' no tiene ningún valor porque se ha dejado vacío.
 
-## Descargar certificado de recepción[​](#descargar-certificado-de-recepción "Enlace directo al Descargar certificado de recepción")
+## Descargar certificado de recepción
 
 Se puede descargar el certificado de recepción de un pago a través del panel, en el detalle del pago. Disponible para envíos mediante email y SMS.
 
-## Descargar certificado de apertura de link[​](#descargar-certificado-de-apertura-de-link "Enlace directo al Descargar certificado de apertura de link")
+## Descargar certificado de apertura de link
 
 Se puede descargar el certificado de apertura del enlace de pago de un pago a través del panel, en el detalle del pago. Disponible para envíos mediante SMS.
 
@@ -94,11 +95,12 @@ Se puede descargar el certificado de apertura del enlace de pago de un pago a tr
   Los certificados de recepción/apertura solo estarán disponibles si en el pago se configuró la certificación (con el campo **CERTIFIED** a **true**).
 </Warning>
 
-## Campos personalizados en plantillas de email y SMS[​](#campos-personalizados-en-plantillas-de-email-y-sms "Enlace directo al Campos personalizados en plantillas de email y SMS")
+## Campos personalizados en plantillas de email y SMS
 
 La herramienta soporta plantillas específicas para enviarlas por SMS o e-mail. Para utilizar una plantilla personalizada, deberás enviar un e-mail a *[soporte@paylands.com](mailto:soporte@paylands.com)*.
 
 Se puede incluir campos personalizados en la plantillas de email y SMS. Para ello, el formato que se debe enviar, ya sea desde formulario del panel o enviándolas mediante API deberá ser:
+
 
 ```
 clave1:valor1;clave2:valor2
@@ -115,5 +117,5 @@ nombre: Juan García; edad: 28
 En la plantilla de email/sms se puede acceder a estos valores de la siguiente forma:
 
 ```
-Bienvenido {{customFields.nombre}},felices {{customFields.edad}} años.
+Bienvenido {{customFields.nombre}}, felices {{customFields.edad}} años.
 ```

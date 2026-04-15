@@ -3,7 +3,7 @@ title: 'Credibanco'
 description: 'Configuración e integración del servicio de pago Credibanco en Paylands'
 ---
 
-## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+## Códigos de error
 
 La estructura del error tiene la siguiente forma:
 
@@ -20,8 +20,8 @@ Por ejemplo:
 | Código | COD\_B24 | Descripción                                         | Intentos x día | Días Bloqueo |
 | ------ | -------- | --------------------------------------------------- | -------------- | ------------ |
 | 00     | 000      | Aprobada                                            | NULL           | NULL         |
-| 01     | 088      | Negada, comuniquese con su entidad                  | 1              | 1            |
-| 02     | 101      | Negada, comuniquese con su entidad                  | NULL           | NULL         |
+| 01     | 088      | Negada, comuníquese con su entidad                  | 1              | 1            |
+| 02     | 101      | Negada, comuníquese con su entidad                  | NULL           | NULL         |
 | 03     | 150      | Negada, comercio inválido                           | NULL           | NULL         |
 | 04     | 909      | Negada, retener tarjeta                             | 1              | 999          |
 | 05     | 050      | Negada, puede ser tarjeta bloqueada o timeout       | 2              | 1            |
@@ -34,8 +34,8 @@ Por ejemplo:
 | 13     | 205      | Negada, monto inválido                              | NULL           | NULL         |
 | 14     | 058      | Negada, estado de la tarjeta inválido               | 1              | 1            |
 | 15     | 070      | Negada, la institución no está en el IDF            | NULL           | NULL         |
-| 16     | 016      | Negada, Numero cuotas invalidas                     | NULL           | NULL         |
-| 17     | 017      | Negada IAC inválido                                 | NULL           | NULL         |
+| 16     | 016      | Negada, Número cuotas inválidas                     | NULL           | NULL         |
+| 17     | 017      | Negada, IAC inválido                                | NULL           | NULL         |
 | 30     | 069      | Negada, error en edición de mensaje                 | NULL           | NULL         |
 | 31     | 053      | Negada, el emisor no es soportado por el Sistema    | NULL           | NULL         |
 | 33     | 901      | Negada, tarjeta vencida con orden de retención      | 1              | 999          |
@@ -46,11 +46,11 @@ Por ejemplo:
 | 38     | 900      | Negada, número de intentos del PIN excedidos        | NULL           | NULL         |
 | 39     | 050      | Negada, puede ser tarjeta bloqueada o timeout       | 1              | 1            |
 | 41     | 057      | Negada, tarjeta robada o extraviada                 | 1              | 999          |
-| 43     | 903      | Negada, estado en archivo de tarjetahabientes (CAF  | 1              | 999          |
+| 43     | 903      | Negada, estado en archivo de tarjetahabientes (CAF) | 1              | 999          |
 | 51     | 076      | Negada, no hay fondos suficientes                   | NULL           | NULL         |
 | 54     | 051      | Negada, tarjeta vencida                            | 2              | 7            |
 | 55     | 201      | Negada, PIN inválido                                | NULL           | NULL         |
-| 56     | 206      | Negada, no se encontro CAF                          | 1              | 1            |
+| 56     | 206      | Negada, no se encontró CAF                          | 1              | 1            |
 | 57     | 056      | Negada, transacción no permitida a esta tarjeta     | NULL           | NULL         |
 | 58     | 055      | Negada, transacción Inválida                        | NULL           | NULL         |
 | 61     | 095      | Negada, excede el monto máximo                      | 1              | 1            |
@@ -83,7 +83,7 @@ Por ejemplo:
 | 97     | 254      | Negada, Número de documento inválido                | NULL           | NULL         |
 | 98     | 255      | Negada, CVV2 inválido                               | 4              | 1            |
 | 99     | 999      | Error de comunicaciones                             | NULL           | NULL         |
-| B1     | 130      | Numero de Factura invalida                          | NULL           | NULL         |
+| B1     | 130      | Número de Factura inválida                          | NULL           | NULL         |
 | B2     | 131      | Factura vencida                                     | NULL           | NULL         |
 | B3     | 132      | Factura pagada                                      | NULL           | NULL         |
 | F1     | 0F1      | Filtro por Comercio                                 | NULL           | NULL         |
@@ -120,7 +120,7 @@ Por ejemplo:
 | P8     | 203      | Negada, administrative card needed                  | NULL           | NULL         |
 | P9     | 204      | Negada, enter lesser amount                         | NULL           | NULL         |
 | Q0     | 207      | Negada, invalid transaction date                    | NULL           | NULL         |
-| Q1     | 208      | Negada, Fecha de vencimiento invalida               | NULL           | NULL         |
+| Q1     | 208      | Negada, Fecha de vencimiento inválida               | NULL           | NULL         |
 | Q2     | 209      | Negada, invalid transaction code                    | NULL           | NULL         |
 | Q3     | 904      | Negada, valor del avance menor que el mínimo        | 1              | 99           |
 | Q4     | 905      | Negada, excedido el número de usos por período      | NULL           | NULL         |
@@ -151,5 +151,5 @@ Por ejemplo:
 | T5     | 089      | Negada, CAF status = 0 or 9                         | 1              | 1            |
 | T6     | 120      | Negada, Bad UAF                                     | NULL           | NULL         |
 | T7     | 251      | Negada, límite diario excedido en el Cash back      | NULL           | NULL         |
-| T8     | 963      | Negada, el enlace esta caido                        | NULL           | NULL         |
+| T8     | 963      | Negada, el enlace está caído                        | NULL           | NULL         |
 | TO     | \_TO     | Negada, time out                                    | NULL           | NULL         |

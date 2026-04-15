@@ -1,6 +1,6 @@
 ---
 title: 'Herramientas No-Code'
-description: 'Process payments directly from your server'
+description: 'Herramientas para aceptar pagos sin necesidad de integración técnica'
 ---
 
 # Pago por Webservice
@@ -13,8 +13,9 @@ Este proceso de pago permite una integración más profunda, donde el comercio g
 El comercio envía las características del pago al endpoint `/payment`.
 Paylands devuelve un objeto `order` junto con su UUID.
 
-> [!IMPORTANT]
-> Con este método, el campo `customer_ext_id` enviado a `/payment` es obligatorio y debe coincidir con el utilizado al guardar la tarjeta.
+<Warning>
+  Con este método, el campo `customer_ext_id` enviado a `/payment` es obligatorio y debe coincidir con el utilizado al guardar la tarjeta.
+</Warning>
 
 ### 2. Completar el pago
 El comercio finaliza el pago con el UUID de la orden y el UUID de la tarjeta almacenada.

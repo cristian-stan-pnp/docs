@@ -1,0 +1,310 @@
+---
+title: 'Antifraude e segurança'
+description: 'Sistema antifraude e listas de segurança da Paylands: regras, whitelist, blacklist e listas cinzentas'
+---
+
+## Anti Fraude
+
+A Paylands oferece um potente sistema antifraude que permite tanto redirecionar transações suspeitas para o 3DS como rejeitá-las diretamente, sem que o pagamento chegue a ser processado.
+
+Para isso, existe uma série de verificações disponíveis que podem ser agrupadas para formar regras antifraude, cada uma com a sua própria pontuação. A soma das pontuações de todas as regras que foram ativadas será o que determinará a pontuação para a operação em curso.
+
+### Configuração e criação do Anti Fraude
+
+Em primeiro lugar, temos de nos dirigir ao separador Segurança -> Anti Fraude no painel. Aqui veremos uma listagem com todos os anti fraudes disponíveis e o número de serviços associados ao mesmo.
+
+Na coluna `Servicios Totales` podemos consultar clicando no número de serviços associados ao anti fraude. Lembre-se de que tem de associar ao anti fraude os serviços que irão fazer uso do mesmo. Um serviço só pode estar associado a um antifraude.
+
+![Anti fraud list](/images/docs/assets/images/antifraud_list-28332c37709f7d7da5e1caf87c100030.png)
+
+Para atribuir um serviço devemos dirigir-nos a Administrar -> Listado de Servicios -> Listado. Acedemos ao detalhe do serviço que desejamos associar a um Anti Fraude. No separador Anti Fraude escolhemos o desejado e atualizamos.
+
+![Anti fraud service](/images/docs/assets/images/associate_antifraud_service-af03a69630483f7eaa9c50e4f4e49680.png)
+
+As validações disponíveis são:
+
+<AccordionGroup>
+  <Accordion title="maximumCorrectPaymentsByCard">
+    * Quantidade de transações corretas com um cartão nos últimos X dias
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumCorrectPaymentsByIp">
+    * Quantidade de transações corretas a partir de um IP nos últimos X dias
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumCorrectPaymentsByExternalId">
+    * Quantidade de transações corretas associadas a um utilizador nos últimos X dias
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByCard">
+    * Quantidade de transações rejeitadas com um cartão nos últimos X dias
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByIp">
+    * Quantidade de transações rejeitadas associadas a um IP nos últimos X dias
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectPaymentsByExternalId">
+    * Quantidade de transações rejeitadas associadas a um utilizador nos últimos X dias
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByCard">
+    * Quantidade de cobranças com um cartão nos últimos X minutos
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em minutos)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByIp">
+    * Quantidade de cobranças a partir de um IP nos últimos X minutos
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em minutos)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsPerMinuteByExternalId">
+    * Quantidade de cobranças associadas a um utilizador nos últimos X minutos
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em minutos)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsFromCardFromDifferentIPs">
+    * Quantidade de cobranças com IPs diferentes a partir dos quais o cartão foi utilizado nos últimos X dias no serviço de pagamento atual
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumPaymentsFromIPFromDifferentCards">
+    * Quantidade de cobranças com cartões diferentes a partir de um IP nos últimos X dias no serviço de pagamento atual
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumRetriesFromCardUsedByOtherUser">
+    * Quantidade de cobranças de utilizadores diferentes que utilizaram o cartão no serviço de pagamento atual
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumRetriesFromSameIpUsedByOtherUsers">
+    * Quantidade de cobranças de utilizadores diferentes que utilizaram o cartão a partir do mesmo IP no serviço de pagamento atual
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="successivePaymentsWithSimilarCards">
+    * Quantidade de pagamentos nos últimos dias a partir do mesmo IP com cartões semelhantes
+    * Parâmetros:
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumAmountPayment">
+    * Valor máximo de pagamento
+    * Parâmetros:
+      * *amount*: number
+  </Accordion>
+
+  <Accordion title="maximumUsedCardsByExternalId">
+    * Quantidade de cobranças com cartões diferentes utilizados pelo mesmo utilizador nos últimos X dias
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="paymentFromProxy">
+    * Verifica se existe algum cabeçalho de proxy
+  </Accordion>
+
+  <Accordion title="paymentFromTor">
+    * Verifica a coincidência do IP com uma lista dos últimos IPs utilizados pelo TOR
+  </Accordion>
+
+  <Accordion title="lastAmountsSum">
+    * Soma dos valores das transações corretas dos últimos X dias
+
+    * Parâmetros:
+
+      * *amount*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="minimumAmountPayment">
+    * Valor mínimo de pagamento
+    * Parâmetros:
+      * *amount*: number
+  </Accordion>
+
+  <Accordion title="datesRange">
+    * Compara a hora da transação com o intervalo de datas fornecido
+
+    * Parâmetros:
+
+      * *from*: date
+      * *to*: date
+  </Accordion>
+
+  <Accordion title="matchingIpFromCountry">
+    * Compara o país do cartão com o país do utilizador
+
+    * Parâmetros:
+
+      * *operator*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="matchingBrand">
+    * Verifica se o cartão pertence a uma marca específica
+    * Parâmetros:
+      * *brand*: string
+  </Accordion>
+
+  <Accordion title="matchingBrandAndCountry">
+    * Verifica se o cartão pertence a uma marca e a um país específicos
+
+    * Parâmetros:
+
+      * *brand*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="matchingSourceCountry">
+    * Verifica se o cartão pertence a um país específico
+
+    * Parâmetros:
+
+      * *operator*: string
+      * *country*: number
+  </Accordion>
+
+  <Accordion title="maximumAmountCorrectPaymentsByCard">
+    * Quantidade máxima de pagamentos bem-sucedidos com o mesmo cartão
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumCorrectUsedCardsByExternalId">
+    * Máximo de cartões utilizados em pagamentos corretos por ID Externo
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+
+  <Accordion title="maximumIncorrectUsedCardsByExternalId">
+    * Máximo de cartões utilizados em pagamentos incorretos por ID Externo
+
+    * Parâmetros:
+
+      * *retries*: number
+      * *interval*: number (em dias)
+  </Accordion>
+</AccordionGroup>
+
+## Listas de segurança
+
+Dentro das listas de segurança podemos configurar os elementos (IP, BIN, UUID, EXTERNAL\_ID e TOKEN) para que sejam marcados como seguros, de risco ou bloqueados.
+
+Para aceder a cada uma das listas de segurança basta dirigirmo-nos a **Segurança** e clicar na lista desejada.
+
+Nesta secção poderemos ver cada uma das listas disponíveis onde poderemos ativá-las ou desativá-las e consultar os serviços associados às mesmas. Podendo inclusivamente desvincular os serviços que pretendamos dessa lista.
+
+![ColorList table](/images/docs/assets/images/colorlist_table-ec48062c05b366a4785978833e314c1e.png)
+
+![ColorList services](/images/docs/assets/images/colorlist_services-5d2d074e0b68dd664ee3e6f76f2608db.png)
+
+No detalhe de cada lista podemos criar, modificar e eliminar elementos. Lembre-se de que também terá de associar tantos serviços quantos desejar que utilizem esta lista.
+
+![ColorList detail](/images/docs/assets/images/colorlist_detail-ed1a5fc228afbaf082d9de64dc48f594.png)
+
+![ColorList add service](/images/docs/assets/images/colorlist_add_service-77491fc9efcb98ef490ee2cae1f8299f.png)
+
+### Listas Brancas
+
+A partir desta secção pode configurar listas brancas que podem ser associadas aos serviços existentes.
+
+Estas listas permitem configurar verificações para evitar que uma operação de confiança entre em avaliação de risco ou fraude. Os parâmetros que podem ser verificados para validar que a operação é de confiança são os seguintes:
+
+* IP: Endereço IP a partir do qual a operação é realizada.
+* BIN: Primeiros 6 dígitos da numeração do cartão.
+* UUID: Identificador do cartão.
+* ID\_EXTERNO: Identificador do customer.
+* TOKEN: Token identificador do cartão.
+
+### Listas Negras
+
+A partir desta secção pode configurar listas negras que podem ser associadas aos serviços existentes.
+
+Estas listas permitem configurar verificações para evitar que uma operação de confiança duvidosa seja processada. Os parâmetros que podem ser verificados para validar que a operação deve ser bloqueada são os seguintes:
+
+* IP: Endereço IP a partir do qual a operação é realizada.
+* BIN: Primeiros 6 dígitos da numeração do cartão.
+* UUID: Identificador do cartão.
+* ID\_EXTERNO: Identificador do customer.
+* TOKEN: Token identificador do cartão.
+
+### Listas Cinzentas
+
+A partir desta secção pode configurar listas cinzentas que podem ser associadas aos serviços existentes.
+
+Estas listas permitem configurar verificações para obrigar uma operação de confiança duvidosa a ser processada como uma ordem segura (3DS). Os parâmetros que podem ser verificados para validar que o nível de segurança da operação deve ser aumentado são os seguintes:
+
+* IP: Endereço IP a partir do qual a operação é realizada.
+* BIN: Primeiros 6 dígitos da numeração do cartão.
+* UUID: Identificador do cartão.
+* ID\_EXTERNO: Identificador do customer.
+* TOKEN: Token identificador do cartão.
