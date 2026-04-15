@@ -1,0 +1,22 @@
+---
+title: 'PSE'
+description: 'Accept payments with PSE in Colombia through the Paylands API'
+---
+
+# PSE
+
+Using this payment method, the user will be redirected to the payment page of the previously selected bank, where they must enter their banking credentials to access the account from which they wish to make the payment. This method is only available for PAYRETAILERS and PAYMENTSWAY type services.
+
+## Integration via redirect
+
+This method requires the user to be present at the time of payment, which must be processed through a browser. First, we must [generate a payment order](/reference/#operation/generate-payment-order) specifying the following fields about the user to prevent them from having to fill them in at a later step.
+
+```
+  "extra_data": {      "checkout": {          "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"      },      "profile": {          "first_name": "John",          "last_name": "Doe",          "email": "johndoe@gmail.com",          "document_identification_number": "92309089",          "phone": {              "number": "02614235138",              "prefix": "54"          }      },      "billing_address": {          "city": "Castellon",          "country": "COL",          "address1": "Avinguda del Mar 23",          "zip_code": "12000",          "state_code": "CT"      }  }
+```
+
+The integration process is [**similar to the redirect payment card process**](/guides/accept-payments/web-integration), but in this case the APM will be added to the base URL:
+
+```
+/payment/{token}?apm=PSE
+```

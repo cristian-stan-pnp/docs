@@ -1,0 +1,22 @@
+---
+title: 'PSE'
+description: 'Aceite pagamentos com PSE na Colômbia através da API da Paylands'
+---
+
+# PSE
+
+Usando este método de pagamento, o usuário será redirecionado para a página de pagamento do banco previamente selecionado, onde deverá inserir suas credenciais bancárias para acessar a conta a partir da qual deseja efetuar o pagamento. Este método está disponível apenas para serviços do tipo PAYRETAILERS e PAYMENTSWAY.
+
+## Integração via redirecionamento
+
+Este método requer que o usuário esteja presente no momento do pagamento, o qual deverá ser processado através de um navegador. Primeiramente, devemos [gerar uma ordem de pagamento](/reference/#operation/generate-payment-order) indicando os seguintes campos sobre o usuário para evitar que ele tenha que preenchê-los em uma etapa posterior.
+
+```
+  "extra_data": {      "checkout": {          "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"      },      "profile": {          "first_name": "John",          "last_name": "Doe",          "email": "johndoe@gmail.com",          "document_identification_number": "92309089",          "phone": {              "number": "02614235138",              "prefix": "54"          }      },      "billing_address": {          "city": "Castellon",          "country": "COL",          "address1": "Avinguda del Mar 23",          "zip_code": "12000",          "state_code": "CT"      }  }
+```
+
+O processo de integração é [**similar ao do cartão de pagamento por redirecionamento**](/guides/accept-payments/web-integration), mas neste caso o APM será adicionado na URL base:
+
+```
+/payment/{token}?apm=PSE
+```

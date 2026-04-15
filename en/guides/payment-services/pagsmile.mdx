@@ -1,0 +1,205 @@
+---
+title: 'Pagsmile'
+description: 'Setup and integration of the Pagsmile payment service in Paylands'
+---
+
+## Introduction
+
+Pagsmile is a service that allows card payments or payments through the alternative payment methods PIX, Loterica, and Boleto. It also supports PIX Payouts and Bank Transfer Payouts. It can be used both in the Paylands checkout and via redirection, as well as with push payments.
+
+## Required extra data
+
+Pagsmile expects to receive the following information in the `extra_data` field when creating the order. The fields to send vary depending on the chosen payment method.
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "11032341882",        "phone": {            "number": "700000000",            "prefix": "351"        }     },    "billing_address": {        "address1": "calle test",        "city": "",        "state_code": "",        "zip_code": "38082365",        "country": "BRA"    }}
+```
+
+* Card payment: does not require `extra_data`
+* PIX: name, email, and identification document (CPF)
+* Loterica: name, email, identification document (CPF), and phone number
+* Boleto: name, email, identification document (CPF), and postal code (`zip_code`)
+
+## Payouts
+
+Pagsmile allows payouts in different countries using the following payment methods:
+
+### Brazil
+
+#### PIX Payout
+
+Required fields:
+
+* **First and last name** (`profile.first_name` and `profile.last_name`)
+* **Identification document number (CPF)** (`profile.document_identification_number`)
+
+PIX payouts will be made using the CPF as the default account type. If you wish to use a different account type, it must be specified when creating the order by sending the `extra_data.payment.account_type` field, along with the associated field for each type, where the corresponding account value must be indicated:
+
+| Account type | Account                                              | Description                                                                    | Example                                               |
+| ------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| CPF          | extra\_data.profile.document\_identification\_number | CPF. 11 digits.                                                                | 22\*\*\*\*\*\*\*99                                    |
+| PHONE        | extra\_data.profile.phone.number                     | Phone number, without country code.                                            | 11987654321                                           |
+| EMAIL        | extra\_data.profile.email                            | Email address.                                                                 | [merchant@pagsmile.com](mailto:merchant@pagsmile.com) |
+| EVP          | extra\_data.payment.evp                              | 32-character alphanumeric key that links to a bank account.                    | a1073db4-a3a0-11ed-a8fc-0242ac120002                  |
+
+The following example shows the `extra_data` sent when creating an order for a PIX payout, using `EMAIL` as the account type:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "merchant@pagsmile.com",        "document_identification_number": "842.359.516-10"     },    "payment": {        "account_type": "EMAIL"    }}
+```
+
+#### Bank Transfer Payout Brasil (Transfer)
+
+Required fields:
+
+* **First and last name** (`profile.first_name` and `profile.last_name`)
+* **Identification document number (CPF)** (`profile.document_identification_number`)
+* **Bank code** (`payment.bank_code`) [See Brazil bank codes](https://docs.pagsmile.com/payout/bank-code/bank-in-brazil)
+* **Branch** (`payment.branch`)
+* **Account number** (`payment.account`)
+* **Account type** (`payment.account_type`): values `SAVINGS` or `CHECKING`
+
+For Bank Transfer Payouts, it will also be necessary to send the bank account information in the `payment` field:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "document_identification_number": "842.359.516-10"     },    "payment": {        "bank_code": "001",        "branch": "0002",        "account": "123412341",        "account_type": "CHECKING"    }}
+```
+
+### Colombia
+
+#### Tpaga
+
+Required fields:
+
+* **First and last name** (`profile.first_name` and `profile.last_name`)
+* **Country** (`billing_address.country`): fixed value `COL`
+* **Phone number** (`profile.phone.number`)
+* **Account type** (`payment.account_type`): fixed value `PHONE`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "phone": {            "number": "322222222"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "account_type": "PHONE"    }}
+```
+
+#### Transfiya
+
+Transfiya payments require `amount` >= 1000 COP.
+
+Required fields:
+
+* **First and last name** (`profile.first_name` and `profile.last_name`)
+* **Identification document number** (`profile.document_identification_number`)
+* **Identification document type** (`profile.document_identification_type`) [See identification document types](#identification-document-type).
+* **Country** (`billing_address.country`): fixed value `COL`
+* **Phone number** (`profile.phone.number`)
+* **Account type** (`payment.account_type`): fixed value `PHONE`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "123456789",        "phone": {            "number": "572222222222"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "account_type": "PHONE"    }}
+```
+
+#### Bank Transfer Payout Colombia (Transfer)
+
+Required fields:
+
+* **First and last name** (`profile.first_name` and `profile.last_name`)
+* **Identification document number** (`profile.document_identification_number`)
+* **Identification document type** (`profile.document_identification_type`) [See identification document types](#identification-document-type).
+* **Country** (`billing_address.country`): fixed value `COL`
+* **Bank code** (`payment.bank_code`) [See Colombia bank codes](https://docs.pagsmile.com/payout/bank-code/bank-in-colombia)
+* **Account number** (`payment.account`)
+* **Account type** (`payment.account_type`): values `SAVINGS` or `CHECKING`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "email": "test@pagsmile.com",        "document_identification_number": "123456789",        "phone": {            "number": "012345678910"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "bank_code": "007",        "account": "57012345678910",        "account_type": "CHECKING"    }}
+```
+
+### Chile
+
+#### Vita Wallet
+
+Vita Wallet payments require `amount` >= 5000 CLP.
+
+Required fields:
+
+* **First and last name** (`profile.first_name` and `profile.last_name`)
+* **Country** (`billing_address.country`): fixed value `CHL`
+* **Email** (`profile.email`)
+* **Account type** (`payment.account_type`): fixed value `EMAIL`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "email": "paid@pagsmile.com"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "CHL"    },    "payment": {        "account_type": "EMAIL"    }}
+```
+
+#### Bank Transfer Payout Chile (Transfer)
+
+Required fields:
+
+* **First and last name** (`profile.first_name` and `profile.last_name`)
+* **Identification document number** (`profile.document_identification_number`)
+* **Identification document type** (`profile.document_identification_type`) [See identification document types](#identification-document-type).
+* **Country** (`billing_address.country`): fixed value `CHL`
+* **Bank code** (`payment.bank_code`) [See Chile bank codes](https://docs.pagsmile.com/payout/bank-code/bank-in-chile)
+* **Account number** (`payment.account`)
+* **Account type** (`payment.account_type`): values `SAVINGS` or `CHECKING`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "111111111"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "CHL"    },    "payment": {        "account_type": "CHECKING",        "account": "222222222222",        "bank_code": "001"    }}
+```
+
+### Mexico
+
+#### SPEI Payout
+
+Required fields:
+
+* **First and last name** (`profile.first_name` and `profile.last_name`)
+* **Identification document number** (`profile.document_identification_number`)
+* **Identification document type** (`profile.document_identification_type`) [See identification document types](#identification-document-type)
+* **Country** (`billing_address.country`): fixed value `MEX`
+* **Account type** (`payment.account_type`): values `DEBIT`, `PHONE`, or `CLABE`
+* **Account number** (`payment.account`) Required if `account_type` is **different** from `PHONE`
+* **Phone number** (`profile.phone.number`) Required **only** if `account_type` is `PHONE`
+* **Bank code** (`payment.bank_code`). Required if `payment.account_type` is **different** from CLABE. [See Mexico bank codes](https://docs.pagsmile.com/payout/bank-code/bank-in-mexico)
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "111111111"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "MEX"    },    "payment": {        "account_type": "CLABE",        "account": "646020146401877826"    }}
+```
+
+## Identification document type
+
+The identification document type must be specified within `extra_data` in the `profile.document_identification_type` field. By default, if not specified, the value **NATIONAL\_IDENTITY\_DOCUMENT** will be used.
+
+Below are the possible values for this field and their equivalences for the different document types in each country:
+
+|                                       | Brazil | Colombia | Chile | Mexico |
+| ------------------------------------- | ------ | -------- | ----- | ------ |
+| **NATIONAL\_IDENTITY\_DOCUMENT**      | CPF    | CC       | RUN   | CURP   |
+| **FOREIGN\_IDENTIFICATION\_DOCUMENT** | -      | CE       | CE    | -      |
+| **FISCAL\_IDENTIFICATION\_CODE**      | -      | -        | RUT   | RFC    |
+| **VALID\_PASSPORT**                   | -      | -        | PAS   | -      |
+
+## Sandbox payment methods
+
+The test card is as follows. In general, the expiration date and CVV do not matter as long as the date is after the current date and the CVV has 3 digits.
+
+```
+- número de tarjeta: 4111 1111 1111 1111- CVV: 123- fecha de expiración: 12/34
+```
+
+## Currency
+
+The supported currencies for this service are the Brazilian real (BRL), the Colombian peso (COP), the Chilean peso (CLP), and the Mexican peso (MXN).
+
+## Error codes
+
+The error structure has the following format:
+
+```
+Código - Mensaje
+```
+
+For example:
+
+```
+4001001 - invalid document_id
+```

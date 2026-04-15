@@ -1,0 +1,22 @@
+---
+title: 'Efecty'
+description: 'Acceptă plăți cu Efecty în Columbia prin intermediul API-ului Paylands'
+---
+
+# Efecty
+
+Folosind această metodă de plată, utilizatorul va fi redirecționat către pagina de plată a băncii selectate anterior, unde va trebui să introducă credențialele bancare pentru a accesa contul din care dorește să efectueze plata. Această metodă este disponibilă doar pentru servicii de tip PAYRETAILERS.
+
+## Integrare prin redirecționare
+
+Metoda prin redirecționare necesită ca utilizatorul să fie prezent în momentul plății, care trebuie procesată printr-un browser. În primul rând, trebuie să [generăm o comandă de plată](/reference/#operation/generate-payment-order) indicând următoarele câmpuri obligatorii despre utilizator pentru a evita ca acesta să fie nevoit să le completeze într-o etapă ulterioară.
+
+```
+  "extra_data": {      "checkout": {          "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"      },      "profile": {          "first_name": "John",          "last_name": "Doe",          "email": "johndoe@gmail.com",          "document_identification_number": "92309089",          "phone": {              "number": "02614235138",              "prefix": "54"          }      },      "billing_address": {          "city": "Castellon",          "country": "COL",          "address1": "Avinguda del Mar 23",          "zip_code": "12000",          "state_code": "CT"      }  }
+```
+
+Procesul de integrare este [**similar cu cel al cardului de plată prin redirecționare**](/guides/accept-payments/web-integration), dar în acest caz APM-ul trebuie specificat în URL-ul de bază:
+
+```
+/payment/{token}?apm=EFECTY
+```

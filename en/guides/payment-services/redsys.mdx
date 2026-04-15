@@ -1,0 +1,519 @@
+---
+title: 'Redsys'
+description: 'Configuration and integration of the Redsys payment service in Paylands'
+---
+
+Two payment methods are supported: Card and [Bizum](/guides/apm/bizum). Refund, confirmation, cancellation, and status retrieval operations are compatible with both payment methods. The remaining operations are oriented towards cards only.
+
+## Restrictions and requirements
+
+Redsys supports at least the following currencies: AUD, BGN, CAD, CHF, COP, CZK, DKK, EUR, GBP, HRK, HUF, ILS, INR, JPY, MYR, NOK, NZD, PEN, PLN, RUB, SAR, SEK, SGD, THB, USD, ZAR.
+
+### Extra data
+
+It is not required to specify `extra_data` when creating the order to carry out the payments.
+
+### Dynamic descriptor
+
+The `dynamic_descriptor` field is optional and if specified, it can only contain a maximum of 38 characters and allows numbers, letters, and spaces.
+
+### Reference
+
+The `reference` field is optional. If specified, this value will appear in Redsys **Canales** within the `descripcion` field, along with the transaction `uuid` identifier.
+
+The format shown in Canales will be:
+
+```
+uuid_transaccion/reference
+```
+
+⚠️ Important: the merchant **must not include** the `uuid` or the slash `/` in the `reference` value. These are added automatically. The `uuid` corresponds to the transaction generated in our system.
+
+For example, if the merchant sends as `reference`:
+
+```
+1234
+```
+
+In Canales it will be displayed as:
+
+```
+10FF94B5-FE7C-41A0-B956-BBBBAA6BCA77/1234
+```
+
+This field allows merchants to add their own information to facilitate the traceability of operations. The maximum size of this field is **88 characters**. If this limit is exceeded, the `reference` value will be **truncated** in Canales.
+
+## Sandbox payment methods
+
+The Redsys test cards are as follows. In general, the expiration date and CVV do not matter as long as the date is later than the current date and the CVV has 3 digits.
+
+| Result                   | Card                       |
+| ------------------------ | -------------------------- |
+| Payment OK               | 4548812049400004 12/34 123 |
+| Payment KO               | 4111111111111111 12/34 123 |
+| Soft-decline (Not secure) | 4548817212493017 12/34 123 |
+
+### 3DSv1
+
+| Result           | Card                       |
+| ---------------- | -------------------------- |
+| Direct to 3DSv1  | 4548810000000003 12/49 123 |
+| Fallback to 3DSv1 | 4918010000000044 12/34 123 |
+
+### 3DSv2.1
+
+| Result                      | Card                       |
+| --------------------------- | -------------------------- |
+| Frictionless 3DSv2.1        | 4548814479727229 12/34 123 |
+| Fingerprinting only 3DSv2.1 | 4918019160034602 12/34 123 |
+| Challenge only 3DSv2.1      | 4548817212493017 12/34 123 |
+| Full flow 3DSv2.1           | 4918019199883839 12/34 123 |
+
+### 3DSv2.2
+
+| Result                      | Card                       |
+| --------------------------- | -------------------------- |
+| Frictionless 3DSv2.2        | 4548816134581156 12/34 123 |
+| Fingerprinting only 3DSv2.2 | 4918019160034602 12/34 123 |
+
+### DCC
+
+| Result                                  | Card                       |
+| --------------------------------------- | -------------------------- |
+| DCC with 3DSv1                          | 4137360000000006 12/34 123 |
+| DCC with 3DS2.x Frictionless            | 5424180805648190 12/34 123 |
+| DCC with 3DS2.x Challenge               | 4117731234567891 12/34 123 |
+| DCC with 3DS2.x Challenge Norwegian Krone | 5409960031405146 12/34 123 |
+
+### Other flows
+
+| Result                                                    | Card                       |
+| --------------------------------------------------------- | -------------------------- |
+| Frictionless with 3DSv2.2 exemption (Payment letter)      | 4548815324058868 12/34 123 |
+| MIT payment without requiring SCA                         | 4548815374025114 12/34 123 |
+
+## Error codes
+
+The error structure has the following form:
+
+```
+Código
+```
+
+For example:
+
+```
+190
+```
+
+### Processor errors
+
+#### Main
+
+| Code   | Message                                                                                            | Notes                       |
+| ------ | -------------------------------------------------------------------------------------------------- | --------------------------- |
+| 0      | OK, without authentication (PUCE)                                                                  |                             |
+| 1      | OK, secure merchant, non-secure cardholder (PUCE)                                                  |                             |
+| 2      | Error of any type (PUCE)                                                                           |                             |
+| 100    | Invalid card, do not retry                                                                         |                             |
+| 101    | Expired card                                                                                       |                             |
+| 102    | Card in transient exception or under suspicion of fraud                                            |                             |
+| 104    | Operation not permitted for this card, contact the issuing entity.                                 |                             |
+| 106    | Card blocked, exceeded incorrect PIN attempts                                                      |                             |
+| 107    | Contact the issuer                                                                                 |                             |
+| 110    | Invalid amount                                                                                     |                             |
+| 112    | Mandatory PIN required                                                                             |                             |
+| 114    | The card cannot be used for this operation. Contact the card issuing entity.                        |                             |
+| 115    | Invalid card, do not retry                                                                         |                             |
+| 116    | Insufficient funds.                                                                                |                             |
+| 117    | Incorrect PIN                                                                                      |                             |
+| 118    | Card not registered. Do not retry.                                                                 |                             |
+| 119    | Denied by electronic commerce controls.                                                            |                             |
+| 120    | Denied by operational controls. Do not retry.                                                      |                             |
+| 121    | Exceeds transaction limit. Contact the card issuing entity.                                        |                             |
+| 123    | Authentication error, contact the card issuing entity.                                             |                             |
+| 125    | Card not effective                                                                                 |                             |
+| 126    | Error in the authentication format. Contact the card issuing entity.                               |                             |
+| 129    | Incorrect CVV                                                                                      |                             |
+| 130    | Currency not supported by the issuer.                                                              |                             |
+| 162    | Exceeded limit of unauthenticated transactions.                                                    |                             |
+| 163    | Inactive card                                                                                      |                             |
+| 171    | Inactive card                                                                                      |                             |
+| 172    | Denied, do not repeat.                                                                             |                             |
+| 173    | Denied, do not repeat without updating card data.                                                  |                             |
+| 174    | Denied, do not repeat before 72 hours.                                                             |                             |
+| 180    | Card not associated with the service                                                               |                             |
+| 181    | Card with debit restrictions                                                                       |                             |
+| 182    | Card with credit restrictions.                                                                     |                             |
+| 184    | The customer has not been authenticated                                                            |                             |
+| 187    | Error in the authentication format. Contact the card issuing entity.                               |                             |
+| 190    | Issuer denial                                                                                      |                             |
+| 191    | Incorrect expiration date                                                                          |                             |
+| 193    | Amount exceeded (Reserved)                                                                         |                             |
+| 195    | Requires SCA authentication                                                                        | Soft-decline (Requires 3DS) |
+| 201    | Expired card                                                                                       |                             |
+| 202    | Card in transient exception or under suspicion of fraud with card withdrawal                       |                             |
+| 204    | Operation not permitted for card / terminal, retain card.                                          |                             |
+| 206    | PIN attempts exceeded                                                                              |                             |
+| 290    | Denial without specifying reason. Retain card.                                                     |                             |
+| 300    | Update or query completed                                                                          |                             |
+| 481    | Cancellation accepted with significant delay.                                                      |                             |
+| 904    | Problem with the merchant configuration                                                            |                             |
+| 909    | System error                                                                                       |                             |
+| 912    | Issuer not available.                                                                              |                             |
+| 913    | Duplicate order                                                                                    |                             |
+| 914    | Cancellation not accepted                                                                          |                             |
+| 940    | Transaction previously cancelled.                                                                  |                             |
+| 941    | Authorization transaction already cancelled by a previous cancellation.                            |                             |
+| 944    | Incorrect session                                                                                  |                             |
+| 945    | Duplicate system transaction reference.                                                            |                             |
+| 950    | Refund operation not permitted                                                                     |                             |
+| 965    | Violation of existing regulations.                                                                 |                             |
+| 8210   | Operation that has been redirected to the issuer for EMV3DS V2.1 authentication (for H2H)          |                             |
+| 8220   | Operation that has been redirected to the issuer for EMV3DS V2.2 authentication (for H2H)          |                             |
+| 9064   | Incorrect number of card positions                                                                 |                             |
+| 9093   | Non-existent card                                                                                  |                             |
+| 9104   | Merchant with "secure cardholder" and cardholder without secure purchase key                        |                             |
+| 9218   | The merchant does not allow secure operations through entry/operations                             |                             |
+| 9253   | Card does not pass check-digit                                                                     |                             |
+| 9256   | The merchant cannot perform pre-authorizations                                                     |                             |
+| 9257   | This card does not allow pre-authorization operations                                              |                             |
+| 9261   | Operation stopped for exceeding restriction controls at SIS entry                                  |                             |
+| 9700   | PayPal returned a KO                                                                               |                             |
+| 9801   | Error in sent data. Phone number or notification URL not specified                                 |                             |
+| 9899   | The data in Ds\_Merchant\_Data was not correctly signed                                            |                             |
+| 9900   | SafetyPay returned a KO                                                                            |                             |
+| 9909   | Generic error. Contact Support                                                                     |                             |
+| 9912   | The operation had a problem and an automatic cancellation must be generated                        |                             |
+| 9913   | Error in SOAP notification delivery                                                                |                             |
+| 9914   | KO response from the merchant in SOAP notification                                                 |                             |
+| 9929   | The cardholder has cancelled the operation                                                         |                             |
+| 9930   | The transfer is pending                                                                            |                             |
+| 9966   | BIZUM returned a KO in the authorization                                                           |                             |
+| 9967   | IPA returned a KO in the authorization                                                             |                             |
+| 9991   | Aplazame operations in which Aplazame returns a KO                                                 |                             |
+| 9992   | PAE request                                                                                        |                             |
+| 9994   | No card has been selected from the wallet.                                                         |                             |
+| 9997   | Multiple payments "in flight" with the same card                                                   |                             |
+| 9998   | Operation in process of requesting card data                                                       |                             |
+| 9999   | Operation that has been redirected to the issuer for authentication                                |                             |
+
+### SISXXXX
+
+| Code   | SISXXXX    | Message                                                                                                                                        | Notes |
+| ------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| 9005   | SIS0005    | Generic error. Contact Support                                                                                                                 |       |
+| 9007   | SIS0007    | The message sent by the merchant is not correct                                                                                                |       |
+| 9008   | SIS0008    | Missing Ds\_Merchant\_MerchantCode                                                                                                             |       |
+| 9009   | SIS0009    | Format error in Ds\_Merchant\_MerchantCode                                                                                                     |       |
+| 9010   | SIS0010    | Error missing Ds\_Merchant\_Terminal                                                                                                           |       |
+| 9011   | SIS0011    | Format error in Ds\_Merchant\_Terminal                                                                                                         |       |
+| 9012   | SIS0012    | Generic error. Contact Support                                                                                                                 |       |
+| 9015   | SIS0015    | Missing Ds\_Merchant\_Currency                                                                                                                 |       |
+| 9016   | SIS0016    | Format error in Ds\_Merchant\_Currency                                                                                                         |       |
+| 9018   | SIS0018    | Missing Ds\_Merchant\_Amount                                                                                                                   |       |
+| 9019   | SIS0019    | Missing Ds\_Merchant\_Amount                                                                                                                   |       |
+| 9020   | SIS0020    | Missing the signature field Ds\_Signature                                                                                                      |       |
+| 9022   | SIS0022    | Format error in Ds\_Merchant\_TransactionType                                                                                                  |       |
+| 9023   | SIS0023    | Unknown Ds\_Merchant\_TransactionType                                                                                                          |       |
+| 9024   | SIS0024    | Error Ds\_Merchant\_ConsumerLanguage has more than 3 positions                                                                                 |       |
+| 9025   | SIS0025    | Format error in Ds\_Merchant\_ConsumerLanguage                                                                                                 |       |
+| 9026   | SIS0026    | The sent merchant / terminal does not exist                                                                                                    |       |
+| 9027   | SIS0027    | Error Currency sent by the merchant                                                                                                            |       |
+| 9028   | SIS0028    | Merchant / terminal has been deactivated                                                                                                       |       |
+| 9029   | SIS0029    | Generic error. Contact Support                                                                                                                 |       |
+| 9031   | SIS0031    | Incorrect payment method                                                                                                                       |       |
+| 9034   | SIS0034    | Error accessing the database                                                                                                                   |       |
+| 9038   | SIS0038    | Generic error. Contact Support                                                                                                                 |       |
+| 9040   | SIS0040    | The merchant / terminal does not have any assigned payment method                                                                              |       |
+| 9042   | SIS0042    | Error in signature calculation                                                                                                                 |       |
+| 9048   | SIS0048    | Generic error. Contact Support                                                                                                                 |       |
+| 9051   | SIS0051    | Duplicate order number                                                                                                                         |       |
+| 9054   | SIS0054    | There is no operation on which to perform the refund                                                                                           |       |
+| 9055   | SIS0055    | There is more than one payment with the same order number                                                                                      |       |
+| 9057   | SIS0057    | The refund amount exceeds the allowed limit                                                                                                    |       |
+| 9058   | SIS0058    | The validation data is incorrect                                                                                                               |       |
+| 9059   | SIS0059    | There is no operation on which to perform the confirmation                                                                                     |       |
+| 9060   | SIS0060    | A confirmation already exists associated with the pre-authorization                                                                            |       |
+| 9062   | SIS0062    | The confirmation amount exceeds the allowed limit                                                                                              |       |
+| 9063   | SIS0063    | Invalid card number.                                                                                                                           |       |
+| 9064   | SIS0064    | Incorrect number of card positions                                                                                                             |       |
+| 9065   | SIS0065    | The card number is not numeric                                                                                                                 |       |
+| 9067   | SIS0067    | The expiration month is not numeric                                                                                                            |       |
+| 9068   | SIS0068    | The expiration month is not valid                                                                                                              |       |
+| 9070   | SIS0070    | The expiration year is not numeric                                                                                                             |       |
+| 9072   | SIS0072    | Non-cancellable operation                                                                                                                      |       |
+| 9075   | SIS0075    | The "Ds\_Merchant\_Order" has less than 4 or more than 12 positions.                                                                           |       |
+| 9079   | SIS0079    | Generic error. Contact Support                                                                                                                 |       |
+| 9080   | SIS0080    | Generic error. Contact Support                                                                                                                 |       |
+| 9081   | SIS0081    | Session data has been lost                                                                                                                     |       |
+| 9089   | SIS0089    | The expiration value does not occupy 4 positions                                                                                               |       |
+| 9092   | SIS0092    | The expiration value is null                                                                                                                   |       |
+| 9093   | SIS0093    | Issuer denial                                                                                                                                  |       |
+| 9098   | SIS0099    | Generic error. Contact Support                                                                                                                 |       |
+| 9103   | SIS0103    | Generic error. Contact Support                                                                                                                 |       |
+| 9104   | SIS0104    | Merchant with "secure cardholder" and cardholder without secure purchase key                                                                   |       |
+| 9113   | SIS0113    | Generic error. Contact Support                                                                                                                 |       |
+| 9115   | SIS0115    | There is no operation on which to perform the installment payment                                                                              |       |
+| 9118   | SIS0118    | The total installment amount has been exceeded                                                                                                 |       |
+| 9119   | SIS0119    | Invalid value for the Ds\_Merchant\_DateFrecuency field                                                                                        |       |
+| 9120   | SIS0120    | Invalid value for the Ds\_Merchant\_ChargeExpiryDate field                                                                                     |       |
+| 9121   | SIS0121    | Invalid value for the Ds\_Merchant\_SumTotal field                                                                                             |       |
+| 9123   | SIS0123    | The deadline to perform the transaction has been exceeded                                                                                       |       |
+| 9124   | SIS0124    | The minimum frequency has not elapsed in a successive recurring payment                                                                         |       |
+| 9126   | SIS0126    | Duplicate operation                                                                                                                            |       |
+| 9127   | SIS0127    | Generic error. Contact Support                                                                                                                 |       |
+| 9128   | SIS0128    | Generic error. Contact Support                                                                                                                 |       |
+| 9132   | SIS0132    | The authorization confirmation date cannot exceed the pre-authorization date by more than 7 days.                                              |       |
+| 9133   | SIS0133    | The authentication confirmation date cannot exceed the previous authentication date by more than 45 days                                        |       |
+| 9142   | SIS0142    | Payment time exceeded                                                                                                                          |       |
+| 9186   | SIS0186    | Missing data for operation                                                                                                                     |       |
+| 9194   | SIS0194    | Error with the currency conversion application and the amount shown to the cardholder                                                          |       |
+| 9214   | SIS0214    | The merchant does not allow refunds. Extended signature is required.                                                                           |       |
+| 9216   | SIS0216    | The CVV2 has more than 3 positions                                                                                                             |       |
+| 9217   | SIS0217    | Format error in CVV2                                                                                                                           |       |
+| 9218   | SIS0218    | The merchant only allows secure operations and a NON-SECURE operation is being sent through Host to Host entries                                |       |
+| 9221   | SIS0221    | CVV2 is mandatory                                                                                                                              |       |
+| 9222   | SIS0222    | A cancellation already exists associated with the pre-authorization                                                                            |       |
+| 9223   | SIS0223    | The pre-authorization to be cancelled is not authorized                                                                                        |       |
+| 9224   | SIS0224    | The merchant does not allow cancellations due to not having extended signature                                                                  |       |
+| 9226   | SIS0226    | Error in cancellation data                                                                                                                     |       |
+| 9227   | SIS0227    | Invalid value for the Ds\_Merchant\_TransactionDate field                                                                                      |       |
+| 9228   | SIS0228    | Deferred payment can only be made with an On-us credit card                                                                                    |       |
+| 9229   | SIS0229    | The requested deferred payment code does not exist                                                                                             |       |
+| 9230   | SIS0230    | The merchant is not configured to accept installment payments or the installment code sent is not registered.                                  |       |
+| 9231   | SIS0231    | No applicable payment method                                                                                                                   |       |
+| 9232   | SIS0232    | Payment method not available                                                                                                                   |       |
+| 9252   | SIS0252    | By your configuration, you cannot send the card                                                                                                |       |
+| 9253   | SIS0253    | Card does not pass check digit                                                                                                                 |       |
+| 9256   | SIS0256    | The merchant does not allow pre-authorization operations                                                                                       |       |
+| 9257   | SIS0257    | The card does not allow pre-authorization operations                                                                                           |       |
+| 9258   | SIS0258    | The issuer IDETRA required to perform the confirmation is not available                                                                        |       |
+| 9260   | SIS0260    | Incorrect entry to the SIS                                                                                                                     |       |
+| 9261   | SIS0261    | Restrictions exceeded                                                                                                                          |       |
+| 9262   | SIS0262    | Currency not allowed for transfer or direct debit operation                                                                                    |       |
+| 9267   | SIS0267    | The operation cannot be processed because no Client Account Code exists                                                                        |       |
+| 9269   | SIS0269    | Refunds of non-downloaded direct debit operations cannot be performed                                                                          |       |
+| 9270   | SIS0270    | The merchant cannot perform deferred pre-authorizations                                                                                        |       |
+| 9274   | SIS0274    | Unknown operation type or not allowed by this entry to the SIS                                                                                 |       |
+| 9280   | SIS0280    | Block by Security control                                                                                                                      |       |
+| 9281   | SIS0281    | Block by Security control                                                                                                                      |       |
+| 9282   | SIS0282    | Block by Security control                                                                                                                      |       |
+| 9283   | SIS0283    | Block by Security control                                                                                                                      |       |
+| 9294   | SIS0294    | The card is not Private                                                                                                                        |       |
+| 9295   | SIS0295    | Operation duplication error. Can be retried                                                                                                    |       |
+| 9298   | SIS0298    | The merchant does not allow Card on File operations                                                                                            |       |
+| 9299   | SIS0299    | Error in PayPal payment                                                                                                                        |       |
+| 9300   | SIS0300    | Error in PayPal payment                                                                                                                        |       |
+| 9301   | SIS0301    | Error in PayPal payment                                                                                                                        |       |
+| 9319   | SIS0319    | The merchant does not belong to the group sent in Ds\_Merchant\_Group                                                                          |       |
+| 9321   | SIS0321    | The identifier specified in Ds\_Merchant\_Identifier is not associated with the merchant                                                       |       |
+| 9322   | SIS0322    | Format error in Ds\_Merchant\_Group                                                                                                            |       |
+| 9324   | SIS0324    | Unable to send link to the cardholder                                                                                                          |       |
+| 9328   | SIS0328    | Invalid two-phase payment token                                                                                                                |       |
+| 9329   | SIS0329    | Unable to retrieve the two-phase payment token                                                                                                 |       |
+| 9330   | SIS0330    | Incorrect two-phase payment dates                                                                                                              |       |
+| 9331   | SIS0331    | The operation does not have a valid status or does not exist.                                                                                  |       |
+| 9334   | SIS0334    | Block by Security control                                                                                                                      |       |
+| 9334   | SIS0334    | Block by Security control                                                                                                                      |       |
+| 9342   | SIS0342    | The merchant does not allow tax payment operations                                                                                             |       |
+| 9343   | SIS0343    | Missing or incorrect Ds\_Merchant\_Tax\_Reference parameter                                                                                    |       |
+| 9345   | SIS0345    | An incorrect number of installments has been chosen                                                                                            |       |
+| 9359   | SIS0359    | The merchant only allows tax payment and the Ds\_Merchant\_TaxReference field is not being provided                                            |       |
+| 9406   | SIS0406    | The merchant's sector is not allowed to perform a gambling prize payment (Gambling)                                                             |       |
+| 9408   | SIS0408    | The card must have been used during the last year to perform a gambling prize payment (Gambling)                                                |       |
+| 9409   | SIS0409    | The card must be a national Visa or MasterCard to perform a gambling prize payment (Gambling)                                                   |       |
+| 9410   | SIS0410    | Block for operation with Cajamar Private Card in a non-Cajamar merchant                                                                        |       |
+| 9413   | SIS0413    | The operation has been denied by Lynx                                                                                                          |       |
+| 9418   | SIS0418    | No active sales plan exists                                                                                                                    |       |
+| 9419   | SIS0419    | Account type not allowed                                                                                                                       |       |
+| 9420   | SIS0420    | The merchant does not have payment methods for this operation                                                                                  |       |
+| 9428   | SIS0428    | Non-secure debit operation                                                                                                                     |       |
+| 9429   | SIS0429    | Error in the version (Ds\_SignatureVersion)                                                                                                    |       |
+| 9430   | SIS0430    | Error decoding the Ds\_MerchantParameters parameter                                                                                            |       |
+| 9431   | SIS0431    | Error in the JSON object sent encoded in the Ds\_MerchantParameters parameter                                                                  |       |
+| 9432   | SIS0432    | Incorrect merchant FUC                                                                                                                         |       |
+| 9433   | SIS0433    | Incorrect merchant terminal                                                                                                                    |       |
+| 9434   | SIS0434    | Invalid order format                                                                                                                           |       |
+| 9435   | SIS0435    | Generic error. Contact Support                                                                                                                 |       |
+| 9436   | SIS0436    | Error in the construction of the `<REQUEST>` element                                                                                           |       |
+| 9437   | SIS0437    | Error in the construction of the `<DS_SIGNATUREVERSION>` element                                                                               |       |
+| 9438   | SIS0438    | Error in the construction of the `<DATOSENTRADA>` element                                                                                      |       |
+| 9439   | SIS0439    | Error in the construction of the `<DS_SIGNATURE>` element                                                                                      |       |
+| 9444   | SIS0444    | An attempt is being made to access using old signatures and the merchant is configured as HMAC SHA256                                           |       |
+| 9448   | SIS0448    | The merchant does not have the Diners payment method                                                                                           |       |
+| 9452   | SIS0452    | Error, the operation card is 4B and the merchant does not have the "4B Card" payment method                                                    |       |
+| 9453   | SIS0453    | The merchant does not have the "JCB Payment" payment method configured                                                                         |       |
+| 9454   | SIS0454    | The merchant does not have the "Amex Payment" payment method configured                                                                        |       |
+| 9463   | SIS0463    | The merchant is attempting to perform a non-secure operation without a non-secure payment method                                                |       |
+| 9467   | SIS0467    | The reference being used has been deactivated                                                                                                  |       |
+| 9473   | SIS0473    | The PPII authentication request response is null.                                                                                              |       |
+| 9475   | SIS0475    | The idOperation from the PPII authentication request response is null                                                                          |       |
+| 9476   | SIS0476    | Error processing the PPII authentication response                                                                                              |       |
+| 9477   | SIS0477    | The time defined between step 1 and 2 of PPI has been exceeded                                                                                 |       |
+| 9478   | SIS0478    | Error processing the PPII authorization response                                                                                               |       |
+| 9485   | SIS0485    | BIZUM returned a KO in the refund                                                                                                              |       |
+| 9487   | SIS0487    | The merchant does not have the Paygold payment method enabled                                                                                  |       |
+| 9488   | SIS0488    | The merchant does not have the "MOTO/Manual Payment" payment method                                                                            |       |
+| 9493   | SIS0493    | MPI parameters received in a non-secure operation                                                                                              |       |
+| 9494   | SIS0494    | Obsolete signature                                                                                                                             |       |
+| 9495   | SIS0495    | Incorrect ApplePay, Google Pay or Token configuration                                                                                          |       |
+| 9496   | SIS0496    | The Google Pay payment method is not registered                                                                                                |       |
+| 9497   | SIS0497    | The ApplePay payment method is not registered                                                                                                  |       |
+| 9498   | SIS0498    | ApplePay operation currency / amount do not match                                                                                              |       |
+| 9499   | SIS0499    | Error obtaining merchant keys in Google/Apple Pay                                                                                              |       |
+| 9502   | SIS0502    | Error validating Id Oper                                                                                                                       |       |
+| 9507   | SIS0507    | Id Oper is no longer valid                                                                                                                     |       |
+| 9508   | SIS0508    | Error validating Id Oper                                                                                                                       |       |
+| 9516   | SIS0516    | Error assembling the China Union Pay message                                                                                                   |       |
+| 9523   | SIS0523    | The calculated signature does not match the one received in the response                                                                       |       |
+| 9524   | SIS0524    | The 3DSecure MasterCard authentication result is PARes="A" or VERes="N" and we did not receive CAVV from the issuer                            |       |
+| 9525   | SIS0525    | The private card cannot be used in this merchant                                                                                               |       |
+| 9526   | SIS0526    | The card is not Chinese                                                                                                                        |       |
+| 9530   | SIS0530    | The cancellation date cannot exceed the pre-authorization date by more than 7 days.                                                            |       |
+| 9533   | SIS0533    | The tax amount in the barcode does not match the one returned by the entity after validation                                                   |       |
+| 9535   | SIS0535    | Receipt/tax payment past due                                                                                                                   |       |
+| 9536   | SIS0536    | Receipt/tax already paid                                                                                                                       |       |
+| 9537   | SIS0537    | Receipt/tax payment denied by the entity                                                                                                       |       |
+| 9538   | SIS0538    | Rejection in receipt/tax payment                                                                                                               |       |
+| 9540   | SIS0540    | The phone number sent is too long (more than 12 positions)                                                                                     |       |
+| 9541   | SIS0541    | The reference sent is too long (more than 40 positions)                                                                                        |       |
+| 9543   | SIS0543    | Error, the operation card is DINERS and the merchant does not have the "DINERS Payment" or "Non-Secure Discover Payment" payment method         |       |
+| 9544   | SIS0544    | Error, the operation card is DINERS and the merchant does not have the "Non-Secure Discover Payment" payment method                             |       |
+| 9548   | SIS0548    | Error DISCOVER                                                                                                                                 |       |
+| 9552   | SIS0552    | ERROR the authentication result PARes = 'U'                                                                                                    |       |
+| 9556   | SIS0556    | Traditional payment is sent and the merchant does not have worldwide Traditional payment or EU Traditional.                                     |       |
+| 9564   | SIS0564    | ERROR in the DCC operation                                                                                                                     |       |
+| 9565   | SIS0565    | Format of the Ds\_Merchant\_Amount field amount exceeds the allowed limit.                                                                     |       |
+| 9567   | SIS0567    | ERROR an attempt has been made to pay with a UPI Chinese card and the merchant does not have UPI payment method                                 |       |
+| 9568   | SIS0568    | Initiate Request operation rejected, incorrect transaction type                                                                                |       |
+| 9569   | SIS0569    | Initiate Request operation rejected, card information not provided                                                                             |       |
+| 9572   | SIS0572    | EMV3DS authentication operation rejected, unrecognized protocolVersion                                                                         |       |
+| 9573   | SIS0573    | EMV3DS authentication operation rejected, browserAcceptHeader not specified                                                                    |       |
+| 9574   | SIS0574    | EMV3DS authentication operation rejected, browserUserAgent not specified                                                                       |       |
+| 9575   | SIS0575    | EMV3DS authentication operation rejected, browserJavaEnabled not specified                                                                     |       |
+| 9576   | SIS0576    | EMV3DS authentication operation rejected, browserLanguage not specified                                                                        |       |
+| 9577   | SIS0577    | EMV3DS authentication operation rejected, browserColorDepth not specified                                                                      |       |
+| 9578   | SIS0578    | EMV3DS authentication operation rejected, browserScreenHeight not specified                                                                    |       |
+| 9580   | SIS0580    | EMV3DS authentication operation rejected, browserTZ not specified                                                                              |       |
+| 9581   | SIS0581    | EMV3DS authentication operation rejected, DS\_MERCHANT\_EMV3DS data is not specified or is too large and cannot be converted to JSON            |       |
+| 9582   | SIS0582    | EMV3DS authentication operation rejected, threeDSServerTransID not specified                                                                   |       |
+| 9584   | SIS0584    | EMV3DS authentication operation rejected, notificationURL not specified                                                                        |       |
+| 9585   | SIS0585    | The EMV 3DS data sent does not match the data obtained in the initiate request                                                                 |       |
+| 9589   | SIS0589    | EMV3DS authentication operation rejected, response without CRes                                                                                |       |
+| 9590   | SIS0590    | EMV3DS authentication operation rejected, error disassembling the CRes response                                                                |       |
+| 9593   | SIS0593    | Error in the EMV3DS authentication operation, the transStatus from the final query of the operation is not defined.                            |       |
+| 9598   | SIS0598    | Error in the EMV3DS authentication operation, fallback to 3DSecure v1 is not allowed.                                                          |       |
+| 9599   | SIS0599    | Error in the EMV3DS authentication operation                                                                                                   |       |
+| 9600   | SIS0600    | The issuing bank indicates that the card cannot be authenticated - Areq response N                                                             |       |
+| 9601   | SIS0601    | The issuing bank indicates that the card cannot be authenticated - Areq response R                                                             |       |
+| 9602   | SIS0602    | Error in the 3DSecure v2 authentication process - Areq response U                                                                              |       |
+| 9603   | SIS0603    | Error in the DS\_MERCHANT\_DCC DCC parameter sent in H2H operation (REST and SOAP)                                                             |       |
+| 9604   | SIS0604    | Error in the DCC data sent in the DS\_MERCHANT\_DCC parameter in H2H operation (REST and SOAP)                                                 |       |
+| 9606   | SIS0606    | Error in the MPI data sent in the DS\_MERCHANT\_MPIEXTERNAL parameter in H2H operation (REST and SOAP)                                         |       |
+| 9611   | SIS0611    | Error the dsTransID MPI parameter sent in the DS\_MERCHANT\_MPIEXTERNAL parameter in H2H operation (REST and SOAP) is incorrect                |       |
+| 9612   | SIS0612    | Error the authenticationValue MPI parameter sent in the DS\_MERCHANT\_MPIEXTERNAL parameter in H2H operation (REST and SOAP) is incorrect      |       |
+| 9614   | SIS0614    | Error the Eci MPI parameter sent in the DS\_MERCHANT\_MPIEXTERNAL parameter in H2H operation (REST and SOAP) is incorrect                      |       |
+| 9615   | SIS0615    | Error in External MPI, card brand not allowed                                                                                                  |       |
+| 9616   | SIS0616    | Error the DS\_MERCHANT\_EXCEP\_SCA parameter has an incorrect value                                                                            |       |
+| 9617   | SIS0617    | Error the DS\_MERCHANT\_EXCEP\_SCA parameter is MIT type and COF or reference payment data is not provided                                     |       |
+| 9618   | SIS0618    | Error the sent exemption is not allowed and the merchant is not prepared to authenticate                                                       |       |
+| 9625   | SIS0625    | Error in the payment cancellation, because a refund already exists associated with that payment                                                |       |
+| 9627   | SIS0627    | The reference or request number sent by CRTM is not valid.                                                                                     |       |
+| 9629   | SIS0629    | Error the separate confirmation operation on which to perform the cancellation does not exist                                                  |       |
+| 9634   | SIS0634    | Error the payment operation on which to perform the cancellation does not exist                                                                |       |
+| 9637   | SIS0637    | The cancellation date cannot exceed the configured days after the payment.                                                                     |       |
+| 9638   | SIS0638    | Error there is more than one refund to be cancelled and it has not been specified which one.                                                   |       |
+| 9639   | SIS0639    | Error the refund operation on which to perform the cancellation does not exist                                                                 |       |
+| 9641   | SIS0641    | The cancellation date cannot exceed the configured days after the refund.                                                                      |       |
+| 9642   | SIS0642    | The date of the pre-authorization to be replaced cannot exceed 30 days of age                                                                  |       |
+| 9644   | SIS0644    | Error in the 3DSecure v2 authentication process - Data from the InitiateRequest entry is sent to the ProcessRequest entry                      |       |
+| 9650   | SIS0650    | Error, the MAC is not correct in the tax payment messaging                                                                                     |       |
+| 9653   | SIS0653    | Authentication operation rejected, browserJavascriptEnabled not specified                                                                      |       |
+| 9662   | SIS0662    | Error, the merchant is not among those allowed to perform partial confirmations.                                                               |       |
+| 9663   | SIS0663    | No Initiate Request data matches the data sent by the merchant in the Process Request message                                                  |       |
+| 9664   | SIS0664    | The 3DS Server Transaction Id element is not sent in the Process Request message and said element exists in the Initiate Request message        |       |
+| 9666   | SIS0666    | The amount indicated by the merchant in the Process Request message does not match the one sent in the Initiate Request message                 |       |
+| 9667   | SIS0667    | The operation type indicated by the merchant in the Process Request message does not match the one sent in the Initiate Request message         |       |
+| 9668   | SIS0668    | The reference indicated by the merchant in the Process Request message does not match the one sent in the Initiate Request message              |       |
+| 9669   | SIS0669    | The Id Oper Insite indicated by the merchant in the Process Request message does not match the one sent in the Initiate Request message         |       |
+| 9670   | SIS0670    | The card indicated by the merchant in the Process Request message does not match the one sent in the Initiate Request message                   |       |
+| 9672   | SIS0672    | Authentication failure. Blocked after three attempts.                                                                                          |       |
+| 9673   | SIS0673    | Operation cancelled. The user does not wish to continue.                                                                                       |       |
+| 9674   | SIS0674    | Credit rejected by beneficiary.                                                                                                                |       |
+| 9675   | SIS0675    | Charge rejected by payer.                                                                                                                      |       |
+| 9676   | SIS0676    | The processor rejects the operation.                                                                                                           |       |
+| 9677   | SIS0677    | Insufficient available balance.                                                                                                                |       |
+| 9678   | SIS0678    | The 3DSecure version specified in the Process Request is incorrect or higher than the one returned in the initiate request                      |       |
+| 9680   | SIS0680    | Error in EMV3DS authentication and the brand does not allow fallback to 3DSecure 1.0                                                           |       |
+| 9681   | SIS0681    | Error inserting authentication data in an operation with External MPI                                                                          |       |
+| 9692   | SIS0692    | PSP entry request for a terminal that is not associated with a PSP                                                                             |       |
+| 9697   | SIS0697    | Error in the DS\_MERCHANT\_MARKETPLACE parameter sent                                                                                          |       |
+| 9700   | SIS0700    | Error in the data obtained from the Marketplace system REST query                                                                              |       |
+| 9703   | SIS0703    | Error the associated merchant indicated in the operation does not correspond to any Marketplace associate                                      |       |
+| 9707   | SIS0707    | Marketplace                                                                                                                                    |       |
+| 9709   | SIS0709    | Marketplace                                                                                                                                    |       |
+| 9714   | SIS0714    | Error, the XML is empty                                                                                                                        |       |
+| 9716   | SIS0716    | The merchant does not have an IBAN configured                                                                                                  |       |
+| 9722   | SIS0722    | Error in authentication. Request to display the entity login to the user. Connection error with the different systems                           |       |
+| 9724   | SIS0724    | An unexpected error occurred when connecting to the IPA.                                                                                       |       |
+| 9740   | SIS0740    | Error in AFT data validation. Incorrect operation type or activity sector                                                                      |       |
+| 9754   | SIS0754    | The card does not allow version 2 authentication                                                                                               |       |
+| 9800   | SIS0800    | BIZUM. Error in the RTP initiation response. (Review Ds\_RtpResponse and Ds\_RtpDescription)                                                   |       |
+| 9801   | SIS0801    | BIZUM RTP. Phone number or notification URL not specified.                                                                                     |       |
+| 9802   | SIS0802    | Incorrect value sent in the DS\_MERCHANT\_COF\_TYPE parameter                                                                                  |       |
+| 9803   | SIS0803    | Error in sent data, DS\_MERCHANT\_COF\_TXID with incorrect value > 15 positions                                                                |       |
+| 9812   | SIS0812    | Error obtaining XPAYDECODEDDATA parameters                                                                                                     |       |
+| 9815   | SIS0815    | Error, a Paygold operation with the same data already exists in the process of being authorized or already authorized                           |       |
+| 9816   | SIS0816    | Error in XPAY operation. Operation with token and without cryptogram                                                                           |       |
+| 9817   | SIS0817    | Operation authenticated by 3RI cannot be processed due to incorrect status                                                                     |       |
+| 9836   | SIS0836    | Error, no original Paygold operation exists with the provided data                                                                             |       |
+| 9843   | SIS0843    | Error in the Ds\_Merchant\_TokenData data.                                                                                                     |       |
+| 9844   | SIS0844    | The merchant profile is not configured to accept tax refunds.                                                                                  |       |
+| 9845   | SIS0845    | Error, the operation is rejected for not being Challenge and Carrefour requires it                                                             |       |
+|        | SIS0850-01 | Incorrect value for the Ds\_Merchant\_Off\_Transaction parameter                                                                               |       |
+|        | SIS0850-02 | Operation type not allowed in OFF mode                                                                                                         |       |
+|        | SIS0850-03 | The merchant does not have the OFF-Payment payment method                                                                                      |       |
+|        | SIS0850-04 | OFF mode is not allowed with backup activated                                                                                                  |       |
+|        | SIS0850-05 | OFF mode is not allowed, the merchant does not have the corresponding non-secure payment method configured                                     |       |
+| 9880   | SIS0880    | Bizum MIT operation in which exemption was sent and not txId                                                                                   |       |
+| 9882   | SIS0882    | Bizum MIT operation that is not type 0                                                                                                         |       |
+| 9883   | SIS0883    | Error, the MIT exemption cannot be marked                                                                                                      |       |
+| 9884   | SIS0884    | PUCE Data Only operation with error in the DataOnly process                                                                                    |       |
+| 9885   | SIS0885    | Error, operation rejected because another operation with the same card in the last 30 days was denied with a code that does not allow retrying. |       |
+| 9887   | SIS0887    | The cookie id used to make the payment is not valid                                                                                            |       |
+| 9899   | SIS0899    | The data sent in Ds\_Merchant\_Data is not correctly signed.                                                                                   |       |
+| 9915   | SIS9915    | At the user's request, the payment is cancelled                                                                                                |       |
+
+### 8XXX and 9XXX errors
+
+| Code   | Message                                                                           | Notes |
+| ------ | --------------------------------------------------------------------------------- | ----- |
+| 8210   | Operation that has been redirected to the issuer for EMV3DS V2.1 authentication (for H2H) |       |
+| 8220   | Operation that has been redirected to the issuer for EMV3DS V2.2 authentication (for H2H) |       |
+| 9064   | Incorrect number of card positions                                                |       |
+| 9093   | Non-existent card                                                                 |       |
+| 9104   | Merchant with "secure cardholder" and cardholder without secure purchase key       |       |
+| 9218   | The merchant does not allow secure operations through entry/operations             |       |
+| 9253   | Card does not pass check-digit                                                    |       |
+| 9256   | The merchant cannot perform pre-authorizations                                    |       |
+| 9257   | This card does not allow pre-authorization operations                             |       |
+| 9261   | Operation stopped for exceeding restriction controls at SIS entry                 |       |
+| 9700   | PayPal returned a KO                                                              |       |
+| 9801   | Error in sent data. Phone number or notification URL not specified                |       |
+| 9899   | The data in Ds\_Merchant\_Data was not correctly signed                           |       |
+| 9900   | SafetyPay returned a KO                                                           |       |
+| 9909   | Generic error. Contact Support                                                    |       |
+| 9912   | The operation had a problem and an automatic cancellation must be generated        |       |
+| 9913   | Error in SOAP notification delivery                                               |       |
+| 9914   | KO response from the merchant in SOAP notification                                |       |
+| 9929   | The cardholder has cancelled the operation                                         |       |
+| 9930   | The transfer is pending                                                            |       |
+| 9966   | BIZUM returned a KO in the authorization                                           |       |
+| 9967   | IPA returned a KO in the authorization                                             |       |
+| 9991   | Aplazame operations in which Aplazame returns a KO                                 |       |
+| 9992   | PAE request                                                                        |       |
+| 9994   | No card has been selected from the wallet.                                         |       |
+| 9997   | Multiple payments "in flight" with the same card                                   |       |
+| 9998   | Operation in process of requesting card data                                       |       |
+| 9999   | Operation that has been redirected to the issuer for authentication                |       |
