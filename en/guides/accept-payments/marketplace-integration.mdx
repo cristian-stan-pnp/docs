@@ -26,7 +26,7 @@ curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
   "source_uuid": null,
   "save_card": true,
   "reference": "50620",
-  "dynamic_descriptor": "PNP*NombreComercio",
+  "dynamic_descriptor": "PNP*MerchantName",
   "expires_in": 3600,
   "extra_data": {
     "marketplace": [
@@ -39,7 +39,7 @@ curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
       {
         "merchant_location_id": 4487,
         "amount": 10000,
-        "description": "Comercio1",
+        "description": "Merchant1",
         "net_amount": 9850
       }
     ]
@@ -76,7 +76,7 @@ curl --request POST 'https://api.paylands.com/v1/sandbox/payment/refund' \
       {
         "merchant_location_id": 4487,
         "amount": 5000,
-        "description": "Comercio1",
+        "description": "Merchant1",
         "net_amount": 4990
       }
     ]

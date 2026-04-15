@@ -103,7 +103,7 @@ Custom fields can be included in email and SMS templates. To do so, the format t
 
 
 ```
-clave1:valor1;clave2:valor2
+key1:value1;key2:value2
 ```
 
 The different fields must be separated by semicolons.
@@ -111,11 +111,11 @@ The different fields must be separated by semicolons.
 For example, sending the following value in the additional field:
 
 ```
-nombre: Juan García; edad: 28
+name: John Smith; age: 28
 ```
 
 In the email/sms template, these values can be accessed as follows:
 
 ```
-Bienvenido {{customFields.nombre}}, felices {{customFields.edad}} años.
+Welcome {{customFields.name}}, happy {{customFields.age}}th birthday.
 ```
