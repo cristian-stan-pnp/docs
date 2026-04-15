@@ -3,7 +3,7 @@ title: 'Redsys'
 description: 'Configuration and integration of the Redsys payment service in Paylands'
 ---
 
-Two payment methods are supported: Card and [Bizum](/docs/apm/apm-bizum). Refund, confirmation, cancellation, and status retrieval operations are compatible with both payment methods. The remaining operations are oriented towards cards only.
+Two payment methods are supported: Card and [Bizum](/guides/apm/bizum). Refund, confirmation, cancellation, and status retrieval operations are compatible with both payment methods. The remaining operations are oriented towards cards only.
 
 ## Restrictions and requirements
 
@@ -250,7 +250,7 @@ For example:
 | 9089   | SIS0089    | The expiration value does not occupy 4 positions                                                                                               |       |
 | 9092   | SIS0092    | The expiration value is null                                                                                                                   |       |
 | 9093   | SIS0093    | Issuer denial                                                                                                                                  |       |
-| 9098   | SIS0099    | Generic error. Contact Support                                                                                                                 |       |
+| 9099   | SIS0099    | Generic error. Contact Support                                                                                                                 |       |
 | 9103   | SIS0103    | Generic error. Contact Support                                                                                                                 |       |
 | 9104   | SIS0104    | Merchant with "secure cardholder" and cardholder without secure purchase key                                                                   |       |
 | 9113   | SIS0113    | Generic error. Contact Support                                                                                                                 |       |
@@ -314,7 +314,6 @@ For example:
 | 9329   | SIS0329    | Unable to retrieve the two-phase payment token                                                                                                 |       |
 | 9330   | SIS0330    | Incorrect two-phase payment dates                                                                                                              |       |
 | 9331   | SIS0331    | The operation does not have a valid status or does not exist.                                                                                  |       |
-| 9334   | SIS0334    | Blocked by security control                                                                                                                    |       |
 | 9334   | SIS0334    | Blocked by security control                                                                                                                    |       |
 | 9342   | SIS0342    | The merchant does not allow tax payment operations                                                                                             |       |
 | 9343   | SIS0343    | Missing or incorrect Ds\_Merchant\_Tax\_Reference parameter                                                                                    |       |

@@ -7,7 +7,7 @@ description: 'Acceptă plăți cu Cofidis (4xCard și Cofidis Pay) în Spania pr
 
 Prin această metodă de plată, utilizatorul va fi redirecționat către pagina de plată Cofidis, unde va trebui să furnizeze informațiile necesare. În cazul 4xcard, este necesar documentul de identitate și cardul titularului, în timp ce pentru produsul Cofidis Pay va fi necesar documentul de identitate și un certificat bancar de titularitate.
 
-Procesul de integrare este [**similar cu cel al paginii de plată prin redirecționare**](/docs/integration/simple-integration).
+Procesul de integrare este [**similar cu cel al paginii de plată prin redirecționare**](/guides/accept-payments/web-integration).
 
 ```
 /payment/process/{token}
@@ -31,7 +31,7 @@ Pentru a efectua o plată Cofidis trebuie să urmăm următorii pași:
 
 ### 1. Generează ordinul de plată pe serverul tău
 
-Creează ordinul la fel cum ai face pentru o [**integrare simplă**](/docs/integration/simple-integration#1-generar-la-orden-de-pago-en-tu-servidor).
+Creează ordinul la fel cum ai face pentru o [**integrare simplă**](/guides/accept-payments/web-integration).
 
 Ordinul va fi configurat cu `secure=false`.
 
