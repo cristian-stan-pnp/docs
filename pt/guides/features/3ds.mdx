@@ -95,13 +95,13 @@ Posso iniciar um pagamento 3DS para autenticar o usuário em um serviço e depoi
 Atualmente suportamos as isenções de **Análise de Risco (TRA)** e de **Baixo valor (LV)** no serviço de pagamento **Redsys**. Para solicitá-las, basta fornecer as seguintes informações no campo `extra_data` ao criar a ordem:
 
 ```
-"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
+"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        }    }
 ```
 
 Também é possível solicitar que **nenhuma isenção seja aplicada** deixando o valor de `exemptions` como uma lista vazia:
 
 ```
-"extra_data": {        ...        "sca": {            "exemptions": []        },    }
+"extra_data": {        ...        "sca": {            "exemptions": []        }    }
 ```
 
 Se o valor de `exemptions` não for indicado explicitamente, por padrão será solicitada a isenção de **Baixo valor (LV)** se esta cumprir os requisitos estabelecidos. Após o pagamento, se alguma isenção tiver sido solicitada, seu nome será incluído na chave `order.threeds_data.exemption`. Se não foi solicitada, ou não foi possível solicitar nenhuma isenção, seu valor será `null`.

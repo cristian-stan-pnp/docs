@@ -95,13 +95,13 @@ Can I initiate a 3DS payment to authenticate the user on one service and then in
 We currently support **Risk Analysis (TRA)** and **Low Value (LV)** exemptions on the **Redsys** payment service. To request them, simply provide the following information in the `extra_data` field when creating the order:
 
 ```
-"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
+"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        }    }
 ```
 
 It is also possible to request that **no exemption be applied** by leaving the `exemptions` value as an empty list:
 
 ```
-"extra_data": {        ...        "sca": {            "exemptions": []        },    }
+"extra_data": {        ...        "sca": {            "exemptions": []        }    }
 ```
 
 If the `exemptions` value is not explicitly specified, by default the **Low Value (LV)** exemption will be requested if it meets the established requirements. After payment, if an exemption was requested, its name will be included under the key `order.threeds_data.exemption`. If no exemption was requested, or no exemption could be requested, its value will be `null`.

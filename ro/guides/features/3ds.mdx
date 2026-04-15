@@ -95,13 +95,13 @@ Pot lansa o plată 3DS pentru a autentifica utilizatorul într-un serviciu și a
 În prezent suportăm scutirile de **Analiză de Risc (TRA)** și de **Sumă mică (LV)** în serviciul de plată **Redsys**. Pentru a le solicita, este suficient să furnizați următoarele informații în câmpul `extra_data` la crearea comenzii:
 
 ```
-"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
+"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        }    }
 ```
 
 De asemenea, este posibil să solicitați ca **nicio scutire să nu fie aplicată** lăsând valoarea `exemptions` ca o listă goală:
 
 ```
-"extra_data": {        ...        "sca": {            "exemptions": []        },    }
+"extra_data": {        ...        "sca": {            "exemptions": []        }    }
 ```
 
 Dacă valoarea `exemptions` nu este indicată explicit, implicit se va solicita scutirea de **Sumă mică (LV)** dacă aceasta îndeplinește cerințele stabilite. După plată, dacă s-a ajuns să se solicite vreo scutire, numele acesteia va fi inclus sub cheia `order.threeds_data.exemption`. Dacă nu s-a solicitat sau nu s-a putut solicita nicio scutire, valoarea sa va fi `null`.
