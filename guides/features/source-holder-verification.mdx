@@ -103,19 +103,19 @@ Para que la verificación pueda realizarse, los datos necesarios deben estar dis
 
 ## Ejemplos de uso
 
-### Tokenizar tarjeta (almacenamiento)")
+### Tokenizar tarjeta (almacenamiento)
 
 ```
 {  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "customer_ext_id": "test1",  "card_holder": "TEST",  "card_pan": "4242424242424242",  "card_expiry_year": 34,  "card_expiry_month": "12",  "additional": null,  "url_post": "",  "validate": false,  "service": "E8952860-5441-45A2-9233-33651DABA250",  "card_cvv": 123,  "source_holder_verification": {    "enabled": true,    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
 ```
 
-### Crear cuenta bancaria (almacenamiento)")
+### Crear cuenta bancaria (almacenamiento)
 
 ```
 {  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "account_holder": "prueba",  "iban": "ES4469400001180255458867",  "customer_ext_id": "test",  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",  "source_holder_verification": {    "enabled": true,    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH", "NO_MATCH"],    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
 ```
 
-### Crear orden (flujo de pago)")
+### Crear orden (flujo de pago)
 
 > En pagos, `source_holder_verification` se envía dentro de `extra_data`.
 
@@ -140,7 +140,7 @@ Para que la verificación pueda realizarse, los datos necesarios deben estar dis
 
 ***
 
-## Respuesta SHV (formato común)")
+## Respuesta SHV (formato común)
 
 Independientemente del endpoint/flujo, el bloque de respuesta de SHV se devuelve con esta forma:
 
@@ -200,7 +200,7 @@ Valores posibles:
 
 ***
 
-## Simulación en Sandbox (IBAN)")
+## Simulación en Sandbox (IBAN)
 
 En entornos de **sandbox**, para **cuentas bancarias**, se pueden simular resultados de `match_result` usando estos IBAN:
 
