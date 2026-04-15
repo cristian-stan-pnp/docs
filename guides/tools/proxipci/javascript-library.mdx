@@ -7,7 +7,7 @@ description: 'Captura segura de datos de tarjeta con la librería JavaScript del
   Reemplazaremos el PAN de la tarjeta por una versión tokenizada del mismo que podrá ser almacenada junto con los demás datos de la tarjeta.
 </Info>
 
-## ¿Cómo funciona?[​](#cómo-funciona "Enlace directo al ¿Cómo funciona?")
+## ¿Cómo funciona?
 
 Para trabajar con el enfoque de tokenización del cliente debe seguir los siguientes pasos:
 
@@ -23,7 +23,7 @@ Para trabajar con el enfoque de tokenización del cliente debe seguir los siguie
   La API REST debe llamarse siempre directamente desde su servidor, nunca desde el lado del cliente.
 </Warning>
 
-## Inclusión de la librería javascript[​](#inclusión-de-la-librería-javascript "Enlace directo al Inclusión de la librería javascript")
+## Inclusión de la librería javascript
 
 Por favor, cargue la versión correcta de la librería javascript directamente desde nuestros servidores compatibles con PCI dependiendo del entorno.
 
@@ -43,7 +43,7 @@ PRODUCTION
   Puedes consultar el [ejemplo de codepen](https://codepen.io/bopechri/pen/dybqRqm) en funcionamiento para verlo en acción.
 </Info>
 
-### Inicialización de la librería[​](#inicialización-de-la-librería "Enlace directo al Inicialización de la librería")
+### Inicialización de la librería
 
 Para inicializar la librería necesitas proporcionar el id del elemento DOM donde la librería debe inyectar el iframe con el campo de entrada pan junto con el `token` emitido con la API REST. Una vez que el iframe haya terminado de cargarse, se disparará un evento `ready`.
 
@@ -60,7 +60,7 @@ proxyFields.on('ready', () => {
 });
 ```
 
-### Estilizar el campo de entrada[​](#estilizar-el-campo-de-entrada "Enlace directo al Estilizar el campo de entrada")
+### Estilizar el campo de entrada
 
 El método recomendado para dar estilo al campo de entrada es utilizar el método `setStyle`. Esto debe hacerse en el callback `ready`.
 

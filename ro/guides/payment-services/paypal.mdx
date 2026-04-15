@@ -3,11 +3,11 @@ title: 'PayPal'
 description: 'Configurarea și integrarea serviciului de plată PayPal în Paylands'
 ---
 
-## Introducere[​](#introducere "Link direct către Introducere")
+## Introducere
 
 PayPal este un serviciu de plată care permite procesarea plăților utilizând checkout-ul Paylands sau printr-o redirecționare.
 
-## Restricții și cerințe[​](#restricții-și-cerințe "Link direct către Restricții și cerințe")
+## Restricții și cerințe
 
 În prezent, doar moneda EUR este suportată.
 
@@ -19,7 +19,7 @@ La generarea comenzii de plată, trebuie trimise cel puțin câmpurile *profile*
 
 ***
 
-## STC (Set Transaction Context)[​](#stc-set-transaction-context "Link direct către STC (Set Transaction Context)")
+## STC (Set Transaction Context)")
 
 Trimiterea datelor STC permite îmbogățirea informațiilor tranzacției cu informații suplimentare despre cumpărător și serviciul contractat.
 
@@ -30,7 +30,7 @@ Trimiterea datelor STC permite îmbogățirea informațiilor tranzacției cu inf
 
 Datele OTA sunt necesare doar pentru anumite industrii, cum ar fi hotelurile.
 
-### OTA - Hoteluri (MCC 7011)[​](#ota---hoteluri-mcc-7011 "Link direct către OTA - Hoteluri (MCC 7011)")
+### OTA - Hoteluri (MCC 7011)")
 
 Următoarele câmpuri corespund contextului OTA pentru hoteluri.
 
@@ -47,7 +47,7 @@ Toate câmpurile OTA trebuie trimise în cadrul **`extra_data.payment`**.
 | `ota_start_city`         | `string`                     | Orașul unde începe sejurul                                | `"Madrid"`                      |
 | `ota_start_zipcode`      | `string`                     | Codul poștal unde începe sejurul                         | `"28080"`                       |
 
-#### Exemplu[​](#exemplu "Link direct către Exemplu")
+#### Exemplu
 
 ```
 {    "extra_data": {        "profile": {            "first_name": "John",            "last_name": "Doe",            "email": "john@doe.com",            "birthdate": "1984-11-28",            "phone": {                "number": "678767878",                "prefix": "+34"            }        },        "billing_address": {            "city": "Madrid",            "country": "ESP",            "address1": "Avenida principal, 24",            "zip_code": "12345",            "state_code": "ESP"        },        "payment": {            "buyer_creation_date": "2012-12-09T19:14:55.277+00:00",            "ota_type": "hotel",            "ota_service_start_date": "2012-12-09T19:14:55.277+00:00",            "ota_service_end_date": "2012-12-14T19:14:55.277+00:00",            "ota_change_guest": false,            "ota_start_country": "ES",            "ota_start_city": "Madrid",            "ota_start_zipcode": "28080"        }    }}
@@ -55,7 +55,7 @@ Toate câmpurile OTA trebuie trimise în cadrul **`extra_data.payment`**.
 
 ***
 
-## Sandbox[​](#sandbox "Link direct către Sandbox")
+## Sandbox
 
 Efectuarea unei plăți cu PayLater și PayPal:
 

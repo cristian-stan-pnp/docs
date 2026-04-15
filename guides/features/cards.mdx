@@ -11,11 +11,11 @@ La tokenización protege los datos confidenciales a través de un proceso de ree
   Aunque solemos llamarlo "token" a raíz de que "tokenizamos" la tarjeta, nos estamos refiriendo al UUID de la tarjeta. El campo "token" de una tarjeta es en realidad un valor calculado a partir del número de la tarjeta, de modo que dos tarjetas con mismo [PAN](/docs/glossary#pan) tienen diferente UUID pero mismo token. Este token solamente sirve para saber si dos tarjetas son iguales. Siempre que queremos utilizar una tarjeta es necesario indicar su UUID.
 </Info>
 
-## Cómo guardar una tarjeta[​](#cómo-guardar-una-tarjeta "Enlace directo al Cómo guardar una tarjeta")
+## Cómo guardar una tarjeta
 
 Podemos almacenar una tarjeta en Paylands mediante uno de los siguientes métodos:
 
-### Realizando un pago[​](#realizando-un-pago "Enlace directo al Realizando un pago")
+### Realizando un pago
 
 Podemos tokenizar cualquier tarjeta al realizar un primer pago con ella. El método habitual para comercios que no son [PCI](/docs/glossary#pci-dss), es utilizar la [**integración simple mediante carta de pago**](/docs/integration/simple-integration) aunque también es posible lanzar la carta de pago mediante:
 
@@ -31,11 +31,11 @@ Estos métodos realizan una orden con transacción [3DS](/docs/glossary#3ds-2) l
 * Cargos puntuales (incrementales)
 * Cobros recurrentes (suscripciones)
 
-### Integrando el SDK de Tokenización[​](#integrando-el-sdk-de-tokenización "Enlace directo al Integrando el SDK de Tokenización")
+### Integrando el SDK de Tokenización
 
 En el caso de estar construyendo una plataforma, web o mobile, donde se desea que el usuario pueda guardar su tarjeta (como Netflix, Amazon) para posteriormente emitirle cobros ya sea de compras o de suscripciones, disponemos de una librería [**SDK de Tokenización**](/docs/guides/sdk-tokenization). Con este SDK los comercios que no son PCI pueden guardar y tokenizar las tarjetas de los clientes embebiendo un iframe en su web/app.
 
-## Obtención de las tarjetas[​](#obtención-de-las-tarjetas "Enlace directo al Obtención de las tarjetas")
+## Obtención de las tarjetas
 
 Una vez tenemos guardadas las tarjetas de nuestros clientes en Paylands podemos recuperarlas y hacer uso de ellas de distintas formas. El primer paso será obtener las tarjetas almacenadas de un cliente.
 
@@ -51,11 +51,11 @@ Obtendremos como respuesta el listado de tarjetas del cliente con el `uuid` de c
 {  "message": "OK",  "code": 200,  "current_time": "2017-01-12T09:12:58+0100",  "cards": [    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 454881,      "brand": "VISA",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "12",      "expire_year": "21",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ebc9b5ffa2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d5851884c",      "type": "C",      "uuid": "90F358C9-7D3F-4334-A60D-1717CC1FBF5B"    },    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 533821,      "brand": "MASTERCARD",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "04",      "expire_year": "23",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ad49b5b1a2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d58516cba",      "type": "C",      "uuid": "0FDE261B-0E76-499D-A394-B6DCF6C03C56"    }  ]}
 ```
 
-## Cómo usar la tarjeta[​](#cómo-usar-la-tarjeta "Enlace directo al Cómo usar la tarjeta")
+## Cómo usar la tarjeta
 
 Una vez hemos obtenido las tarjetas de un cliente, podemos realizar pagos y autorizaciones de distintas formas que se explican a continuación.
 
-### Pago directo por webservice[​](#pago-directo-por-webservice "Enlace directo al Pago directo por webservice")
+### Pago directo por webservice
 
 El método de [**pago directo por webservice**](/reference/#operation/webservice-payment) permite realizar pagos sin la intervención del usuario. Esta forma de pago está dirigida a comercios avanzados que traten ellos mismos sus recurrencias, ya que son ellos quienes deciden la periodicidad de los cobros.
 
@@ -81,13 +81,13 @@ Si como comercio tienes el sistema antifraude activado, podría darse el caso qu
   Bajo ningún concepto debe modificarse esta URL, puesto que su formato puede variar en futuras actualizaciones. Su uso se restringe a obtenerla del cuerpo de la petición y redirigir al usuario.
 </Warning>
 
-### Pago tokenizado 3DS[​](#pago-tokenizado-3ds "Enlace directo al Pago tokenizado 3DS")
+### Pago tokenizado 3DS
 
 Este método de **pago mediante el token de una orden** es similar al [pago directo por webservice](#pago-directo-por-webservice), con la diferencia que en este caso al usuario se le mostrará la pantalla de [3DS](/docs/glossary#3ds-2) antes de finalizarlo.
 
 Para generar una nueva orden podemos hacerlo llamando al método [**Generar orden de pago**](/reference/#operation/generate-payment-order). La respuesta nos devolverá el `order_token`. Lanzaremos un [**pago tokenizado 3DS**](/reference/#operation/3ds-tokenized) añadiendo el `order_token` de la orden en la URL de la llamada.
 
-### Autorización 3DS de la tarjeta[​](#autorización-3ds-de-la-tarjeta "Enlace directo al Autorización 3DS de la tarjeta")
+### Autorización 3DS de la tarjeta
 
 Si para una tarjeta no se ha realizado todavía un pago [3DS](/docs/glossary#3ds-2) y queremos utilizarla más adelante para lanzar [pagos directos por webservice](#pago-directo-por-webservice) sin querer cobrar todavía al usuario, es posible realizar una **autorización 3DS de la tarjeta lanzando un pago 3DS de 0€**. En este caso el usuario solamente se autentica de forma segura para más adelante poder ser cobrado por el comercio sin que él tenga que volver a intervenir. Este es un proceso habitual por ejemplo en hoteles o algunos proveedores de suscripciones.
 
@@ -103,7 +103,7 @@ Al lanzar la orden de autorización 3DS obtendremos la siguiente respuesta y la 
 {  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 0,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "AUTHORIZATION",        "amount": 0,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": "34f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec9",    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
 ```
 
-## Tarjetas dinámicas[​](#tarjetas-dinámicas "Enlace directo al Tarjetas dinámicas")
+## Tarjetas dinámicas
 
 Cuando el usuario paga mediante un wallet como Google Pay o Apple Pay, no está proporcionando el número de su tarjeta sino un pseudónimo llamado DPAN (Device PAN). Este número tiene la misma apariencia y está asociado al PAN (Primary Account Number) real de la tarjeta, sin embargo existen varias limitaciones en torno a la información que obtenemos y su uso. Estos medios de pago se conocen como **tarjetas dinámicas** en Paylands.
 
@@ -130,7 +130,7 @@ Debido a que varios DPAN corresponden a un mismo PAN, las tarjetas dinámicas no
 | Prepago                 | ✔   | ✔    |
 | Descripción de la marca | ✔   | ✔    |
 
-### Ventajas y desventajas[​](#ventajas-y-desventajas "Enlace directo al Ventajas y desventajas")
+### Ventajas y desventajas
 
 La principal ventaja de solicitar los datos de tarjeta a través de Google Pay o Apple Pay es que en algunos casos el pago ya se considera autenticado y no es necesario llevar a cabo el 3DS. La desventaja es que la autenticación la lleva a cabo el wallet cuando obtiene los datos de la tarjeta, por lo que es necesario que el usuario interactúe con el wallet cada vez. Esto previene que se lancen [**pagos tokenizados 3DS**](/reference/#operation/3ds-tokenized) con UUIDs de tarjetas dinámicas.
 

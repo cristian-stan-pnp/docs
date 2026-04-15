@@ -7,7 +7,7 @@ description: 'Acepta pagos con SafetyPay a través de la API de Paylands'
 
 En primer lugar, para solicitar un servicio de pago en sandbox para Safetypay deberá ponerse en contacto con **[soporte@paylands.com](mailto:soporte@paylands.com)**.
 
-## Banca por internet[​](#banca-por-internet "Enlace directo al Banca por internet")
+## Banca por internet
 
 * El método de pago safetypay solo está disponible mediante [**redirección**](/reference/#operation/redirection-payment).
 * En la generación de la orden siempre se debe enviar el parámetro `"secure": false`.
@@ -17,6 +17,6 @@ En primer lugar, para solicitar un servicio de pago en sandbox para Safetypay de
 "extra_data": {    "profile": {        "first_name": "Nombre Usuario",        "last_name": "Apellido",        "email": "email@example.com"    }}
 ```
 
-Una vez accedemos al simulador de sandbox de SafetyPay seleccionamos Banca por internet (SP Test Bank Direct). Tras esto iniciamos sesión en la web usando las credenciales admin/admin. Por último, confirmamos la operación.
+Una vez accedemos al simulador de sandbox de SafetyPay, seleccionamos Banca por internet (SP Test Bank Direct). Tras esto iniciamos sesión en la web usando las credenciales admin/admin. Por último, confirmamos la operación.
 
 ![SafetyPay BankDirect](/images/docs/apm/assets/images/safetypay-bank-direct-1188c6131746a9740e9040e37a3b8617.png)

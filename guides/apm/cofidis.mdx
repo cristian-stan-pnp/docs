@@ -25,11 +25,11 @@ Cofidis espera recibir un email obligatoriamente en el campo extra\_data al crea
 }
 ```
 
-## Integración[​](#integración "Enlace directo al Integración")
+## Integración
 
 Para hacer un pago en Cofidis debemos seguir los siguientes pasos:
 
-### 1. Generar la orden de pago en tu servidor[​](#1-generar-la-orden-de-pago-en-tu-servidor "Enlace directo al 1. Generar la orden de pago en tu servidor")
+### 1. Generar la orden de pago en tu servidor
 
 Crea la orden igual que harías para realizar una [**integración simple**](/docs/integration/simple-integration#1-generar-la-orden-de-pago-en-tu-servidor).
 
@@ -51,7 +51,7 @@ Obteniendo como respuesta:
 {  "message": "OK",  "code": 200,  "current_time": "2022-07-19T13:36:32+0200",  "order": {    "uuid": "997BFC59-2407-4CFD-A518-0FCE478AB7D5",    "created": "2022-07-19T13:36:32+0200",    "created_from_client_timezone": "2022-07-19T14:36:32+0300",    "amount": 50000,    "currency": "978",    "paid": false,    "status": "CREATED",    "safe": false,    "refunded": 0,    "additional": "Paylands test",    "service": "COFIDIS",    "service_uuid": "AB567191-DCCC-4143-81DA-5F1ED5F68B47",    "customer": "test",    "cof_txnid": null,    "transactions": [],    "token": "69694f7765bba3d5d7da3f401d304bef151c8eded8ceac43c48e3b852368502d815c86d0a6e901f031ae13fea256f0ac8d99d7cea7c369b4683b8f7c4db52b95",    "ip": null,    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"}}
 ```
 
-### 2. Redirigir al cliente al formulario de pago[​](#2-redirigir-al-cliente-al-formulario-de-pago "Enlace directo al 2. Redirigir al cliente al formulario de pago")
+### 2. Redirigir al cliente al formulario de pago
 
 Construimos la URL de redirección a la pasarela de Cofidis aportando el **token** de la orden devuelto en la llamada anterior.
 
@@ -71,13 +71,13 @@ Al pulsar el botón, el usuario será redirigido a la pasarela de Cofidis.
 
 ![Cofidis Form](/images/docs/apm/assets/images/cofidis-fourxcard-2e2430871a11525867e8777c63674e90.png)
 
-### 3. Introducir datos y código de validación[​](#3-introducir-datos-y-código-de-validación "Enlace directo al 3. Introducir datos y código de validación")
+### 3. Introducir datos y código de validación
 
 Una vez se ha redirigido al usuario a la página de Cofidis, necesitará introducir su información personal y, en el caso de Cofidis Pay, seleccionar el número de plazos deseado.
 
 Una vez completado el formulario, Cofidis determinará si aprueba o rechaza la financiación siendo el usuario redirigido a la URL OK/KO de vuelta, dependiendo del resultado.
 
-### 4. Se notifica al servidor[​](#4-se-notifica-al-servidor "Enlace directo al 4. Se notifica al servidor")
+### 4. Se notifica al servidor
 
 Una vez completado el proceso de pago, se recibirá la notificación POST, que será similar a un [**pago por webservice**](/reference/#operation/webservice-payment), salvo por los siguientes detalles:
 
@@ -85,7 +85,7 @@ Una vez completado el proceso de pago, se recibirá la notificación POST, que s
 
 * Los pagos COFIDIS soportan únicamente autorizaciones `AUTHORIZATION` como operativa.
 
-## Testing[​](#testing "Enlace directo al Testing")
+## Testing
 
 Para realizar pruebas en el entorno sandbox y forzar que la operación sea OK/KO hay que tener en cuenta cuál es el producto de COFIDIS que estamos empleando.
 

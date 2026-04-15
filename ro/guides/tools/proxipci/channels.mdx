@@ -42,7 +42,7 @@ Maparea câmpurilor este specificată ca atribute XPATH sau JSONPATH în funcți
 
 Principala diferență între configurațiile canalelor sunt câmpurile **direcție** și **acțiune**. Pentru a clarifica lucrurile, să analizăm câteva scenarii din lumea reală:
 
-## PUSH + TOKENIZARE[​](#push--tokenización "Enlace directo al PUSH + TOKENIZACIÓN")
+## PUSH + TOKENIZARE
 
 ![PUSH + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_tokenization.png)
 
@@ -54,7 +54,7 @@ Odată ce ați creat channel-ul utilizând API-ul REST al PROXY PCI, puteți act
 
 În acest mod, channel manager-ul va invoca PROXY PCI, care își va face magia și în final va redirecționa rezervările către endpoint-ul dumneavoastră configurat, înlocuind toate PAN-urile cardului cu o versiune token a acestora. Acest token poate fi stocat de dumneavoastră și utilizat pentru a emite o plată sau redirecționat către un alt terț.
 
-## PULL + TOKENIZARE[​](#pull--tokenización "Enlace directo al PULL + TOKENIZACIÓN")
+## PULL + TOKENIZARE
 
 ![PULL + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_tokenization.png)
 
@@ -66,13 +66,13 @@ Sunteți un PMS, dar încă aveți nevoie de rezervările de la un channel manag
   Metoda de invocare a canalului PROXY PCI redirecționează toate QUERY și HTTP HEADERS către endpoint-ul configurat.
 </Info>
 
-## PUSH + DETOKENIZATION[​](#push--detokenization "Enlace directo al PUSH + DETOKENIZATION")
+## PUSH + DETOKENIZATION
 
 ![PUSH + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_detokenization.png)
 
 În acest caz dorim să trimitem datele PAN ale cardului colectate către un PAYMENT GATEWAY terț pentru a procesa plata. PAYMENT GATEWAY-ul oferă un endpoint pentru aceasta, unde trebuie trimise datele cardului în formatul JSON specificat de acesta. În acest scenariu vom avea nevoie de un channel de tip **PUSH + DETOKENIZATION**. Endpoint-ul channel-ului va fi endpoint-ul API al PAYMENT GATEWAY-ului. Veți trimite detaliile cardului, cu excepția PAN-ului, către endpoint-ul de invocare al channel-ului PROXY PCI, iar PROXY PCI va înlocui token-ul cardului cu PAN-ul real al cardului.
 
-## PULL + DETOKENIZATION[​](#pull--detokenization "Enlace directo al PULL + DETOKENIZATION")
+## PULL + DETOKENIZATION
 
 ![PULL + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_detokenization.png)
 
@@ -88,7 +88,7 @@ Sunteți un PMS, dar încă aveți nevoie de rezervările de la un channel manag
 
 Pentru o mai bună înțelegere, am pregătit câteva canale pe care le puteți invoca. Există un endpoint de tokenizare JSON PUSH și un exemplu de detokenizare XML PUSH pe care le puteți testa.
 
-## Exemplu JSON[​](#ejemplo-json "Enlace directo al Ejemplo JSON")
+## Exemplu JSON
 
 Exemplu JSON
 
@@ -96,7 +96,7 @@ Exemplu JSON
 {  "bookings": [    {      "id": "BK-213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4442330588722461",          "cvv": "123",          "expiry": "12/21",          "holder": "John Doe"        }      }    },    {      "id": "BK-3213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4701731341611394",          "expiry": "06-2025",          "holder": "Patma Patill"        }      }    }  ]}
 ```
 
-## MAPAREA CÂMPURILOR[​](#mapeo-de-campos "Enlace directo al MAPEO DE CAMPOS")
+## MAPAREA CÂMPURILOR
 
 | NUMELE CÂMPULUI  | VALOARE                                   |
 | ---------------- | ----------------------------------------- |
@@ -106,7 +106,7 @@ Exemplu JSON
 | pan              | $.bookings\[\*].payment\_data.card.pan    |
 | cardCVV          | $.bookings\[\*].payment\_data.card.cvv    |
 
-## EXEMPLU DE CANAL ÎN FUNCȚIONARE[​](#ejemplo-de-canal-en-funcionamiento "Enlace directo al EJEMPLO DE CANAL EN FUNCIONAMIENTO")
+## EXEMPLU DE CANAL ÎN FUNCȚIONARE
 
 Am configurat un canal cu exact această mapare a câmpurilor. Aceasta este configurația exactă a canalului:
 
@@ -124,7 +124,7 @@ curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-
 
 După executarea comenzii, ar trebui să vedeți cererea în consola beeceptor. Nu ezitați să inspectați corpul primit și să verificați câmpul pan al obiectului card.
 
-## Exemplu XML[​](#ejemplo-de-xml "Enlace directo al Ejemplo de XML")
+## Exemplu XML
 
 Exemplu XML
 
@@ -136,7 +136,7 @@ Exemplu XML
   Acest payload a fost parțial extras din channel manager-ul [Siteminder](https://www.siteminder.com/).
 </Info>
 
-### Namespaces[​](#namespaces "Enlace directo al Namespaces")
+### Namespaces
 
 <Warning>
   Înțelegerea modului în care funcționează xpath și namespaces este crucială pentru maparea câmpurilor XML.
@@ -162,13 +162,13 @@ Dacă un element are spațiul de nume gol (xmlns=""), atunci acesta este un spa�
 
 Exemplu: `//title`
 
-### Maparea câmpurilor[​](#mapeo-de-campos-1 "Enlace directo al Mapeo de campos")
+### Maparea câmpurilor
 
 | NUMELE CÂMPULUI  | VALOARE                       |
 | ---------------- | ----------------------------- |
-| referencia       | //ota:UniqueID/@ID            |
+| reference        | //ota:UniqueID/@ID            |
 | cardHolder       | //ota:CardHolderName          |
-| caducidad        | //ota:PaymentCard/@ExpireDate |
+| expiry           | //ota:PaymentCard/@ExpireDate |
 | pan              | //ota:PaymentCard/@CardNumber |
 | cardCVV          | //ota:PaymentCard/@CardCVV    |
 
@@ -178,7 +178,7 @@ Am configurat un canal cu exact această mapare a câmpurilor. Aceasta este conf
 {    "action": "detokenize",    "direction": "push",    "endpoint": "https://pciproxypnp.free.beeceptor.com/push/xml/detokenize",    "contentType": "xml",    "fieldMapping": {        "reference": "//ota:UniqueID/@ID",        "cardHolder": "//ota:CardHolderName",        "expiry": "//ota:PaymentCard/@ExpireDate",        "pan": "//ota:PaymentCard/@CardNumber",        "cardCVV": "//ota:PaymentCard/@CardCVV"    },    "encoding": "utf8"}
 ```
 
-Aceasta înseamnă că, dacă este invocat, corpul transmis va fi analizat și câmpurile mapate vor fi extrase și salvate. Apoi, PAN-ul este înlocuit cu o versiune token a acestuia. În cele din urmă, noul corp este redirecționat către endpoint-ul furnizat, incluzând toate anteturile și parametrii de interogare originali care au fost trimiși către endpoint-ul channel-ului.
+Aceasta înseamnă că, dacă este invocat, corpul transmis va fi analizat și câmpurile mapate vor fi extrase. Apoi, token-ul este înlocuit cu PAN-ul real al cardului. În cele din urmă, noul corp este redirecționat către endpoint-ul furnizat, incluzând toate anteturile și parametrii de interogare originali care au fost trimiși către endpoint-ul channel-ului.
 
 Accesați [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) și lăsați pagina deschisă. Apoi, executați următoarea comandă curl:
 

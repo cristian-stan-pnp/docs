@@ -3,11 +3,11 @@ title: 'MIT'
 description: 'Configuración e integración del servicio de pago MIT en Paylands'
 ---
 
-## Moneda[​](#moneda "Enlace directo al Moneda")
+## Moneda
 
 La moneda soportada para este servicio son los pesos mexicanos.
 
-## Tarjetas para entorno de pruebas[​](#tarjetas-para-entorno-de-pruebas "Enlace directo al Tarjetas para entorno de pruebas")
+## Tarjetas para entorno de pruebas
 
 Para realizar operaciones con y sin 3DS, se deben proporcionar los siguientes datos:
 
@@ -17,7 +17,7 @@ Para realizar operaciones con y sin 3DS, se deben proporcionar los siguientes da
 
 Tras introducir los datos de tarjeta, el proceso solicitará el código de seguridad y deberemos introducir el valor 555. Ambos flujos deberían ser exitosos.
 
-## Códigos de error[​](#códigos-de-error "Enlace directo al Códigos de error")
+## Códigos de error
 
 La estructura del mensaje de error puede tener los siguientes formatos:
 
@@ -31,7 +31,7 @@ Código: Mensaje
 | 02     | El documento XML no cumple con las restricciones                                                           |
 | 03     | Los datos de empresa, sucursal o usuario son incorrectos                                                   |
 | 04     | Número de tarjeta inválido                                                                                 |
-| 05     | Multiples errores con la configuración de la sucursal                                                      |
+| 05     | Múltiples errores con la configuración de la sucursal                                                      |
 | 06     | Error de la validación de la tarjeta (VISA, MASTERCARD o AMEX)                                             |
 | 07     | No se puede cobrar a meses con este banco, o el banco no concuerda con el banco de la tarjeta              |
 | 08     | El monto mínimo proporcionado es menor que el monto definido para la afiliación                            |

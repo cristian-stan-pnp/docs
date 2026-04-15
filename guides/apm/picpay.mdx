@@ -7,7 +7,7 @@ description: 'Acepta pagos con PicPay en Brasil a través de la API de Paylands'
 
 Existen dos formas de integrarlo: mediante redirección o pago push.
 
-## Integración mediante redirección[​](#integración-mediante-redirección "Enlace directo al Integración mediante redirección")
+## Integración mediante redirección
 
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order).
 
@@ -23,7 +23,7 @@ https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=PICPAY
 
 Una vez el usuario sea redirigido a esta pantalla, podrá visualizar un código QR con el que, a través de la aplicación móvil, completar el pago. Cuando complete el pago, será redirigido de vuelta a la URL OK o KO, dependiendo del resultado del pago.
 
-## Integración mediante pago push[​](#integración-mediante-pago-push "Enlace directo al Integración mediante pago push")
+## Integración mediante pago push
 
 Si el comercio prefiere hacer llegar la referencia al usuario por otro canal distinto al navegador, es posible integrar el método de pago push, el cual devolverá la referencia al servidor para que ésta pueda ser enviada al usuario. Los pagos Push con PicPay están disponibles a través de APOLOPAG.
 
@@ -41,11 +41,11 @@ A continuación, se debe lanzar la petición del [pago push](/reference/#operati
 
 Una vez se complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.
 
-## Pruebas[​](#pruebas "Enlace directo al Pruebas")
+## Pruebas
 
 Para más información sobre cómo probar este método de pago en cada uno de sus proveedores, visitar la documentación de APOLOPAG.
 
-## Campos personalizados[​](#campos-personalizados "Enlace directo al Campos personalizados")
+## Campos personalizados
 
 Opcionalmente, dentro del objeto `extra_data` se puede incluir el campo `payment_reason`, que permite indicar una descripción del pago.
 

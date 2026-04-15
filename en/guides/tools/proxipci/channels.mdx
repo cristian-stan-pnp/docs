@@ -42,7 +42,7 @@ Field mapping is specified as XPATH or JSONPATH attributes depending on the body
 
 The main difference between channel configurations is the **direction** and **action** fields. To make it clearer, let's look at some real-world scenarios:
 
-## PUSH + TOKENIZATION[​](#push--tokenization "Direct link to PUSH + TOKENIZATION")
+## PUSH + TOKENIZATION
 
 ![PUSH + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_tokenization.png)
 
@@ -54,7 +54,7 @@ Once you have created the channel using the PROXY PCI REST API, you can update t
 
 This way, the channel manager will invoke PROXY PCI, which will do its magic and finally forward the bookings to your configured endpoint, having replaced all card PANs with a token version of it. This token can be stored by you and used to issue a payment or forward it to another third party.
 
-## PULL + TOKENIZATION[​](#pull--tokenization "Direct link to PULL + TOKENIZATION")
+## PULL + TOKENIZATION
 
 ![PULL + TOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_tokenization.png)
 
@@ -66,13 +66,13 @@ In this case, you need a channel of type **PULL + TOKENIZATION** where the chann
   The PROXY PCI channel invocation method forwards all QUERY and HTTP HEADERS to the configured endpoint.
 </Info>
 
-## PUSH + DETOKENIZATION[​](#push--detokenization "Direct link to PUSH + DETOKENIZATION")
+## PUSH + DETOKENIZATION
 
 ![PUSH + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/push_and_detokenization.png)
 
 In this case, we want to send our collected card PAN data to a third-party PAYMENT GATEWAY to process the payment. The PAYMENT GATEWAY offers an endpoint for this where the card data must be sent in its specified JSON format. In this scenario, we will need a channel of type **PUSH + DETOKENIZATION**. The channel endpoint will be the PAYMENT GATEWAY API endpoint. You will send the card details, except for the PAN, to the PROXY PCI channel invocation endpoint and PROXY PCI will replace the card token with the real card PAN.
 
-## PULL + DETOKENIZATION[​](#pull--detokenization "Direct link to PULL + DETOKENIZATION")
+## PULL + DETOKENIZATION
 
 ![PULL + DETOKENIZATION](/images/docs/proxy-pci/img/docs/proxy-pci/pull_and_detokenization.png)
 
@@ -88,7 +88,7 @@ In this final use case, you are a channel manager and you have collected card de
 
 For your better understanding, we have prepared some channels for you to invoke. There is a JSON PUSH tokenization endpoint and an XML PUSH detokenization example for you to test.
 
-## JSON example[​](#json-example "Direct link to JSON example")
+## JSON example
 
 JSON example
 
@@ -96,7 +96,7 @@ JSON example
 {  "bookings": [    {      "id": "BK-213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4442330588722461",          "cvv": "123",          "expiry": "12/21",          "holder": "John Doe"        }      }    },    {      "id": "BK-3213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4701731341611394",          "expiry": "06-2025",          "holder": "Patma Patill"        }      }    }  ]}
 ```
 
-## FIELD MAPPING[​](#field-mapping "Direct link to FIELD MAPPING")
+## FIELD MAPPING
 
 | FIELD NAME  | VALUE                                     |
 | ----------- | ----------------------------------------- |
@@ -106,7 +106,7 @@ JSON example
 | pan         | $.bookings\[\*].payment\_data.card.pan    |
 | cardCVV     | $.bookings\[\*].payment\_data.card.cvv    |
 
-## WORKING CHANNEL EXAMPLE[​](#working-channel-example "Direct link to WORKING CHANNEL EXAMPLE")
+## WORKING CHANNEL EXAMPLE
 
 We have configured a channel with this exact field mapping. This is the exact channel configuration:
 
@@ -124,7 +124,7 @@ curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-
 
 After executing the command, you should see the request in the beeceptor console. Feel free to inspect the received body and check the PAN field of the card object.
 
-## XML example[​](#xml-example "Direct link to XML example")
+## XML example
 
 XML example
 
@@ -136,7 +136,7 @@ XML example
   This payload was partially extracted from the [Siteminder](https://www.siteminder.com/) channel manager.
 </Info>
 
-### Namespaces[​](#namespaces "Direct link to Namespaces")
+### Namespaces
 
 <Warning>
   Understanding how xpath and namespaces work is crucial for XML field mapping.
@@ -162,7 +162,7 @@ If an element has a blank namespace (xmlns="") then it is an undeclared namespac
 
 Example: `//title`
 
-### Field mapping[​](#field-mapping-1 "Direct link to Field mapping")
+### Field mapping
 
 | FIELD NAME  | VALUE                         |
 | ----------- | ----------------------------- |
@@ -178,7 +178,7 @@ We have configured a channel with this exact field mapping. This is the exact ch
 {    "action": "detokenize",    "direction": "push",    "endpoint": "https://pciproxypnp.free.beeceptor.com/push/xml/detokenize",    "contentType": "xml",    "fieldMapping": {        "reference": "//ota:UniqueID/@ID",        "cardHolder": "//ota:CardHolderName",        "expiry": "//ota:PaymentCard/@ExpireDate",        "pan": "//ota:PaymentCard/@CardNumber",        "cardCVV": "//ota:PaymentCard/@CardCVV"    },    "encoding": "utf8"}
 ```
 
-This means that when invoked, the transmitted body will be parsed and the mapped fields will be extracted and saved. The PAN is then replaced with a token version of it. Finally, the new body is forwarded to the provided endpoint, including all original headers and query parameters that were sent to the channel endpoint.
+This means that when invoked, the transmitted body will be parsed and the mapped fields will be extracted. The token is then replaced with the real PAN of the card. Finally, the new body is forwarded to the provided endpoint, including all original headers and query parameters that were sent to the channel endpoint.
 
 Go ahead and visit [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) and leave the page open. Then issue the following curl command:
 
