@@ -90,8 +90,6 @@ Pentru o mai bună înțelegere, am pregătit câteva canale pe care le puteți 
 
 ## Exemplu JSON
 
-Exemplu JSON
-
 ```
 {  "bookings": [    {      "id": "BK-213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4442330588722461",          "cvv": "123",          "expiry": "12/21",          "holder": "John Doe"        }      }    },    {      "id": "BK-3213123",      "room_category": "VIP",      "facility_id": 1,      "payment_data": {        "card": {          "pan": "4701731341611394",          "expiry": "06-2025",          "holder": "Patma Patill"        }      }    }  ]}
 ```
@@ -125,8 +123,6 @@ curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-
 După executarea comenzii, ar trebui să vedeți cererea în consola beeceptor. Nu ezitați să inspectați corpul primit și să verificați câmpul pan al obiectului card.
 
 ## Exemplu XML
-
-Exemplu XML
 
 ```
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05">    <SOAP-ENV:Header>        <wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1">            <wsse:UsernameToken>                <wsse:Username>::someUsername</wsse:Username>                <wsse:Password>::somePassword::</wsse:Password>            </wsse:UsernameToken>        </wsse:Security>    </SOAP-ENV:Header>    <SOAP-ENV:Body>        <ota:OTA_HotelResNotifRQ>            <ota:HotelReservations>                <ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit">                    <ota:UniqueID ID="M5304934-86503" Type="14"/>                    <ota:ResGlobalInfo>                        <ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/>                        <ota:Guarantee>                            <ota:GuaranteesAccepted>                                <ota:GuaranteeAccepted>                                    <ota:PaymentCard CardCode="335" CardCVV="123" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022">                                        <ota:CardHolderName>John Doe</ota:CardHolderName>                                    </ota:PaymentCard>                                </ota:GuaranteeAccepted>                            </ota:GuaranteesAccepted>                        </ota:Guarantee>                    </ota:ResGlobalInfo>                </ota:HotelReservation>            </ota:HotelReservations>        </ota:OTA_HotelResNotifRQ>    </SOAP-ENV:Body></SOAP-ENV:Envelope>
