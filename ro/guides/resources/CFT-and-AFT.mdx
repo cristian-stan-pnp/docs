@@ -210,12 +210,12 @@ Câmpuri cheie:
 
 Disponibilitatea AFT depinde de combinația **marcă de card + MCC-ul comerciantului**.
 
-## Visa
+### Visa
 
 - **ACCOUNT_TO_ACCOUNT**: MCC `4829`, `6012`, `6051`, `6211`, `6540`
 - **PERSON_TO_PERSON**: MCC `4829`
 
-## Mastercard
+### Mastercard
 
 - **ACCOUNT_TO_ACCOUNT**: MCC `6012`, `6051`, `6211`, `6536`, `6537`, `6540`
 - **PERSON_TO_PERSON**: MCC `4829`, `6536`, `6537`, `6538`, `6540`
@@ -224,7 +224,7 @@ Disponibilitatea AFT depinde de combinația **marcă de card + MCC-ul comerciant
 
 ## 6. Flux tehnic de integrare
 
-## 6.1 Flux CFT (credit pe card)
+### 6.1 Flux CFT (credit pe card)
 
 1. **Creați o comandă de plată (`POST /payment`)** cu operativă `PAYOUT`:
 
@@ -270,7 +270,7 @@ Disponibilitatea AFT depinde de combinația **marcă de card + MCC-ul comerciant
 
 ---
 
-## 6.2 Flux AFT (funding de pe card)
+### 6.2 Flux AFT (funding de pe card)
 
 1. **Creați comandă de plată (`POST /payment`)** incluzând `profile`, `billing_address` și opțional `aft`:
 
@@ -331,12 +331,12 @@ Disponibilitatea AFT depinde de combinația **marcă de card + MCC-ul comerciant
 
 ## 8. Când să utilizați CFT și când AFT?
 
-## Utilizați **CFT** când:
+### Utilizați **CFT** când:
 - Doriți să **trimiteți bani pe cardul** utilizatorului.  
 - Aveți nevoie de un **cashout direct**.  
 - Doriți un credit imediat și ireversibil.  
 
-## Utilizați **AFT** când:
+### Utilizați **AFT** când:
 - Aveți nevoie să **încărcați un cont** (wallet, portofel electronic, prepaid) de pe un card.  
 - Doriți să activați **transferuri P2P**.  
 - Aveți nevoie de un flux condiționat de MCC, marcă sau reguli de achizitor.  
