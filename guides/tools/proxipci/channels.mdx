@@ -117,7 +117,11 @@ Esto significa que si se invoca, el *body* transmitido será analizado y los cam
 Vaya y visite [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) y deje la página abierta. A continuación, emite el siguiente comando `curl`:
 
 ```
-curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke \-H 'Content-Type: application/json' \-H 'SomeCustomHeader: SayHello!' \--data '{"bookings":[{"id":"BK-213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4442330588722461","cvv":"222","expiry":"12/28","holder":"John Doe"}}},{"id":"BK-3213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4701731341611394","cvv":"333", "expiry":"06-2025","holder":"Patma Patill"}}}]}'
+curl -X POST \
+  https://pci-proxy-api.paynopain.com/sandbox/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke \
+  -H 'Content-Type: application/json' \
+  -H 'SomeCustomHeader: SayHello!' \
+  --data '{"bookings":[{"id":"BK-213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4442330588722461","cvv":"222","expiry":"12/28","holder":"John Doe"}}},{"id":"BK-3213123","room_category":"VIP","facility_id":1,"payment_data":{"card":{"pan":"4701731341611394","cvv":"333", "expiry":"06-2025","holder":"Patma Patill"}}}]}'
 ```
 
 Después de ejecutar el comando deberías ver la petición en la consola de beeceptor. Siéntete libre de inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.
@@ -179,7 +183,11 @@ Esto significa que si se invoca, el cuerpo transmitido será analizado y los cam
 Sigue adelante y visita [https://beeceptor.com/console/pciproxypnp](https://beeceptor.com/console/pciproxypnp) y deja la página abierta. A continuación, emite el siguiente comando curl:
 
 ```
-curl -X POST \https://pci-proxy-api.paynopain.com/sandbox/channel/da3e2c5b-8e3d-44f3-a56e-0491b949d7f7/invoke \-H 'Content-Type: application/xml' \-H 'SomeCustomHeader: SayHello!' \--data '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05"><SOAP-ENV:Header><wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1"><wsse:UsernameToken><wsse:Username>::someUsername</wsse:Username><wsse:Password>::somePassword::</wsse:Password></wsse:UsernameToken></wsse:Security></SOAP-ENV:Header><SOAP-ENV:Body><ota:OTA_HotelResNotifRQ><ota:HotelReservations><ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit"><ota:UniqueID ID="M5304934-86503" Type="14"/><ota:ResGlobalInfo><ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/><ota:Guarantee><ota:GuaranteesAccepted><ota:GuaranteeAccepted><ota:PaymentCard CardCode="335" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022"><ota:CardHolderName>John Doe</ota:CardHolderName></ota:PaymentCard></ota:GuaranteeAccepted></ota:GuaranteesAccepted></ota:Guarantee></ota:ResGlobalInfo></ota:HotelReservation></ota:HotelReservations></ota:OTA_HotelResNotifRQ></SOAP-ENV:Body></SOAP-ENV:Envelope>'
+curl -X POST \
+  https://pci-proxy-api.paynopain.com/sandbox/channel/da3e2c5b-8e3d-44f3-a56e-0491b949d7f7/invoke \
+  -H 'Content-Type: application/xml' \
+  -H 'SomeCustomHeader: SayHello!' \
+  --data '<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ota="http://www.opentravel.org OTA/2003/05"><SOAP-ENV:Header><wsse:Security xmlns="http://schemas.xmlsoap.org/soap/envelope/" mustUnderstand="1"><wsse:UsernameToken><wsse:Username>::someUsername</wsse:Username><wsse:Password>::somePassword::</wsse:Password></wsse:UsernameToken></wsse:Security></SOAP-ENV:Header><SOAP-ENV:Body><ota:OTA_HotelResNotifRQ><ota:HotelReservations><ota:HotelReservation CreateDateTime="2018-10-03T19:08:23.000+02:00" LastModifyDateTime="2018-10-03T19:08:23.000+02:00" ResStatus="Commit"><ota:UniqueID ID="M5304934-86503" Type="14"/><ota:ResGlobalInfo><ota:TimeSpan Duration="3" End="2018-10-24" Start="2018-10-21"/><ota:Guarantee><ota:GuaranteesAccepted><ota:GuaranteeAccepted><ota:PaymentCard CardCode="335" CardNumber="A27BEC4A-C3EF-4A45-A6B9-1485BA596625" ExpireDate="08-2022"><ota:CardHolderName>John Doe</ota:CardHolderName></ota:PaymentCard></ota:GuaranteeAccepted></ota:GuaranteesAccepted></ota:Guarantee></ota:ResGlobalInfo></ota:HotelReservation></ota:HotelReservations></ota:OTA_HotelResNotifRQ></SOAP-ENV:Body></SOAP-ENV:Envelope>'
 ```
 
 Después de ejecutar el comando debería ver la solicitud en la consola de beeceptor. No dude en inspeccionar el cuerpo recibido y comprobar el campo pan del objeto tarjeta.
