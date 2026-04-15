@@ -352,7 +352,7 @@
                 "group": "Payment Services",
                 "pages": [
                   "en/guides/payment-services/paypal",
-                  "en/guides/payment-services/payretailers"
+                  "en/guides/payment-services/payretailers",
                   "en/guides/payment-services/redsys",
                   "en/guides/payment-services/cecabank",
                   "en/guides/payment-services/credorax",
@@ -515,6 +515,9 @@
                       "pt/guides/tools/proxipci/payments"
                     ]
                   }
+                ]
+              },
+              {
                 "group": "Serviços de Pagamento",
                 "pages": [
                   "pt/guides/payment-services/payretailers",
@@ -548,7 +551,7 @@
                 "group": "Serviços de Pagamento",
                 "pages": [
                   "pt/guides/payment-services/paypal",
-                  "pt/guides/payment-services/payretailers"
+                  "pt/guides/payment-services/payretailers",
                   "pt/guides/payment-services/redsys",
                   "pt/guides/payment-services/cecabank",
                   "pt/guides/payment-services/credorax",
@@ -710,6 +713,9 @@
                       "ro/guides/tools/proxipci/payments"
                     ]
                   }
+                ]
+              },
+              {
                 "group": "Servicii de Plată",
                 "pages": [
                   "ro/guides/payment-services/payretailers",
@@ -743,7 +749,7 @@
                 "group": "Servicii de Plată",
                 "pages": [
                   "ro/guides/payment-services/paypal",
-                  "ro/guides/payment-services/payretailers"
+                  "ro/guides/payment-services/payretailers",
                   "ro/guides/payment-services/redsys",
                   "ro/guides/payment-services/cecabank",
                   "ro/guides/payment-services/credorax",
