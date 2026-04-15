@@ -1,0 +1,121 @@
+---
+title: 'Autorizare parțială'
+description: 'Cum să gestionezi autorizările parțiale în Paylands'
+---
+
+În loc să respingă operațiunea, sistemul autorizează **suma maximă disponibilă** pe card.
+
+Această funcționalitate este deosebit de utilă pentru modelele de afaceri care pot gestiona suma rămasă printr-o altă metodă de plată sau o nouă încercare de debitare.
+
+> ⚠️ Autorizările parțiale trebuie utilizate doar dacă fluxul dumneavoastră de afaceri permite gestionarea sumelor restante.
+
+***
+
+## Cum să utilizați autorizările parțiale
+
+Pentru a activa autorizarea parțială, trebuie să utilizați operativa **`PARTIAL_AUTHORIZATION`** la crearea ordinului de plată.
+
+> ℹ️ **AUTHORIZATION** respinge operațiunea dacă suma completă nu poate fi autorizată, în timp ce **PARTIAL\_AUTHORIZATION** o aprobă chiar dacă doar o parte din sumă poate fi autorizată.
+
+***
+
+### Exemplu de creare a ordinului
+
+Exemplu de cerere pentru crearea unui ordin folosind operativa de autorizare parțială:
+
+```bash
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \
+--header 'Authorization: pk_test_************************' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 600,
+  "operative": "PARTIAL_AUTHORIZATION",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",
+  "description": "Payment #1",
+  "additional": null,
+  "url_post": "https://my.website.com/process",
+  "url_ok": "https://my.website.com/ok",
+  "url_ko": "https://my.website.com/ko",
+  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",
+  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",
+  "source_uuid": null,
+  "save_card": true,
+  "reference": "50620",
+  "dynamic_descriptor": "PNP*MerchantName",
+  "expires_in": 3600
+}'
+```
+
+***
+
+### Exemplu de răspuns pentru o plată cu autorizare parțială
+
+Mai jos este prezentat răspunsul unei plăți reușite în care a fost efectuată o autorizare parțială.
+
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "order": {
+    "uuid": "6E317E9E-1508-487A-98CB-389F7054B9CF",
+    "amount": 600,
+    "currency": "986",
+    "paid": true,
+    "status": "SUCCESS",
+    "transactions": [
+      {
+        "uuid": "1EAC092C-5A96-49E3-8FDB-D2374DE2F3B9",
+        "operative": "PARTIAL_AUTHORIZATION",
+        "amount": 420,
+        "status": "SUCCESS",
+        "error": "NONE",
+        "source": {
+          "object": "CARD",
+          "brand": "VISA",
+          "last4": "0071"
+        },
+        "...": "Alte câmpuri ale tranzacției omise pentru claritate"
+      }
+    ]
+  },
+  "...": "Câmpuri suplimentare ale răspunsului omise pentru claritate"
+}
+```
+
+> 💡 **Comportament cheie:** Ordinul menține suma solicitată inițial (**600**), în timp ce tranzacția arată suma autorizată final (**420**).
+
+***
+
+## Cum să testați autorizările parțiale în sandbox
+
+Puteți valida comportamentul autorizărilor parțiale în mediul sandbox utilizând următoarele metode:
+
+### Paynopain
+
+Pentru a simula o autorizare parțială cu **Paynopain**, trimiteți o cerere cu următoarea sumă:
+
+```
+amount: 100010
+```
+
+Această valoare este configurată pentru a declanșa o autorizare parțială în timpul testării.
+
+### Simulatorul Paylands
+
+Paylands pune la dispoziție un simulator care permite testarea diferitelor fluxuri de plată în sandbox, inclusiv cel de autorizări parțiale.
+
+**Card de test pentru autorizare parțială:**
+
+```
+4000058400000071
+```
+
+**Comportamentul simulatorului:**
+
+* Pentru plăți cu o **sumă mai mare de 100**, simulatorul va aplica o **autorizare parțială**.
+* Pentru plăți cu o **sumă egală sau mai mică de 100**, va fi autorizată **suma completă**.
+
+Pentru mai multe informații despre simulator, consultați [documentația serviciului Paylands](/guides/payment-services/paylands).

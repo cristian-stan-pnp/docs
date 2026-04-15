@@ -1,0 +1,323 @@
+---
+title: 'Verificarea titularului'
+description: 'Cum se verifică identitatea titularului unui card în Paylands'
+---
+
+Verificarea poate fi realizată prin numele titularului sau printr-un identificator legal al titularului, în funcție de metoda selectată.
+
+***
+
+## Metode de verificare
+
+SHV permite verificarea titularității unui `source` utilizând una dintre următoarele metode:
+
+* `NAME` (**implicit**): verifică dacă numele titularului indicat corespunde cu titularul real al mijlocului de plată.
+* `IDENTIFICATION_NUMBER`: verifică dacă identificatorul legal indicat corespunde cu titularul real al mijlocului de plată.
+
+Metoda poate fi indicată prin câmpul `verification_method`. Dacă nu este specificată, se utilizează `NAME`.
+
+***
+
+## În ce fluxuri poate fi utilizată?
+
+SHV poate fi aplicată în **trei fluxuri**:
+
+1. **[Endpoint specific de verificare](/reference/#operation/verify-source-holder)**
+
+   * Permite **verificarea unui `source` față de un titular** și **obținerea rezultatului** verificării.
+   * Returnează rezultatul de coincidență: `MATCH`, `NO_MATCH`, `PARTIAL_MATCH` (când verificarea este realizată).
+
+2. **Stocarea unui mijloc de plată ([tokenizare card](/reference/#operation/save-card) / [creare cont bancar](/reference/#operation/save-bank))**
+
+   * În endpoint-ul de **stocare** a cardului sau contului bancar, dacă sunt trimise câmpurile necesare, SHV validează dacă `source`-ul care se dorește a fi stocat **aparține titularului indicat**.
+   * În funcție de politicile configurate, fluxul poate fi **blocat**, împiedicând stocarea `source`-ului.
+
+3. **Flux de plată (payins și payouts)**
+
+   * La [**generarea ordinului de plată**](/reference/#operation/generate-payment-order), se poate indica în `extra_data` corpul `source_holder_verification`.
+
+   * Înainte de a încerca plata, se execută o verificare SHV a `source`-ului cu care se dorește efectuarea plății.
+
+   * Permite **blocarea plății** dacă:
+
+     * verificarea **nu poate fi efectuată** (conform politicii), sau
+     * rezultatul **nu corespunde** (conform `accepted_verification_results`).
+
+***
+
+## Endpoint specific: verificarea titularului unui source
+
+### Exemplu de cerere cu NAME
+
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "holder": {
+    "first_name": "Luis",
+    "last_name": "Pérez López"
+  }
+}
+```
+
+### Exemplu de cerere cu IDENTIFICATION\_NUMBER
+
+> Când `verification_method` este `IDENTIFICATION_NUMBER`, trebuie trimis `holder.identification_number`. Câmpul `first_name` rămâne necesar pentru verificare.
+
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "holder": {
+    "first_name": "Luis",
+    "last_name": "Pérez López",
+    "identification_number": "B88353412"
+  },
+  "verification_method": "IDENTIFICATION_NUMBER"
+}
+```
+
+### Exemplu de răspuns
+
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "current_time": "2026-02-24T14:35:01+0100",
+  "verification": {
+    "uuid": "A8CABF0C-C690-46C7-9F4B-E6AC3F929799",
+    "status": "PERFORMED",
+    "match_result": "MATCH",
+    "error": null,
+    "policy_action": null,
+    "verification_method": "NAME"
+  }
+}
+```
+
+***
+
+## Aplicarea SHV în stocarea source-ului sau în plăți
+
+În fluxurile de **stocare a source-ului** și **plată**, corpul trimis este același:
+
+```json
+{
+  "source_holder_verification": {
+    "enabled": true,
+    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
+```
+
+### Ce face acest corp?
+
+* Dacă `enabled = true`, se încearcă executarea SHV în timpul fluxului.
+
+* Permite definirea **politicilor**:
+
+  * ce rezultate sunt acceptabile (`accepted_verification_results`),
+  * ce se face dacă verificarea **nu este disponibilă** sau **nu se realizează** (`allow_unavailable`),
+  * ce se face în cazul **erorilor** (`allow_error`).
+
+* Permite informarea `first_name` și `last_name`. Dacă nu sunt trimise:
+
+  * În **plăți**, se încearcă obținerea din `extra_data.profile`.
+  * În **stocare**, se încearcă obținerea din `card_holder` / `account_holder`.
+
+* Permite selectarea metodei de verificare prin `verification_method`.
+
+Pentru ca verificarea să poată fi realizată, datele necesare trebuie să fie disponibile în operațiune:
+
+* **Numele titularului** (`first_name`) trebuie să fie prezent, fie trimis în `source_holder_verification`, fie obținut din `extra_data.profile.first_name`.
+* Dacă metoda selectată este `IDENTIFICATION_NUMBER`, trebuie să fie disponibil și **identificatorul legal al titularului** (`identification_number`), fie trimis explicit, fie obținut din `extra_data.profile.document_identification_number`.
+
+***
+
+## Exemple de utilizare
+
+### Tokenizare card (stocare)
+
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "customer_ext_id": "test1",
+  "card_holder": "TEST",
+  "card_pan": "4242424242424242",
+  "card_expiry_year": 34,
+  "card_expiry_month": "12",
+  "additional": null,
+  "url_post": "",
+  "validate": false,
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "card_cvv": 123,
+  "source_holder_verification": {
+    "enabled": true,
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
+```
+
+### Creare cont bancar (stocare)
+
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "account_holder": "prueba",
+  "iban": "ES4469400001180255458867",
+  "customer_ext_id": "test",
+  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",
+  "source_holder_verification": {
+    "enabled": true,
+    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH", "NO_MATCH"],
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
+```
+
+### Creare ordin (flux de plată)
+
+> În plăți, `source_holder_verification` se trimite în interiorul `extra_data`.
+
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 10,
+  "operative": "PAYOUT",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",
+  "description": "test",
+  "additional": "Paylands test",
+  "url_post": "https://enpxp0f8f1owh.x.pipedream.net/",
+  "url_ok": "",
+  "url_ko": "",
+  "template_uuid": null,
+  "dcc_template_uuid": null,
+  "extra_data": {
+    "profile": {
+      "first_name": "Luis",
+      "last_name": "test",
+      "email": "victor.colejo@paynopain.com",
+      "birthdate": "1996-04-04"
+    },
+    "source_holder_verification": {
+      "enabled": true,
+      "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],
+      "allow_unavailable": true,
+      "allow_error": false,
+      "first_name": "Pedro",
+      "last_name": "Perez"
+    }
+  }
+}
+```
+
+***
+
+## Câmpurile `source_holder_verification`
+
+| Câmp                            | Tip                 | Obligatoriu | Implicit | Descriere                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------- | ------------------- | ----------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `enabled`                       | `boolean`           | **Da**      | —        | Activează verificarea titularului mijlocului de plată. Când este setat pe `true`, platforma efectuează o verificare SHV înainte de a continua fluxul (de exemplu, înainte de a executa plata).                                                                                                                                                                                                                                                    |
+| `verification_method`           | `string` *(enum)*   | Nu          | `NAME`   | Metoda utilizată pentru a verifica titularitatea mijlocului de plată. Valori permise: `NAME` sau `IDENTIFICATION_NUMBER`. Dacă este setat `NAME`, verificarea se bazează pe compararea numelui titularului indicat cu titularul real al mijlocului de plată. Dacă este setat `IDENTIFICATION_NUMBER`, verificarea se bazează pe compararea identificatorului legal indicat cu titularul real al mijlocului de plată.                                 |
+| `accepted_verification_results` | `string[]` *(enum)* | Nu          | —        | Lista rezultatelor de verificare considerate acceptabile pentru a continua operațiunea. Dacă este omisă sau goală, fluxul continuă indiferent de rezultatul SHV. Valori permise: `MATCH`, `NO_MATCH`, `PARTIAL_MATCH`.                                                                                                                                                                                                                           |
+| `allow_unavailable`             | `boolean`           | Nu          | `true`   | Permite continuarea fluxului dacă verificarea **nu a fost realizată** deoarece nu este suportată de bancă sau de tipul/marca cardului, sau deoarece, deși ar putea fi suportată, banca nu o execută.                                                                                                                                                                                                                                             |
+| `allow_error`                   | `boolean`           | Nu          | `false`  | Determină comportamentul când verificarea nu poate fi finalizată din cauza unor erori/defecțiuni tranzitorii (de ex. timeout sau indisponibilitate temporară). Când este `true`, aceste erori **nu** blochează fluxul. Când este `false`, aceste erori **blochează** operațiunea.                                                                                                                                                                  |
+| `first_name`                    | `string`            | Nu          | —        | Prenumele titularului mijlocului de plată. Dacă nu este trimis: în plăți se încearcă obținerea din `extra_data.profile`; în stocare, din `card_holder` / `account_holder`. Această informație trebuie să fie disponibilă pentru ca verificarea să poată fi realizată.                                                                                                                                                                              |
+| `last_name`                     | `string`            | Nu          | —        | Numele de familie al titularului mijlocului de plată (aceeași logică ca `first_name`).                                                                                                                                                                                                                                                                                                                                                           |
+| `identification_number`         | `string`            | Condiționat | —        | Identificatorul legal al titularului mijlocului de plată (de exemplu, CNP, carte de identitate, pașaport sau număr de înregistrare al companiei). Obligatoriu când `verification_method` este `IDENTIFICATION_NUMBER`. Dacă nu este trimis, în plăți se încearcă obținerea din `extra_data.profile.document_identification_number`.                                                                                                                |
+
+***
+
+## Răspuns SHV (format comun)
+
+Indiferent de endpoint/flux, blocul de răspuns SHV este returnat cu această formă:
+
+```json
+{
+  "source_holder_verification": {
+    "uuid": "ED17EDE3-51A7-47A9-BD13-50448587278C",
+    "status": "PERFORMED",
+    "match_result": "NO_MATCH",
+    "error": null,
+    "policy_action": "ALLOWED",
+    "verification_method": "NAME"
+  }
+}
+```
+
+### Semnificația câmpurilor
+
+* `uuid`: identificator unic al verificării realizate.
+* `status`: starea finală a tentativei de verificare.
+* `match_result`: rezultatul de coincidență (dacă este cazul).
+* `error`: eroarea care s-a putut produce în timpul verificării.
+* `policy_action`: se aplică doar fluxurilor de **creare a source-ului** și **plată** (când se trimite `source_holder_verification` cu politici). Indică decizia finală luată cu privire la continuarea fluxului.
+
+***
+
+## Stările `status`
+
+Valori posibile:
+
+* `PERFORMED` Verificarea a putut fi realizată. Se așteaptă ca `match_result` să fie informat (`MATCH`, `PARTIAL_MATCH` sau `NO_MATCH`).
+
+* `NOT_PERFORMED` Verificarea nu a fost realizată (din motive care nu sunt neapărat legate de suport).
+
+* `NOT_SUPPORTED` Verificarea nu este suportată pentru banca / tipul de cont / marca sau tipul de card.
+
+* `FAILED` Eșec în timpul executării verificării.
+
+* `ERROR` Eroare tranzitorie sau tehnică (de exemplu, timeout sau indisponibilitate temporară).
+
+***
+
+## Rezultate de coincidență `match_result`
+
+O verificare SHV poate returna:
+
+* `MATCH` — Datele titularului corespund complet cu cele ale titularului real al mijlocului de plată.
+* `PARTIAL_MATCH` — Coincidență aproximativă cu mici discrepanțe.
+* `NO_MATCH` — Datele titularului nu corespund cu titularul real.
+
+***
+
+## Acțiuni de politică `policy_action`
+
+> Se aplică în fluxurile de **creare a source-ului** și **plată** când au fost trimise politici în `source_holder_verification`.
+
+Valori posibile:
+
+* `ALLOWED`
+* `BLOCKED_NOT_ACCEPTED_MATCH_RESULT`
+* `SKIPPED_UNAVAILABLE`
+* `SKIPPED_ERROR`
+* `BLOCKED_UNAVAILABLE`
+* `BLOCKED_ERROR`
+* `BLOCKED_UNEXPECTED_STATUS`
+
+***
+
+## Simulare în Sandbox (IBAN)
+
+În mediile de **sandbox**, pentru **conturi bancare**, se pot simula rezultate de `match_result` folosind aceste IBAN-uri:
+
+| IBAN                       | Rezultat simulat               | Descriere                                       |
+| -------------------------- | ------------------------------ | ----------------------------------------------- |
+| `ES8569400001160529041877` | respins                        | Simulează întotdeauna o verificare respinsă.    |
+| `ES6769400001110836662135` | eșuat (`NO_MATCH`)             | Simulează întotdeauna un rezultat `NO_MATCH`.   |
+| `ES3369400001190536473836` | confirmat (`PARTIAL_MATCH`)    | Simulează întotdeauna o coincidență aproximativă.|
+| Orice alt IBAN             | confirmat (`MATCH`)            | Simulează întotdeauna o coincidență completă.   |

@@ -1,0 +1,96 @@
+---
+title: 'Batch operations'
+description: 'How to perform batch authorizations and refunds with the Paylands API'
+---
+
+This endpoint allows you to send a CSV file to the server containing multiple operations that will be executed in a batch process.
+
+This CSV must contain a header row with the field names. The second row and following will contain all the information for the different operations. Fields within each row must be separated by a comma (,).
+
+The batch operations available on these endpoints are Payments and Refunds, each of these operations has its own file structure and endpoint to which the request is made.
+
+## Batch payments
+
+To process a batch of payments, you only need to [send a CSV to the corresponding endpoint](/reference/#operation/batch-payments-file) following the payment file structure described below.
+
+### Batch payments CSV structure
+
+A payments CSV contains a first row with the headers of the fields to process, and one row with the operation data for each payment to be made.
+
+The CSV headers must be the following:
+
+```
+AMOUNT,CARD,CUSTOMER_EXTERNAL_ID,SERVICE,ADDITIONAL,URL_POST,EXTRA_DATA
+```
+
+And the operation rows must be filled with the following fields:
+
+| Field                  | Type    | Required | Description                                                                                                        |
+| ---------------------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| AMOUNT                 | Integer | YES      | Amount to charge, in cents                                                                                         |
+| CARD                   | String  | YES      | UUID of the card to be used for the payment                                                                        |
+| CUSTOMER\_EXTERNAL\_ID | String  | YES      | Identifier of the user making the payment. Must be the same as the one used to save the card                       |
+| SERVICE                | String  | YES      | UUID of the service                                                                                                |
+| ADDITIONAL             | String  | NO       | Free text field that will be sent to the merchant in the notification                                              |
+| URL\_POST              | String  | NO       | Merchant URL where the notification with the payment result will be sent                                           |
+| EXTRA\_DATA            | String  | NO       | You can specify as many fields as needed following the CSV format, separating each one with `;`                    |
+
+The data that can be included in extra\_data are the same as those contained in the extra\_data field when [**generating a payment order**](/reference/#operation/generate-payment-order).
+
+For **Paylands** to correctly read the .csv file, the standard must be respected by separating the fields with `,`
+
+An example of a payments CSV file would be the following:
+
+```csv
+AMOUNT,CARD,CUSTOMER_EXTERNAL_ID,SERVICE,ADDITIONAL,URL_POST,EXTRA_DATA
+111,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_111,https://google.es/post,cof.reason:OTHER;address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
+222,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_222,,
+333,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_333,,address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
+```
+
+## Batch refunds
+
+To process a batch of refunds, you will need to [send a CSV to the batch refunds endpoint](/reference/#operation/batch-refunds-file) following the refund file structure described below:
+
+### Batch refunds CSV structure
+
+The refunds CSV file must contain a first row with the headers of the fields to process, and one row with the operation data for each refund to be processed.
+
+The CSV headers must be the following:
+
+```
+ORDER_UUID,AMOUNT
+```
+
+And the rows for each operation must be filled with the following fields:
+
+| Field       | Type    | Required | Description                               |
+| ----------- | ------- | -------- | ----------------------------------------- |
+| ORDER\_UUID | String  | YES      | UUID of the order to be refunded          |
+| AMOUNT      | Integer | NO       | Amount to refund, in cents                |
+
+An example of a refunds CSV file would be the following:
+
+```csv
+ORDER_UUID,AMOUNT
+AAA94216-045C-4A8F-ABBC-E480BEAA22B4,111
+3FC5B2E2-87FC-4329-B3AC-FE9DEC9EE56A,452
+1F8B9B46-E125-4F01-B981-35C2358FCCF3,388
+```
+
+## Operation response
+
+The response from these endpoints will maintain the same format as the rest of the endpoints. Additionally, an "errors" field will be added containing an array with all the errors produced in the file, along with the line where it occurred.
+
+```json
+{
+  "errors": [
+    {
+      "line": 13,
+      "msg": "Invalid card"
+    }
+  ]
+}
+```
+
+If there are no errors in the file submission, the response will contain an empty array under the "errors" key.

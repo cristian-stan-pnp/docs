@@ -1,0 +1,102 @@
+---
+title: 'Biblioteca JavaScript'
+description: 'Captură securizată a datelor de card cu biblioteca JavaScript PROXY PCI'
+---
+
+<Info>
+  Vom înlocui PAN-ul cardului cu o versiune tokenizată a acestuia care poate fi stocată împreună cu celelalte date ale cardului.
+</Info>
+
+## Cum funcționează?
+
+Pentru a lucra cu abordarea de tokenizare a clientului, trebuie să urmați următorii pași:
+
+1. Primul lucru pe care trebuie să-l faceți este să generați un `token` de captură utilizând [POST /tokenize/\{reference}](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/IssueTokenizationToken) în API-ul REST. La generarea acestui token trebuie să furnizați o `referință`. Această `referință` trebuie să fie unică și poate fi id-ul rezervării dumneavoastră, etc.
+2. Odată ce aveți token-ul, trebuie să inițializați biblioteca JavaScript cu acest token. Mai multe detalii despre acest lucru mai jos.
+3. Biblioteca JavaScript se inițializează și afișează un câmp de introducere iframe securizat pe website-ul dumneavoastră.
+4. Utilizatorul introduce datele sale în formularul web, iar numărul PAN este introdus în câmpul iframe securizat.
+5. Utilizatorul apasă pe trimitere, iar dumneavoastră îi spuneți bibliotecii să trimită datele către motorul nostru de seif.
+6. Apoi, puteți obține rezultatul pe serverul dumneavoastră inițiind un apel către metoda [GET /card/reference/\{reference}](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults). Rezultatul va include PAN-ul tokenizat al cardului printre alte detalii.
+7. Acest token poate fi utilizat pentru a trimite datele cardului către un terț sau pentru a emite un token de vizualizare.
+
+<Warning>
+  API-ul REST trebuie apelat întotdeauna direct de pe serverul dumneavoastră, niciodată din partea clientului.
+</Warning>
+
+## Includerea bibliotecii JavaScript
+
+Vă rugăm să încărcați versiunea corectă a bibliotecii JavaScript direct de pe serverele noastre compatibile PCI, în funcție de mediu.
+
+SANDBOX
+
+```
+<script src="https://pci-proxy-api.paynopain.com/sandbox/client.js"></script>
+```
+
+PRODUCTION
+
+```
+<script src="https://pci-proxy-api.paynopain.com/prod/client.js"></script>
+```
+
+<Info>
+  Puteți consulta [exemplul de codepen](https://codepen.io/bopechri/pen/dybqRqm) în funcțiune pentru a-l vedea în acțiune.
+</Info>
+
+### Inițializarea bibliotecii
+
+Pentru a inițializa biblioteca trebuie să furnizați id-ul elementului DOM unde biblioteca trebuie să injecteze iframe-ul cu câmpul de introducere PAN împreună cu `token-ul` emis cu API-ul REST. Odată ce iframe-ul a terminat de încărcat, va fi declanșat un eveniment `ready`.
+
+```html
+<div id="pan"></div>
+<button id="submit">Trimite</button>
+```
+
+```js
+var proxyFields = new ProxyFields();
+proxyFields.init('::token::', { cardNumber: "pan" });
+proxyFields.on('ready', () => {
+    console.log('iframe a terminat de încărcat');
+});
+```
+
+### Stilizarea câmpului de introducere
+
+Metoda recomandată pentru stilizarea câmpului de introducere este utilizarea metodei `setStyle`. Aceasta trebuie făcută în callback-ul `ready`.
+
+```js
+proxyFields.on("ready", function() {
+  proxyFields.setStyle(
+    "cardNumber",
+    "width: 300px; border-radius: 4px; border: 1px solid black; padding:5px 10px;font-size:100%;"
+  );
+  proxyFields.setStyle("cardNumber::placeholder", "color: grey");
+  proxyFields.setPlaceholder("cardNumber", "4987806170805591");
+});
+```
+
+### Validarea și trimiterea datelor
+
+Odată ce utilizatorul a completat formularul de trimitere, puteți apela metoda `submit`. Metoda `submit` primește ca unic parametru un obiect în care trebuie să furnizați informații suplimentare despre card. Aceste date pot fi colectate direct de către dumneavoastră deoarece nu sunt supuse reglementărilor PCI.
+
+Odată ce ați apelat metoda `submit`, va fi declanșat un callback `validate` cu un obiect de intrare care conține informații legate de eroare, dacă există. Dacă PAN-ul este valid, trimiterea va fi efectuată și va fi declanșat un callback de succes sau de eroare. După ce callback-ul `success` este declanșat, puteți apela în siguranță [metoda API-ului REST](https://pci-proxy-api.paynopain.com/docs#/Client%20tokenization/GetTokenizationResults) pe serverul dumneavoastră pentru a obține token-ul PAN.
+
+```js
+proxyFields.submit({
+  expiryMonth: "01",
+  expiryYear: "21",
+  cardHolder: "Name Displayed On Card"
+});
+proxyFields.on("validate", function(data) {
+  if(data.hasErrors){
+    console.log("Card pan is not valid");
+    proxyFields.setStyle("cardNumber","border: 1px solid red");
+  }
+});
+proxyFields.on("success", function(data) {
+  console.log('Submission succeeded');
+});
+proxyFields.on("error", function(error) {
+  console.log('Something went wrong');
+});
+```

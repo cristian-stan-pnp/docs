@@ -1,0 +1,96 @@
+---
+title: 'Operações em lote'
+description: 'Como realizar autorizações e devoluções em lote com a API do Paylands'
+---
+
+Este endpoint permite enviar um ficheiro CSV ao servidor contendo várias operações que serão executadas num processo batch.
+
+Este CSV deve conter uma linha de cabeçalho com o nome dos campos. A segunda linha e seguintes conterão toda a informação das diferentes operações. Os campos dentro de cada linha devem estar separados por uma vírgula (,).
+
+As operações em lote disponíveis nestes endpoints são Pagamentos e Devoluções, cada uma destas operações tem a sua própria estrutura de ficheiro e endpoint ao qual fazer o pedido.
+
+## Pagamentos em lote
+
+Para processar em lote um conjunto de pagamentos, só precisa de [enviar um CSV ao endpoint correspondente](/reference/#operation/batch-payments-file) seguindo a estrutura do ficheiro de pagamentos descrita a seguir.
+
+### Estrutura CSV de pagamentos em lote
+
+Um CSV de pagamentos contém uma primeira linha com os cabeçalhos dos campos a processar, e uma linha com os dados da operação por cada pagamento que se queira realizar.
+
+Os cabeçalhos do CSV deverão ser os seguintes:
+
+```
+AMOUNT,CARD,CUSTOMER_EXTERNAL_ID,SERVICE,ADDITIONAL,URL_POST,EXTRA_DATA
+```
+
+E as linhas de operação deverão ser preenchidas com os seguintes campos:
+
+| Campo                  | Tipo    | Obrigatório | Descrição                                                                                                          |
+| ---------------------- | ------- | ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| AMOUNT                 | Integer | SIM         | Montante a cobrar, em cêntimos                                                                                     |
+| CARD                   | String  | SIM         | UUID do cartão que será utilizado para fazer o pagamento                                                            |
+| CUSTOMER\_EXTERNAL\_ID | String  | SIM         | Identificador do utilizador que fará o pagamento. Deve ser o mesmo que o utilizado para guardar o cartão            |
+| SERVICE                | String  | SIM         | UUID do serviço                                                                                                    |
+| ADDITIONAL             | String  | NÃO         | Campo de texto livre que será enviado ao comerciante na notificação                                                |
+| URL\_POST              | String  | NÃO         | URL do comerciante onde será enviada a notificação com o resultado do pagamento                                     |
+| EXTRA\_DATA            | String  | NÃO         | Podem ser indicados tantos campos quantos forem necessários seguindo o formato CSV, separando cada um deles por `;` |
+
+Os dados que podem ser incluídos no extra\_data são os mesmos que contém o campo extra\_data quando [**geramos uma ordem de pagamento**](/reference/#operation/generate-payment-order).
+
+Para que o **Paylands** possa ler corretamente o ficheiro .csv deve respeitar-se o padrão separando os campos por `,`
+
+Um exemplo de ficheiro de pagamentos CSV seria o seguinte:
+
+```csv
+AMOUNT,CARD,CUSTOMER_EXTERNAL_ID,SERVICE,ADDITIONAL,URL_POST,EXTRA_DATA
+111,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_111,https://google.es/post,cof.reason:OTHER;address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
+222,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_222,,
+333,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_333,,address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
+```
+
+## Devoluções em lote
+
+Para processar em lote um conjunto de devoluções, será necessário [enviar um CSV ao endpoint de devoluções em lote](/reference/#operation/batch-refunds-file) seguindo a estrutura dos ficheiros de devoluções descrita a seguir:
+
+### Estrutura CSV de devoluções em lote
+
+O ficheiro CSV de devoluções deve conter uma primeira linha com os cabeçalhos dos campos a processar, e uma linha com os dados da operação por cada devolução que se queira processar.
+
+Os cabeçalhos do CSV deverão ser os seguintes:
+
+```
+ORDER_UUID,AMOUNT
+```
+
+E as linhas de cada operação deverão ser preenchidas com os seguintes campos:
+
+| Campo       | Tipo    | Obrigatório | Descrição                                  |
+| ----------- | ------- | ----------- | ------------------------------------------ |
+| ORDER\_UUID | String  | SIM         | UUID da ordem que se pretende devolver      |
+| AMOUNT      | Integer | NÃO         | Montante a devolver, em cêntimos            |
+
+Um exemplo de ficheiro de devoluções CSV seria o seguinte:
+
+```csv
+ORDER_UUID,AMOUNT
+AAA94216-045C-4A8F-ABBC-E480BEAA22B4,111
+3FC5B2E2-87FC-4329-B3AC-FE9DEC9EE56A,452
+1F8B9B46-E125-4F01-B981-35C2358FCCF3,388
+```
+
+## Resposta de operações
+
+A resposta destes endpoints manterá o mesmo formato que o resto dos endpoints. Além disso, será adicionado o campo "errors" que conterá um array com todos os erros produzidos no ficheiro, junto à linha em que ocorreu.
+
+```json
+{
+  "errors": [
+    {
+      "line": 13,
+      "msg": "Invalid card"
+    }
+  ]
+}
+```
+
+Se não houver erros no envio do ficheiro, a resposta conterá um array vazio sob a chave "errors".
