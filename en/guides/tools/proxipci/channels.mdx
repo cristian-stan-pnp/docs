@@ -13,12 +13,12 @@ A channel always consists of the following attributes:
 
 | FIELD NAME  | AVAILABLE VALUES                           | DESCRIPTION                                                                                                             |
 | ----------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| endpoint    |                                            | Endpoint to or from which the request body is transmitted                                                               |
+| endpoint    |                                            | Endpoint to or from which the request body is transmitted.                                                              |
 | action      | tokenize, detokenize                       | Specifies whether the card data is masked or unmasked.                                                                  |
 | direction   | pull, push                                 | Indicates whether the payload body to be processed is sent to the channel or obtained from the channel.                 |
 | contentType | json, xml                                  | Format of the payload body from which data must be extracted for the tokenization or detokenization process.            |
-| encoding    | utf8, ascii, utf16le, ucs2, base64, latin1 | Encoding of the request body                                                                                            |
-| fieldMapping |                                            | Tells the PCI proxy how the data will be extracted from the body                                                        |
+| encoding    | utf8, ascii, utf16le, ucs2, base64, latin1 | Encoding of the request body.                                                                                           |
+| fieldMapping |                                            | Tells the PCI proxy how the data will be extracted from the body.                                                       |
 
 A `fieldMapping` consists of the following fields:
 

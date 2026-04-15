@@ -13,24 +13,24 @@ Um canal é sempre composto pelos seguintes atributos:
 
 | NOME DO CAMPO | VALORES DISPONÍVEIS                        | DESCRIÇÃO                                                                                                                  |
 | ------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| endpoint      |                                            | Endpoint para o qual ou a partir do qual o corpo do pedido é transmitido                                                   |
+| endpoint      |                                            | Endpoint para o qual ou a partir do qual o corpo do pedido é transmitido.                                                  |
 | action        | tokenize, detokenize                       | Especifica se os dados do cartão estão mascarados ou desmascarados.                                                        |
 | direction     | pull, push                                 | Indica se o corpo da carga útil que deve ser processado é enviado para o canal ou obtido a partir do canal.                |
 | contentType   | json,xml                                   | Formato do corpo da carga útil do qual os dados devem ser extraídos para o processo de tokenização ou destokenização.      |
-| encoding      | utf8, ascii, utf16le, ucs2, base64, latin1 | Codificação do corpo do pedido                                                                                             |
-| fieldMapping  |                                            | Indica ao proxy PCI como os dados vão ser extraídos do corpo                                                               |
+| encoding      | utf8, ascii, utf16le, ucs2, base64, latin1 | Codificação do corpo do pedido.                                                                                            |
+| fieldMapping  |                                            | Indica ao proxy PCI como os dados vão ser extraídos do corpo.                                                              |
 
 Um `fieldMapping` é composto pelos seguintes campos:
 
 | NOME        | DESCRIÇÃO                                                                                                                                                                                                                                          |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| referencia  | Opcional. Pode ser utilizado para associar os dados do cartão a uma referência do seu software. Por exemplo, um identificador de reserva.                                                                                                          |
+| reference   | Opcional. Pode ser utilizado para associar os dados do cartão a uma referência do seu software. Por exemplo, um identificador de reserva.                                                                                                          |
 | pan         | Número do cartão ou o token do cartão.                                                                                                                                                                                                             |
 | cardHolder  | Nome do titular do cartão.                                                                                                                                                                                                                         |
 | expiry      | Data de validade do cartão. Os formatos válidos são MM-YYYY, MM-YY, YYYY-MM, YY-MM, MM/YYYY, YYYY/MM, MM/YY, YY/MM, MMYY. Se a data de validade estiver dividida em dois campos separados, utilize em vez disso expiryMonth e expiryYear.          |
 | expiryMonth | Utilizado se a data de validade do cartão estiver dividida em dois campos.                                                                                                                                                                         |
 | expiryYear  | Utilizado se a data de validade do cartão estiver dividida em dois campos.                                                                                                                                                                         |
-| cardCVV     | Número CVV do cartão                                                                                                                                                                                                                               |
+| cardCVV     | Número CVV do cartão.                                                                                                                                                                                                                              |
 
 O mapeamento de campos é especificado como atributos XPATH ou JSONPATH dependendo do contentType do corpo. Para compreender melhor estas linguagens de consulta, visite os recursos [XPATH](https://www.w3schools.com/xml/xml_xpath.asp) e [JSONPATH](https://goessner.net/articles/JsonPath/index.html#e2).
 

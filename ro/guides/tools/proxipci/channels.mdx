@@ -13,24 +13,24 @@ Un canal este întotdeauna compus din următoarele atribute:
 
 | NUMELE CÂMPULUI  | VALORI DISPONIBILE                         | DESCRIERE                                                                                                                    |
 | ---------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| endpoint         |                                            | Endpoint-ul către sau de la care este transmis corpul cererii                                                                 |
+| endpoint         |                                            | Endpoint-ul către sau de la care este transmis corpul cererii.                                                                |
 | action           | tokenize, detokenize                       | Specifică dacă datele cardului sunt mascate sau demascate.                                                                   |
 | direction        | pull, push                                 | Indică dacă corpul încărcăturii utile care trebuie procesat este trimis către canal sau este obținut de la canal.             |
 | contentType      | json,xml                                   | Formatul corpului încărcăturii utile din care trebuie extrase datele pentru procesul de tokenizare sau detokenizare.          |
-| encoding         | utf8, ascii, utf16le, ucs2, base64, latin1 | Codificarea corpului cererii                                                                                                 |
-| fieldMapping     |                                            | Indică proxy-ului PCI cum vor fi extrase datele din corp                                                                     |
+| encoding         | utf8, ascii, utf16le, ucs2, base64, latin1 | Codificarea corpului cererii.                                                                                                |
+| fieldMapping     |                                            | Indică proxy-ului PCI cum vor fi extrase datele din corp.                                                                    |
 
 Un `fieldMapping` este compus din următoarele câmpuri:
 
 | NUME        | DESCRIERE                                                                                                                                                                                                                                          |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| referencia  | Opțional. Poate fi utilizat pentru a asocia datele cardului cu o referință din software-ul dumneavoastră. De exemplu, un identificator de rezervare.                                                                                                |
+| reference   | Opțional. Poate fi utilizat pentru a asocia datele cardului cu o referință din software-ul dumneavoastră. De exemplu, un identificator de rezervare.                                                                                                |
 | pan         | Numărul cardului sau token-ul cardului.                                                                                                                                                                                                            |
 | cardHolder  | Numele titularului cardului.                                                                                                                                                                                                                       |
 | expiry      | Data de expirare a cardului. Formatele valide sunt MM-YYYY, MM-YY, YYYY-MM, YY-MM, MM/YYYY, YYYY/MM, MM/YY, YY/MM, MMYY. Dacă data de expirare este împărțită în două câmpuri separate, utilizați în schimb expiryMonth și expiryYear.             |
 | expiryMonth | Se utilizează dacă data de expirare a cardului este împărțită în două câmpuri.                                                                                                                                                                     |
 | expiryYear  | Se utilizează dacă data de expirare a cardului este împărțită în două câmpuri.                                                                                                                                                                     |
-| cardCVV     | Numărul CVV al cardului                                                                                                                                                                                                                            |
+| cardCVV     | Numărul CVV al cardului.                                                                                                                                                                                                                           |
 
 Maparea câmpurilor este specificată ca atribute XPATH sau JSONPATH în funcție de contentType-ul corpului. Pentru a înțelege mai bine aceste limbaje de interogare, vizitați resursele [XPATH](https://www.w3schools.com/xml/xml_xpath.asp) și [JSONPATH](https://goessner.net/articles/JsonPath/index.html#e2).
 
