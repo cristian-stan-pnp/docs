@@ -36,7 +36,7 @@ Para ello, en primer lugar debemos [generar una orden de pago](/reference/#opera
 A continuación, se debe lanzar la petición del [pago push](/reference/#operation/push-payment) indicando el UUID de la orden. La respuesta contendrá el código qr con el que pagar. Este campo se incluye dentro de la transacción del pago, en el campo `payment_data`. A continuación se incluye un ejemplo:
 
 ```
-"payment_data": {    "qr_code_url": "https://paylands/picpay-example/qr-code",    "confirmation_url": "https://paylands/picpay-example/url_confirmation",}
+"payment_data": {    "qr_code_url": "https://paylands/picpay-example/qr-code",    "confirmation_url": "https://paylands/picpay-example/url_confirmation"}
 ```
 
 Una vez se complete el pago, el comercio recibirá la notificación del pago a la URL indicada en el campo `url_post` al generar la orden de pago.

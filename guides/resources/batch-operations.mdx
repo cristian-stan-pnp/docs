@@ -42,7 +42,10 @@ Para que **Paylands** pueda leer correctamente el archivo .csv debe respetarse e
 Un ejemplo de fichero de pagos CSV sería el siguiente:
 
 ```
-AMOUNT,CARD,CUSTOMER_EXTERNAL_ID,SERVICE,ADDITIONAL,URL_POST,EXTRA_DATA111,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_111,https://google.es/post,cof.reason:OTHER;address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121222,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_222,,333,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_333,,address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
+AMOUNT,CARD,CUSTOMER_EXTERNAL_ID,SERVICE,ADDITIONAL,URL_POST,EXTRA_DATA
+111,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_111,https://google.es/post,cof.reason:OTHER;address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
+222,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_222,,
+333,ABCDF61C46B84F768E3E8E038F5FB11E,customer111,ACDBB424-023B-4E13-B63C-F52ADA63A9FF,additional_info_333,,address.city:Madrid;address.address1:Calle Alcala 13;address.country:Spain;address.default:true;address.state_code:Madrid;address.type:OTHER;address.zip_code:12121
 ```
 
 ## Devoluciones en lote
@@ -69,7 +72,10 @@ Y las líneas de cada operación se deberán rellenar con los siguientes campos:
 Un ejemplo de fichero de Devoluciones CSV sería el siguiente:
 
 ```
-ORDER_UUID,AMOUNTAAA94216-045C-4A8F-ABBC-E480BEAA22B4,1113FC5B2E2-87FC-4329-B3AC-FE9DEC9EE56A,4521F8B9B46-E125-4F01-B981-35C2358FCCF3,388
+ORDER_UUID,AMOUNT
+AAA94216-045C-4A8F-ABBC-E480BEAA22B4,111
+3FC5B2E2-87FC-4329-B3AC-FE9DEC9EE56A,452
+1F8B9B46-E125-4F01-B981-35C2358FCCF3,388
 ```
 
 ## Respuesta de operaciones
@@ -77,7 +83,7 @@ ORDER_UUID,AMOUNTAAA94216-045C-4A8F-ABBC-E480BEAA22B4,1113FC5B2E2-87FC-4329-B3AC
 La respuesta de estos endpoints mantendrá el mismo formato que el resto de endpoints. Además, se añadirá el campo "errors" donde contendrá un array con todos los errores producidos en el fichero, junto a la línea en la que ocurrió.
 
 ```
-{   "errors": [    {      "line": 13,      "msg": "Invalid card"    }  ],}
+{   "errors": [    {      "line": 13,      "msg": "Invalid card"    }  ]}
 ```
 
 Si no hay errores en el envío del fichero, la respuesta contendrá un array vacío bajo la clave "errors".
