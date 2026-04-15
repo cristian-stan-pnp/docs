@@ -321,6 +321,9 @@
                       "en/guides/tools/proxipci/javascript-library"
                     ]
                   }
+                ]
+              },
+              {
                 "group": "Payment Services",
                 "pages": [
                   "en/guides/payment-services/payretailers",
