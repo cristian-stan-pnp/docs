@@ -26,7 +26,7 @@ La primera condición se cumplirá siempre en los servicios de pago mencionados 
 Si se intenta realizar un pago no seguro y éste no puede llevarse a cabo debido a la PSD2:
 
 * Si el usuario está presente ([pago a través de la carta de pago](/reference/#operation/redirection-payment)) el usuario será redirigido al 3DS.
-* Si el usuario no está presente ([pago directo](/reference/#operation/webservice-payment)) la API devolverá un enlace al que el usuario deberá ser redirigido para que lleve a cabo el 3DS. Este tipo de pagos también se conocen como pagos por webservice o pagos MIT (Merchant Initiated Transactions)
+* Si el usuario no está presente ([pago directo](/reference/#operation/webservice-payment)) la API devolverá un enlace al que el usuario deberá ser redirigido para que lleve a cabo el 3DS. Este tipo de pagos también se conocen como pagos por webservice o pagos MIT (Merchant Initiated Transactions).
 
 Recomendamos utilizar [pagos tokenizados](/reference/#operation/3ds-tokenized) una vez se haya tokenizado la tarjeta, ya que éstos siempre utilizan 3DS y permiten aprovechar todas las ventajas que ofrece la PSD2. Los pagos no seguros a través de webservice deben utilizarse solo cuando el usuario no está presente, por ejemplo, para cobrar una suscripción.
 
@@ -64,15 +64,15 @@ Estos pagos se llevarán a cabo por WebService. Recomendamos indicar el motivo d
 * DELAYED (pagos por servicios ofrecidos cuya cantidad se desconoce al principio: minibar, reparaciones, multas...)
 * OTHER (cuando no se sabe a priori el motivo del cobro. Por ejemplo, en el caso de un hotel que no sabe si tendrá que cobrar la reserva cuando se presente el usuario, lo cual sería RECURRING, o un NO-SHOW si no se presenta)
 
-Si las condiciones mencionadas se cumplen, el pago finalizará normalmente sin necesidad de que intervenga el usuario. Si por el contrario alguna de esas condiciones no se cumple o es imprescindible que el usuario se autentique, [la API devolverá un enlace de pago el cual puede enviarse al usuario para que finalice el pago mediante 3DS](/#reference/pagos/realizar-el-pago/por-webservice). Esta decisión de si el usuario debe autenticar una operación MIT es 100% del banco, y la toma en base a sus propias reglas internas. Desde Paylands siempre se enviará el máximo de información posible al banco emisor para que intente finalizar la operación sin que se requiera intervención del usuario, pero la decisión final será del propio banco del usuario.
+Si las condiciones mencionadas se cumplen, el pago finalizará normalmente sin necesidad de que intervenga el usuario. Si por el contrario alguna de esas condiciones no se cumple o es imprescindible que el usuario se autentique, [la API devolverá un enlace de pago el cual puede enviarse al usuario para que finalice el pago mediante 3DS](/reference/#operation/webservice-payment). Esta decisión de si el usuario debe autenticar una operación MIT es 100% del banco, y la toma en base a sus propias reglas internas. Desde Paylands siempre se enviará el máximo de información posible al banco emisor para que intente finalizar la operación sin que se requiera intervención del usuario, pero la decisión final será del propio banco del usuario.
 
 **El primer pago con una tarjeta siempre se deberá realizar a través de la carta de pago o de forma tokenizada** para que el usuario se autentique por primera vez y poder optar a esta modalidad en pagos posteriores. Los pagos sin la presencia del usuario están reservados únicamente para pagos que inicia el comercio, también conocidos como MIT (Merchant Initiated Transaction).
 
 ### Cómo adaptarse a los cambios
 
-Si tu comercio realiza únicamente [pagos seguros mediante 3DS](#reference/pagos/realizar-el-pago/tokenizado-por-3ds) no es necesario que hagas nada. Una vez llegue la fecha, Paylands cambiará la forma en la que se procesan los pagos. Los clientes notarán que el proceso es ligeramente distinto en función del banco emisor de su tarjeta, sin embargo como comercio no notarás ninguna diferencia.
+Si tu comercio realiza únicamente [pagos seguros mediante 3DS](/reference/#operation/3ds-tokenized) no es necesario que hagas nada. Una vez llegue la fecha, Paylands cambiará la forma en la que se procesan los pagos. Los clientes notarán que el proceso es ligeramente distinto en función del banco emisor de su tarjeta, sin embargo como comercio no notarás ninguna diferencia.
 
-Si por el contrario realizas [pagos no seguros mediante WebService](/#reference/pagos/realizar-el-pago/por-webservice) cuando los usuarios no están presentes en el momento del pago, será necesario que soportes modalidades de pago seguras, como la carta de pago o pago tokenizado. También deberás tratar correctamente la respuesta del pago mediante WebService cuando se devuelve el enlace de pago.
+Si por el contrario realizas [pagos no seguros mediante WebService](/reference/#operation/webservice-payment) cuando los usuarios no están presentes en el momento del pago, será necesario que soportes modalidades de pago seguras, como la carta de pago o pago tokenizado. También deberás tratar correctamente la respuesta del pago mediante WebService cuando se devuelve el enlace de pago.
 
 Todos los comercios empezarán a operar con la nueva normativa a partir del día 1 de enero, sin necesidad de llevar a cabo ninguna acción. Sin embargo, si quieres adelantarte y que tu comercio empiece a operar con PSD2 antes de la fecha límite, puedes enviar un correo a [soporte@paylands.com](mailto:soporte@paylands.com) indicando tu FUC (Código de comercio de 8-9 cifras) y el banco a través del cual opera tu comercio.
 
@@ -94,20 +94,37 @@ Para aumentar las probabilidades de que no sea necesario que el usuario se auten
 
 Actualmente soportamos las exenciones de **Análisis de Riesgo (TRA)** y de **Bajo importe (LV)** en el servicio de pago **Redsys**. Para solicitarlas, basta aportar la siguiente información en el campo `extra_data` al crear la orden:
 
-```
-"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
+```json
+"extra_data": {
+  ...
+  "sca": {
+    "exemptions": ["TRA", "LV"]
+  }
+}
 ```
 
 También es posible solicitar que **no se aplique ninguna exención** dejando el valor de `exemptions` como una lista vacía:
 
-```
-"extra_data": {        ...        "sca": {            "exemptions": []        },    }
+```json
+"extra_data": {
+  ...
+  "sca": {
+    "exemptions": []
+  }
+}
 ```
 
 Si el valor de `exemptions` no se indica explícitamente, por defecto se solicitará la exención de **Bajo importe (LV)** si ésta cumple los requisitos establecidos. Tras el pago, si se ha llegado a solicitar alguna exención, su nombre se incluirá bajo la clave `order.threeds_data.exemption`. Si no se solicitó, o no se pudo solicitar ninguna exención, su valor será `null`.
 
-```
-"threeds_data": {      "version": "...",      "flow": "...",      "sca_requested": ...,      "status": "...",      "eci": "...",      "exemption": "TRA"  }
+```json
+"threeds_data": {
+  "version": "...",
+  "flow": "...",
+  "sca_requested": ...,
+  "status": "...",
+  "eci": "...",
+  "exemption": "TRA"
+}
 ```
 
 Finalmente, que una exención sea solicitada no implica que haya sido aceptada. Para poder entender mejor si una exención fue aceptada o no, puede verse el campo `threeds_data.flow`. Si la exención fue solicitada pero su valor es CHALLENGE\_ONLY o FULL, significa que no se aceptó. Si su valor es FRICTIONLESS o FINGERPRINTING\_ONLY, significa que puede que sí fuera aceptada. No hay forma de conocer al 100% si una exención fue aceptada, solo si fue rechazada.

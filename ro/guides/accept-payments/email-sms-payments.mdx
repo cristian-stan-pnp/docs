@@ -1,0 +1,121 @@
+---
+title: 'Plăți prin Email și SMS'
+description: 'Cum să trimiți încasări prin email și SMS cu Paylands'
+---
+
+Pentru fiecare plată care urmează a fi efectuată, va fi necesar să indicați suma de plată și emailul sau numărul de telefon al destinatarului, precum și subiectul emailului sau SMS-ului, printre altele. Când fișierul este încărcat, toate trimiterile vor fi efectuate, acestea fiind grupate pentru a permite urmărirea câte au fost plătite și care nu. Pe măsură ce utilizatorii efectuează plățile, stările operațiunilor asociate vor fi actualizate.
+
+![Envío de pagos via email y sms](/images/docs/integration/assets/images/email-sms-campaigns-1-7d37b6bfe9da67f44f49b90ec0367392.png)
+
+## Funcționare prin panou
+
+Această funcționalitate este accesibilă doar prin [panoul Paylands](https://backend.paylands.com) în secțiunea "Instrumente de plată" > "Plăți prin email și sms". În această secțiune sunt afișate listele plăților inițiate recent. Pentru a crea o plată nouă, faceți clic pe butonul **Plată nouă**. Formularul acceptă crearea unei singure plăți sau a unui fișier CSV cu o listă de plăți.
+
+![Envío de pago individual](/images/docs/integration/assets/images/email-sms-campaigns-2-81eb0f80c8dba4d6f12fc9dd0d991d14.png)
+
+Mai jos sunt descrise toate câmpurile care pot fi configurate pentru a lansa una sau mai multe plăți:
+
+**Detalii plată**
+
+* **Subiect**: Subiectul emailului sau titlul SMS-ului pe care îl va primi utilizatorul.
+* **Descriere**: Descriere internă a campaniei.
+* **Serviciu de plată**: Serviciul de plată cu care se va efectua plata.
+* **Metodă de trimitere**: Email, SMS sau manual. Dacă se selectează manual, linkurile sunt generate dar nu sunt trimise utilizatorilor.
+* **Data de expirare**: Data de la care linkul de plată nu va mai fi valid.
+
+**Plăți email și sms**
+
+* **Metodă de introducere**: *Formular* pentru o singură trimitere sau *Încărcare Fișier* pentru a încărca un fișier CSV.
+* **Sumă**: Suma de încasat în cenți.
+* **Destinație**: Emailul sau numărul de mobil al destinatarului dacă este SMS. Dacă se indică un telefon, acesta trebuie să conțină prefixul (+34 pentru Spania). Dacă metoda de trimitere este manuală, formatul este liber.
+* **Operativă**: AUTHORIZATION sau DEFERRED. Determină dacă suma încasată este decontată sau nu în ziua următoare, respectiv.
+* **Plată securizată?**: Indică dacă va fi efectuat procesul 3D Secure pentru autentificarea operațiunii.
+* **ID extern**: ID extern care identifică clientul care efectuează plata.
+* **Adițional**: Câmp liber care va fi returnat în notificarea plății.
+* **UUID card**: Dacă cardul este indicat, utilizatorul nu va trebui să îl introducă din nou. Obligatoriu ca câmpul "Plată securizată" să fie "Da".
+* **URL de notificare**: URL-ul comerciantului care va primi notificarea plății odată ce aceasta se finalizează.
+* **URL în caz de succes**: URL către care clientul va fi redirecționat în caz de succes.
+* **URL în caz de eșec**: URL către care clientul va fi redirecționat în caz de eroare.
+* **Plată certificată**: Indică dacă trimiterea linkului va fi certificată sau nu\*.
+* **Șablon card**: Permite selectarea unui șablon al ecranului pe care utilizatorul introduce datele cardului său.
+* **Șablon email și sms**: Permite selectarea șablonului care formatează emailul/sms-ul.
+* **Șablon DCC**: Permite selectarea șablonului unde utilizatorul selectează ce monedă dorește să utilizeze dacă DCC este activ.
+* **Limbă**: Indică limba care va fi afișată destinatarului.
+* **Extra data**: Permite indicarea manuală a câmpului `extra_data` la generarea ordinului de plată.
+
+\* Dacă campania este procesată prin SMS sau Email, certificatul de recepție/deschidere a linkului poate fi activat, ceea ce permite verificarea dacă utilizatorul a primit SMS-ul/emailul sau a accesat linkul de plată.
+
+<Note>
+  La selectarea *Încărcare Fișier* puteți încărca un fișier cu mai mulți destinatari, configurând o sumă și o metodă de trimitere pentru fiecare dintre ei.
+</Note>
+
+![Envío de pagos mediante fichero](/images/docs/integration/assets/images/email-sms-campaigns-3-c09fba2e7e26d6907d9e5105d68b42d0.png)
+
+## Structura fișierului de plăți
+
+Pentru a trimite mai multe linkuri de plată simultan, trebuie încărcat un fișier CSV, care este un document text a cărui primă linie conține antetul, iar restul liniilor conțin datele fiecărei plăți. Aceasta este structura sa:
+
+| Antet             | Tip     | Obligatoriu | Descriere                                                                                                                                                                                      |
+| ----------------- | ------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AMOUNT            | Integer | Da          | Suma de încasat în cenți.                                                                                                                                                                      |
+| OPERATIVE         | String  | Da          | AUTHORIZATION sau DEFERRED. Determină dacă suma încasată este decontată sau nu în ziua următoare, respectiv.                                                                                   |
+| DESTINATION       | String  | Da          | Emailul sau numărul de mobil al destinatarului dacă este SMS. Dacă se indică un telefon, acesta trebuie să conțină prefixul (+34 pentru Spania). Dacă metoda de trimitere este manuală, formatul este liber. |
+| SECURE            | String  | Da          | Valori acceptate: true/false. Indică dacă va fi efectuat procesul 3D Secure pentru autentificarea operațiunii.                                                                                 |
+| CUSTOMER\_EXT\_ID | String  | Nu          | ID extern care identifică clientul care efectuează plata.                                                                                                                                      |
+| SOURCE\_UUID      | String  | Nu          | Dacă UUID-ul cardului este indicat, utilizatorul nu va trebui să îl introducă din nou. Obligatoriu ca antetul "SECURE" să fie "true".                                                          |
+| ADDITIONAL        | String  | Nu          | Câmp liber care va fi returnat în notificarea plății.                                                                                                                                          |
+| URL\_POST         | String  | Nu          | URL-ul comerciantului care va primi notificarea plății odată ce aceasta se finalizează.                                                                                                         |
+| URL\_OK           | String  | Nu          | URL către care clientul va fi redirecționat în caz de succes.                                                                                                                                  |
+| URL\_KO           | String  | Nu          | URL către care clientul va fi redirecționat în caz de eroare.                                                                                                                                  |
+| CARD\_TEMPLATE    | String  | Nu          | Permite selectarea unui șablon al ecranului pe care utilizatorul introduce datele cardului său.                                                                                                 |
+| MOTO\_TEMPLATE    | String  | Nu          | Permite selectarea șablonului care formatează emailul/sms-ul.                                                                                                                                  |
+| DCC\_TEMPLATE     | String  | Nu          | Permite selectarea șablonului unde utilizatorul selectează ce monedă dorește să utilizeze dacă DCC este activ.                                                                                  |
+| CERTIFIED         | String  | Nu          | true/false. Indică dacă trimiterea emailului sau sms-ului va fi certificată.                                                                                                                   |
+| LANGUAGE          | String  | Nu          | Indică limba care va fi afișată destinatarului. Exemplu: es                                                                                                                                    |
+| EXTRA\_DATA       | String  | Nu          | Câmpuri din `extra_data` separate prin punct și virgulă. Subcheile vor fi imbricate folosind un punct. De exemplu, pentru a indica cof RECURRING, ar trebui indicată valoarea cof.reason:RECURRING |
+
+Valorile sunt delimitate cu o virgulă: ",". Anteturile opționale care nu conțin nicio valoare pot fi omise. Valorile nule sau goale sunt indicate lăsând un spațiu între virgule. Un exemplu de CSV este următorul:
+
+```
+AMOUNT,OPERATIVE,DESTINATION,SECURE,SOURCE_UUID,CUSTOMER_EXT_ID,ADDITIONAL,URL_POST,URL_OK,URL_KO,CARD_TEMPLATE,MOTO_TEMPLATE,DCC_TEMPLATE,CERTIFIED,LANGUAGE
+12035,AUTHORIZATION,+34666554411,false,,user_1234,additional_info_1234,http://google.es/notification,http://google.es/ok_payment,http://google.es/ko_payment,,90895BE4-F614-447A-AE7F-082B248FE3A3,,false,es
+```
+
+În exemplu, va fi creată comanda pentru o plată nesecurizată de 120.35€, asociată clientului 'user\_1234'. Câmpul 'SOURCE\_UUID' nu are nicio valoare deoarece a fost lăsat gol.
+
+## Descărcarea certificatului de recepție
+
+Certificatul de recepție al unei plăți poate fi descărcat prin panou, în detaliul plății. Disponibil pentru trimiteri prin email și SMS.
+
+## Descărcarea certificatului de deschidere a linkului
+
+Certificatul de deschidere a linkului de plată al unei plăți poate fi descărcat prin panou, în detaliul plății. Disponibil pentru trimiteri prin SMS.
+
+<Warning>
+  Certificatele de recepție/deschidere vor fi disponibile doar dacă în plată a fost configurată certificarea (cu câmpul **CERTIFIED** setat la **true**).
+</Warning>
+
+## Câmpuri personalizate în șabloane de email și SMS
+
+Instrumentul suportă șabloane specifice pentru trimitere prin SMS sau email. Pentru a utiliza un șablon personalizat, trebuie să trimiteți un email la *[soporte@paylands.com](mailto:soporte@paylands.com)*.
+
+Se pot include câmpuri personalizate în șabloanele de email și SMS. Pentru aceasta, formatul care trebuie trimis, fie din formularul panoului, fie prin API, trebuie să fie:
+
+
+```
+clave1:valor1;clave2:valor2
+```
+
+Diferitele câmpuri trebuie separate prin punct și virgulă.
+
+De exemplu, trimițând în câmpul additional următoarea valoare:
+
+```
+nombre: Juan García; edad: 28
+```
+
+În șablonul de email/sms se poate accesa aceste valori în felul următor:
+
+```
+Bienvenido {{customFields.nombre}}, felices {{customFields.edad}} años.
+```

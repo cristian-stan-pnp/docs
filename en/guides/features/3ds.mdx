@@ -1,0 +1,142 @@
+---
+title: '3D Secure (3DS)'
+description: '3D Secure authentication guide for secure payments with Paylands'
+---
+
+## PSD2
+
+The second Payment Services Directive (PSD2) has been **mandatory since December 31, 2020**. This directive affects payments made in the European Economic Area and requires that all payments where the user is present be carried out securely via 3DS. Additionally, non-secure payments without the user's presence can no longer be initiated unless the card has previously completed at least one secure payment via 3DS.
+
+The following types of payment services have been affected by PSD2 since December 31, 2020:
+
+* REDSYS
+* EVOSNAP
+* CREDORAX
+* CLEARHAUS
+
+### Regulations
+
+PSD2 will be mandatory as long as two conditions are met:
+
+* The payment service is located within the Eurozone.
+* The card has been issued from a country within the Eurozone.
+
+The first condition will always be met for the payment services mentioned above, so the only factor that can influence whether PSD2 regulations apply is the country of origin of the card. Cards from a country outside the Eurozone are exempt from PSD2 compliance. However, since it is not possible to know until the moment of payment whether the card is exempt or not, **we recommend that all payments be made securely via 3DS when the user is present**.
+
+If a non-secure payment is attempted and cannot be completed due to PSD2:
+
+* If the user is present ([payment through the payment page](/reference/#operation/redirection-payment)) the user will be redirected to 3DS.
+* If the user is not present ([direct payment](/reference/#operation/webservice-payment)) the API will return a link to which the user must be redirected to complete 3DS. These types of payments are also known as webservice payments or MIT (Merchant Initiated Transactions) payments.
+
+We recommend using [tokenized payments](/reference/#operation/3ds-tokenized) once the card has been tokenized, as these always use 3DS and take advantage of all the benefits offered by PSD2. Non-secure payments via webservice should only be used when the user is not present, for example, to charge a subscription.
+
+### Advantages
+
+Until now, secure payments always used 3DS version 1.0, which requires the user to enter a code received on their mobile phone, creating friction that could result in the user abandoning the purchase process. The 3DS version 2 protocol allows this step to be skipped under certain circumstances:
+
+* The transaction amount is low (less than €30) or the total amount of the last 5 transactions does not exceed €100.
+* The merchant's fraud threshold is low and the transaction does not exceed €100, €250, or €500.
+* Sufficient personal data about the user is provided, such as their first and last name, email, shipping address, mobile phone number...
+
+The above circumstances are called exemptions, and Paylands requests them whenever possible to minimize friction during 3DS.
+
+If any of the above conditions are met, the payment may complete without the user needing to intervene. This is known as a **frictionless** 3DS payment. If, on the other hand, the above conditions are not met, the user will need to complete a *challenge*, which is one of the following actions:
+
+* Enter a code received on their mobile phone, known as OTP (One Time Password).
+* Confirm the charge from their bank's mobile application.
+
+Regardless of what happens, the payment will be considered authenticated via 3DS.
+
+### Payments without the user's presence
+
+In general, the user must be present at the time of payment and it must be carried out securely with 3DS. So, how can payments be made without the user being present, such as subscriptions? PSD2 provides for exceptions as long as the card has been previously used in a secure payment.
+
+Only some payments can be carried out without the user's presence:
+
+* Recurring or installment payments (subscriptions, loans...)
+* No-show at hotels
+
+These payments will be carried out via WebService. We recommend indicating the reason for the charge when creating the order in the **extra\_data.cof.reason** parameter. These are the possible values for that field:
+
+* RECURRING (recurring payments, subscriptions...)
+* INSTALLMENTS (installment payments, loans...)
+* NO\_SHOW (when a person does not show up on the hotel reservation day)
+* DELAYED (payments for services provided whose amount is unknown at the beginning: minibar, repairs, fines...)
+* OTHER (when the reason for the charge is not known in advance. For example, in the case of a hotel that does not know if it will need to charge the reservation when the user shows up, which would be RECURRING, or a NO-SHOW if they do not show up)
+
+If the mentioned conditions are met, the payment will complete normally without the user needing to intervene. If, on the other hand, any of those conditions are not met or it is essential for the user to authenticate, [the API will return a payment link that can be sent to the user to complete the payment via 3DS](/reference/#operation/webservice-payment). The decision of whether the user must authenticate an MIT transaction is 100% the bank's, and it is made based on their own internal rules. Paylands will always send the maximum amount of information possible to the issuing bank so that it attempts to complete the transaction without requiring user intervention, but the final decision will be the user's own bank's.
+
+**The first payment with a card must always be made through the payment page or in tokenized form** so that the user authenticates for the first time and can qualify for this modality in subsequent payments. Payments without the user's presence are reserved exclusively for merchant-initiated payments, also known as MIT (Merchant Initiated Transaction).
+
+### How to adapt to the changes
+
+If your merchant only makes [secure payments via 3DS](/reference/#operation/3ds-tokenized), you do not need to do anything. Once the date arrives, Paylands will change the way payments are processed. Customers will notice that the process is slightly different depending on the issuing bank of their card, however, as a merchant you will not notice any difference.
+
+If, on the other hand, you make [non-secure payments via WebService](/reference/#operation/webservice-payment) when users are not present at the time of payment, you will need to support secure payment modalities, such as the payment page or tokenized payment. You will also need to correctly handle the WebService payment response when the payment link is returned.
+
+All merchants will start operating under the new regulations as of January 1, without needing to take any action. However, if you want to get ahead and have your merchant start operating with PSD2 before the deadline, you can send an email to [soporte@paylands.com](mailto:soporte@paylands.com) indicating your FUC (8-9 digit merchant code) and the bank through which your merchant operates.
+
+### Extra data
+
+To increase the chances that the user does not need to authenticate to complete the payment, extra data can optionally be sent. This data must be included in the `extra_data` field when creating an order with the format detailed in the "Payments > Payment Order" section.
+
+### Frequently Asked Questions (FAQ)
+
+Can I make payments without the user's presence if the secure payment took place before the regulation came into effect?
+
+> Yes, for the REDSYS and EVOSNAP services. For the other services, it will be necessary to make a secure payment again before being able to initiate payments without the user's presence.
+
+Can I initiate a 3DS payment to authenticate the user on one service and then initiate a payment without the user's presence on another?
+
+> No. It is necessary to authenticate the user at least once per payment service. The services can be different as long as they are of the same type.
+
+## Exemptions
+
+We currently support **Risk Analysis (TRA)** and **Low Value (LV)** exemptions on the **Redsys** payment service. To request them, simply provide the following information in the `extra_data` field when creating the order:
+
+```
+"extra_data": {        ...        "sca": {            "exemptions": ["TRA", "LV"]        },    }
+```
+
+It is also possible to request that **no exemption be applied** by leaving the `exemptions` value as an empty list:
+
+```
+"extra_data": {        ...        "sca": {            "exemptions": []        },    }
+```
+
+If the `exemptions` value is not explicitly specified, by default the **Low Value (LV)** exemption will be requested if it meets the established requirements. After payment, if an exemption was requested, its name will be included under the key `order.threeds_data.exemption`. If no exemption was requested, or no exemption could be requested, its value will be `null`.
+
+```
+"threeds_data": {      "version": "...",      "flow": "...",      "sca_requested": ...,      "status": "...",      "eci": "...",      "exemption": "TRA"  }
+```
+
+Finally, the fact that an exemption was requested does not mean it was accepted. To better understand whether an exemption was accepted or not, you can look at the `threeds_data.flow` field. If the exemption was requested but its value is CHALLENGE\_ONLY or FULL, it means it was not accepted. If its value is FRICTIONLESS or FINGERPRINTING\_ONLY, it means it may have been accepted. There is no way to know 100% whether an exemption was accepted, only if it was rejected.
+
+It is also not possible to know whether an exemption was accepted by the issuer (user's bank) or the acquirer (merchant's bank).
+
+### Requirements
+
+Exemptions must meet certain requirements before they can be requested. Up to 2 exemptions can be requested, of which at most one will be applied. Exemptions are requested in the order they are specified in the request. The requirements for requesting each exemption are:
+
+#### General requirements
+
+* The card must belong to the European Economic Area (EEA).
+* The payment service must support exemption requests (for now only Redsys supports this).
+* The terminal associated with the payment service used must have the requested exemption enabled.
+* The currency used must be the Euro.
+* The payment must be secure and the 3DS version must be 2.1 or 2.2.
+* The card must have at least one successful payment in the last year.
+
+#### Risk Analysis (TRA)
+
+* The amount must be equal to or less than €500, €250, or €100 depending on the merchant's average fraud rate being equal to or less than 0.01%, 0.06%, or 0.13%, respectively.
+
+* To make the most of this exemption, it is recommended to provide the following information in the `extra_data` field:
+
+  * Email
+  * Phone number
+  * Billing and shipping address (they can be the same).
+
+#### Low Value (LV)
+
+* The amount must be equal to or less than €30.

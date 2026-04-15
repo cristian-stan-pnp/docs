@@ -1,0 +1,29 @@
+---
+title: 'FirePay'
+description: 'Configuração e integração do serviço de pagamento FirePay no Paylands'
+---
+
+* É um método de pagamento alternativo; é gerado um código QR para que o utilizador complete o fluxo através da sua app bancária/cryptowallet.
+* Suporta a maioria dos bancos mais utilizados na zona europeia. (Spain, France, UK, Italy, Germany, Austria; Banco Santander, BBVA, Caixa Bank, Banco de Sabadell, ING, UBS, Revolut, Etc.)
+
+## Integração
+
+A integração é realizada pelo mesmo processo que segue a [**integração simples**](/docs/integration/simple-integration).
+
+Ao redirecionar para o URL de pagamento, dependendo do tipo de serviço de pagamento utilizado, é possível contactar dois serviços de sandbox distintos:
+
+* Sandbox account-to-account.
+* Sandbox crypto
+
+## Testes em sandbox account-to-account
+
+* Fineco: pode ser utilizada qualquer combinação de username/password.
+* BBVA: username 00000034B e password 123456
+* Modelo Sandbox: username mits e password mits
+* Unicaja: username user1, password 1234 e security key 123456.
+
+## Testes em sandbox para crypto
+
+O valor mínimo é de 5€.
+
+O simulador redirecionará para uma página externa onde será possível selecionar uma criptomoeda de uma lista e será apresentada informação sobre como continuar com a transação.

@@ -9,7 +9,7 @@ PayRetailers permite procesar **pay-ins** mediante métodos de pago locales en L
 
 ***
 
-## Payins con Payretailers
+## Payins con PayRetailers
 
 ### Requisitos generales
 
@@ -210,7 +210,7 @@ Con esta tabla reflejamos posibles errores que puedan surgir en el proceso del p
 | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | PAYMENT\_METHOD\_NOT\_ALLOWED                   | The payment method ID used in the request is not active or enabled, and cannot be used.                                                                                                                                                  |
 | PAYMENT\_PSP\_ERROR                             | Generic error message received from the PSP, normally originated from a timeout on the PSP side in high traffic instances.                                                                                                               |
-| PERSONAL\_ID\_VALIDATION\_FAILED                | The PersonalID doesn't exist or belongs to a minor, deceased individuals or PEP and associates. Also the payment will be blocked if the PersonalID is related to any international lists of money laundering and/or terrorist financing. |
+| PERSONAL\_ID\_VALIDATION\_FAILED                | The PersonalID doesn't exist or belongs to a minor, a deceased individual, or a PEP and associates. Also the payment will be blocked if the PersonalID is related to any international lists of money laundering and/or terrorist financing. |
 | TRANSACTION\_INVALID\_FIELD\_LANGUAGE           | The "Language" field of the request contains an invalid language value.                                                                                                                                                                  |
 | TRANSACTION\_INVALID\_FIELD\_CURRENCY           | The "Currency" field contains an unsupported or invalid currency value.                                                                                                                                                                  |
 | TRANSACTION\_INVALID\_FIELD\_COUNTRY            | The "Country" field contains an unsupported or invalid country value.                                                                                                                                                                    |
@@ -242,9 +242,9 @@ Con esta tabla reflejamos posibles errores que puedan surgir en el proceso del p
 
 ***
 
-## Payouts con Payretailers
+## Payouts con PayRetailers
 
-Payretailers permite realizar **payouts** (envíos de fondos) en los siguientes países:
+PayRetailers permite realizar **payouts** (envíos de fondos) en los siguientes países:
 
 | País     | Moneda |
 | -------- | ------ |
@@ -369,7 +369,7 @@ El campo `document_identification_type` se incluye dentro de `profile`, es **opc
 | Tipo clave | Formato regex                                                  | Ejemplo                                |
 | ---------- | -------------------------------------------------------------- | -------------------------------------- |
 | CPF        | `^[0-9]{11}$`                                                  | `12345678901`                          |
-| Teléfono   | `^+[1-9][0-9]\d{1,14}$`                                        | `+5510998765432`                       |
+| Teléfono   | `^\+[1-9][0-9]\d{1,14}$`                                        | `+5510998765432`                       |
 | Email      | `^[a-z0-9.!#$&'*+/=?^_{}~-]+@[a-z0-9.-]+$`                     | `pix@bcb.gov.br`                       |
 | Aleatorio  | `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` | `123e4567-e89b-12d3-a456-426655440000` |
 

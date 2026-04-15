@@ -9,13 +9,13 @@ Usando este método de pago, el usuario será redirigido a la página de pago de
 
 ## Integración mediante redirección
 
-Este método requiere que el usuario esté presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) indicando los siguientes campos sobre el usuario para evitar que el usuario tenga que rellenarlos en un paso posterior.
+Este método requiere que el usuario esté presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order) indicando los siguientes campos sobre el usuario para evitar que tenga que rellenarlos en un paso posterior.
 
 ```
   "extra_data": {      "checkout": {          "uuid": "C42043F9-B77C-4918-BD43-86C526B4F24D"      },      "profile": {          "first_name": "John",          "last_name": "Doe",          "email": "johndoe@gmail.com",          "document_identification_number": "92309089",          "phone": {              "number": "02614235138",              "prefix": "54"          }      },      "billing_address": {          "city": "Castellon",          "country": "ARG",          "address1": "Avinguda del Mar 23",          "zip_code": "12000",          "state_code": "CT"      }  }
 ```
 
-El proceso de integración es [**similar al de la carta de pago por redirección**](/docs/integration/simple-integration), pero en este caso se especificará el APM en la URL base:
+El proceso de integración es [**similar al de la carta de pago por redirección**](/guides/accept-payments/web-integration), pero en este caso se especificará el APM en la URL base:
 
 ```
 /payment/{token}?apm=PAGO_FACIL

@@ -3,7 +3,7 @@ title: 'Redsys'
 description: 'Configuración e integración del servicio de pago Redsys en Paylands'
 ---
 
-Se admiten dos métodos de pago: Tarjeta y [Bizum](/docs/apm/apm-bizum). Las operaciones de devolución, confirmación, cancelación y recuperación de estado son compatibles con ambos métodos de pago. El resto de operaciones están orientadas solamente a tarjetas.
+Se admiten dos métodos de pago: Tarjeta y [Bizum](/guides/apm/bizum). Las operaciones de devolución, confirmación, cancelación y recuperación de estado son compatibles con ambos métodos de pago. El resto de operaciones están orientadas solamente a tarjetas.
 
 ## Restricciones y requisitos
 
@@ -181,7 +181,7 @@ Por ejemplo:
 | 9261   | Operación detenida por superar el control de restricciones en la entrada al SIS                    |                             |
 | 9700   | PayPal ha devuelto un KO                                                                           |                             |
 | 9801   | Error en datos enviados. No se ha especificado el Tlf. O la Url de notificación                    |                             |
-| 9899   | Los datos en Ds\_Merchant\_Data y no estaban correctamente firmados                                |                             |
+| 9899   | Los datos en Ds\_Merchant\_Data no estaban correctamente firmados                                  |                             |
 | 9900   | SafetyPay ha devuelto un KO                                                                        |                             |
 | 9909   | Error genérico. Consulte con Soporte                                                               |                             |
 | 9912   | La operación ha tenido algún problema y se ha de generar una anulación automática                  |                             |
@@ -216,7 +216,7 @@ Por ejemplo:
 | 9020   | SIS0020    | Falta el campo firma Ds\_Signature                                                                                                             |       |
 | 9022   | SIS0022    | Error de formato en Ds\_Merchant\_TransactionType                                                                                              |       |
 | 9023   | SIS0023    | Ds\_Merchant\_TransactionType desconocido                                                                                                      |       |
-| 9024   | SIS0024    | Error Ds\_Merchant\_ConsumerLanguage tiene mas de 3 posiciones                                                                                 |       |
+| 9024   | SIS0024    | Error Ds\_Merchant\_ConsumerLanguage tiene más de 3 posiciones                                                                                 |       |
 | 9025   | SIS0025    | Error de formato en Ds\_Merchant\_ConsumerLanguage                                                                                             |       |
 | 9026   | SIS0026    | No existe el comercio / terminal enviado                                                                                                       |       |
 | 9027   | SIS0027    | Error Moneda enviada por el comercio                                                                                                           |       |
@@ -264,13 +264,13 @@ Por ejemplo:
 | 9126   | SIS0126    | Operación Duplicada                                                                                                                            |       |
 | 9127   | SIS0127    | Error genérico. Consulte con Soporte                                                                                                           |       |
 | 9128   | SIS0128    | Error genérico. Consulte con Soporte                                                                                                           |       |
-| 9132   | SIS0132    | La fecha de Confirmación de Autorización no puede superar en mas de 7 dias a la de Preautorización.                                            |       |
-| 9133   | SIS0133    | La fecha de Confirmación de Autenticación no puede superar en mas de 45 días a la de Autenticacion Previa                                      |       |
+| 9132   | SIS0132    | La fecha de Confirmación de Autorización no puede superar en más de 7 días a la de Preautorización.                                            |       |
+| 9133   | SIS0133    | La fecha de Confirmación de Autenticación no puede superar en más de 45 días a la de Autenticación Previa                                      |       |
 | 9142   | SIS0142    | Tiempo excedido para el pago                                                                                                                   |       |
 | 9186   | SIS0186    | Faltan datos para operación                                                                                                                    |       |
 | 9194   | SIS0194    | Error problemas con la aplicación del cambio y el mostrado al titular                                                                          |       |
 | 9214   | SIS0214    | El comercio no permite devoluciones. Se requiere usar firma ampliada.                                                                          |       |
-| 9216   | SIS0216    | El CVV2 tiene mas de 3 posiciones                                                                                                              |       |
+| 9216   | SIS0216    | El CVV2 tiene más de 3 posiciones                                                                                                              |       |
 | 9217   | SIS0217    | Error de formato en el CVV2                                                                                                                    |       |
 | 9218   | SIS0218    | El comercio solo permite operaciones seguras y se está mandando una operación NO SEGURA por entradas Host to Host                              |       |
 | 9221   | SIS0221    | El CVV2 es obligatorio                                                                                                                         |       |
@@ -357,7 +357,7 @@ Por ejemplo:
 | 9488   | SIS0488    | El comercio no tiene el método de pago "Pago MOTO/Manual"                                                                                      |       |
 | 9493   | SIS0493    | Se reciben parametros de MPI en operacion no segura                                                                                            |       |
 | 9494   | SIS0494    | Firma Obsoleta                                                                                                                                 |       |
-| 9495   | SIS0495    | Configuración incorrecta ApplePay,Google Pay o Token                                                                                           |       |
+| 9495   | SIS0495    | Configuración incorrecta ApplePay, Google Pay o Token                                                                                           |       |
 | 9496   | SIS0496    | No tiene dado de alta el método de pago Google Pay                                                                                             |       |
 | 9497   | SIS0497    | No tiene dado de alta el método de pago ApplePay                                                                                               |       |
 | 9498   | SIS0498    | moneda / importe de la operación de ApplePay no coinciden                                                                                      |       |
@@ -370,7 +370,7 @@ Por ejemplo:
 | 9524   | SIS0524    | el resultado de la autenticación 3DSecure MasterCard es PARes="A" o VERes="N" y no recibimos CAVV del emisor                                   |       |
 | 9525   | SIS0525    | No se puede utilizar la tarjeta privada en este comercio                                                                                       |       |
 | 9526   | SIS0526    | La tarjeta no es china                                                                                                                         |       |
-| 9530   | SIS0530    | La fecha de Anulación no puede superar en mas de 7 dias a la de Preautorización.                                                               |       |
+| 9530   | SIS0530    | La fecha de Anulación no puede superar en más de 7 días a la de Preautorización.                                                               |       |
 | 9533   | SIS0533    | El importe del tributo que hay en el código de barras no es el mismo que el que nos devuelve la entidad tras validarlo                         |       |
 | 9535   | SIS0535    | Pago de recibo/tributo fuera de plazo                                                                                                          |       |
 | 9536   | SIS0536    | Recibo/tributo ya pagado                                                                                                                       |       |
@@ -501,7 +501,7 @@ Por ejemplo:
 | 9261   | Operación detenida por superar el control de restricciones en la entrada al SIS   |       |
 | 9700   | PayPal ha devuelto un KO                                                          |       |
 | 9801   | Error en datos enviados. No se ha especificado el Tlf. O la Url de notificación   |       |
-| 9899   | Los datos en Ds\_Merchant\_Data y no estaban correctamente firmados               |       |
+| 9899   | Los datos en Ds\_Merchant\_Data no estaban correctamente firmados                 |       |
 | 9900   | SafetyPay ha devuelto un KO                                                       |       |
 | 9909   | Error genérico. Consulte con Soporte                                              |       |
 | 9912   | La operación ha tenido algún problema y se ha de generar una anulación automática |       |

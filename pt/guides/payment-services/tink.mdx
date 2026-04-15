@@ -1,0 +1,52 @@
+---
+title: 'Tink'
+description: 'Configuração e integração do serviço de pagamento Tink no Paylands'
+---
+
+## Introdução
+
+Tink é um serviço que permite **iniciar pagamentos (transferências bancárias)** e realizar operações financeiras seguras, como **verificações bancárias e validações de contas** (incluindo *Account Check* e *Business Account Check*).
+
+## Moeda suportada
+
+* **EUR (Euro)**
+
+## Funcionalidades disponíveis
+
+### Pagamentos
+
+Consiste em **pagamentos únicos** através de transferências bancárias. Este tipo de operação permite que um cliente realize um pagamento a partir de sua conta bancária para um beneficiário, tudo dentro de um fluxo guiado e seguro.
+
+### Verificação de conta (Account Check / Business Account Check)
+
+A verificação de conta mediante Tink permite confirmar que uma conta bancária é válida e que pertence ao tipo de titular esperado. Existem duas variantes dentro da mesma funcionalidade:
+
+* **Account Check** (padrão): para verificar contas de pessoas físicas.
+* **Business Account Check**: para verificar contas de empresas.
+
+#### Requisitos de uso
+
+Para poder utilizar a verificação de conta é necessário:
+
+* Ter a funcionalidade de **Account Check** ativada na conta da plataforma.
+* Realizar uma operação com **valor 0** (`amount = 0`) através do fluxo de pagamento do Tink.
+
+#### Como indicar Business Account Check
+
+Por padrão, a verificação é interpretada como **Account Check normal** (pessoas físicas). Se desejar realizar um **Business Account Check** em vez de um Account Check normal, deve ser indicado através do campo `extra_data.payment.is_business` na requisição, definindo-o como `true`.
+
+```
+"extra_data": {    "payment": {        "is_business": true    }}
+```
+
+## Testes em sandbox
+
+Após o redirecionamento, selecione **Tink Demo Bank**. Para simular um cenário específico, utilize os seguintes dados de teste:
+
+| Cenário                                               | Usuário   | Senha      |
+| ----------------------------------------------------- | --------- | ---------- |
+| Transferência bem-sucedida                            | u89609866 | bst827     |
+| Account Check bem-sucedido                            | u82144157 | ymm529     |
+| Account Check: Info da conta não encontrada           | u51613239 | cty440     |
+| Business Acct. Check bem-sucedido                     | u42389294 | fog735     |
+| Business Acct. Check: Info da conta não encontrada    | u51613239 | cty440     |

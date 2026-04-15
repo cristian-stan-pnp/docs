@@ -31,7 +31,7 @@ En la siguiente tabla se muestran los campos adicionales que deberán ser enviad
 | room\_range              | Para pagos Stay, el rango del hotel (estrellas)                                                                                                                                                                                                                                                                                                                                                        | string     | Stay        |
 | insurance                | Si el cliente escoge un seguro. Values: "yes", "no"                                                                                                                                                                                                                                                                                                                                                    | string     | Travel/Stay |
 | destination\_country     | Código del país de destino, en formato ISO 3166-2 (p. ej.: "ES" para España)                                                                                                                                                                                                                                                                                                                           | string     | Travel/Stay |
-| travel\_type             | Un valor entre: **Unknown**, **OneWay** (ida), **TwoWay** (ida y vuelta), **Multiple** (Multiples destinos)                                                                                                                                                                                                                                                                                            | string(2)  | Travel/Stay |
+| travel\_type             | Un valor entre: **Unknown**, **OneWay** (ida), **TwoWay** (ida y vuelta), **Multiple** (Múltiples destinos)                                                                                                                                                                                                                                                                                            | string(2)  | Travel/Stay |
 | departure\_airport       | Código IATA del aeropuerto de salida                                                                                                                                                                                                                                                                                                                                                                   | string(3)  | Travel      |
 | arrival\_airport         | Código IATA del aeropuerto de destino                                                                                                                                                                                                                                                                                                                                                                  | string(3)  | Travel      |
 | main\_departure\_company | En caso de viajes con avión, nombre de la aerolínea del primer vuelo (código IATA)                                                                                                                                                                                                                                                                                                                     | string(3)  | Travel      |
@@ -69,7 +69,10 @@ Es recomendable usar un amount de entre 100€ y 250€ para aumentar las probab
 Los datos de tarjeta de prueba son los siguientes:
 
 ```
-- número de tarjeta OK: 5017 6791 1038 0400- número de tarjeta KO: 5017 6791 0090 0712- CVV: 000- fecha de expiración: mayor a la fecha de la última cuota
+- número de tarjeta OK: 5017 6791 1038 0400
+- número de tarjeta KO: 5017 6791 0090 0712
+- CVV: 000
+- fecha de expiración: mayor a la fecha de la última cuota
 ```
 
 ## Moneda

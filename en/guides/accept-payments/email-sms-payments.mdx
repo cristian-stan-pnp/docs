@@ -1,0 +1,121 @@
+---
+title: 'Email and SMS Payments'
+description: 'How to send payments via email and SMS with Paylands'
+---
+
+For each payment to be made, you will need to specify the amount to pay and the recipient's email or phone number, as well as the email or SMS subject, among others. When the file is loaded, all deliveries will be carried out, and they are grouped together so you can track how many have been paid and which have not. As users make payments, the statuses of the associated operations will be updated.
+
+![Sending payments via email and sms](/images/docs/integration/assets/images/email-sms-campaigns-1-7d37b6bfe9da67f44f49b90ec0367392.png)
+
+## How it works through the panel
+
+This feature is accessible only through the [Paylands panel](https://backend.paylands.com) in the "Payment tools" > "Payments via email and sms" section. This section displays the lists of recently initiated payments. To create a new payment, click the **New payment** button. The form accepts the creation of a single payment or a CSV file with a list of payments.
+
+![Individual payment sending](/images/docs/integration/assets/images/email-sms-campaigns-2-81eb0f80c8dba4d6f12fc9dd0d991d14.png)
+
+Below are all the fields that can be configured to launch one or more payments:
+
+**Payment details**
+
+* **Subject**: Subject of the email or title of the SMS that the user will receive.
+* **Description**: Internal description of the campaign.
+* **Payment service**: Payment service to be used for the payment.
+* **Delivery method**: Email, SMS or manual. If manual is selected, the links are generated but not sent to the users.
+* **Expiration date**: The date after which the payment link will no longer be valid.
+
+**Email and SMS payments**
+
+* **Input method**: *Form* for a single delivery or *File Upload* to upload a CSV file.
+* **Amount**: Amount to charge in cents.
+* **Destination**: The recipient's email or mobile number if SMS. If a phone number is provided, it must include the prefix (+34 for Spain). If the delivery method is manual, the format is free.
+* **Operative**: AUTHORIZATION or DEFERRED. Determines whether the charged amount is settled or not the following day, respectively.
+* **Secure payment?**: Indicates whether the 3D Secure process will be carried out to authenticate the transaction.
+* **External ID**: External ID that identifies the customer making the payment.
+* **Additional**: Free field that will be returned in the payment notification.
+* **Card UUID**: If the card is specified, the user will not need to enter it again. The "Secure payment" field must be set to "Yes".
+* **Notification URL**: Merchant URL that will receive the payment notification once it is completed.
+* **Success URL**: URL to which the customer will be redirected in case of success.
+* **Failure URL**: URL to which the customer will be redirected in case of error.
+* **Certified payment**: Indicates whether the link delivery will be certified or not\*.
+* **Card template**: Allows selecting a template for the screen where the user enters their card details.
+* **Email and SMS template**: Allows selecting the template that formats the email/sms.
+* **DCC template**: Allows selecting the template where the user selects which currency they want to use if DCC is active.
+* **Language**: Indicates the language that will be displayed to the recipient.
+* **Extra data**: Allows manually specifying the `extra_data` field when generating the payment order.
+
+\* If the campaign is processed via SMS or Email, the reception/link opening certificate can be activated, which allows checking whether the user has received the SMS/email or has accessed the payment link.
+
+<Note>
+  When selecting *File Upload* you can load a file with multiple recipients, configuring an amount and delivery method for each of them.
+</Note>
+
+![Sending payments via file](/images/docs/integration/assets/images/email-sms-campaigns-3-c09fba2e7e26d6907d9e5105d68b42d0.png)
+
+## Payment file structure
+
+To send multiple payment links simultaneously, a CSV file must be uploaded. This is a text document whose first line contains the header and the remaining lines contain the data for each payment. This is its structure:
+
+| Header            | Type    | Required | Description                                                                                                                                                                                    |
+| ----------------- | ------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AMOUNT            | Integer | Yes      | Amount to charge in cents.                                                                                                                                                                     |
+| OPERATIVE         | String  | Yes      | AUTHORIZATION or DEFERRED. Determines whether the charged amount is settled or not the following day, respectively.                                                                            |
+| DESTINATION       | String  | Yes      | The recipient's email or mobile number if SMS. If a phone number is provided, it must include the prefix (+34 for Spain). If the delivery method is manual, the format is free.                |
+| SECURE            | String  | Yes      | Accepted values: true/false. Indicates whether the 3D Secure process will be carried out to authenticate the transaction.                                                                      |
+| CUSTOMER\_EXT\_ID | String  | No       | External ID that identifies the customer making the payment.                                                                                                                                   |
+| SOURCE\_UUID      | String  | No       | If the card UUID is specified, the user will not need to enter it again. The "SECURE" header must be "true".                                                                                   |
+| ADDITIONAL        | String  | No       | Free field that will be returned in the payment notification.                                                                                                                                  |
+| URL\_POST         | String  | No       | Merchant URL that will receive the payment notification once it is completed.                                                                                                                  |
+| URL\_OK           | String  | No       | URL to which the customer will be redirected in case of success.                                                                                                                               |
+| URL\_KO           | String  | No       | URL to which the customer will be redirected in case of error.                                                                                                                                 |
+| CARD\_TEMPLATE    | String  | No       | Allows selecting a template for the screen where the user enters their card details.                                                                                                           |
+| MOTO\_TEMPLATE    | String  | No       | Allows selecting the template that formats the email/sms.                                                                                                                                     |
+| DCC\_TEMPLATE     | String  | No       | Allows selecting the template where the user selects which currency they want to use if DCC is active.                                                                                        |
+| CERTIFIED         | String  | No       | true/false. Indicates whether the email or sms delivery will be certified.                                                                                                                     |
+| LANGUAGE          | String  | No       | Indicates the language that will be displayed to the recipient. Example: es                                                                                                                    |
+| EXTRA\_DATA       | String  | No       | `extra_data` fields separated by semicolons. Subkeys are nested using a dot. For example, to specify the cof RECURRING, you would specify the value cof.reason:RECURRING                      |
+
+Values are delimited with a comma: ",". Optional headers that do not contain any value can be omitted. Null or empty values are indicated by leaving a gap between commas. An example CSV is as follows:
+
+```
+AMOUNT,OPERATIVE,DESTINATION,SECURE,SOURCE_UUID,CUSTOMER_EXT_ID,ADDITIONAL,URL_POST,URL_OK,URL_KO,CARD_TEMPLATE,MOTO_TEMPLATE,DCC_TEMPLATE,CERTIFIED,LANGUAGE
+12035,AUTHORIZATION,+34666554411,false,,user_1234,additional_info_1234,http://google.es/notification,http://google.es/ok_payment,http://google.es/ko_payment,,90895BE4-F614-447A-AE7F-082B248FE3A3,,false,es
+```
+
+In the example, an order will be created for a non-secure payment of 120.35€, associated with the customer 'user\_1234'. The 'SOURCE\_UUID' field has no value because it was left empty.
+
+## Download reception certificate
+
+The reception certificate for a payment can be downloaded through the panel, in the payment details. Available for deliveries via email and SMS.
+
+## Download link opening certificate
+
+The payment link opening certificate for a payment can be downloaded through the panel, in the payment details. Available for deliveries via SMS.
+
+<Warning>
+  Reception/opening certificates will only be available if certification was configured for the payment (with the **CERTIFIED** field set to **true**).
+</Warning>
+
+## Custom fields in email and SMS templates
+
+The tool supports specific templates for sending via SMS or email. To use a custom template, you must send an email to *[soporte@paylands.com](mailto:soporte@paylands.com)*.
+
+Custom fields can be included in email and SMS templates. To do so, the format to be sent, whether from the panel form or via API, must be:
+
+
+```
+clave1:valor1;clave2:valor2
+```
+
+The different fields must be separated by semicolons.
+
+For example, sending the following value in the additional field:
+
+```
+nombre: Juan García; edad: 28
+```
+
+In the email/sms template, these values can be accessed as follows:
+
+```
+Bienvenido {{customFields.nombre}}, felices {{customFields.edad}} años.
+```
