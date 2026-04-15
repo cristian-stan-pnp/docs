@@ -1,0 +1,38 @@
+---
+title: 'SPEI'
+description: 'Acceptați plăți cu SPEI în Mexic prin API-ul Paylands'
+---
+
+# SPEI
+
+## Integrare prin redirecționare[​](#integrare-prin-redirecționare "Link direct la Integrare prin redirecționare")
+
+Pentru a-l integra prin redirecționare, utilizatorul trebuie să fie prezent în momentul plății, care trebuie procesată printr-un browser. În primul rând, trebuie să [generăm o comandă de plată](/reference/#operation/generate-payment-order). În cazul utilizării SPEI prin FLOW, va trebui să trimitem obligatoriu email-ul în `extra_data`:
+
+```
+  "extra_data": {    "profile": {      "first_name": " ",      "last_name": " ",      "email": "test@gmail.com"    }  }
+```
+
+Ca identificator de serviciu, trebuie indicat **service\_uuid** al serviciului FACILITAPAY sau FLOW pe care îl aveți activat în **Backend-ul Paylands → Administrare → Servicii de plată → [Listă](https://backend.paylands.com/payment-services/list)**.
+
+Odată generată comanda, utilizatorul trebuie redirecționat către [ecranul de plată](/reference/#operation/redirection-payment) indicând token-ul comenzii și în query, numele APM-ului:
+
+Construim URL-ul de redirecționare înlocuind **token**-ul cu valoarea returnată în apelul anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=SPEI
+```
+
+Odată ce utilizatorul este redirecționat către acest ecran, va putea vizualiza o CLABE sau un cod QR cu care, prin intermediul aplicației mobile, poate finaliza plata. Când finalizează plata, va fi redirecționat înapoi la URL-ul OK sau KO, în funcție de rezultatul plății.
+
+## Testare[​](#testare "Link direct la Testare")
+
+Pentru mai multe informații despre cum să testați această metodă de plată la fiecare dintre furnizorii săi, vizitați documentația FACILITAPAY și FLOW.
+
+## Câmpuri personalizate[​](#câmpuri-personalizate "Link direct la Câmpuri personalizate")
+
+Opțional, dacă utilizați SPEI cu FLOW, în cadrul obiectului `extra_data` puteți include câmpul `payment_reason`, care vă permite să indicați o descriere a plății.
+
+```
+  "extra_data": {    "payment": {      "payment_reason": "Payment description"    }  }
+```

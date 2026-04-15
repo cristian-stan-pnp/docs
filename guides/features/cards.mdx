@@ -59,7 +59,7 @@ Una vez hemos obtenido las tarjetas de un cliente, podemos realizar pagos y auto
 
 El método de [**pago directo por webservice**](/reference/#operation/webservice-payment) permite realizar pagos sin la intervención del usuario. Esta forma de pago está dirigida a comercios avanzados que traten ellos mismos sus recurrencias, ya que son ellos quienes deciden la periodicidad de los cobros.
 
-Para ello se necesita el uuid de la orden de pago `order_uuid` y el uuid de una tarjeta `card_uuid` previamente almacenada en el sistema. Para generar una nueva orden podemos hacerlo llamando al método [Generar orden de pago](/reference/#operation/generate-payment-order). La respuesta nos devolverá el \[order\_uuid]. Por seguridad se solicita la IP del usuario `customer_ip` que solicita el pago pudiéndose indicar en formato IPv4 o IPv6.
+Para ello se necesita el uuid de la orden de pago `order_uuid` y el uuid de una tarjeta `card_uuid` previamente almacenada en el sistema. Para generar una nueva orden podemos hacerlo llamando al método [Generar orden de pago](/reference/#operation/generate-payment-order). La respuesta nos devolverá el `order_uuid`. Por seguridad se solicita la IP del usuario `customer_ip` que solicita el pago pudiéndose indicar en formato IPv4 o IPv6.
 
 ```
 curl --request POST 'https://api.paylands.com/v1/sandbox/payment/direct' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "order_uuid": "1F405EA3-9798-42A6-9E87-BD347EF67F55",  "card_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",  "customer_ip": "62.43.214.55"}'

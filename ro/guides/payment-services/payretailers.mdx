@@ -221,9 +221,9 @@ Acest tabel reflectă posibilele erori care pot apărea în procesul de plată:
 | INVALID\_AMOUNT                                 | The value sent for "amount" is not an integer.                                                                                                                                                                                           |
 | TRANSACTION\_REQUIRED\_COUNTRY                  | The "Country" parameter is empty.                                                                                                                                                                                                        |
 | TRANSACTION\_REQUIRED\_CURRENCY                 | The "Currency" parameter is empty.                                                                                                                                                                                                       |
-| TRANSACTION\_BLOCKED\_BY\_CUSTOMER\_LIMIT\_RULE | The daily/monthly limit of transaction attempts for this customer has been reached, and no transactions can be generated for the customer until the next day/week/month.                                                                 |
+| TRANSACTION\_BLOCKED\_BY\_CUSTOMER\_LIMIT\_RULE  | The daily/monthly limit of transaction attempts for this customer has been reached, and no transactions can be generated for the customer until the next day/week/month.                                                                 |
 | CUSTOMER\_COMPLIANCE\_VALIDATION\_FAILED        | (Brazil only) the "personalID" field contains a non-existent CPF.                                                                                                                                                                        |
-| MERCHANT\_COMPLIANCE\_VALIDATION\_ERROR         | If one of your users is blocked with this error message please expose your case on our Freshdesk.                                                                                                                                        |
+| MERCHANT\_COMPLIANCE\_VALIDATION\_ERROR          | If one of your users is blocked with this error message please expose your case on our Freshdesk.                                                                                                                                        |
 | PAYMENT\_PSP\_ERROR                             | Generic error message received from the payment partner PSP, usually comes from a timeout on PSP's side in high traffic instances.                                                                                                       |
 | TRANSACTION\_CREATION\_ERROR                    | The payment method used in the request is not active and cannot be used. Shop credentials have been disabled.                                                                                                                            |
 | PAYMENT\_AMOUNT\_NOT\_EQUAL                     | The paid amount differs from the original amount or QR amount.                                                                                                                                                                           |
@@ -284,8 +284,8 @@ Există două metode de payout:
 
 **Dacă tipul de payout este `Transfer`:**
 
-* `bank_name` *(cu excepția Argentinei)* – Acest câmp trebuie să conțină **codul** băncii destinatarului. Consultă secțiunea [Coduri de bănci pe țară](#c%C3%B3digos-de-bancos-por-pa%C3%ADs) pentru a vedea valorile valide în funcție de țară.
-* `account` [Vezi specificațiile](#especificaciones-para-account-por-pa%C3%ADs-transfer)
+* `bank_name` *(cu excepția Argentinei)* – Acest câmp trebuie să conțină **codul** băncii destinatarului. Consultă secțiunea [Coduri de bănci pe țară](#coduri-de-bănci-pe-țară) pentru a vedea valorile valide în funcție de țară.
+* `account` [Vezi specificațiile](#specificații-pentru-account-pe-țară-transfer)
 * `account_type` *(cu excepția Argentinei și Mexicului)*
 * `account_agency_number` *(doar Brazilia, obligatoriu)* – Cod numeric al agenției bancare, furnizat de bancă. **Se folosesc doar cifrele de dinaintea cratimei** (ex: `"1234-5"` → se trimite `"1234"`).
 * `aba_swift` *(opțional și doar Brazilia)*
@@ -350,7 +350,7 @@ Câmpul `document_identification_type` se include în `profile`, este **opționa
 | CO (Columbia)  | 16                 | —                                                                                           |
 | MX (Mexic)     | 16, 18             | General (ACCOUNT\_CLABE): 18 cifre Număr de card de debit (CARD\_NUMBER): 16 cifre          |
 | EC (Ecuador)   | 12                 | —                                                                                           |
-| PE (Peru)      | 10, 13, 14, 18, 20 | Depinde de bancă. [Vezi detalii](#detalle-para-per%C3%BA-account)                           |
+| PE (Peru)      | 10, 13, 14, 18, 20 | Depinde de bancă. [Vezi detalii](#detalii-pentru-peru-account)                           |
 
 ##### Detalii pentru Peru (`account`)
 
@@ -439,7 +439,7 @@ Poți consulta valorile valide ale câmpului `payment.bank_name` pentru fiecare 
 | 655    | Neon Pagamentos                           |
 | 077    | Banco Inter S.A.                          |
 | 121    | Banco Agibank S.A.                        |
-| 212    | Banco Original S.A                        |
+| 212    | Banco Original S.A.                       |
 | 260    | Nubank                                    |
 | 336    | Banco C6 S.A.                             |
 | 413    | Banco BV (Before Banco Votorantim)        |

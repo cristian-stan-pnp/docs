@@ -66,12 +66,12 @@ El método recomendado para dar estilo al campo de entrada es utilizar el métod
 
 ```js
 proxyFields.on("ready", function() {
-    proxyFields.setStyle(
-        "cardNumber",
-        "width: 300px; border-radius: 4px; border: 1px solid black; padding:5px 10px;font-size:100%;"
-    );
-    proxyFields.setStyle("cardNumber::placeholder", "color: grey");
-    proxyFields.setPlaceholder("cardNumber", "4987806170805591");
+  proxyFields.setStyle(
+    "cardNumber",
+    "width: 300px; border-radius: 4px; border: 1px solid black; padding:5px 10px;font-size:100%;"
+  );
+  proxyFields.setStyle("cardNumber::placeholder", "color: grey");
+  proxyFields.setPlaceholder("cardNumber", "4987806170805591");
 });
 ```
 
@@ -83,20 +83,20 @@ Una vez que hayas llamado al método `submit` se disparará un callback `validat
 
 ```js
 proxyFields.submit({
-    expiryMonth: "01",
-    expiryYear: "21",
-    cardHolder: "Name Displayed On Card"
+  expiryMonth: "01",
+  expiryYear: "21",
+  cardHolder: "Name Displayed On Card"
 });
 proxyFields.on("validate", function(data) {
-    if(data.hasErrors){
-        console.log("Card pan is not valid");
-        proxyFields.setStyle("cardNumber","border: 1px solid red");
-    }
+  if(data.hasErrors){
+    console.log("Card pan is not valid");
+    proxyFields.setStyle("cardNumber","border: 1px solid red");
+  }
 });
 proxyFields.on("success", function(data) {
-    console.log('Submission succeeded');
+  console.log('Submission succeeded');
 });
 proxyFields.on("error", function(error) {
-    console.log('Ha ocurrido algo malo');
+  console.log('Ha ocurrido algo malo');
 });
 ```

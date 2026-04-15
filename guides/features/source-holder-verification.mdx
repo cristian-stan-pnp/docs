@@ -49,22 +49,52 @@ SHV puede aplicarse en **tres flujos**:
 
 ### Ejemplo de petición con NAME
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",  "service": "E8952860-5441-45A2-9233-33651DABA250",  "holder": {    "first_name": "Luis",    "last_name": "Pérez López"  }}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "holder": {
+    "first_name": "Luis",
+    "last_name": "Pérez López"
+  }
+}
 ```
 
 ### Ejemplo de petición con IDENTIFICATION\_NUMBER
 
 > Cuando `verification_method` es `IDENTIFICATION_NUMBER`, debe enviarse `holder.identification_number`. El campo `first_name` sigue siendo necesario para la verificación.
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",  "service": "E8952860-5441-45A2-9233-33651DABA250",  "holder": {    "first_name": "Luis",    "last_name": "Pérez López",    "identification_number": "B88353412"  },  "verification_method": "IDENTIFICATION_NUMBER"}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "source_uuid": "EEE99130-218B-4E22-90E2-E55B845DF0D4",
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "holder": {
+    "first_name": "Luis",
+    "last_name": "Pérez López",
+    "identification_number": "B88353412"
+  },
+  "verification_method": "IDENTIFICATION_NUMBER"
+}
 ```
 
 ### Ejemplo de respuesta
 
-```
-{  "message": "OK",  "code": 200,  "current_time": "2026-02-24T14:35:01+0100",  "verification": {    "uuid": "A8CABF0C-C690-46C7-9F4B-E6AC3F929799",    "status": "PERFORMED",    "match_result": "MATCH",    "error": null,    "policy_action": null,    "verification_method": "NAME"  }}
+```json
+{
+  "message": "OK",
+  "code": 200,
+  "current_time": "2026-02-24T14:35:01+0100",
+  "verification": {
+    "uuid": "A8CABF0C-C690-46C7-9F4B-E6AC3F929799",
+    "status": "PERFORMED",
+    "match_result": "MATCH",
+    "error": null,
+    "policy_action": null,
+    "verification_method": "NAME"
+  }
+}
 ```
 
 ***
@@ -73,8 +103,17 @@ SHV puede aplicarse en **tres flujos**:
 
 En los flujos de **almacenamiento de source** y **pago**, el cuerpo que se envía es el mismo:
 
-```
-{  "source_holder_verification": {    "enabled": true,    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```json
+{
+  "source_holder_verification": {
+    "enabled": true,
+    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
 ```
 
 ### ¿Qué hace este cuerpo?
@@ -105,22 +144,85 @@ Para que la verificación pueda realizarse, los datos necesarios deben estar dis
 
 ### Tokenizar tarjeta (almacenamiento)
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "customer_ext_id": "test1",  "card_holder": "TEST",  "card_pan": "4242424242424242",  "card_expiry_year": 34,  "card_expiry_month": "12",  "additional": null,  "url_post": "",  "validate": false,  "service": "E8952860-5441-45A2-9233-33651DABA250",  "card_cvv": 123,  "source_holder_verification": {    "enabled": true,    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "customer_ext_id": "test1",
+  "card_holder": "TEST",
+  "card_pan": "4242424242424242",
+  "card_expiry_year": 34,
+  "card_expiry_month": "12",
+  "additional": null,
+  "url_post": "",
+  "validate": false,
+  "service": "E8952860-5441-45A2-9233-33651DABA250",
+  "card_cvv": 123,
+  "source_holder_verification": {
+    "enabled": true,
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
 ```
 
 ### Crear cuenta bancaria (almacenamiento)
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "account_holder": "prueba",  "iban": "ES4469400001180255458867",  "customer_ext_id": "test",  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",  "source_holder_verification": {    "enabled": true,    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH", "NO_MATCH"],    "allow_unavailable": true,    "allow_error": false,    "first_name": "Pedro",    "last_name": "Perez"  }}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "account_holder": "prueba",
+  "iban": "ES4469400001180255458867",
+  "customer_ext_id": "test",
+  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",
+  "source_holder_verification": {
+    "enabled": true,
+    "accepted_verification_results": ["MATCH", "PARTIAL_MATCH", "NO_MATCH"],
+    "allow_unavailable": true,
+    "allow_error": false,
+    "first_name": "Pedro",
+    "last_name": "Perez"
+  }
+}
 ```
 
 ### Crear orden (flujo de pago)
 
 > En pagos, `source_holder_verification` se envía dentro de `extra_data`.
 
-```
-{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 10,  "operative": "PAYOUT",  "secure": false,  "customer_ext_id": "test",  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",  "description": "test",  "additional": "Paylands test",  "url_post": "https://enpxp0f8f1owh.x.pipedream.net/",  "url_ok": "",  "url_ko": "",  "template_uuid": null,  "dcc_template_uuid": null,  "extra_data": {    "profile": {      "first_name": "Luis",      "last_name": "test",      "email": "victor.colejo@paynopain.com",      "birthdate": "1996-04-04"    },    "source_holder_verification": {      "enabled": true,      "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],      "allow_unavailable": true,      "allow_error": false,      "first_name": "Pedro",      "last_name": "Perez"    }  }}
+```json
+{
+  "signature": "341f7de8e6fc49da8d8736473af6b03a",
+  "amount": 10,
+  "operative": "PAYOUT",
+  "secure": false,
+  "customer_ext_id": "test",
+  "service": "DD90CBFA-DB3E-4961-BB7A-4CC0CC129247",
+  "description": "test",
+  "additional": "Paylands test",
+  "url_post": "https://enpxp0f8f1owh.x.pipedream.net/",
+  "url_ok": "",
+  "url_ko": "",
+  "template_uuid": null,
+  "dcc_template_uuid": null,
+  "extra_data": {
+    "profile": {
+      "first_name": "Luis",
+      "last_name": "test",
+      "email": "victor.colejo@paynopain.com",
+      "birthdate": "1996-04-04"
+    },
+    "source_holder_verification": {
+      "enabled": true,
+      "accepted_verification_results": ["MATCH", "PARTIAL_MATCH"],
+      "allow_unavailable": true,
+      "allow_error": false,
+      "first_name": "Pedro",
+      "last_name": "Perez"
+    }
+  }
+}
 ```
 
 ***
@@ -144,8 +246,17 @@ Para que la verificación pueda realizarse, los datos necesarios deben estar dis
 
 Independientemente del endpoint/flujo, el bloque de respuesta de SHV se devuelve con esta forma:
 
-```
-{  "source_holder_verification": {    "uuid": "ED17EDE3-51A7-47A9-BD13-50448587278C",    "status": "PERFORMED",    "match_result": "NO_MATCH",    "error": null,    "policy_action": "ALLOWED",    "verification_method": "NAME"  }}
+```json
+{
+  "source_holder_verification": {
+    "uuid": "ED17EDE3-51A7-47A9-BD13-50448587278C",
+    "status": "PERFORMED",
+    "match_result": "NO_MATCH",
+    "error": null,
+    "policy_action": "ALLOWED",
+    "verification_method": "NAME"
+  }
+}
 ```
 
 ### Significado de los campos

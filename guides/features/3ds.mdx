@@ -26,7 +26,7 @@ La primera condición se cumplirá siempre en los servicios de pago mencionados 
 Si se intenta realizar un pago no seguro y éste no puede llevarse a cabo debido a la PSD2:
 
 * Si el usuario está presente ([pago a través de la carta de pago](/reference/#operation/redirection-payment)) el usuario será redirigido al 3DS.
-* Si el usuario no está presente ([pago directo](/reference/#operation/webservice-payment)) la API devolverá un enlace al que el usuario deberá ser redirigido para que lleve a cabo el 3DS. Este tipo de pagos también se conocen como pagos por webservice o pagos MIT (Merchant Initiated Transactions)
+* Si el usuario no está presente ([pago directo](/reference/#operation/webservice-payment)) la API devolverá un enlace al que el usuario deberá ser redirigido para que lleve a cabo el 3DS. Este tipo de pagos también se conocen como pagos por webservice o pagos MIT (Merchant Initiated Transactions).
 
 Recomendamos utilizar [pagos tokenizados](/reference/#operation/3ds-tokenized) una vez se haya tokenizado la tarjeta, ya que éstos siempre utilizan 3DS y permiten aprovechar todas las ventajas que ofrece la PSD2. Los pagos no seguros a través de webservice deben utilizarse solo cuando el usuario no está presente, por ejemplo, para cobrar una suscripción.
 

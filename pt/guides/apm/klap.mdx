@@ -1,0 +1,38 @@
+---
+title: 'Klap'
+description: 'Aceite pagamentos com Klap (Multicaja) no Chile através da API da Paylands'
+---
+
+# Klap
+
+## Integração por redirecionamento[​](#integração-por-redirecionamento "Link direto para Integração por redirecionamento")
+
+Para integrá-lo por redirecionamento, o utilizador deve estar presente no momento do pagamento, que deve ser processado através de um navegador. Em primeiro lugar, devemos [gerar uma ordem de pagamento](/reference/#operation/generate-payment-order), indicando o email.
+
+```
+  "extra_data": {    "profile": {      "first_name": " ",      "last_name": " ",      "email": "test@gmail.com"    }  }
+```
+
+Como identificador de serviço, deve indicar o **service\_uuid** do serviço FLOW que tenha ativado no seu **Backend da Paylands → Administrar → Serviços de pagamento → [Lista](https://backend.paylands.com/payment-services/list)**.
+
+Uma vez gerada a ordem, o utilizador deve ser redirecionado para [o ecrã de pagamento](/reference/#operation/redirection-payment) indicando o token da ordem e na query, o nome do APM:
+
+Construímos o URL de redirecionamento substituindo o **token** pelo valor devolvido na chamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}?apm=KLAP
+```
+
+Uma vez que o utilizador seja redirecionado para este ecrã, será apresentado um cupão com o qual o utilizador pode realizar o pagamento numa sucursal. Quando completar o pagamento, será redirecionado de volta para o URL OK ou KO, dependendo do resultado do pagamento.
+
+## Testes[​](#testes "Link direto para Testes")
+
+Para mais informações sobre como testar este método de pagamento em cada um dos seus fornecedores, visite a documentação do FLOW.
+
+## Campos personalizados[​](#campos-personalizados "Link direto para Campos personalizados")
+
+Opcionalmente, dentro do objeto `extra_data` pode incluir o campo `payment_reason`, que permite indicar uma descrição do pagamento.
+
+```
+  "extra_data": {    "payment": {      "payment_reason": "Payment description"    }  }
+```

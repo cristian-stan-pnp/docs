@@ -221,9 +221,9 @@ Com esta tabela apresentamos possíveis erros que podem surgir no processo de pa
 | INVALID\_AMOUNT                                 | The value sent for "amount" is not an integer.                                                                                                                                                                                           |
 | TRANSACTION\_REQUIRED\_COUNTRY                  | The "Country" parameter is empty.                                                                                                                                                                                                        |
 | TRANSACTION\_REQUIRED\_CURRENCY                 | The "Currency" parameter is empty.                                                                                                                                                                                                       |
-| TRANSACTION\_BLOCKED\_BY\_CUSTOMER\_LIMIT\_RULE | The daily/monthly limit of transaction attempts for this customer has been reached, and no transactions can be generated for the customer until the next day/week/month.                                                                 |
+| TRANSACTION\_BLOCKED\_BY\_CUSTOMER\_LIMIT\_RULE  | The daily/monthly limit of transaction attempts for this customer has been reached, and no transactions can be generated for the customer until the next day/week/month.                                                                 |
 | CUSTOMER\_COMPLIANCE\_VALIDATION\_FAILED        | (Brazil only) the "personalID" field contains a non-existent CPF.                                                                                                                                                                        |
-| MERCHANT\_COMPLIANCE\_VALIDATION\_ERROR         | If one of your users is blocked with this error message please expose your case on our Freshdesk.                                                                                                                                        |
+| MERCHANT\_COMPLIANCE\_VALIDATION\_ERROR          | If one of your users is blocked with this error message please expose your case on our Freshdesk.                                                                                                                                        |
 | PAYMENT\_PSP\_ERROR                             | Generic error message received from the payment partner PSP, usually comes from a timeout on PSP's side in high traffic instances.                                                                                                       |
 | TRANSACTION\_CREATION\_ERROR                    | The payment method used in the request is not active and cannot be used. Shop credentials have been disabled.                                                                                                                            |
 | PAYMENT\_AMOUNT\_NOT\_EQUAL                     | The paid amount differs from the original amount or QR amount.                                                                                                                                                                           |
@@ -439,7 +439,7 @@ Pode consultar os valores válidos do campo `payment.bank_name` para cada país 
 | 655    | Neon Pagamentos                           |
 | 077    | Banco Inter S.A.                          |
 | 121    | Banco Agibank S.A.                        |
-| 212    | Banco Original S.A                        |
+| 212    | Banco Original S.A.                       |
 | 260    | Nubank                                    |
 | 336    | Banco C6 S.A.                             |
 | 413    | Banco BV (Before Banco Votorantim)        |
