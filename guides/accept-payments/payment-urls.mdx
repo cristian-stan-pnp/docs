@@ -48,9 +48,9 @@ Para activarla debemos acceder al panel de Paylands y dirigirnos en el menú lat
 
 ![Clients Preferences](/images/docs/integration/assets/images/configuration-clients-preferences-b214cf1aa1dc9fb553b91dbcc08cd8e8.png)
 
-Una vez aquí podemos activar **Generar urls de pago** y si queremos una versión abreviada de la url podemos activar **Generar urls abreviadas**. Es importante remarcar que la primera opción debe estar activada si queremos recibir las urls de forma abreviada.
+Una vez aquí podemos activar **Generar urls de pago** y si queremos una versión abreviada de la URL podemos activar **Generar urls abreviadas**. Es importante remarcar que la primera opción debe estar activada si queremos recibir las URLs de forma abreviada.
 
-### Ejemplo de respuesta con urls abreviadas:
+### Ejemplo de respuesta con URLs abreviadas:
 
 ```json
 {
@@ -93,8 +93,8 @@ Una vez aquí podemos activar **Generar urls de pago** y si queremos una versió
 
 ## Generación de URLs
 
-Estas tres urls se generan de forma automática, pero en el caso de `bizum` y `3ds_tokenized` deben cumplirse unos requisitos.
+Estas tres URLs se generan de forma automática, pero en el caso de `bizum` y `3ds_tokenized` deben cumplirse unos requisitos.
 
-**Bizum:** Solo se generará esta url si el servicio indicado al crear la orden soporta este método de pago. [**Bizum**](/guides/apm/bizum)
+**Bizum:** Solo se generará esta URL si el servicio indicado al crear la orden soporta este método de pago. [**Bizum**](/guides/apm/bizum)
 
-**3ds\_tokenized:** Para generar esta url es necesario que cuando creemos la orden indiquemos `secure: true` y un `source_uuid` válido. [**3Ds Tokenized**](/reference/#operation/3ds-tokenized)
+**3ds\_tokenized:** Para generar esta URL es necesario que cuando creemos la orden indiquemos `secure: true` y un `source_uuid` válido. [**3Ds Tokenized**](/reference/#operation/3ds-tokenized)
