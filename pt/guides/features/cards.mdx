@@ -1,0 +1,145 @@
+---
+title: 'Guia de Cartões'
+description: 'Guia completo para gerenciar cartões no Paylands: tokenização, recorrência e mais'
+---
+
+Quando falamos de **tokenização**, estamos nos referindo à ação de **salvar um método de pagamento para uso futuro**. Ao salvar o método de pagamento, é gerado um token que permitirá emitir cobranças ao cliente sem necessidade de solicitar novamente os dados.
+
+A tokenização protege os dados confidenciais através de um processo de substituição dos dados por um equivalente não confidencial, conhecido como token. O token não tem significado ou valor externo. É uma referência, ou identificador, que através de um sistema de tokenização, é mapeado de volta aos dados confidenciais. Este processo coleta de forma segura informações confidenciais do cartão de crédito e evita o roubo de dados.
+
+<Info>
+  Embora normalmente o chamemos de "token" porque "tokenizamos" o cartão, estamos nos referindo ao UUID do cartão. O campo "token" de um cartão é na verdade um valor calculado a partir do número do cartão, de modo que dois cartões com o mesmo [PAN](/guides/resources/glossary#pan) têm UUIDs diferentes mas o mesmo token. Este token serve apenas para saber se dois cartões são iguais. Sempre que queremos utilizar um cartão é necessário indicar seu UUID.
+</Info>
+
+## Como salvar um cartão
+
+Podemos armazenar um cartão no Paylands usando um dos seguintes métodos:
+
+### Realizando um pagamento
+
+Podemos tokenizar qualquer cartão ao realizar um primeiro pagamento com ele. O método habitual para comerciantes que não são [PCI](/guides/resources/glossary#pci-dss) é utilizar a [**integração simples via formulário de pagamento**](/guides/accept-payments/web-integration), embora também seja possível iniciar o formulário de pagamento através de:
+
+* [Links de pagamento](/guides/accept-payments/link-payments)
+* [Pagamentos Moto](/guides/accept-payments/moto-payments)
+* [Plugins E-commerce](/guides/plugins/ecommerce).
+
+Na notificação recebida após o pagamento é incluído um objeto da `ordem` processada. Dentro da transação existe também o objeto `source` que contém o `token` do cartão utilizado no pagamento. Este token ficará a partir de agora vinculado ao cliente, de modo que em novas operações os pagamentos poderão ser confirmados para este usuário sem necessidade de solicitar novamente o cartão.
+
+Estes métodos criam uma ordem com transação [3DS](/guides/resources/glossary#3ds-2) que gera um token com [SCA](/guides/resources/glossary#sca) permitindo que o comerciante envie:
+
+* [MITs](/guides/resources/glossary#mit)
+* Cobranças pontuais (incrementais)
+* Cobranças recorrentes (assinaturas)
+
+### Integrando o SDK de Tokenização
+
+No caso de estar construindo uma plataforma, web ou mobile, onde se deseja que o usuário possa salvar seu cartão (como Netflix, Amazon) para posteriormente emitir cobranças seja de compras ou de assinaturas, dispomos de uma biblioteca [**SDK de Tokenização**](/guides/features/tokenization). Com este SDK, os comerciantes que não são PCI podem salvar e tokenizar os cartões dos clientes incorporando um iframe em seu site/app.
+
+## Obtenção dos cartões
+
+Uma vez que temos os cartões dos nossos clientes salvos no Paylands, podemos recuperá-los e utilizá-los de diferentes formas. O primeiro passo será obter os cartões armazenados de um cliente.
+
+A forma mais habitual de recuperar o cartão de um cliente é realizando uma chamada ao método da API do Paylands [para obter os cartões de um cliente](/reference/#operation/get-customer-cards). Através deste método obtém-se a lista de cartões armazenados no sistema para um dado `customer_ext_id`. O customer\_ext\_id deve coincidir com o que foi utilizado ao salvar o cartão no sistema ou ao criar a ordem de pagamento para o cliente.
+
+```
+curl --request GET 'https://api.paylands.com/v1/sandbox/customer/{customer_ext_id}/cards?unique=true' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \
+```
+
+Obteremos como resposta a lista de cartões do cliente com o `uuid` de cada um deles.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2017-01-12T09:12:58+0100",  "cards": [    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 454881,      "brand": "VISA",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "12",      "expire_year": "21",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ebc9b5ffa2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d5851884c",      "type": "C",      "uuid": "90F358C9-7D3F-4334-A60D-1717CC1FBF5B"    },    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 533821,      "brand": "MASTERCARD",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "04",      "expire_year": "23",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ad49b5b1a2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d58516cba",      "type": "C",      "uuid": "0FDE261B-0E76-499D-A394-B6DCF6C03C56"    }  ]}
+```
+
+## Como usar o cartão
+
+Uma vez que obtivemos os cartões de um cliente, podemos realizar pagamentos e autorizações de diferentes formas que são explicadas a seguir.
+
+### Pagamento direto por webservice
+
+O método de [**pagamento direto por webservice**](/reference/#operation/webservice-payment) permite realizar pagamentos sem a intervenção do usuário. Esta forma de pagamento é direcionada a comerciantes avançados que gerenciam suas próprias recorrências, já que são eles quem decidem a periodicidade das cobranças.
+
+Para isso é necessário o uuid da ordem de pagamento `order_uuid` e o uuid de um cartão `card_uuid` previamente armazenado no sistema. Para gerar uma nova ordem podemos fazê-lo chamando o método [Gerar ordem de pagamento](/reference/#operation/generate-payment-order). A resposta nos retornará o `order_uuid`. Por segurança é solicitado o IP do usuário `customer_ip` que solicita o pagamento, podendo ser indicado em formato IPv4 ou IPv6.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment/direct' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "order_uuid": "1F405EA3-9798-42A6-9E87-BD347EF67F55",  "card_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",  "customer_ip": "62.43.214.55"}'
+```
+
+Ao executar este método, o pagamento será realizado sem a intervenção do usuário, retornando a seguinte resposta.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 1,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "DEFERRED",        "amount": 1,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": null,    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+Se como comerciante você tem o sistema antifraude ativado, poderia acontecer que alguma regra fosse acionada e fosse necessário finalizar a cobrança por [3DS](/guides/resources/glossary#3ds-2). Nesse caso, a resposta retornada conterá no campo `details` a URL para a qual o usuário deve ser redirecionado para se autenticar e poder finalizar a cobrança.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "details": "URL_3DS",  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+<Warning>
+  Sob nenhuma circunstância esta URL deve ser modificada, pois seu formato pode variar em futuras atualizações. Seu uso se restringe a obtê-la do corpo da requisição e redirecionar o usuário.
+</Warning>
+
+### Pagamento tokenizado 3DS
+
+Este método de **pagamento mediante o token de uma ordem** é similar ao [pagamento direto por webservice](#pagamento-direto-por-webservice), com a diferença de que neste caso ao usuário será mostrada a tela de [3DS](/guides/resources/glossary#3ds-2) antes de finalizá-lo.
+
+Para gerar uma nova ordem podemos fazê-lo chamando o método [**Gerar ordem de pagamento**](/reference/#operation/generate-payment-order). A resposta nos retornará o `order_token`. Lançaremos um [**pagamento tokenizado 3DS**](/reference/#operation/3ds-tokenized) adicionando o `order_token` da ordem na URL da chamada.
+
+### Autorização 3DS do cartão
+
+Se para um cartão ainda não foi realizado um pagamento [3DS](/guides/resources/glossary#3ds-2) e queremos utilizá-lo mais adiante para lançar [pagamentos diretos por webservice](#pagamento-direto-por-webservice) sem querer cobrar ainda do usuário, é possível realizar uma **autorização 3DS do cartão lançando um pagamento 3DS de 0 euros**. Neste caso o usuário apenas se autentica de forma segura para mais adiante poder ser cobrado pelo comerciante sem que ele tenha que intervir novamente. Este é um processo habitual por exemplo em hotéis ou alguns provedores de assinaturas.
+
+Deveremos gerar uma nova ordem de pagamento com o método [**Gerar ordem de pagamento**](/reference/#operation/generate-payment-order) indicando no campo `source_uuid` o uuid do cartão que desejamos autorizar e no campo `amount` indicar o valor `0`. Também é preciso indicar o campo `operative` com o valor `AUTHORIZATION`.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 0,  "operative": "AUTHORIZATION",  "source_uuid": "UUID_TARJETA",  "secure": false,  "customer_ext_id": "test",  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*NombreComercio",  "expires_in": 3600}'
+```
+
+Ao lançar a ordem de autorização 3DS obteremos a seguinte resposta e o cartão estará autorizado para emitir futuras cobranças.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 0,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "AUTHORIZATION",        "amount": 0,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": "34f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec9",    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+## Cartões dinâmicos
+
+Quando o usuário paga através de uma carteira digital como Google Pay ou Apple Pay, não está fornecendo o número do seu cartão mas um pseudônimo chamado DPAN (Device PAN). Este número tem a mesma aparência e está associado ao PAN (Primary Account Number) real do cartão, no entanto existem várias limitações em torno da informação que obtemos e seu uso. Estes meios de pagamento são conhecidos como **cartões dinâmicos** no Paylands.
+
+|                    | PAN                                                         | DPAN                                                              |
+| ------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Definição**      | Identificador único por cartão                              | Identificador único por cartão e dispositivo                      |
+| **Disponibilidade**| Todos os provedores o suportam, não requer uma carteira     | Apenas alguns provedores o suportam, requer uma carteira          |
+| **Reutilização**   | Pode ser reutilizado em qualquer tipo de pagamento          | Só pode ser reutilizado em pagamentos sem a presença do usuário   |
+| **Tokenização**    | O PAN é real e não pode ser invalidado                      | O DPAN é um alias e o usuário pode invalidá-lo posteriormente     |
+
+Devido ao fato de que vários DPANs correspondem a um mesmo PAN, os cartões dinâmicos não contêm o campo `token` que é utilizado para determinar se dois cartões têm o mesmo PAN. Também devido ao fato de que o DPAN é um alias e não o número do cartão, não dispomos do `BIN`, embora sim do `last4` real do cartão porque o Google Pay e o Apple Pay o fornecem separadamente. Finalmente, a data de expiração não é fornecida, portanto não dispomos dela.
+
+|                         | PAN | DPAN |
+| ----------------------- | --- | ---- |
+| UUID                    | ✔   | ✔    |
+| Token único             | ✔   | ❌    |
+| Data de expiração       | ✔   | ❌    |
+| BIN                     | ✔   | ❌    |
+| Last4                   | ✔   | ✔    |
+| Holder/Alias\*          | ✔   | ✔    |
+| Débito/Crédito          | ✔   | ✔    |
+| País de emissão         | ✔   | ✔    |
+| Nome do banco           | ✔   | ✔    |
+| Pré-pago                | ✔   | ✔    |
+| Descrição da marca      | ✔   | ✔    |
+
+### Vantagens e desvantagens
+
+A principal vantagem de solicitar os dados do cartão através do Google Pay ou Apple Pay é que em alguns casos o pagamento já é considerado autenticado e não é necessário realizar o 3DS. A desvantagem é que a autenticação é realizada pela carteira quando obtém os dados do cartão, portanto é necessário que o usuário interaja com a carteira cada vez. Isso impede que sejam lançados [**pagamentos tokenizados 3DS**](/reference/#operation/3ds-tokenized) com UUIDs de cartões dinâmicos.
+
+Outra vantagem é que o usuário não precisa inserir os dados do seu cartão se já os tem registrados na sua carteira. Isso pode afetar positivamente a conversão já que para o usuário é mais cômodo selecionar seu cartão. Além disso, utilizar Google Pay ou Apple Pay pode ser mais familiar para certos usuários que desconfiam de inserir os dados do seu cartão em páginas web de terceiros.
+
+Uma desvantagem é que, como desconhecemos o BIN do cartão, o usuário somente poderá ver os últimos 4 dígitos do seu cartão para poder identificá-lo. Isso é relevante se for mostrada ao usuário a lista de cartões que tem associados e precisa selecionar um deles. Para facilitar sua identificação, recomendamos mostrar a marca do cartão junto aos seus últimos 4 dígitos como no seguinte exemplo:
+
+![Exemplo de listagem de cartões](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVYAAACECAIAAABETJREAAAAA3NCSVQICAjb4U/gAAAAGXRFWHRTb2Z0d2FyZQBnbm9tZS1zY3JlZW5zaG907wO/PgAAGrtJREFUeJzt3XlcTfn/B/D359x723MlklKJqGTpVhKylX1n7EZEDcXYGTO+JsuMMWMwM362CiMmSxhhZB+qsRNabC0obUrrvd3ucj6/P65SqZS5SnPez4c/1D2fz/l8zv18Xvdzzj23SyilgBDiKqa+G4AQqk8YAQhxGkYAQpyGEYAQp2EEIMRpGAEIcRpGAEKchhGAEKdhBCDEaRgBCHEaRgBCnIYRgBCn1VkEUHHi+Z0rZ40b1LtbV5de/YdPnrNm96UkcfWfUZJHrurjKOr65Yk8dX6WSXp2SVeRyHHwj3cUaqy1XtCcu0f9d/gfvpnFfkBpNmWfp7NI1GXqnmfVFv93e2nAih6eCtixMyg85U2/2fSD3s4iUZdJAfH/nSNRRxEgjQnw8fhqx1+3X7JG7Tq0b9VY8eLG8S1LvTdEFtVNA8oiPL6GhoaGgE/qft9qRnPuHg3Y6X/49qsPykjCf3Mkqh8G/3IvDRaVxJ0O3OkfFJ6ifPObkqHD+w+tnvl1speCK3uDYiS8NhO2+C91acIAAMizY88ejTF10q6TBpSj2W99RL+63+2nRFGYkVqgZWo6KSByUn23pVpscU5aprJJy6ban0JeM83HbY8cVye7qruO10kEsIXZ2TJK9Dv0EDUpiU+Bod2wL+xKtqCS+LOB2/eF3U7MUeqb2/f//Evf4da6lXRemXUreGvgsYiYVLHAyMZ1tPdcj+7GfAAANvvuoR27joVHpxQwhua2ToM9fT93NuIVJZ3fs/OPMzefvpLpGlt16jVu1hcDiwPHTv/9Zfv5R36fbsEA+zoqZGfgkcvRybmsfku7XqO9fCZ1acoDkEeu6j//hKzv4jVtonaHXk/IIU3ths5bvXigmQAAQJYSvnfbnhNXH2XKdU069B7vM3eCvUH5Vwc2/YD3iJ/uNZ0UcGKZAx9AGfvb2Gl7Umznhez1NE/d5zlmU1wbD79R4tADF6NTi3QtXKd+s3KaSEiASpKuHD508vKN6MTUnGIto3Yuo3wXz+xmVLZ62aWv+y45I6EAkBAw2SkAGNPPdx1faBl/9tDhsPDbcc8y8hTaLdr3njh/0aTOQvKmO3K3BcuFZzYefyTpuOjYdrMd/Rb+Je/9/aXNQ3Qr75Hu5drtpZyCU/P7rYxsMuabOTqX9py+97JYz9J55KzF3n1MBQDFqdePHTh+6fr9pylZEl4TS8chXyzxcTfTADZFdWSmLndL2r37arrWiC3nlre6U/nG74y1yoeB9NnF3TuCwm48zZRqNLNyGjBl9syBVrqkdF/vPAsdEzaM8D6QxgJA9lEf56NAdIduvuTHW9d/fmhR99Xnfhuh80/Vw0P5cNuEqQHP2405tN+rNQMgv7p6wJfHJd38zm4Z1VhWm477dRfUer7VTp0saBgjB2dLDZp75sclm4LPXI1NzpOVW1Eqkg4t8lqxN4rXzWPx8nljWqcfX+2z4mT6O6dbNO/qT95zN4elW4yYs3zpTFf+zW0L5269JwWg4tu/zPLZcPRGVmPRwCG9bXRS/j51I4tlU44tm7k84NxjtnWvIQOcTKT3T118UlyuTvHdLbN8fgy5U9TKffyEQdbKmD83zfH++Xp+SQOp9Mpvq068Nuvm5twS0qMOr11/MoMFYDPOrPRatCNc3GHCgq8XTrYXX/x57qJ9CcqKTX4fxaN9ftvva3Xs08eucUHCxS3fBt6TAwDNvxuy50ySprXr8ClTxzhoJZ3fvtTvWFq5I8K3dJs2Y6yTIQOMgWj0DC+vmRNcjBnIitwfFJ4h7Nh3zJTPh9uysSc3Llp/sfRaCi2K2P7jRbndoLGTBliX)
+
+Dependendo do uso que será dado ao cartão, é importante ter em conta seu tipo quando [**se obtêm os cartões de um usuário**](/reference/#operation/get-customer-cards). Os cartões dinâmicos podem ser identificados através do campo `"object": "DYNAMIC_CARD"` da resposta.
+
+Outra desvantagem é que nem todos os serviços de pagamento suportam pagamentos com DPAN, no entanto isso é cada vez menos habitual. Se o seu comércio quer oferecer Google Pay ou Apple Pay, deve se assegurar de que o [**serviço de pagamento**](/guides/payment-services/introduction) que utiliza suporta pagamentos com DPAN.

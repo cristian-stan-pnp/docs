@@ -1,0 +1,29 @@
+---
+title: 'FirePay'
+description: 'Configurarea și integrarea serviciului de plată FirePay în Paylands'
+---
+
+* Este o metodă de plată alternativă, care generează un cod QR pentru ca utilizatorul să finalizeze fluxul prin aplicația sa bancară/crypto wallet.
+* Suportă majoritatea băncilor cele mai utilizate din zona europeană. (Spain, France, UK, Italy, Germany, Austria; Banco Santander, BBVA, Caixa Bank, Banco de Sabadell, ING, UBS, Revolut, etc.)
+
+## Integrare
+
+Integrarea se va realiza prin același proces care urmează [**integrarea simplă**](/guides/accept-payments/web-integration).
+
+La redirecționarea către URL-ul de plată, în funcție de tipul serviciului de plată utilizat, pot fi contactate două servicii sandbox diferite:
+
+* Sandbox account-to-account.
+* Sandbox crypto
+
+## Teste în sandbox account-to-account
+
+* Fineco: se poate folosi orice combinație de username/password.
+* BBVA: username 00000034B și password 123456
+* Modelo Sandbox: username mits și password mits
+* Unicaja: username user1, password 1234 și security key 123456.
+
+## Teste în sandbox pentru crypto
+
+Suma minimă va fi de 5€
+
+Simulatorul va redirecționa către o pagină externă unde se va putea selecta o criptomonedă dintr-o listă și va afișa informații despre cum se continuă tranzacția.

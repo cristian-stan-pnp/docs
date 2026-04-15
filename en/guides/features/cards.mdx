@@ -1,0 +1,145 @@
+---
+title: 'Cards Guide'
+description: 'Complete guide for managing cards in Paylands: tokenization, recurrence and more'
+---
+
+When we talk about **tokenization**, we are referring to the action of **saving a payment method for future use**. When saving the payment method, a token is generated that will allow charges to be issued to the customer without needing to request their details again.
+
+Tokenization protects sensitive data through a process of replacing the data with a non-sensitive equivalent, known as a token. The token has no external meaning or value. It is a reference, or identifier, that through a tokenization system, maps back to the sensitive data. This process securely collects sensitive credit card information and prevents data theft.
+
+<Info>
+  Although we usually call it "token" because we "tokenize" the card, we are referring to the card's UUID. The "token" field of a card is actually a value calculated from the card number, so two cards with the same [PAN](/guides/resources/glossary#pan) have different UUIDs but the same token. This token only serves to determine if two cards are the same. Whenever we want to use a card, it is necessary to provide its UUID.
+</Info>
+
+## How to save a card
+
+We can store a card in Paylands using one of the following methods:
+
+### Making a payment
+
+We can tokenize any card when making a first payment with it. The usual method for merchants that are not [PCI](/guides/resources/glossary#pci-dss) compliant is to use the [**simple integration via payment form**](/guides/accept-payments/web-integration), although it is also possible to launch the payment form via:
+
+* [Payment links](/guides/accept-payments/link-payments)
+* [Moto payments](/guides/accept-payments/moto-payments)
+* [E-commerce plugins](/guides/plugins/ecommerce).
+
+In the notification received after the payment, an object of the processed `order` is included. Within the transaction there is also the `source` object which contains the `token` of the card used in the payment. This token will from now on be linked to the customer, so in new operations payments can be confirmed for this user without needing to request the card again.
+
+These methods create an order with a [3DS](/guides/resources/glossary#3ds-2) transaction which generates a token with [SCA](/guides/resources/glossary#sca) allowing the merchant to send:
+
+* [MITs](/guides/resources/glossary#mit)
+* One-time charges (incremental)
+* Recurring charges (subscriptions)
+
+### Integrating the Tokenization SDK
+
+In the case of building a platform, web or mobile, where you want the user to be able to save their card (like Netflix, Amazon) to later issue charges either for purchases or subscriptions, we have a [**Tokenization SDK**](/guides/features/tokenization) library. With this SDK, merchants that are not PCI compliant can save and tokenize customer cards by embedding an iframe in their web/app.
+
+## Retrieving cards
+
+Once we have our customers' cards saved in Paylands, we can retrieve them and use them in different ways. The first step will be to obtain a customer's stored cards.
+
+The most common way to retrieve a customer's card is by making a call to the Paylands API method [to get a customer's cards](/reference/#operation/get-customer-cards). This method returns the list of cards stored in the system for a given `customer_ext_id`. The customer\_ext\_id must match the one used when saving the card in the system or when creating the payment order for the customer.
+
+```
+curl --request GET 'https://api.paylands.com/v1/sandbox/customer/{customer_ext_id}/cards?unique=true' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \
+```
+
+We will get as a response the list of the customer's cards with the `uuid` of each one.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2017-01-12T09:12:58+0100",  "cards": [    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 454881,      "brand": "VISA",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "12",      "expire_year": "21",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ebc9b5ffa2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d5851884c",      "type": "C",      "uuid": "90F358C9-7D3F-4334-A60D-1717CC1FBF5B"    },    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 533821,      "brand": "MASTERCARD",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "04",      "expire_year": "23",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ad49b5b1a2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d58516cba",      "type": "C",      "uuid": "0FDE261B-0E76-499D-A394-B6DCF6C03C56"    }  ]}
+```
+
+## How to use the card
+
+Once we have obtained a customer's cards, we can make payments and authorizations in different ways as explained below.
+
+### Direct payment by webservice
+
+The [**direct payment by webservice**](/reference/#operation/webservice-payment) method allows payments to be made without user intervention. This payment method is aimed at advanced merchants that handle their own recurrences, as they are the ones who decide the frequency of charges.
+
+To do this, the payment order uuid `order_uuid` and the uuid of a card `card_uuid` previously stored in the system are needed. To generate a new order we can do so by calling the [Generate payment order](/reference/#operation/generate-payment-order) method. The response will return the `order_uuid`. For security purposes, the IP of the user `customer_ip` requesting the payment is required, which can be provided in IPv4 or IPv6 format.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment/direct' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "order_uuid": "1F405EA3-9798-42A6-9E87-BD347EF67F55",  "card_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",  "customer_ip": "62.43.214.55"}'
+```
+
+When executing this method, the payment will be made without user intervention, returning the following response.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 1,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "DEFERRED",        "amount": 1,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": null,    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+If as a merchant you have the anti-fraud system enabled, it could happen that some rule is triggered and it becomes necessary to complete the charge via [3DS](/guides/resources/glossary#3ds-2). If so, the returned response will contain in the `details` field the URL to which the user must be redirected to authenticate and complete the charge.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "details": "URL_3DS",  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+<Warning>
+  Under no circumstances should this URL be modified, as its format may change in future updates. Its use is restricted to obtaining it from the request body and redirecting the user.
+</Warning>
+
+### 3DS tokenized payment
+
+This **payment method using the token of an order** is similar to the [direct payment by webservice](#direct-payment-by-webservice), with the difference that in this case the user will be shown the [3DS](/guides/resources/glossary#3ds-2) screen before completing it.
+
+To generate a new order we can do so by calling the [**Generate payment order**](/reference/#operation/generate-payment-order) method. The response will return the `order_token`. We will launch a [**3DS tokenized payment**](/reference/#operation/3ds-tokenized) adding the `order_token` of the order in the call URL.
+
+### 3DS card authorization
+
+If a [3DS](/guides/resources/glossary#3ds-2) payment has not yet been made for a card and we want to use it later to launch [direct payments by webservice](#direct-payment-by-webservice) without wanting to charge the user yet, it is possible to perform a **3DS card authorization by launching a 3DS payment of 0 euros**. In this case the user only authenticates securely so that they can later be charged by the merchant without having to intervene again. This is a common process for example in hotels or some subscription providers.
+
+We will need to generate a new payment order with the [**Generate payment order**](/reference/#operation/generate-payment-order) method, indicating in the `source_uuid` field the uuid of the card we wish to authorize and in the `amount` field the value `0`. It is also necessary to indicate the `operative` field with the value `AUTHORIZATION`.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 0,  "operative": "AUTHORIZATION",  "source_uuid": "UUID_TARJETA",  "secure": false,  "customer_ext_id": "test",  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*NombreComercio",  "expires_in": 3600}'
+```
+
+When launching the 3DS authorization order we will get the following response and the card will be authorized to issue future charges.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 0,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "AUTHORIZATION",        "amount": 0,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": "34f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec9",    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+## Dynamic cards
+
+When the user pays through a wallet like Google Pay or Apple Pay, they are not providing their card number but a pseudonym called DPAN (Device PAN). This number has the same appearance and is associated with the real PAN (Primary Account Number) of the card, however there are several limitations regarding the information we obtain and its use. These payment methods are known as **dynamic cards** in Paylands.
+
+|                    | PAN                                                         | DPAN                                                              |
+| ------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Definition**     | Unique identifier per card                                  | Unique identifier per card and device                             |
+| **Availability**   | All providers support it, does not require a wallet         | Only some providers support it, requires a wallet                 |
+| **Reusability**    | Can be reused in any type of payment                        | Can only be reused in payments without the user's presence        |
+| **Tokenization**   | The PAN is real and cannot be invalidated                   | The DPAN is an alias and the user can invalidate it later         |
+
+Because several DPANs correspond to the same PAN, dynamic cards do not contain the `token` field that is used to determine if two cards have the same PAN. Also because the DPAN is an alias and not the card number, we do not have the `BIN`, although we do have the real `last4` of the card because Google Pay and Apple Pay provide it separately. Finally, the expiration date is not provided, so we do not have it.
+
+|                         | PAN | DPAN |
+| ----------------------- | --- | ---- |
+| UUID                    | ✔   | ✔    |
+| Unique token            | ✔   | ❌    |
+| Expiration date         | ✔   | ❌    |
+| BIN                     | ✔   | ❌    |
+| Last4                   | ✔   | ✔    |
+| Holder/Alias\*          | ✔   | ✔    |
+| Debit/Credit            | ✔   | ✔    |
+| Country of issuance     | ✔   | ✔    |
+| Bank name               | ✔   | ✔    |
+| Prepaid                 | ✔   | ✔    |
+| Brand description       | ✔   | ✔    |
+
+### Advantages and disadvantages
+
+The main advantage of requesting card data through Google Pay or Apple Pay is that in some cases the payment is already considered authenticated and it is not necessary to carry out 3DS. The disadvantage is that the authentication is carried out by the wallet when it obtains the card data, so the user needs to interact with the wallet each time. This prevents [**3DS tokenized payments**](/reference/#operation/3ds-tokenized) from being launched with dynamic card UUIDs.
+
+Another advantage is that the user does not need to enter their card details if they already have them registered in their wallet. This can positively affect conversion since it is more convenient for the user to select their card. Additionally, using Google Pay or Apple Pay may be more familiar to certain users who are distrustful of entering their card details on third-party web pages.
+
+A disadvantage is that because we do not know the BIN of the card, the user will only be able to see the last 4 digits of their card to identify it. This is relevant if the user is shown the list of cards they have associated and needs to select one of them. To facilitate identification, we recommend showing the card brand along with its last 4 digits as in the following example:
+
+![Card list example](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVYAAACECAIAAABETJREAAAAA3NCSVQICAjb4U/gAAAAGXRFWHRTb2Z0d2FyZQBnbm9tZS1zY3JlZW5zaG907wO/PgAAGrtJREFUeJzt3XlcTfn/B/D359x723MlklKJqGTpVhKylX1n7EZEDcXYGTO+JsuMMWMwM362CiMmSxhhZB+qsRNabC0obUrrvd3ucj6/P65SqZS5SnPez4c/1D2fz/l8zv18Xvdzzj23SyilgBDiKqa+G4AQqk8YAQhxGkYAQpyGEYAQp2EEIMRpGAEIcRpGAEKchhGAEKdhBCDEaRgBCHEaRgBCnIYRgBCn1VkEUHHi+Z0rZ40b1LtbV5de/YdPnrNm96UkcfWfUZJHrurjKOr65Yk8dX6WSXp2SVeRyHHwj3cUaqy1XtCcu0f9d/gfvpnFfkBpNmWfp7NI1GXqnmfVFv93e2nAih6eCtixMyg85U2/2fSD3s4iUZdJAfH/nSNRRxEgjQnw8fhqx1+3X7JG7Tq0b9VY8eLG8S1LvTdEFtVNA8oiPL6GhoaGgE/qft9qRnPuHg3Y6X/49qsPykjCf3Mkqh8G/3IvDRaVxJ0O3OkfFJ6ifPObkqHD+w+tnvl1speCK3uDYiS8NhO2+C91acIAAMizY88ejTF10q6TBpSj2W99RL+63+2nRFGYkVqgZWo6KSByUn23pVpscU5aprJJy6ban0JeM83HbY8cVye7qruO10kEsIXZ2TJK9Dv0EDUpiU+Bod2wL+xKtqCS+LOB2/eF3U7MUeqb2/f//Evf4da6lXRemXUreGvgsYiYVLHAyMZ1tPdcj+7GfAAANvvuoR27joVHpxQwhua2ToM9fT93NuIVJZ3fs/OPMzefvpLpGlt16jVu1hcDiwPHTv/9Zfv5R36fbsEA+zoqZGfgkcvRybmsfku7XqO9fCZ1acoDkEeu6j//hKzv4jVtonaHXk/IIU3ths5bvXigmQAAQJYSvnfbnhNXH2XKdU069B7vM3eCvUH5Vwc2/YD3iJ/uNZ0UcGKZAx9AGfvb2Gl7Umznhez1NE/d5zlmU1wbD79R4tADF6NTi3QtXKd+s3KaSEiASpKuHD508vKN6MTUnGIto3Yuo3wXz+xmVLZ62aWv+y45I6EAkBAw2SkAGNPPdx1faBl/9tDhsPDbcc8y8hTaLdr3njh/0aTOQvKmO3K3BcuFZzYefyTpuOjYdrMd/Rb+Je/9/aXNQ3Qr75Hu5drtpZyCU/P7rYxsMuabOTqX9py+97JYz9J55KzF3n1MBQDFqdePHTh+6fr9pylZEl4TS8chXyzxcTfTADZFdWSmLndL2r37arrWiC3nlre6U/nG74y1yoeB9NnF3TuCwm48zZRqNLNyGjBl9syBVrqkdF/vPAsdEzaM8D6QxgJA9lEf56NAdIduvuTHW9d/fmhR99Xnfhuh80/Vw0P5cNuEqQHP2405tN+rNQMgv7p6wJfHJd38zm4Z1VhWm477dRfUer7VTp0saBgjB2dLDZp75sclm4LPXI1NzpOVW1Eqkg4t8lqxN4rXzWPx8nljWqcfX+2z4mT6O6dbNO/qT95zN4elW4yYs3zpTFf+zW0L5269JwWg4tu/zPLZcPRGVmPRwCG9bXRS/j51I4tlU44tm7k84NxjtnWvIQOcTKT3T118UlyuTvHdLbN8fgy5U9TKffyEQdbKmD83zfH++Xp+SQOp9Mpvq068Nuvm5twS0qMOr11/MoMFYDPOrPRatCNc3GHCgq8XTrYXX/x57qJ9CcqKTX4fxaN9ftvva3Xs08eucUHCxS3fBt6TAwDNvxuy50ySprXr8ClTxzhoJZ3fvtTvWFq5I8K3dJs2Y6yTIQOMgWj0DC+vmRNcjBnIitwfFJ4h7Nh3zJTPh9uysSc3Llp/sfRaCi2K2P7jRbndoLGTBliX)
+
+Depending on the use that will be given to the card, it is important to take into account its type when [**obtaining a user's cards**](/reference/#operation/get-customer-cards). Dynamic cards can be identified through the `"object": "DYNAMIC_CARD"` field of the response.
+
+Another disadvantage is that not all payment services support payments with DPAN, however this is becoming less common. If your business wants to offer Google Pay or Apple Pay, you must make sure that the [**payment service**](/guides/payment-services/introduction) you use supports payments with DPAN.

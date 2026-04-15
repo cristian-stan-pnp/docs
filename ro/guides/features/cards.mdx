@@ -1,0 +1,145 @@
+---
+title: 'Ghid Carduri'
+description: 'Ghid complet pentru gestionarea cardurilor in Paylands: tokenizare, recurenta si mai mult'
+---
+
+Cand vorbim despre **tokenizare**, ne referim la actiunea de **a salva o metoda de plata pentru utilizare ulterioara**. La salvarea metodei de plata se genereaza un token care va permite emiterea de incasari catre client fara a fi necesara solicitarea din nou a datelor.
+
+Tokenizarea protejeaza datele confidentiale printr-un proces de inlocuire a datelor cu un echivalent neconfidential, cunoscut sub numele de token. Tokenul nu are semnificatie sau valoare externa. Este o referinta, sau un identificator, care printr-un sistem de tokenizare, este mapat inapoi la datele confidentiale. Acest proces colecteaza in mod securizat informatiile confidentiale ale cardului de credit si previne furtul de date.
+
+<Info>
+  Desi de obicei il numim "token" deoarece "tokenizam" cardul, ne referim la UUID-ul cardului. Campul "token" al unui card este de fapt o valoare calculata din numarul cardului, astfel incat doua carduri cu acelasi [PAN](/guides/resources/glossary#pan) au UUID-uri diferite dar acelasi token. Acest token serveste doar pentru a determina daca doua carduri sunt identice. De fiecare data cand dorim sa utilizam un card este necesar sa indicam UUID-ul acestuia.
+</Info>
+
+## Cum sa salvezi un card
+
+Putem stoca un card in Paylands folosind una dintre urmatoarele metode:
+
+### Efectuand o plata
+
+Putem tokeniza orice card la efectuarea unei prime plati cu acesta. Metoda obisnuita pentru comerciantii care nu sunt [PCI](/guides/resources/glossary#pci-dss) este de a utiliza [**integrarea simpla prin formularul de plata**](/guides/accept-payments/web-integration), desi este posibil si lansarea formularului de plata prin:
+
+* [Linkuri de plata](/guides/accept-payments/link-payments)
+* [Plati Moto](/guides/accept-payments/moto-payments)
+* [Pluginuri E-commerce](/guides/plugins/ecommerce).
+
+In notificarea primita dupa plata este inclus un obiect al `comenzii` procesate. In cadrul tranzactiei exista de asemenea obiectul `source` care contine `token`-ul cardului utilizat in plata. Acest token va fi de acum inainte legat de client, astfel incat in operatiuni noi platile pot fi confirmate pentru acest utilizator fara a fi necesara solicitarea din nou a cardului.
+
+Aceste metode creeaza o comanda cu tranzactie [3DS](/guides/resources/glossary#3ds-2) care genereaza un token cu [SCA](/guides/resources/glossary#sca) permitand comerciantului sa trimita:
+
+* [MITs](/guides/resources/glossary#mit)
+* Incasari punctuale (incrementale)
+* Incasari recurente (abonamente)
+
+### Integrarea SDK-ului de Tokenizare
+
+In cazul in care construiti o platforma, web sau mobila, unde doriti ca utilizatorul sa poata salva cardul sau (precum Netflix, Amazon) pentru a-i emite ulterior incasari fie din cumparaturi fie din abonamente, dispunem de o biblioteca [**SDK de Tokenizare**](/guides/features/tokenization). Cu acest SDK, comerciantii care nu sunt PCI pot salva si tokeniza cardurile clientilor incorporand un iframe in site-ul/aplicatia lor.
+
+## Obtinerea cardurilor
+
+Odata ce avem cardurile clientilor nostri salvate in Paylands, le putem recupera si utiliza in diferite moduri. Primul pas va fi obtinerea cardurilor stocate ale unui client.
+
+Cea mai obisnuita modalitate de a recupera cardul unui client este efectuand un apel la metoda API-ului Paylands [pentru a obtine cardurile unui client](/reference/#operation/get-customer-cards). Prin aceasta metoda se obtine lista de carduri stocate in sistem pentru un `customer_ext_id` dat. customer\_ext\_id trebuie sa coincida cu cel utilizat la salvarea cardului in sistem sau la crearea comenzii de plata pentru client.
+
+```
+curl --request GET 'https://api.paylands.com/v1/sandbox/customer/{customer_ext_id}/cards?unique=true' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \
+```
+
+Vom obtine ca raspuns lista de carduri ale clientului cu `uuid`-ul fiecaruia dintre ele.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2017-01-12T09:12:58+0100",  "cards": [    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 454881,      "brand": "VISA",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "12",      "expire_year": "21",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ebc9b5ffa2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d5851884c",      "type": "C",      "uuid": "90F358C9-7D3F-4334-A60D-1717CC1FBF5B"    },    {      "additional": null,      "bank": "SERVIRED, SOCIEDAD ESPANOLA DE MEDIOS DE PAGO, S.A.",      "bin": 533821,      "brand": "MASTERCARD",      "country": "724",      "creation_date": "2020-02-18 17:22:56",      "expire_month": "04",      "expire_year": "23",      "holder": "Test user",      "is_saved": true,      "last4": "0004",      "object": "CARD",      "token": "ad49b5b1a2efcf74197734a071192817e6f2a3fc15f49c4b1bdb6edc46b16e3ab4109498bff8e6ba00fb6d2bd1838afbea67095c4caaa2f46e4acf4d58516cba",      "type": "C",      "uuid": "0FDE261B-0E76-499D-A394-B6DCF6C03C56"    }  ]}
+```
+
+## Cum sa utilizezi cardul
+
+Odata ce am obtinut cardurile unui client, putem efectua plati si autorizari in diferite moduri, asa cum este explicat mai jos.
+
+### Plata directa prin webservice
+
+Metoda de [**plata directa prin webservice**](/reference/#operation/webservice-payment) permite efectuarea platilor fara interventia utilizatorului. Aceasta forma de plata este destinata comerciantilor avansati care isi gestioneaza propriile recurente, deoarece ei sunt cei care decid periodicitatea incasarilor.
+
+Pentru aceasta este necesar uuid-ul comenzii de plata `order_uuid` si uuid-ul unui card `card_uuid` stocat anterior in sistem. Pentru a genera o comanda noua putem face acest lucru apeland metoda [Generare comanda de plata](/reference/#operation/generate-payment-order). Raspunsul ne va returna `order_uuid`. Din motive de securitate se solicita IP-ul utilizatorului `customer_ip` care solicita plata, putand fi indicat in format IPv4 sau IPv6.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment/direct' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "121149a0ba5361191d740fa898784a8b",  "order_uuid": "1F405EA3-9798-42A6-9E87-BD347EF67F55",  "card_uuid": "C10721E7-1404-45DC-8762-351DD9945D1D",  "customer_ip": "62.43.214.55"}'
+```
+
+La executarea acestei metode, plata va fi efectuata fara interventia utilizatorului, returnand urmatorul raspuns.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 1,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "DEFERRED",        "amount": 1,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": null,    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+Daca in calitate de comerciant aveti sistemul antifraud activat, ar putea aparea cazul in care o regula sa fie declansata si sa fie necesar finalizarea incasarii prin [3DS](/guides/resources/glossary#3ds-2). In acest caz, raspunsul returnat va contine in campul `details` URL-ul catre care utilizatorul trebuie redirectionat pentru a se autentifica si a putea finaliza incasarea.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "details": "URL_3DS",  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+<Warning>
+  Sub nicio circumstanta nu trebuie modificat acest URL, deoarece formatul sau poate varia in actualizari viitoare. Utilizarea sa se restrange la obtinerea sa din corpul cererii si redirectionarea utilizatorului.
+</Warning>
+
+### Plata tokenizata 3DS
+
+Aceasta metoda de **plata prin tokenul unei comenzi** este similara cu [plata directa prin webservice](#plata-directa-prin-webservice), cu diferenta ca in acest caz utilizatorului i se va afisa ecranul [3DS](/guides/resources/glossary#3ds-2) inainte de finalizare.
+
+Pentru a genera o comanda noua putem face acest lucru apeland metoda [**Generare comanda de plata**](/reference/#operation/generate-payment-order). Raspunsul ne va returna `order_token`. Vom lansa o [**plata tokenizata 3DS**](/reference/#operation/3ds-tokenized) adaugand `order_token`-ul comenzii in URL-ul apelului.
+
+### Autorizare 3DS a cardului
+
+Daca pentru un card nu s-a efectuat inca o plata [3DS](/guides/resources/glossary#3ds-2) si dorim sa il utilizam ulterior pentru a lansa [plati directe prin webservice](#plata-directa-prin-webservice) fara a dori sa incasam inca de la utilizator, este posibil sa efectuam o **autorizare 3DS a cardului lansand o plata 3DS de 0 euro**. In acest caz utilizatorul doar se autentifica in mod securizat pentru ca ulterior sa poata fi incasat de catre comerciant fara a mai fi nevoie sa intervina din nou. Acesta este un proces obisnuit de exemplu in hoteluri sau la unii furnizori de abonamente.
+
+Va trebui sa generam o noua comanda de plata cu metoda [**Generare comanda de plata**](/reference/#operation/generate-payment-order) indicand in campul `source_uuid` uuid-ul cardului pe care dorim sa il autorizam si in campul `amount` valoarea `0`. De asemenea este necesar sa indicam campul `operative` cu valoarea `AUTHORIZATION`.
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: pk_test_3c140607778e1217f56ccb8b50540e00' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "341f7de8e6fc49da8d8736473af6b03a",  "amount": 0,  "operative": "AUTHORIZATION",  "source_uuid": "UUID_TARJETA",  "secure": false,  "customer_ext_id": "test",  "service": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "template_uuid": "6412549E-933E-4DFE-A225-2E87FBF7623E",  "dcc_template_uuid": "BF418CA6-7043-4864-B36F-F02C2CF2B76B",  "save_card": true,  "reference": "50620",  "dynamic_descriptor": "PNP*NombreComercio",  "expires_in": 3600}'
+```
+
+La lansarea comenzii de autorizare 3DS vom obtine urmatorul raspuns si cardul va fi autorizat pentru emiterea de incasari viitoare.
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2021-12-28T13:51:27+0100",  "order": {    "uuid": "91016708-967B-4B58-AD6B-94776C9F7220",    "created": "2021-12-28T13:51:18+0100",    "created_from_client_timezone": "2021-12-28T14:51:18+0200",    "amount": 0,    "currency": "978",    "paid": false,    "status": "PENDING_CONFIRMATION",    "safe": false,    "refunded": 0,    "additional": "",    "service": "CREDORAX",    "service_uuid": "9A1BDCC8-DB30-4ED2-8523-62B330A67873",    "customer": "test",    "cof_txnid": "887001863998888",    "transactions": [      {        "uuid": "580B8D14-FEB0-4DF4-BF81-7B22BFE0F26E",        "created": "2021-12-28T13:51:22+0100",        "created_from_client_timezone": "2021-12-28T14:51:22+0200",        "operative": "AUTHORIZATION",        "amount": 0,        "authorization": "055005",        "processor_id": "XZZ727f5d8192a0c0DCY5FKHSB3MVA6N",        "status": "SUCCESS",        "error": "NONE",        "source": {          "object": "CARD",          "uuid": "7088F344-4261-4244-B0E3-CAEE35E4ADB3",          "type": "",          "token": "f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec934f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8",          "brand": "VISA",          "country": "US",          "holder": "Paco",          "bin": 476173,          "last4": "0016",          "is_saved": true,          "expire_month": "09",          "expire_year": "23",          "additional": null,          "bank": "",          "prepaid": "",          "validation_date": "2021-12-28 13:51:26",          "creation_date": "2021-12-28 13:50:45",          "brand_description": null        },        "antifraud": null,        "device": null      }    ],    "token": "34f1100d8fc6930910ccd634ecc81c0aa7a1b3b721a739f2bac8aa4eedc0d529806d8f41fdb5764efad821b2527aeaaf236e29d010771ea5a73ba26044526ec9",    "ip": "127.0.0.1",    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"  }}
+```
+
+## Carduri dinamice
+
+Cand utilizatorul plateste printr-un portofel digital precum Google Pay sau Apple Pay, nu furnizeaza numarul cardului sau ci un pseudonim numit DPAN (Device PAN). Acest numar are aceeasi aparenta si este asociat cu PAN-ul (Primary Account Number) real al cardului, insa exista mai multe limitari in ceea ce priveste informatiile pe care le obtinem si utilizarea acestora. Aceste metode de plata sunt cunoscute sub numele de **carduri dinamice** in Paylands.
+
+|                    | PAN                                                         | DPAN                                                              |
+| ------------------ | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Definitie**      | Identificator unic per card                                 | Identificator unic per card si dispozitiv                         |
+| **Disponibilitate**| Toti furnizorii il suporta, nu necesita un portofel         | Doar unii furnizori il suporta, necesita un portofel              |
+| **Reutilizare**    | Poate fi reutilizat in orice tip de plata                   | Poate fi reutilizat doar in plati fara prezenta utilizatorului    |
+| **Tokenizare**     | PAN-ul este real si nu poate fi invalidat                   | DPAN-ul este un alias si utilizatorul il poate invalida ulterior  |
+
+Deoarece mai multe DPAN-uri corespund aceluiasi PAN, cardurile dinamice nu contin campul `token` care este utilizat pentru a determina daca doua carduri au acelasi PAN. De asemenea, deoarece DPAN-ul este un alias si nu numarul cardului, nu dispunem de `BIN`, desi avem `last4`-ul real al cardului deoarece Google Pay si Apple Pay il furnizeaza separat. In cele din urma, data de expirare nu este furnizata, deci nu dispunem de aceasta.
+
+|                         | PAN | DPAN |
+| ----------------------- | --- | ---- |
+| UUID                    | ✔   | ✔    |
+| Token unic              | ✔   | ❌    |
+| Data de expirare        | ✔   | ❌    |
+| BIN                     | ✔   | ❌    |
+| Last4                   | ✔   | ✔    |
+| Holder/Alias\*          | ✔   | ✔    |
+| Debit/Credit            | ✔   | ✔    |
+| Tara de emisiune        | ✔   | ✔    |
+| Numele bancii           | ✔   | ✔    |
+| Prepaid                 | ✔   | ✔    |
+| Descrierea marcii       | ✔   | ✔    |
+
+### Avantaje si dezavantaje
+
+Principalul avantaj al solicitarii datelor cardului prin Google Pay sau Apple Pay este ca in unele cazuri plata este deja considerata autentificata si nu este necesar sa se efectueze 3DS. Dezavantajul este ca autentificarea este efectuata de portofelul digital cand obtine datele cardului, asa ca este necesar ca utilizatorul sa interactioneze cu portofelul de fiecare data. Acest lucru previne lansarea de [**plati tokenizate 3DS**](/reference/#operation/3ds-tokenized) cu UUID-uri de carduri dinamice.
+
+Un alt avantaj este ca utilizatorul nu trebuie sa introduca datele cardului sau daca le are deja inregistrate in portofelul sau. Acest lucru poate afecta pozitiv conversia deoarece pentru utilizator este mai comod sa selecteze cardul sau. In plus, utilizarea Google Pay sau Apple Pay poate fi mai familiara pentru anumiti utilizatori care nu au incredere sa introduca datele cardului pe pagini web ale tertilor.
+
+Un dezavantaj este ca, deoarece nu cunoastem BIN-ul cardului, utilizatorul va putea vedea doar ultimele 4 cifre ale cardului sau pentru a-l identifica. Acest lucru este relevant daca utilizatorului i se afiseaza lista de carduri pe care le are asociate si trebuie sa selecteze unul dintre ele. Pentru a facilita identificarea, recomandam afisarea marcii cardului impreuna cu ultimele sale 4 cifre ca in urmatorul exemplu:
+
+![Exemplu de lista de carduri](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVYAAACECAIAAABETJREAAAAA3NCSVQICAjb4U/gAAAAGXRFWHRTb2Z0d2FyZQBnbm9tZS1zY3JlZW5zaG907wO/PgAAGrtJREFUeJzt3XlcTfn/B/D359x723MlklKJqGTpVhKylX1n7EZEDcXYGTO+JsuMMWMwM362CiMmSxhhZB+qsRNabC0obUrrvd3ucj6/P65SqZS5SnPez4c/1D2fz/l8zv18Xvdzzj23SyilgBDiKqa+G4AQqk8YAQhxGkYAQpyGEYAQp2EEIMRpGAEIcRpGAEKchhGAEKdhBCDEaRgBCHEaRgBCnIYRgBCn1VkEUHHi+Z0rZ40b1LtbV5de/YdPnrNm96UkcfWfUZJHrurjKOr65Yk8dX6WSXp2SVeRyHHwj3cUaqy1XtCcu0f9d/gfvpnFfkBpNmWfp7NI1GXqnmfVFv93e2nAih6eCtixMyg85U2/2fSD3s4iUZdJAfH/nSNRRxEgjQnw8fhqx1+3X7JG7Tq0b9VY8eLG8S1LvTdEFtVNA8oiPL6GhoaGgE/qft9qRnPuHg3Y6X/49qsPykjCf3Mkqh8G/3IvDRaVxJ0O3OkfFJ6ifPObkqHD+w+tnvl1speCK3uDYiS8NhO2+C91acIAAMizY88ejTF10q6TBpSj2W99RL+63+2nRFGYkVqgZWo6KSByUn23pVpscU5aprJJy6ban0JeM83HbY8cVye7qruO10kEsIXZ2TJK9Dv0EDUpiU+Bod2wL+xKtqCS+LOB2/eF3U7MUeqb2/f//Evf4da6lXRemXUreGvgsYiYVLHAyMZ1tPdcj+7GfAAANvvuoR27joVHpxQwhua2ToM9fT93NuIVJZ3fs/OPMzefvpLpGlt16jVu1hcDiwPHTv/9Zfv5R36fbsEA+zoqZGfgkcvRybmsfku7XqO9fCZ1acoDkEeu6j//hKzv4jVtonaHXk/IIU3ths5bvXigmQAAQJYSvnfbnhNXH2XKdU069B7vM3eCvUH5Vwc2/YD3iJ/uNZ0UcGKZAx9AGfvb2Gl7Umznhez1NE/d5zlmU1wbD79R4tADF6NTi3QtXKd+s3KaSEiASpKuHD508vKN6MTUnGIto3Yuo3wXz+xmVLZ62aWv+y45I6EAkBAw2SkAGNPPdx1faBl/9tDhsPDbcc8y8hTaLdr3njh/0aTOQvKmO3K3BcuFZzYefyTpuOjYdrMd/Rb+Je/9/aXNQ3Qr75Hu5drtpZyCU/P7rYxsMuabOTqX9py+97JYz9J55KzF3n1MBQDFqdePHTh+6fr9pylZEl4TS8chXyzxcTfTADZFdWSmLndL2r37arrWiC3nlre6U/nG74y1yoeB9NnF3TuCwm48zZRqNLNyGjBl9syBVrqkdF/vPAsdEzaM8D6QxgJA9lEf56NAdIduvuTHW9d/fmhR99Xnfhuh80/Vw0P5cNuEqQHP2405tN+rNQMgv7p6wJfHJd38zm4Z1VhWm477dRfUer7VTp0saBgjB2dLDZp75sclm4LPXI1NzpOVW1Eqkg4t8lqxN4rXzWPx8nljWqcfX+2z4mT6O6dbNO/qT95zN4elW4yYs3zpTFf+zW0L5269JwWg4tu/zPLZcPRGVmPRwCG9bXRS/j51I4tlU44tm7k84NxjtnWvIQOcTKT3T118UlyuTvHdLbN8fgy5U9TKffyEQdbKmD83zfH++Xp+SQOp9Mpvq068Nuvm5twS0qMOr11/MoMFYDPOrPRatCNc3GHCgq8XTrYXX/x57qJ9CcqKTX4fxaN9ftvva3Xs08eucUHCxS3fBt6TAwDNvxuy50ySprXr8ClTxzhoJZ3fvtTvWFq5I8K3dJs2Y6yTIQOMgWj0DC+vmRNcjBnIitwfFJ4h7Nh3zJTPh9uysSc3Llp/sfRaCi2K2P7jRbndoLGTBliX)
+
+In functie de utilizarea care va fi data cardului, este important sa se tina cont de tipul acestuia cand [**se obtin cardurile unui utilizator**](/reference/#operation/get-customer-cards). Cardurile dinamice pot fi identificate prin campul `"object": "DYNAMIC_CARD"` al raspunsului.
+
+Un alt dezavantaj este ca nu toate serviciile de plata suporta plati cu DPAN, insa acest lucru este din ce in ce mai putin obisnuit. Daca afacerea dumneavoastra doreste sa ofere Google Pay sau Apple Pay, trebuie sa va asigurati ca [**serviciul de plata**](/guides/payment-services/introduction) pe care il utilizati suporta plati cu DPAN.

@@ -1,0 +1,106 @@
+---
+title: 'Cofidis'
+description: 'Aceite pagamentos com Cofidis (4xCard e Cofidis Pay) em Espanha através da API da Paylands'
+---
+
+# Cofidis
+
+Através deste método de pagamento, o utilizador será redirecionado para a página de pagamento da Cofidis, onde deverá fornecer as informações necessárias. No caso do 4xcard, será necessário o documento de identidade e o cartão do titular, enquanto no caso do produto Cofidis Pay será necessário o documento de identidade e um comprovativo bancário de titularidade.
+
+O processo de integração é [**semelhante ao da página de pagamento por redirecionamento**](/guides/accept-payments/web-integration).
+
+```
+/payment/process/{token}
+```
+
+A Cofidis espera receber obrigatoriamente um email no campo extra\_data ao criar a ordem:
+
+```json
+"extra_data": {
+    "profile": {
+      "first_name": "",
+      "last_name": "",
+      "email": "johndoe@paynopain.com"
+    }
+}
+```
+
+## Integração
+
+Para efetuar um pagamento com Cofidis, devemos seguir os seguintes passos:
+
+### 1. Gerar a ordem de pagamento no seu servidor
+
+Crie a ordem da mesma forma que faria para realizar uma [**integração simples**](/guides/accept-payments/web-integration).
+
+A ordem será configurada com `secure=false`.
+
+Como identificador de serviço, forneça o **service\_uuid** do serviço COFIDIS configurado para um dos dois produtos Cofidis que deseja, que encontrará em **Backend da Paylands → Administrar → Serviços de pagamento → [Lista](https://backend.paylands.com/payment-services/list)**.
+
+Se ainda não tem o serviço Cofidis ativado, deverá solicitar a sua ativação em **[soporte@paylands.com](mailto:soporte@paylands.com)**.
+
+Uma vez aqui, geramos a ordem com o seguinte pedido:
+
+```
+curl --request POST 'https://api.paylands.com/v1/sandbox/payment' \--header 'Authorization: Bearer [API_KEY]' \--header 'Content-Type: application/json' \--data-raw '{  "signature": "[SIGNATURE]",  "amount": 10000,  "operative": "AUTHORIZATION",  "secure": false,  "customer_ext_id": "test",  "service": "[SERVICE_UUID]",  "description": "Payment #1",  "additional": null,  "url_post": "https://my.website.com/process",  "url_ok": "https://my.website.com/ok",  "url_ko": "https://my.website.com/ko",  "source_uuid": null}'
+```
+
+Obtendo como resposta:
+
+```
+{  "message": "OK",  "code": 200,  "current_time": "2022-07-19T13:36:32+0200",  "order": {    "uuid": "997BFC59-2407-4CFD-A518-0FCE478AB7D5",    "created": "2022-07-19T13:36:32+0200",    "created_from_client_timezone": "2022-07-19T14:36:32+0300",    "amount": 50000,    "currency": "978",    "paid": false,    "status": "CREATED",    "safe": false,    "refunded": 0,    "additional": "Paylands test",    "service": "COFIDIS",    "service_uuid": "AB567191-DCCC-4143-81DA-5F1ED5F68B47",    "customer": "test",    "cof_txnid": null,    "transactions": [],    "token": "69694f7765bba3d5d7da3f401d304bef151c8eded8ceac43c48e3b852368502d815c86d0a6e901f031ae13fea256f0ac8d99d7cea7c369b4683b8f7c4db52b95",    "ip": null,    "reference": null,    "dynamic_descriptor": null,    "threeds_data": null  },  "client": {    "uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"}}
+```
+
+### 2. Redirecionar o cliente para o formulário de pagamento
+
+Construímos o URL de redirecionamento para a gateway da Cofidis utilizando o **token** da ordem devolvido na chamada anterior.
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}
+```
+
+Podemos apresentar ao utilizador um botão de pagamento com Cofidis como o seguinte:
+
+```
+<a href="https://api.paylands.com/v1/sandbox/payment/process/{token}">  <img src="cofidis-logo.png" alt="Cofidis Logo" style="width:200px; height:auto;"/></a>
+```
+
+![Cofidis button](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAABMWlDQ1BBZG9iZSBSR0IgKDE5OTgpAAAoz62OsUrDUBRAz4ui4lArBHFweJMoKLbqYMakLUUQrNUhydakoUppEl5e1X6Eo1sHF3e/wMlRcFD8Av9AcergECGDgwie6dzD5XLBqNh1p2GUYRBr1W460vV8OfvEDFMA0Amz1G61DgDiJI74wecrAuB50647Df7GfJgqDUyA7W6UhSAqQP9CpxrEGDCDfqpB3AGmOmnXQDwApV7uL0ApyP0NKCnX80F8AGbP9Xww5gAzyH0FMHV0qQFqSTpSZ71TLauWZUm7mwSRPB5lOhpkcj8OE5UmqqOjLpD/B8BivthuOnKtall76/wzrufL3N6PEIBYeixaQThU598qjJ3f5+LGeBkOb2F6UrTdK7jZgIXroq1WobwF9+MvwMZP/U6/OGUAAAAJcEhZcwAACxMAAAsTAQCanBgAAAXCaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjYtYzE0MiA3OS4xNjA5MjQsIDIwMTcvMDcvMTMtMDE6MDY6MzkgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDQyAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIyLTA3LTIwVDA5OjUwOjE0KzAyOjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIyLTA3LTIwVDA5OjUwOjE0KzAyOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMi0wNy0yMFQwOTo1MDoxNCswMjowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDowOTI4ZDVmNS0xOGEyLWJiNDYtOGJlZS1lYmNlZGJjZGFkY2MiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDoxYjNjZmUzMC0zOTU1LTdmNDktOTRmZC00NTE3NDE0YjMyZDYiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpkZWQyYmI2Ni0xN2E4LTkzNGItYjRlZS1iZWNlOThjNDc2OGYiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIj4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDpkZWQyYmI2Ni0xN2E4LTkzNGItYjRlZS1iZWNlOThjNDc2OGYiIHN0...)
+
+Ao clicar no botão, o utilizador será redirecionado para a gateway da Cofidis.
+
+![Cofidis Form](/images/docs/apm/assets/images/cofidis-fourxcard-2e2430871a11525867e8777c63674e90.png)
+
+### 3. Introduzir dados e código de validação
+
+Uma vez redirecionado o utilizador para a página da Cofidis, este deverá introduzir as suas informações pessoais e, no caso do Cofidis Pay, selecionar o número de prestações desejado.
+
+Uma vez preenchido o formulário, a Cofidis determinará se aprova ou rejeita o financiamento, sendo o utilizador redirecionado para o URL OK/KO de volta, dependendo do resultado.
+
+### 4. Notificação ao servidor
+
+Uma vez concluído o processo de pagamento, será recebida a notificação POST, que será semelhante a um [**pagamento por webservice**](/reference/#operation/webservice-payment), exceto pelos seguintes detalhes:
+
+* A chave `source` que contém os detalhes do cartão utilizado, que aparece em `order.transactions.[n].source`, conterá o valor `null`.
+
+* Os pagamentos COFIDIS suportam apenas autorizações `AUTHORIZATION` como operativa.
+
+## Testes
+
+Para realizar testes no ambiente sandbox e forçar a operação a ser OK/KO, é necessário ter em conta qual é o produto COFIDIS que estamos a utilizar.
+
+Para o produto Cofidis Pay, será solicitado o preenchimento de um formulário com as informações do utilizador que solicita o financiamento. Para concluir com sucesso os testes no ambiente sandbox, recomenda-se utilizar montantes específicos, como 50000 (500,00€), assim como introduzir no campo do primeiro apelido "IP+Apelido" (IPExemplo), de forma a evitar a solicitação de documentação real neste ambiente de testes.
+
+Para o 4xcard, será necessário fornecer as informações de um utilizador da Cofidis e um cartão. Podemos utilizar os seguintes cartões:
+
+```
+OK MC: 5132830960047108 03/24 462
+OK VISA: 4977830259527191 03/24 153
+KO: 5132830960047199 03/24 813
+```
+
+O URL de sandbox para os pagamentos Cofidis é o seguinte:
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}
+```
