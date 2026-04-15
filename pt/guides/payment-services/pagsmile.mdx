@@ -1,0 +1,205 @@
+---
+title: 'Pagsmile'
+description: 'Configuração e integração do serviço de pagamento Pagsmile no Paylands'
+---
+
+## Introdução
+
+Pagsmile é um serviço que permite realizar pagamentos por cartão ou através dos métodos de pagamento alternativos PIX, Loterica e Boleto. Também permite PIX Payouts e Bank Transfer Payouts. Pode ser utilizado tanto no checkout do Paylands como mediante redirecionamento, assim como com pagamentos push.
+
+## Dados extras obrigatórios
+
+Pagsmile espera receber as seguintes informações no campo `extra_data` ao criar a ordem. Os campos a serem enviados variam dependendo do método de pagamento escolhido.
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "11032341882",        "phone": {            "number": "700000000",            "prefix": "351"        }     },    "billing_address": {        "address1": "calle test",        "city": "",        "state_code": "",        "zip_code": "38082365",        "country": "BRL"    }}
+```
+
+* Pagamento com cartão: não necessita de `extra_data`
+* PIX: nome, email e documento de identificação (CPF)
+* Loterica: nome, email, documento de identificação (CPF) e número de telefone
+* Boleto: nome, email, documento de identificação (CPF) e código postal (`zip_code`)
+
+## Payouts
+
+Pagsmile permite payouts em diferentes países usando os seguintes métodos de pagamento:
+
+### Brasil
+
+#### PIX Payout
+
+Campos obrigatórios:
+
+* **Nome e sobrenome** (`profile.first_name` e `profile.last_name`)
+* **Número de documento de identificação (CPF)** (`profile.document_identification_number`)
+
+Os payouts PIX serão realizados usando o CPF como tipo de conta por padrão. Se desejar utilizar outro tipo de conta, deve ser indicado ao criar a ordem, enviando o campo `extra_data.payment.account_type`, juntamente com o campo associado para cada tipo, onde deve ser indicado o valor da conta correspondente:
+
+| Tipo de conta | Conta                                                | Descrição                                                               | Exemplo                                               |
+| -------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------- |
+| CPF            | extra\_data.profile.document\_identification\_number | CPF. 11 dígitos.                                                        | 22\*\*\*\*\*\*\*99                                    |
+| PHONE          | extra\_data.profile.phone.number                     | Número de telefone, sem prefixo telefônico.                             | 11987654321                                           |
+| EMAIL          | extra\_data.profile.email                            | Endereço de e-mail.                                                     | [merchant@pagsmile.com](mailto:merchant@pagsmile.com) |
+| EVP            | extra\_data.payment.evp                              | Chave alfanumérica de 32 caracteres, que vincula a uma conta bancária.  | a1073db4-a3a0-11ed-a8fc-0242ac120002                  |
+
+O seguinte exemplo mostra o `extra_data` enviado na criação de ordem para um payout PIX, usando `EMAIL` como tipo de conta:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "merchant@pagsmile.com",        "document_identification_number": "842.359.516-10"     },    "payment": {        "account_type": "EMAIL"    }}
+```
+
+#### Bank Transfer Payout Brasil (Transfer)
+
+Campos obrigatórios:
+
+* **Nome e sobrenome** (`profile.first_name` e `profile.last_name`)
+* **Número de documento de identificação (CPF)** (`profile.document_identification_number`)
+* **Código de banco** (`payment.bank_code`) [Ver códigos de banco do Brasil](https://docs.pagsmile.com/payout/bank-code/bank-in-brazil)
+* **Branch** (`payment.branch`)
+* **Número de conta** (`payment.account`)
+* **Tipo de conta** (`payment.account_type`): valores `SAVINGS` ou `CHECKING`
+
+No caso de Bank Transfer Payouts também será necessário enviar as informações da conta bancária no campo `payment`:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "document_identification_number": "842.359.516-10"     },    "payment": {        "bank_code": "001",        "branch": "0002",        "account": "123412341",        "account_type": "CHECKING"    }}
+```
+
+### Colômbia
+
+#### Tpaga
+
+Campos obrigatórios:
+
+* **Nome e sobrenome** (`profile.first_name` e `profile.last_name`)
+* **País** (`billing_address.country`): valor fixo `COL`
+* **Número de telefone** (`profile.phone.number`)
+* **Tipo de conta** (`payment.account_type`): valor fixo `PHONE`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "phone": {            "number": "322222222"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "account_type": "PHONE"    }}
+```
+
+#### Transfiya
+
+Os pagamentos com Transfiya requerem `amount` >= 1000 COP.
+
+Campos obrigatórios:
+
+* **Nome e sobrenome** (`profile.first_name` e `profile.last_name`)
+* **Número de documento de identificação** (`profile.document_identification_number`)
+* **Tipo de documento de identificação** (`profile.document_identification_type`) [Ver tipos de documento de identificação](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **País** (`billing_address.country`): valor fixo `COL`
+* **Número de telefone** (`profile.phone.number`)
+* **Tipo de conta** (`payment.account_type`): valor fixo `PHONE`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "123456789",        "phone": {            "number": "572222222222"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "account_type": "PHONE"    }}
+```
+
+#### Bank Transfer Payout Colômbia (Transfer)
+
+Campos obrigatórios:
+
+* **Nome e sobrenome** (`profile.first_name` e `profile.last_name`)
+* **Número de documento de identificação** (`profile.document_identification_number`)
+* **Tipo de documento de identificação** (`profile.document_identification_type`) [Ver tipos de documento de identificação](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **País** (`billing_address.country`): valor fixo `COL`
+* **Código de banco** (`payment.bank_code`) [Ver códigos de banco da Colômbia](https://docs.pagsmile.com/payout/bank-code/bank-in-colombia)
+* **Número de conta** (`payment.account`)
+* **Tipo de conta** (`payment.account_type`): valores `SAVINGS` ou `CHECKING`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "email": "test@pagsmile.com",        "document_identification_number": "123456789",        "phone": {            "number": "012345678910"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "bank_code": "007",        "account": "57012345678910",        "account_type": "CHECKING"    }}
+```
+
+### Chile
+
+#### Vita Wallet
+
+Os pagamentos com Vita Wallet requerem `amount` >= 5000 CLP.
+
+Campos obrigatórios:
+
+* **Nome e sobrenome** (`profile.first_name` e `profile.last_name`)
+* **País** (`billing_address.country`): valor fixo `CHL`
+* **Email** (`profile.email`)
+* **Tipo de conta** (`payment.account_type`): valor fixo `EMAIL`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "email": "paid@pagsmile.com"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "CHL"    },    "payment": {        "account_type": "EMAIL"    }}
+```
+
+#### Bank Transfer Payout Chile (Transfer)
+
+Campos obrigatórios:
+
+* **Nome e sobrenome** (`profile.first_name` e `profile.last_name`)
+* **Número de documento de identificação** (`profile.document_identification_number`)
+* **Tipo de documento de identificação** (`profile.document_identification_type`) [Ver tipos de documento de identificação](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **País** (`billing_address.country`): valor fixo `CHL`
+* **Código de banco** (`payment.bank_code`) [Ver códigos de banco do Chile](https://docs.pagsmile.com/payout/bank-code/bank-in-chile)
+* **Número de conta** (`payment.account`)
+* **Tipo de conta** (`payment.account_type`): valores `SAVINGS` ou `CHECKING`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "111111111"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "CHL"    },    "payment": {        "account_type": "CHECKING",        "account": "222222222222",        "bank_code": "001"    }}
+```
+
+### México
+
+#### SPEI Payout
+
+Campos obrigatórios:
+
+* **Nome e sobrenome** (`profile.first_name` e `profile.last_name`)
+* **Número de documento de identificação** (`profile.document_identification_number`)
+* **Tipo de documento de identificação** (`profile.document_identification_type`) [Ver tipos de documento de identificação](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n)
+* **País** (`billing_address.country`): valor fixo `MEX`
+* **Tipo de conta** (`payment.account_type`): valores `DEBIT`, `PHONE` ou `CLABE`
+* **Número de conta** (`payment.account`) Obrigatório se `account_type` for **diferente** de `PHONE`
+* **Número de telefone** (`profile.phone.number`) Obrigatório **apenas** se `account_type` for `PHONE`
+* **Código de banco** (`payment.bank_code`). Obrigatório se `payment.account_type` for **diferente** de CLABE. [Ver códigos de banco do México](https://docs.pagsmile.com/payout/bank-code/bank-in-mexico)
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "111111111"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "MEX"    },    "payment": {        "account_type": "CLABE",        "account": "646020146401877826"    }}
+```
+
+## Tipo de documento de identificação
+
+Deve-se indicar o tipo de documento de identificação dentro do `extra_data` no campo `profile.document_identification_type`. Por padrão, se não for indicado, será utilizado o valor **NATIONAL\_IDENTITY\_DOCUMENT**.
+
+A seguir são mostrados os possíveis valores desse campo e suas equivalências para os diferentes tipos de documentos de cada país:
+
+|                                       | Brasil | Colombia | Chile | México |
+| ------------------------------------- | ------ | -------- | ----- | ------ |
+| **NATIONAL\_IDENTITY\_DOCUMENT**      | CPF    | CC       | RUN   | CURP   |
+| **FOREIGN\_IDENTIFICATION\_DOCUMENT** | -      | CE       | CE    | -      |
+| **FISCAL\_IDENTIFICATION\_CODE**      | -      | -        | RUT   | RFC    |
+| **VALID\_PASSPORT**                   | -      | -        | PAS   | -      |
+
+## Métodos de pagamento em Sandbox
+
+O cartão de teste é o seguinte. Em geral, a data de validade e o CVV não importam desde que a data seja posterior à data atual e o CVV tenha 3 dígitos.
+
+```
+- número de tarjeta: 4111 1111 1111 1111- CVV: 123- fecha de expiración: 12/34
+```
+
+## Moeda
+
+As moedas suportadas para este serviço são o real brasileiro (BRL), o peso colombiano (COP), o peso chileno (CLP) e o peso mexicano (MXN).
+
+## Códigos de erro
+
+A estrutura do erro tem o seguinte formato:
+
+```
+Código - Mensaje
+```
+
+Por exemplo:
+
+```
+4001001 - invalid document_id
+```
