@@ -7,7 +7,7 @@ description: 'Acepta pagos con Cofidis (4xCard y Cofidis Pay) en España a trav�
 
 Mediante este método de pago, el usuario será redirigido a la carta de pago de Cofidis, donde deberá aportar la información requerida, siendo necesario, en el caso de 4xcard, el documento de identidad y la tarjeta del titular, mientras que en el caso del producto Cofidis Pay se requerirá el documento de identidad y un justificante bancario de titularidad.
 
-El proceso de integración es [**similar al de la carta de pago por redirección**](/docs/integration/simple-integration).
+El proceso de integración es [**similar al de la carta de pago por redirección**](/guides/accept-payments/web-integration).
 
 ```
 /payment/process/{token}
@@ -31,7 +31,7 @@ Para hacer un pago en Cofidis debemos seguir los siguientes pasos:
 
 ### 1. Generar la orden de pago en tu servidor
 
-Crea la orden igual que harías para realizar una [**integración simple**](/docs/integration/simple-integration#1-generar-la-orden-de-pago-en-tu-servidor).
+Crea la orden igual que harías para realizar una [**integración simple**](/guides/accept-payments/web-integration).
 
 La orden será configurada con `secure=false`.
 
