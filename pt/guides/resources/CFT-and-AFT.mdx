@@ -166,36 +166,6 @@ Se não se enviar o campo `aft`, a Paylands pode aplicar **AFT de tipo `ACCOUNT_
 
 ### Campos destacados
 
-Dentro de `extra_data.aft` os campos relevantes são:
-
-```json
-"extra_data": {
-  "profile": {
-    "first_name": "Luis",
-    "last_name": "Cliente",
-    "email": "luis@example.com",
-    "birthdate": "1990-01-01"
-  },
-  "billing_address": {
-    "country": "ESP",
-    "address1": "Calle Ejemplo 123",
-    "city": "Castellón",
-    "zip_code": "12001",
-    "state_code": "CT"
-  },
-  "aft": {
-    "type": "PERSON_TO_PERSON",
-    "receiver": {
-      "first_name": "Ana",
-      "last_name": "Receptora",
-      "country": "ESP",
-      "account_number": "4111111111111111",
-      "account_type": "CARD_NUMBER"
-    }
-  }
-}
-```
-
 Campos chave:
 
 - `aft.type` (obrigatório): [NONE, ACCOUNT_TO_ACCOUNT, PERSON_TO_PERSON]
