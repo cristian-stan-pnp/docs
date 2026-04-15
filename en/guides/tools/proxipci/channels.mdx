@@ -52,7 +52,7 @@ In this case, you would need to create a channel of type **PUSH + TOKENIZATION**
 
 Once you have created the channel using the PROXY PCI REST API, you can update the channel manager's configuration and replace your endpoint with the proxy PCI channel invocation endpoint (e.g.: `https://pci-proxy-api.paynopain.com/production/channel/1df28290-f3cd-411f-9f5f-6b844fe6aaa4/invoke`).
 
-This way, the channel manager will invoke PROXY PCI, which will do its magic and finally forward the bookings to your configured endpoint, having replaced all card PANs with a token version of it. This token can be stored by you and used to issue a payment or forward it to another third party.
+This way, the channel manager will invoke PROXY PCI, which will do its magic and finally forward the bookings to your configured endpoint, having replaced all card PANs with a token version of them. This token can be stored by you and used to issue a payment or forward it to another third party.
 
 ## PULL + TOKENIZATION
 
