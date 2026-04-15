@@ -39,7 +39,7 @@ Primero, debemos obtener los campos `order`, `client` y `extra_data` proveniente
 Como ya hemos mencionado antes, el campo `extra_data` puede no aparecer si este no se mandó en la petición inicial enviada por el comercio.
 
 ```
-<?php$jsonObject = json_decode($response);$array['order'] = $jsonObject->order;$array['client'] = $jsonObject->client;$array['extra_data'] = $jsonObject->extra_data;$data = json_encode($array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);$signature ='341f7de8e6fc49da8d8736473af6b03a';$validationHash = hash('sha256', $data . $signature);
+<?php $jsonObject = json_decode($response);$array['order'] = $jsonObject->order;$array['client'] = $jsonObject->client;$array['extra_data'] = $jsonObject->extra_data;$data = json_encode($array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);$signature ='341f7de8e6fc49da8d8736473af6b03a';$validationHash = hash('sha256', $data . $signature);
 ```
 
 El `$validationHash` que se obtiene debe ser idéntico al recibido en la notificación de Paylands. Se puede utilizar el ejemplo anterior para las pruebas necesarias, puesto que se trata de un caso real.
