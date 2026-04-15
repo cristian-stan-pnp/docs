@@ -1,0 +1,146 @@
+---
+title: 'Flywire'
+description: 'Configuração e integração do serviço de pagamento Flywire no Paylands'
+---
+
+## Introdução
+
+Flywire é uma solução especializada no **processamento de pagamentos transfronteiriços de alto valor**, especialmente em setores como educação, saúde e turismo.
+
+Através deste serviço são aceitos **pagamentos únicos com cartão de crédito e débito**. O usuário pode pagar em sua **moeda local**, enquanto o sistema gerencia a **conversão de moedas**, garantindo que o comércio receba o **valor líquido exato** e simplificando a conciliação de pagamentos internacionais.
+
+***
+
+## Integração mediante redirecionamento
+
+Flywire só admite **integração mediante redirecionamento**. O pagador deve estar presente durante o processo de pagamento, que será realizado através do navegador.
+
+Primeiramente, você deve [gerar uma ordem de pagamento](/reference/#operation/generate-payment-order).
+
+Como identificador de serviço, deve indicar o **service\_uuid** do serviço de **Flywire** que você tenha ativado no seu **Backend do Paylands → Administrar → Serviços de pagamento → Listagem**.
+
+Finalmente, construa a URL de redirecionamento substituindo o **token** pelo valor retornado na chamada anterior:
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}
+```
+
+***
+
+## Idioma da página de pagamento
+
+Você pode indicar o idioma da página de pagamento através do parâmetro `lang` na URL de redirecionamento:
+
+```
+?lang=en
+```
+
+Idiomas suportados:
+
+| Código | Idioma                |
+| ------ | --------------------- |
+| en     | Inglês                |
+| zh     | Chinês (Simplificado) |
+| ko     | Coreano               |
+| pt     | Português             |
+| ja     | Japonês               |
+| fr     | Francês               |
+| id     | Indonésio             |
+| ar     | Árabe                 |
+| vi     | Vietnamita            |
+| it     | Italiano              |
+| de     | Alemão                |
+| es     | Espanhol (padrão)     |
+
+Se o parâmetro `lang` não for indicado, a página de pagamento será exibida em **espanhol (es-ES)** por padrão.
+
+***
+
+## Moeda suportada
+
+* **EUR (Euro)**
+
+***
+
+## Dados Extras
+
+### Dados do pagador
+
+Para processar pagamentos com Flywire é necessário fornecer os **dados do pagador**. Esses dados devem corresponder **sempre à pessoa que realiza o pagamento**, não ao beneficiário do serviço.
+
+Por exemplo, no caso de instituições de ensino, se o pagamento for realizado pelo pai ou pela mãe de um aluno, **os dados devem ser do pai ou da mãe**, nunca do aluno.
+
+Esses dados são enviados através do campo `extra_data` ao criar a ordem de pagamento, dentro dos campos *profile* e *billing\_address*:
+
+```
+{  "extra_data": {    "profile": {      "first_name": "Peter",      "last_name": "Payer",      "email": "peterpayer@example.com",      "phone": {        "number": "625439533",        "prefix": "34"      }    },    "billing_address": {      "country": "ESP",      "address1": "Avenida del Mar",      "city": "Castellon",      "state_code": "CT",      "zip_code": "12006"    }  }}
+```
+
+> Esses campos **não são obrigatórios** ao criar a ordem de pagamento. Se algum não for enviado, será solicitado automaticamente ao usuário durante o fluxo de pagamento através de um formulário na página do Flywire.
+
+### Campos dinâmicos do comércio (context\_fields)
+
+Alguns comércios do Flywire requerem **campos dinâmicos adicionais**. Esses campos **dependem do comércio configurado** e podem variar conforme o caso (por exemplo: dados do aluno, matrícula, referência interna, número de expediente, etc.).
+
+Quando um comércio os requer, devem ser enviados **obrigatoriamente ao criar a ordem de pagamento**. Diferentemente dos dados do pagador, **se esses dados adicionais estiverem faltando, a criação da ordem falhará** e não será possível iniciar o fluxo de pagamento.
+
+Para enviá-los, inclua os campos em `extra_data.payment.context_fields`. Exemplo para um comércio do tipo educacional:
+
+```
+{  "extra_data": {    "payment": {      "context_fields": {        "student_email": "al123456@uni.es",        "student_first_name": "Victor",        "student_last_name": "Test",        "student_id": "123456"      }    }  }}
+```
+
+> Os campos dinâmicos dependem do comércio e de sua configuração no Flywire. Se você não os conhece, entre em contato conosco. Se o seu comércio não requer campos dinâmicos, você pode omitir `context_fields`.
+
+***
+
+## Testes em sandbox
+
+### Cenários de teste
+
+Em sandbox, o Flywire permite forçar diferentes resultados em função da combinação `first_name` + `last_name` do pagador.
+
+Esses valores correspondem a:
+
+* `extra_data.profile.first_name`
+* `extra_data.profile.last_name`
+
+Se você decidir enviar `extra_data.profile` ao criar a ordem, pode usar os seguintes valores para simular cada cenário:
+
+| first\_name | last\_name         | Resultado                                                                                        |
+| ----------- | ------------------ | ------------------------------------------------------------------------------------------------ |
+| MAGICVALUE  | AUTH               | Pagamento permitido (simula fluxo **3DS**)                                                       |
+| MAGICVALUE  | APPROVED           | Pagamento permitido (simula pagamento **sem 3DS**)                                               |
+| PAYMENT     | DELIVERED          | Pagamento permitido e simula um pagamento liquidado (a partir deste ponto já é possível realizar devoluções) |
+| MAGICVALUE  | EXPIRED            | Pagamento recusado (cartão expirado)                                                             |
+| MAGICVALUE  | FRAUD              | Pagamento recusado (cartão recusado)                                                             |
+| MAGICVALUE  | NOT ENOUGH BALANCE | Pagamento recusado (saldo insuficiente)                                                          |
+
+> Nota: Os cartões de teste devem ser usados junto com essas combinações de valores.
+
+### Cartões de teste
+
+#### Visa
+
+| Número              | Expiração | CVV | Moeda | País emissor | Tipo   |
+| ------------------- | --------- | --- | ----- | ------------ | ------ |
+| 4010 1000 0000 0016 | 03/30     | 737 | EUR   | DE           | Debit  |
+| 4988 4388 4000 0012 | 03/30     | 737 | EUR   | ES           | Debit  |
+| 4242 4201 0000 0017 | 03/30     | 737 | GBP   | GB           | Credit |
+| 4761 3600 0000 0017 | 03/30     | 737 | INR   | IN           | Debit  |
+| 4111 1111 1111 1111 | 03/30     | 737 | USD   | US           | Credit |
+
+#### Mastercard
+
+| Número              | Expiração | CVV | Moeda | País emissor | Tipo   |
+| ------------------- | --------- | --- | ----- | ------------ | ------ |
+| 2222 4000 1000 0016 | 03/30     | 737 | CAD   | CA           | Credit |
+| 5163 6136 0000 0014 | 03/30     | 737 | AUD   | AU           | Debit  |
+| 5252 5202 0000 0017 | 03/30     | 737 | JPY   | JP           | Debit  |
+| 5454 5454 5454 5454 | 03/30     | 737 | USD   | US           | Credit |
+
+#### American Express (Amex)
+
+| Número             | Expiração | CVV  | Moeda | País emissor | Tipo   |
+| ------------------ | --------- | ---- | ----- | ------------ | ------ |
+| 3700 0000 0000 002 | 03/30     | 7373 | USD   | US           | Credit |

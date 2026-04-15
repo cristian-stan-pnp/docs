@@ -298,9 +298,22 @@
                 "pages": [
                   "en/guides/features/tokenization",
                   "en/guides/features/subscriptions",
+                  "en/guides/features/3ds",
                   "en/guides/features/security",
+                  "en/guides/features/source-holder-verification",
                   "en/guides/features/customization",
                   "en/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Payment Services",
+                "pages": [
+                  "en/guides/payment-services/payretailers",
+                  "en/guides/payment-services/floa",
+                  "en/guides/payment-services/pagsmile",
+                  "en/guides/payment-services/flywire",
+                  "en/guides/payment-services/paypal",
+                  "en/guides/payment-services/tink"
                 ]
               },
               {
@@ -434,9 +447,22 @@
                 "pages": [
                   "pt/guides/features/tokenization",
                   "pt/guides/features/subscriptions",
+                  "pt/guides/features/3ds",
                   "pt/guides/features/security",
+                  "pt/guides/features/source-holder-verification",
                   "pt/guides/features/customization",
                   "pt/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Serviços de Pagamento",
+                "pages": [
+                  "pt/guides/payment-services/payretailers",
+                  "pt/guides/payment-services/floa",
+                  "pt/guides/payment-services/pagsmile",
+                  "pt/guides/payment-services/flywire",
+                  "pt/guides/payment-services/paypal",
+                  "pt/guides/payment-services/tink"
                 ]
               },
               {
@@ -570,9 +596,22 @@
                 "pages": [
                   "ro/guides/features/tokenization",
                   "ro/guides/features/subscriptions",
+                  "ro/guides/features/3ds",
                   "ro/guides/features/security",
+                  "ro/guides/features/source-holder-verification",
                   "ro/guides/features/customization",
                   "ro/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Servicii de Plată",
+                "pages": [
+                  "ro/guides/payment-services/payretailers",
+                  "ro/guides/payment-services/floa",
+                  "ro/guides/payment-services/pagsmile",
+                  "ro/guides/payment-services/flywire",
+                  "ro/guides/payment-services/paypal",
+                  "ro/guides/payment-services/tink"
                 ]
               },
               {

@@ -1,0 +1,205 @@
+---
+title: 'Pagsmile'
+description: 'Configurarea și integrarea serviciului de plată Pagsmile în Paylands'
+---
+
+## Introducere
+
+Pagsmile este un serviciu care permite efectuarea plăților prin card sau prin metodele de plată alternative PIX, Loterica și Boleto. De asemenea, permite PIX Payouts și Bank Transfer Payouts. Poate fi utilizat atât în checkout-ul Paylands, cât și prin redirecționare, precum și cu plăți push.
+
+## Date suplimentare obligatorii
+
+Pagsmile așteaptă să primească următoarele informații în câmpul `extra_data` la crearea comenzii. Câmpurile de trimis variază în funcție de metoda de plată aleasă.
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "johndoe@paynopain.com",        "document_identification_number": "11032341882",        "phone": {            "number": "700000000",            "prefix": "351"        }     },    "billing_address": {        "address1": "calle test",        "city": "",        "state_code": "",        "zip_code": "38082365",        "country": "BRL"    }}
+```
+
+* Plată cu card: nu necesită `extra_data`
+* PIX: nume, email și document de identificare (CPF)
+* Loterica: nume, email, document de identificare (CPF) și număr de telefon
+* Boleto: nume, email, document de identificare (CPF) și cod poștal (`zip_code`)
+
+## Payouts
+
+Pagsmile permite payouts în diferite țări folosind următoarele metode de plată:
+
+### Brazilia
+
+#### PIX Payout
+
+Câmpuri obligatorii:
+
+* **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
+* **Număr document de identificare (CPF)** (`profile.document_identification_number`)
+
+Payouts-urile PIX se vor efectua folosind CPF-ul ca tip de cont implicit. Dacă se dorește utilizarea unui alt tip de cont, acesta trebuie indicat la crearea comenzii, trimițând câmpul `extra_data.payment.account_type`, împreună cu câmpul asociat pentru fiecare tip, unde se va indica valoarea contului corespunzător:
+
+| Tipo de cuenta | Cuenta                                               | Descriere                                                               | Ejemplo                                               |
+| -------------- | ---------------------------------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------- |
+| CPF            | extra\_data.profile.document\_identification\_number | CPF. 11 cifre.                                                          | 22\*\*\*\*\*\*\*99                                    |
+| PHONE          | extra\_data.profile.phone.number                     | Număr de telefon, fără prefix telefonic.                                | 11987654321                                           |
+| EMAIL          | extra\_data.profile.email                            | Adresă de email.                                                        | [merchant@pagsmile.com](mailto:merchant@pagsmile.com) |
+| EVP            | extra\_data.payment.evp                              | Cheie alfanumerică de 32 caractere, care face legătura cu un cont bancar. | a1073db4-a3a0-11ed-a8fc-0242ac120002                  |
+
+Următorul exemplu prezintă `extra_data` trimis la crearea comenzii pentru un payout PIX, folosind `EMAIL` ca tip de cont:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "merchant@pagsmile.com",        "document_identification_number": "842.359.516-10"     },    "payment": {        "account_type": "EMAIL"    }}
+```
+
+#### Bank Transfer Payout Brazilia (Transfer)
+
+Câmpuri obligatorii:
+
+* **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
+* **Număr document de identificare (CPF)** (`profile.document_identification_number`)
+* **Cod bancă** (`payment.bank_code`) [Vezi coduri de bancă din Brazilia](https://docs.pagsmile.com/payout/bank-code/bank-in-brazil)
+* **Branch** (`payment.branch`)
+* **Număr de cont** (`payment.account`)
+* **Tip de cont** (`payment.account_type`): valori `SAVINGS` sau `CHECKING`
+
+În cazul Bank Transfer Payouts va fi de asemenea necesar să se trimită informațiile contului bancar în câmpul `payment`:
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe",        "document_identification_number": "842.359.516-10"     },    "payment": {        "bank_code": "001",        "branch": "0002",        "account": "123412341",        "account_type": "CHECKING"    }}
+```
+
+### Columbia
+
+#### Tpaga
+
+Câmpuri obligatorii:
+
+* **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
+* **Țară** (`billing_address.country`): valoare fixă `COL`
+* **Număr de telefon** (`profile.phone.number`)
+* **Tip de cont** (`payment.account_type`): valoare fixă `PHONE`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "phone": {            "number": "322222222"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "account_type": "PHONE"    }}
+```
+
+#### Transfiya
+
+Plățile cu Transfiya necesită `amount` >= 1000 COP.
+
+Câmpuri obligatorii:
+
+* **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
+* **Număr document de identificare** (`profile.document_identification_number`)
+* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Țară** (`billing_address.country`): valoare fixă `COL`
+* **Număr de telefon** (`profile.phone.number`)
+* **Tip de cont** (`payment.account_type`): valoare fixă `PHONE`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "123456789",        "phone": {            "number": "572222222222"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "account_type": "PHONE"    }}
+```
+
+#### Bank Transfer Payout Columbia (Transfer)
+
+Câmpuri obligatorii:
+
+* **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
+* **Număr document de identificare** (`profile.document_identification_number`)
+* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Țară** (`billing_address.country`): valoare fixă `COL`
+* **Cod bancă** (`payment.bank_code`) [Vezi coduri de bancă din Columbia](https://docs.pagsmile.com/payout/bank-code/bank-in-colombia)
+* **Număr de cont** (`payment.account`)
+* **Tip de cont** (`payment.account_type`): valori `SAVINGS` sau `CHECKING`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "email": "test@pagsmile.com",        "document_identification_number": "123456789",        "phone": {            "number": "012345678910"        }     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "COL"    },    "payment": {        "bank_code": "007",        "account": "57012345678910",        "account_type": "CHECKING"    }}
+```
+
+### Chile
+
+#### Vita Wallet
+
+Plățile cu Vita Wallet necesită `amount` >= 5000 CLP.
+
+Câmpuri obligatorii:
+
+* **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
+* **Țară** (`billing_address.country`): valoare fixă `CHL`
+* **Email** (`profile.email`)
+* **Tip de cont** (`payment.account_type`): valoare fixă `EMAIL`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "email": "paid@pagsmile.com"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "CHL"    },    "payment": {        "account_type": "EMAIL"    }}
+```
+
+#### Bank Transfer Payout Chile (Transfer)
+
+Câmpuri obligatorii:
+
+* **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
+* **Număr document de identificare** (`profile.document_identification_number`)
+* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n).
+* **Țară** (`billing_address.country`): valoare fixă `CHL`
+* **Cod bancă** (`payment.bank_code`) [Vezi coduri de bancă din Chile](https://docs.pagsmile.com/payout/bank-code/bank-in-chile)
+* **Număr de cont** (`payment.account`)
+* **Tip de cont** (`payment.account_type`): valori `SAVINGS` sau `CHECKING`
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "111111111"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "CHL"    },    "payment": {        "account_type": "CHECKING",        "account": "222222222222",        "bank_code": "001"    }}
+```
+
+### Mexic
+
+#### SPEI Payout
+
+Câmpuri obligatorii:
+
+* **Prenume și nume de familie** (`profile.first_name` și `profile.last_name`)
+* **Număr document de identificare** (`profile.document_identification_number`)
+* **Tip document de identificare** (`profile.document_identification_type`) [Vezi tipuri de document de identificare](/docs/integrations/payment-service-pagsmile#tipo-de-documento-de-identificaci%C3%B3n)
+* **Țară** (`billing_address.country`): valoare fixă `MEX`
+* **Tip de cont** (`payment.account_type`): valori `DEBIT`, `PHONE` sau `CLABE`
+* **Număr de cont** (`payment.account`) Obligatoriu dacă `account_type` este **diferit** de `PHONE`
+* **Număr de telefon** (`profile.phone.number`) Obligatoriu **doar** dacă `account_type` este `PHONE`
+* **Cod bancă** (`payment.bank_code`). Obligatoriu dacă `payment.account_type` este **diferit** de CLABE. [Vezi coduri de bancă din Mexic](https://docs.pagsmile.com/payout/bank-code/bank-in-mexico)
+
+```
+"extra_data": {    "profile": {        "first_name": "Victor",        "last_name": "lastname",        "document_identification_number": "111111111"     },    "billing_address": {        "address1": "test street",        "city": "",        "state_code": "",        "zip_code": "",        "country": "MEX"    },    "payment": {        "account_type": "CLABE",        "account": "646020146401877826"    }}
+```
+
+## Tipul documentului de identificare
+
+Tipul documentului de identificare trebuie indicat în `extra_data` în câmpul `profile.document_identification_type`. Implicit, dacă nu este indicat, se va utiliza valoarea **NATIONAL\_IDENTITY\_DOCUMENT**.
+
+Mai jos sunt prezentate valorile posibile ale acelui câmp și echivalențele lor pentru diferitele tipuri de documente din fiecare țară:
+
+|                                       | Brasil | Colombia | Chile | México |
+| ------------------------------------- | ------ | -------- | ----- | ------ |
+| **NATIONAL\_IDENTITY\_DOCUMENT**      | CPF    | CC       | RUN   | CURP   |
+| **FOREIGN\_IDENTIFICATION\_DOCUMENT** | -      | CE       | CE    | -      |
+| **FISCAL\_IDENTIFICATION\_CODE**      | -      | -        | RUT   | RFC    |
+| **VALID\_PASSPORT**                   | -      | -        | PAS   | -      |
+
+## Metode de plată în Sandbox
+
+Cardul de test este următorul. În general, data de expirare și CVV-ul nu contează atâta timp cât data este ulterioară datei curente, iar CVV-ul are 3 cifre.
+
+```
+- número de tarjeta: 4111 1111 1111 1111- CVV: 123- fecha de expiración: 12/34
+```
+
+## Monedă
+
+Monedele suportate pentru acest serviciu sunt realul brazilian (BRL), peso-ul columbian (COP), peso-ul chilian (CLP) și peso-ul mexican (MXN).
+
+## Coduri de eroare
+
+Structura erorii are următoarea formă:
+
+```
+Código - Mensaje
+```
+
+De exemplu:
+
+```
+4001001 - invalid document_id
+```

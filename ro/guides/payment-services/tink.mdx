@@ -1,0 +1,52 @@
+---
+title: 'Tink'
+description: 'Configurarea și integrarea serviciului de plată Tink în Paylands'
+---
+
+## Introducere
+
+Tink este un serviciu care permite **inițierea plăților (transferuri bancare)** și efectuarea operațiunilor financiare securizate, precum **verificări bancare și validări de conturi** (inclusiv *Account Check* și *Business Account Check*).
+
+## Monedă suportată
+
+* **EUR (Euro)**
+
+## Funcționalități disponibile
+
+### Plăți
+
+Constă în **plăți unice** prin transferuri bancare. Acest tip de operațiune permite unui client să efectueze o plată din contul său bancar către un beneficiar, totul în cadrul unui flux ghidat și securizat.
+
+### Verificare de cont (Account Check / Business Account Check)
+
+Verificarea de cont prin Tink permite confirmarea faptului că un cont bancar este valid și că aparține tipului de titular așteptat. Există două variante în cadrul aceleiași funcționalități:
+
+* **Account Check** (implicit): pentru verificarea conturilor de persoane fizice.
+* **Business Account Check**: pentru verificarea conturilor de companii.
+
+#### Cerințe de utilizare
+
+Pentru a putea utiliza verificarea de cont este necesar:
+
+* Să ai funcționalitatea de **Account Check** activată în contul platformei.
+* Să efectuezi o operațiune cu **suma 0** (`amount = 0`) prin fluxul de plată Tink.
+
+#### Cum se indică Business Account Check
+
+Implicit, verificarea este interpretată ca **Account Check normal** (persoane fizice). Dacă se dorește efectuarea unui **Business Account Check** în loc de un Account Check normal, aceasta trebuie indicată prin câmpul `extra_data.payment.is_business` în cerere, setându-l pe `true`.
+
+```
+"extra_data": {    "payment": {        "is_business": true    }}
+```
+
+## Teste în sandbox
+
+După redirecționare, selectează **Tink Demo Bank**. Pentru a simula un scenariu concret, utilizează următoarele date de test:
+
+| Scenariu                                                | Utilizator | Parolă  |
+| ------------------------------------------------------- | ---------- | ------- |
+| Transfer reușit                                         | u89609866  | bst827  |
+| Account Check reușit                                    | u82144157  | ymm529  |
+| Account Check: Informațiile contului nu au fost găsite  | u51613239  | cty440  |
+| Business Acct. Check reușit                             | u42389294  | fog735  |
+| Business Acct. Check: Informațiile contului nu au fost găsite | u51613239  | cty440  |
