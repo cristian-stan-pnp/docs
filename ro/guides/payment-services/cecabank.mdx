@@ -1,0 +1,138 @@
+---
+title: 'CECA Bank'
+description: 'Configurare și integrare a serviciului de plată CECA Bank în Paylands'
+---
+
+## Coduri de eroare
+
+Structura erorii poate avea următoarele forme:
+
+```
+Código - Mensaje
+```
+
+De exemplu:
+
+```
+ERR-190190 - Operación no realizable (resto de casos)
+```
+
+| Cod    | Mesaj                                                                                                                                                                                                     |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0      | Operațiune aprobată                                                                                                                                                                                       |
+| 1      | COMUNICARE ONLINE INCORECTĂ                                                                                                                                                                               |
+| 2      | EROARE LA CALCULAREA SEMNĂTURII                                                                                                                                                                           |
+| 5      | EROARE. Eroare în SELECT COMERCIANȚI                                                                                                                                                                      |
+| 6      | EROARE. Câmpuri obligatorii lipsă                                                                                                                                                                         |
+| 7      | EROARE. MerchantID inexistent                                                                                                                                                                             |
+| 9      | EROARE. Nu s-a putut conecta la ORACLE                                                                                                                                                                    |
+| 10     | EROARE. Card invalid                                                                                                                                                                                      |
+| 12     | SEMNĂTURĂ:                                                                                                                                                                                                |
+| 13     | OPERAȚIUNE INCORECTĂ                                                                                                                                                                                      |
+| 14     | EROARE. Eroare în SELECT OPERAȚIUNI                                                                                                                                                                       |
+| 15     | EROARE. Operațiune inexistentă                                                                                                                                                                            |
+| 16     | EROARE. Operațiune deja anulată                                                                                                                                                                           |
+| 17     | EROARE LA OBȚINEREA CHEII                                                                                                                                                                                 |
+| 18     | EROARE. ETILL nu acceptă comanda                                                                                                                                                                          |
+| 19     | EROARE. Date non-numerice                                                                                                                                                                                 |
+| 20     | EROARE. Date non-alfanumerice                                                                                                                                                                             |
+| 21     | EROARE în calculul MAC                                                                                                                                                                                    |
+| 22     | EROARE în calculul MAC                                                                                                                                                                                    |
+| 23     | EROARE. Utilizator sau parolă invalidă.                                                                                                                                                                   |
+| 24     | EROARE. Tip de monedă invalid. Operațiunea trebuie realizată în Euro.                                                                                                                                     |
+| 25     | EROARE. Sumă nu este Integer.                                                                                                                                                                             |
+| 26     | EROARE. Operațiune nerealizabilă 100.                                                                                                                                                                     |
+| 27     | EROARE. Format CVV2/CVC2 invalid.                                                                                                                                                                         |
+| 28     | EROARE. Trebuie să specificați CVV2/CVC2 al cardului dumneavoastră.                                                                                                                                       |
+| 29     | EROARE. CVV2 nu este Integer.                                                                                                                                                                             |
+| 30     | EROARE. În acest moment nu este posibil să continuați fără cvc2/cvv2                                                                                                                                      |
+| 31     | EROARE. EROARE în operațiunile comerciantului.                                                                                                                                                             |
+| 32     | EROARE. Tip de monedă invalid. Operațiunea trebuie realizată în Euro.                                                                                                                                     |
+| 33     | EROARE. Comerciantul poate efectua plăți doar în Euro                                                                                                                                                     |
+| 34     | EROARE. Monedă sau conversie invalidă pentru acest card.                                                                                                                                                  |
+| 35     | EROARE. Monedă sau conversie invalidă.                                                                                                                                                                    |
+| 36     | EROARE. Conversie în Euro invalidă.                                                                                                                                                                       |
+| 37     | EROARE. Comerciantul nu dispune de această opțiune.                                                                                                                                                       |
+| 38     | EROARE. Răspuns eronat de la managerul de operațiuni.                                                                                                                                                     |
+| 39     | EROARE. Nu este posibil să continuați cu preautorizarea.                                                                                                                                                  |
+| 40     | EROARE. Eroare de comunicare. Nu este posibil să finalizați operațiunea.                                                                                                                                  |
+| 41     | EROARE. TimeOut SEP. Nu este posibil să finalizați operațiunea.                                                                                                                                           |
+| 42     | EROARE. SEP returnează un 20 ERROR. Nu este posibil să finalizați operațiunea.                                                                                                                            |
+| 43     | EROARE. Eroare neașteptată. Nu este posibil să finalizați operațiunea.                                                                                                                                    |
+| 44     | EROARE. Răspuns eronat de la SEP. Nu este posibil să finalizați operațiunea.                                                                                                                              |
+| 45     | EROARE. Nu este posibil să continuați cu preautorizarea.                                                                                                                                                  |
+| 46     | EROARE. Eroare în procesul de Autentificare. Nu navigați înapoi în browser. Trebuie să reveniți la comerciant și să reîncercați plata.                                                                    |
+| 48     | EROARE. Eroare în procesul de Autentificare. Nu navigați înapoi în browser. Trebuie să reveniți la comerciant și să reîncercați plata.                                                                    |
+| 50     | EROARE. S-a primit un răspuns negativ la interogarea stării autentificării.                                                                                                                                |
+| 51     | EROARE. S-a primit un răspuns negativ la interogarea stării autentificării.                                                                                                                                |
+| 53     | EROARE. S-a primit un răspuns negativ la interogarea stării înrolării. Card neînrolat.                                                                                                                    |
+| 54     | EROARE. S-a primit un răspuns negativ la interogarea stării înrolării și suma depășește maximul permis. Card neînrolat.                                                                                   |
+| 55     | EROARE. Indisponibilitate temporară la distanță la interogarea stării înrolării la comerciant.                                                                                                            |
+| 56     | EROARE. Indisponibilitate temporară la distanță la interogarea stării înrolării la comerciant și suma depășește maximul permis.                                                                           |
+| 57     | EROARE. Indisponibilitate temporară la distanță la interogarea stării înrolării la comerciant, și suma depășește maximul permis.                                                                          |
+| 58     | EROARE. Sistemul la distanță nu răspunde la interogarea stării înrolării.                                                                                                                                 |
+| 62     | EROARE. Comerciantul are un filtru care nu permite această operațiune.(Filtru2:%d)                                                                                                                        |
+| 63     | EROARE. Comerciantul ultra-securizat nu acceptă plăți Visa neautentificate. Contactați instituția dumneavoastră.                                                                                          |
+| 64     | EROARE. Comerciantul ultra-securizat nu acceptă plăți MasterCard neautentificate. Contactați instituția dumneavoastră.                                                                                    |
+| 65     | EROARE. Comerciantul ultra-securizat nu acceptă plăți neautentificate. Contactați instituția dumneavoastră.                                                                                               |
+| 66     | EROARE. Eroare proces ultra-securizat. Comerciantul nu acceptă plăți neautentificate. Contactați instituția dumneavoastră.                                                                                |
+| 67     | EROARE. Limită depășită la comerciant mixt.                                                                                                                                                               |
+| 68     | EROARE. Răspuns eronat de la managerul de operațiuni. Operațiune anulată.                                                                                                                                 |
+| 69     | EROARE. Operațiune UCAF invalidă. Contactați comerciantul sau instituția dumneavoastră.                                                                                                                   |
+| 70     | Comerciantul are un filtru care nu permite această operațiune.`Bins pe țări`.                                                                                                                             |
+| 71     | Acest comerciant acceptă doar plata cu carduri EURO 6000.                                                                                                                                                 |
+| 72     | Comerciantul are un filtru care nu permite această operațiune.`Manager de Bins`.                                                                                                                          |
+| 73     | Comerciantul are un filtru care nu permite această operațiune.`Operațiuni pe zi și IP`.                                                                                                                   |
+| 74     | Comerciantul are un filtru care nu permite această operațiune.`Operațiuni pe zi și card`.                                                                                                                 |
+| 78     | Token invalid.                                                                                                                                                                                            |
+| 80     | EROARE. Câmpuri obligatorii lipsă. `MerchantID`                                                                                                                                                           |
+| 81     | EROARE. Câmpuri obligatorii lipsă. `AcquirerBIN`                                                                                                                                                          |
+| 82     | EROARE. Câmpuri obligatorii lipsă. `TerminalID`                                                                                                                                                           |
+| 83     | EROARE. Câmpuri obligatorii lipsă. `NumOperacion`                                                                                                                                                         |
+| 84     | EROARE. Câmpuri obligatorii lipsă. `Importe`                                                                                                                                                              |
+| 85     | EROARE. Câmpuri obligatorii lipsă. `TipoMoneda`                                                                                                                                                           |
+| 86     | EROARE. Câmpuri obligatorii lipsă. `Exponente`                                                                                                                                                            |
+| 87     | EROARE. Câmpuri obligatorii lipsă. `UrlOK`                                                                                                                                                                |
+| 88     | EROARE. Câmpuri obligatorii lipsă. `UrlNOK`                                                                                                                                                               |
+| 89     | EROARE. Câmpuri obligatorii lipsă. `Firma`                                                                                                                                                                |
+| 93     | Timpul maxim permis pentru realizarea operațiunii a expirat                                                                                                                                                |
+| 100    | Card invalid (în negativi)                                                                                                                                                                                |
+| 101    | Card expirat                                                                                                                                                                                              |
+| 102    | Operațiune nerealizată                                                                                                                                                                                    |
+| 104    | Card invalid (electron)                                                                                                                                                                                   |
+| 106    | Card invalid (reîncercări PIN)                                                                                                                                                                            |
+| 111    | Număr de card introdus greșit (check)                                                                                                                                                                     |
+| 112    | Card invalid (PIN necesar)                                                                                                                                                                                |
+| 114    | Forma de plată solicitată nu este acceptată                                                                                                                                                               |
+| 116    | Sold insuficient                                                                                                                                                                                          |
+| 118    | Card invalid (inexistent în fișiere)                                                                                                                                                                      |
+| 120    | Card invalid la acest comerciant                                                                                                                                                                          |
+| 121    | Disponibil depășit                                                                                                                                                                                        |
+| 123    | Număr maxim de operațiuni depășit                                                                                                                                                                         |
+| 125    | Cardul nu este încă operațional                                                                                                                                                                           |
+| 180    | Card nesuportat de sistem                                                                                                                                                                                 |
+| 190    | Operațiune nerealizabilă (alte cazuri)                                                                                                                                                                    |
+| 400    | Anulare acceptată                                                                                                                                                                                         |
+| 480    | Anulare prin TO acceptată fără a găsi operațiunea originală                                                                                                                                               |
+| 721    | Mesaj de răspuns incorect primit                                                                                                                                                                          |
+| 801    | Preautorizare nepermisă                                                                                                                                                                                   |
+| 802    | Caractere nepermise                                                                                                                                                                                       |
+| 803    | Eroare la încercarea unei plăți amânate cu acest card                                                                                                                                                     |
+| 808    | Există erori în anulările anterioare; momentan nu permitem efectuarea din nou a anulării                                                                                                                   |
+| 888    | Eroare de comunicare. Această operațiune este blocată până la revizuirea stării sale. Vă rugăm verificați din nou starea începând cu ora 10 a zilei următoare. Ne cerem scuze pentru neplăceri.            |
+| 900    | Rambursare acceptată                                                                                                                                                                                      |
+| 904    | Operațiune nerealizabilă (eroare de format)                                                                                                                                                               |
+| 908    | Card necunoscut                                                                                                                                                                                           |
+| 909    | Operațiune nerealizabilă (eroare de sistem)                                                                                                                                                               |
+| 912    | Instituția dumneavoastră nu este disponibilă                                                                                                                                                              |
+| 913    | Operațiune nerealizabilă (cheie duplicată)                                                                                                                                                                |
+| 914    | Operațiunea de anulat nu există                                                                                                                                                                           |
+| 930    | Operațiune nerealizabilă (entitate merchant invalidă)                                                                                                                                                     |
+| 931    | Operațiune nerealizabilă (comerciant neînregistrat)                                                                                                                                                       |
+| 932    | Operațiune nerealizabilă (bin merchant nu există)                                                                                                                                                         |
+| 933    | Operațiune nerealizabilă (sector necunoscut)                                                                                                                                                              |
+| 940    | O anulare a fost deja primită                                                                                                                                                                             |
+| 944    | Operațiune nerealizabilă (sesiune invalidă)                                                                                                                                                               |
+| 948    | Operațiune nerealizabilă (dată/oră invalidă)                                                                                                                                                              |
+| 950    | Rambursare neacceptată                                                                                                                                                                                    |
+| 999    | Operațiune nerealizabilă (alte cazuri)                                                                                                                                                                    |

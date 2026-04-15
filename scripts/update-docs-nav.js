@@ -42,7 +42,7 @@ guidesTab.groups = [
       'guides/accept-payments/web-integration',
       'guides/accept-payments/pos-integration',
       'guides/accept-payments/no-integration',
-      'guides/accept-payments/platformas-integration',
+      'guides/accept-payments/plataformas-integration',
       'guides/accept-payments/plugins-integration',
     ],
   },

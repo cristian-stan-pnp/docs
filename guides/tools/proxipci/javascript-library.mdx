@@ -88,7 +88,7 @@ proxyFields.submit({
   cardHolder: "Name Displayed On Card"
 });
 proxyFields.on("validate", function(data) {
-  if(validate.hasErrors){
+  if(data.hasErrors){
     console.log("Card pan is not valid");
     proxyFields.setStyle("cardNumber","border: 1px solid red");
   }

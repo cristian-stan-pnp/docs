@@ -1,0 +1,94 @@
+---
+title: 'Floa'
+description: 'Configurarea și integrarea serviciului de plată Floa în Paylands'
+---
+
+## Introducere
+
+Floa este o soluție de plată franceză care permite finanțarea achizițiilor cu opțiuni de credit de consum, inclusiv plăți în rate. Printre opțiunile de plată în rate se oferă:
+
+* 3X: Plăți în 3 rate, cu 30 de zile diferență între fiecare.
+* 4X: Plăți în 4 rate, cu 30 de zile diferență între fiecare.
+
+## Date suplimentare obligatorii
+
+În funcție de tipul de produs sau serviciu oferit, va fi necesar să se indice informații suplimentare în `extra_data` în timpul creării comenzii, deși țara va fi întotdeauna obligatorie (`extra_data.billing_address.country`), împreună cu prenumele și numele de familie (`extra_data.profile.first_name` și `extra_data.profile.last_name`, respectiv).
+
+În tabelul următor sunt prezentate câmpurile suplimentare care trebuie trimise în `extra_data.payment` în funcție de tipul de produs oferit:
+
+| Câmp                     | Descriere                                                                                                                                                                                                                                                                                                                                                                                              | Tip        | Obligatoriu |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ----------- |
+| categorie\_1             | Categoria produsului cel mai scump. Pentru Travel/Stay utilizați una dintre următoarele valori: **AIRLINE TICKET**, **TRAIN TICKET**, **BUS TICKET**, **HOTEL**, **CAMPING**, **STAY**, **CRUISE**, **CAR RENTAL**                                                                                                                                                                                       | string(30) | Da          |
+| categorie\_2             | Subcategoria produsului cel mai scump. Opțional pentru Travel.                                                                                                                                                                                                                                                                                                                                          | string(30) | Da          |
+| cart\_item\_count        | Numărul de articole                                                                                                                                                                                                                                                                                                                                                                                    | int        | Da          |
+| sale\_channel            | Canalul de vânzare. Una dintre următoarele valori: **DESKTOP**, **TABLET**, **TABLET\_IPAD**, **SMARTPHONE**, **SMARTPHONE\_ANDROID**, **SMARTPHONE\_IPHONE**                                                                                                                                                                                                                                           | string(18) | Da          |
+| merchant\_home\_url      | URL-ul paginii de start a comerciantului                                                                                                                                                                                                                                                                                                                                                               | string     | Da          |
+| merchant\_back\_url      | URL pentru revenirea la pagina anterioară a site-ului comerciantului                                                                                                                                                                                                                                                                                                                                    | string     | Da          |
+| departure\_date          | Format dată de început: DD/MM/AAAA HH:MM                                                                                                                                                                                                                                                                                                                                                               | date       | Travel/Stay |
+| return\_date             | Format dată de întoarcere: DD/MM/AAAA HH:MM                                                                                                                                                                                                                                                                                                                                                            | date       | Travel/Stay |
+| traveller\_count         | Numărul de călători                                                                                                                                                                                                                                                                                                                                                                                    | int        | Travel/Stay |
+| own\_ticket              | Câmp pentru a identifica dacă titularul cardului de credit utilizat pentru finanțarea călătoriei participă.                                                                                                                                                                                                                                                                                             | bool       | Travel/Stay |
+| room\_range              | Pentru plăți Stay, clasificarea hotelului (stele)                                                                                                                                                                                                                                                                                                                                                      | string     | Stay        |
+| insurance                | Dacă clientul alege o asigurare. Values: "yes", "no"                                                                                                                                                                                                                                                                                                                                                   | string     | Travel/Stay |
+| destination\_country     | Codul țării de destinație, în format ISO 3166-2 (de ex.: "ES" pentru Spania)                                                                                                                                                                                                                                                                                                                           | string     | Travel/Stay |
+| travel\_type             | O valoare dintre: **Unknown**, **OneWay** (doar dus), **TwoWay** (dus-întors), **Multiple** (Destinații multiple)                                                                                                                                                                                                                                                                                       | string(2)  | Travel/Stay |
+| departure\_airport       | Codul IATA al aeroportului de plecare                                                                                                                                                                                                                                                                                                                                                                  | string(3)  | Travel      |
+| arrival\_airport         | Codul IATA al aeroportului de destinație                                                                                                                                                                                                                                                                                                                                                               | string(3)  | Travel      |
+| main\_departure\_company | În cazul călătoriilor cu avionul, numele companiei aeriene a primului zbor (cod IATA)                                                                                                                                                                                                                                                                                                                   | string(3)  | Travel      |
+| shipping\_method         | Metoda de livrare a comerciantului. Dacă nu este trimisă, "VIR" implicit. Valori: **STD** (Normal), **EXP** (Express Delivery), **TRK** (Tracked), **REG** (Registered), **COL** (Colissimo), **CHR** (Chronopost), **REL** (Mondial Relay), **TNT** (TNT), **UPS** (UPS), **TRP** (Transporter), **MAG** (Delivery in store), **LCK** (Lockers), **VIR** (Virtual), **RIM** (Immediate withdrawal in store) | string(3)  | Nu          |
+| fees\_amount             | Suma totală a tarifelor asociate comenzii (în cenți)                                                                                                                                                                                                                                                                                                                                                   | string     | Nu          |
+| shipping\_cost           | Suma totală a costurilor de expediere ale comenzii (în cenți)                                                                                                                                                                                                                                                                                                                                           | string     | Nu          |
+| discount\_amount         | Suma totală a reducerilor asociate comenzii (în cenți)                                                                                                                                                                                                                                                                                                                                                  | string     | Nu          |
+
+În funcție de produs, există următoarele sectoare de activitate: **General**, **Stay** (hoteluri) și **Travel**.
+
+Mai jos este prezentat un exemplu de `extra_data` trimis pentru a efectua o plată cu fiecare sector de activitate:
+
+### General
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe"    },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avenida del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "Juego de mesa",        "categorie_2": "Virus 2",        "cart_item_count": 1,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/",        "shipping_method": "STD",        "shipping_cost": "500",        "discount_amount": "1000"    }}
+```
+
+### Stay (Hotel)
+
+```
+"extra_data":{    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@gmail.com"        },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avenida del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "HOTEL",        "categorie_2": "Room",        "departure_date": "05/05/2024 12:00",        "return_date": "12/05/2024 12:00",        "traveller_count": 2,        "own_ticket": true,        "room_range": 3,        "insurance": "no",        "destination_country": "ES",        "travel_type": "OneWay",        "cart_item_count": 2,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/"    }}
+```
+
+### Travel
+
+```
+"extra_data":{    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@gmail.com"        },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avinguda del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "AIRLINE TICKET",        "departure_date": "30/04/2024 12:00",        "return_date": "05/05/2024 12:00",        "traveller_count": 2,        "own_ticket": true,        "insurance": "no",        "destination_country": "ES",        "travel_type": "TwoWay",        "cart_item_count": 2,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/",        "departure_airport": "VLC",        "arrival_airport": "LEN",        "main_departure_company": "Iberia"    }}
+```
+
+## Metode de plată în Sandbox
+
+Este recomandat să se utilizeze un amount între 100€ și 250€ pentru a crește probabilitățile de eligibilitate reușită.
+
+Datele cardului de test sunt următoarele:
+
+```
+- număr card OK: 5017 6791 1038 0400
+- număr card KO: 5017 6791 0090 0712
+- CVV: 000
+- data de expirare: ulterioară datei ultimei rate
+```
+
+## Monedă
+
+Moneda suportată pentru acest serviciu este euro (EUR).
+
+## Coduri de eroare
+
+Structura erorii are următoarea formă:
+
+```
+Cod - Mesaj
+```
+
+De exemplu:
+
+```
+3 - Failed (Technical failure)
+```

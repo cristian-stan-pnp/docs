@@ -1,0 +1,519 @@
+---
+title: 'Redsys'
+description: 'Configurarea și integrarea serviciului de plată Redsys în Paylands'
+---
+
+Sunt acceptate două metode de plată: Card și [Bizum](/docs/apm/apm-bizum). Operațiunile de rambursare, confirmare, anulare și recuperare a stării sunt compatibile cu ambele metode de plată. Restul operațiunilor sunt destinate exclusiv cardurilor.
+
+## Restricții și cerințe
+
+Redsys acceptă cel puțin următoarele monede: AUD, BGN, CAD, CHF, COP, CZK, DKK, EUR, GBP, HRK, HUF, ILS, INR, JPY, MYR, NOK, NZD, PEN, PLN, RUB, SAR, SEK, SGD, THB, USD, ZAR.
+
+### Extra data
+
+Nu este necesar să se indice `extra_data` la crearea comenzii pentru efectuarea plăților.
+
+### Dynamic descriptor
+
+Câmpul `dynamic_descriptor` este opțional și, în cazul în care este indicat, poate conține maximum 38 de caractere și permite numere, litere și spații.
+
+### Reference
+
+Câmpul `reference` este opțional. În cazul în care este indicat, această valoare va apărea în **Canales** din Redsys în câmpul `descripcion`, împreună cu identificatorul `uuid` al tranzacției.
+
+Formatul afișat în Canales va fi:
+
+```
+uuid_transaccion/reference
+```
+
+⚠️ Important: comerciantul **nu trebuie să includă** `uuid`-ul și nici bara `/` în valoarea `reference`. Acestea se adaugă automat. `uuid`-ul corespunde tranzacției generate în sistemul nostru.
+
+De exemplu, dacă comerciantul trimite ca `reference`:
+
+```
+1234
+```
+
+În Canales se va afișa:
+
+```
+10FF94B5-FE7C-41A0-B956-BBBBAA6BCA77/1234
+```
+
+Acest câmp permite comercianților să adauge informații proprii pentru a facilita trasabilitatea operațiunilor. Dimensiunea maximă a acestui câmp este de **88 de caractere**. Dacă se depășește această limită, valoarea `reference` va fi **trunchiată** în Canales.
+
+## Metode de plată în Sandbox
+
+Cardurile de test Redsys sunt următoarele. În general, data de expirare și CVV-ul nu contează atâta timp cât data este ulterioară datei curente, iar CVV-ul are 3 cifre.
+
+| Rezultat                 | Card                       |
+| ------------------------ | -------------------------- |
+| Plată OK                 | 4548812049400004 12/34 123 |
+| Plată KO                 | 4111111111111111 12/34 123 |
+| Soft-decline (Nesigur)   | 4548817212493017 12/34 123 |
+
+### 3DSv1
+
+| Rezultat         | Card                       |
+| ---------------- | -------------------------- |
+| Direct la 3DSv1  | 4548810000000003 12/49 123 |
+| Fallback la 3DSv1 | 4918010000000044 12/34 123 |
+
+### 3DSv2.1
+
+| Rezultat                      | Card                       |
+| ----------------------------- | -------------------------- |
+| Frictionless 3DSv2.1          | 4548814479727229 12/34 123 |
+| Doar fingerprinting 3DSv2.1   | 4918019160034602 12/34 123 |
+| Doar challenge 3DSv2.1        | 4548817212493017 12/34 123 |
+| Full flow 3DSv2.1             | 4918019199883839 12/34 123 |
+
+### 3DSv2.2
+
+| Rezultat                      | Card                       |
+| ----------------------------- | -------------------------- |
+| Frictionless 3DSv2.2          | 4548816134581156 12/34 123 |
+| Doar fingerprinting 3DSv2.2   | 4918019160034602 12/34 123 |
+
+### DCC
+
+| Rezultat                                  | Card                       |
+| ----------------------------------------- | -------------------------- |
+| DCC cu 3DSv1                              | 4137360000000006 12/34 123 |
+| DCC cu 3DS2.x Frictionless                | 5424180805648190 12/34 123 |
+| DCC cu 3DS2.x Challenge                   | 4117731234567891 12/34 123 |
+| DCC cu 3DS2.x Challenge Coroana Norvegiană | 5409960031405146 12/34 123 |
+
+### Alte fluxuri
+
+| Rezultat                                            | Card                       |
+| --------------------------------------------------- | -------------------------- |
+| Frictionless cu excepție 3DSv2.2 (Carte de plată)   | 4548815324058868 12/34 123 |
+| Plată MIT fără a necesita SCA                       | 4548815374025114 12/34 123 |
+
+## Coduri de eroare
+
+Structura erorii are următoarea formă:
+
+```
+Código
+```
+
+De exemplu:
+
+```
+190
+```
+
+### Erori ale procesatorului
+
+#### Principale
+
+| Cod    | Mesaj                                                                                              | Note                        |
+| ------ | -------------------------------------------------------------------------------------------------- | --------------------------- |
+| 0      | OK, fără autentificare (PUCE)                                                                      |                             |
+| 1      | OK, comerciant sigur, titular nesigur (PUCE)                                                       |                             |
+| 2      | Eroare de orice tip (PUCE)                                                                         |                             |
+| 100    | Card invalid, nu reîncercați                                                                       |                             |
+| 101    | Card expirat                                                                                       |                             |
+| 102    | Card în excepție tranzitorie sau sub suspiciune de fraudă                                           |                             |
+| 104    | Operațiune nepermisă pentru acest card, consultați emitentul.                                       |                             |
+| 106    | Card blocat, depășire PIN eronat                                                                   |                             |
+| 107    | Contactați emitentul                                                                               |                             |
+| 110    | Sumă invalidă                                                                                      |                             |
+| 112    | PIN obligatoriu necesar                                                                             |                             |
+| 114    | Cardul nu poate fi utilizat pentru această operațiune. Consultați emitentul cardului.               |                             |
+| 115    | Card invalid, nu reîncercați                                                                       |                             |
+| 116    | Disponibil insuficient.                                                                            |                             |
+| 117    | PIN incorect                                                                                       |                             |
+| 118    | Card neînregistrat. Nu reîncercați.                                                                |                             |
+| 119    | Refuzat prin controale de comerț electronic.                                                       |                             |
+| 120    | Refuzat prin controale operaționale. Nu reîncercați.                                               |                             |
+| 121    | Depășește limita tranzacției. Consultați emitentul cardului.                                        |                             |
+| 123    | Eroare la autentificare, consultați emitentul cardului.                                             |                             |
+| 125    | Card nefuncțional                                                                                  |                             |
+| 126    | Eroare în formatul autentificării. Consultați emitentul cardului.                                   |                             |
+| 129    | CVV Incorect                                                                                       |                             |
+| 130    | Monedă neacceptată de emitent.                                                                     |                             |
+| 162    | Limită de tranzacții fără autentificare depășită.                                                  |                             |
+| 163    | Card inactiv                                                                                       |                             |
+| 171    | Card inactiv                                                                                       |                             |
+| 172    | Refuzat, nu repetați.                                                                              |                             |
+| 173    | Refuzat, nu repetați fără actualizarea datelor cardului.                                            |                             |
+| 174    | Refuzat, nu repetați înainte de 72 de ore.                                                         |                             |
+| 180    | Card care nu aparține serviciului                                                                   |                             |
+| 181    | Card cu restricții de debit                                                                        |                             |
+| 182    | Card cu restricții de credit.                                                                      |                             |
+| 184    | Clientul nu s-a autentificat                                                                       |                             |
+| 187    | Eroare în formatul autentificării. Consultați emitentul cardului.                                   |                             |
+| 190    | Refuz emitent                                                                                      |                             |
+| 191    | Dată de expirare eronată                                                                           |                             |
+| 193    | Sumă depășită (Rezervat)                                                                           |                             |
+| 195    | Necesită autentificare SCA                                                                         | Soft-decline (Necesită 3DS) |
+| 201    | Card expirat                                                                                       |                             |
+| 202    | Card în excepție tranzitorie sau sub suspiciune de fraudă cu retragerea cardului                    |                             |
+| 204    | Operațiune nepermisă pentru card / terminal, rețineți cardul.                                      |                             |
+| 206    | Încercări de PIN depășite                                                                          |                             |
+| 290    | Refuz fără motiv specificat. Rețineți cardul.                                                      |                             |
+| 300    | Actualizare sau consultare finalizată                                                              |                             |
+| 481    | Anulare acceptată cu întârziere mare.                                                              |                             |
+| 904    | Problemă cu configurarea comerciantului                                                            |                             |
+| 909    | Eroare de sistem                                                                                   |                             |
+| 912    | Emitent indisponibil.                                                                              |                             |
+| 913    | Comandă duplicată                                                                                  |                             |
+| 914    | Anularea nu este acceptată                                                                         |                             |
+| 940    | Tranzacție anulată anterior.                                                                       |                             |
+| 941    | Tranzacție de autorizare deja anulată printr-o anulare anterioară.                                 |                             |
+| 944    | Sesiune Incorectă                                                                                  |                             |
+| 945    | Referință de tranzacție de sistem duplicată.                                                     |                             |
+| 950    | Operațiune de rambursare nepermisă                                                                 |                             |
+| 965    | Încălcarea normelor existente.                                                                     |                             |
+| 8210   | Operațiune redirecționată către emitent pentru autentificare EMV3DS V2.1 (pentru H2H)              |                             |
+| 8220   | Operațiune redirecționată către emitent pentru autentificare EMV3DS V2.2 (pentru H2H)              |                             |
+| 9064   | Număr de poziții al cardului incorect                                                              |                             |
+| 9093   | Card inexistent                                                                                    |                             |
+| 9104   | Comerciant cu "titular sigur" și titular fără cheie de cumpărare sigură                            |                             |
+| 9218   | Comerciantul nu permite operațiuni sigure prin intrarea /operații                                   |                             |
+| 9253   | Cardul nu îndeplinește check-digit-ul                                                              |                             |
+| 9256   | Comerciantul nu poate efectua preautorizări                                                         |                             |
+| 9257   | Acest card nu permite operațiuni de preautorizare                                                  |                             |
+| 9261   | Operațiune oprită pentru depășirea controlului de restricții la intrarea în SIS                     |                             |
+| 9700   | PayPal a returnat un KO                                                                            |                             |
+| 9801   | Eroare în datele trimise. Nu s-a specificat nr. de tel. sau URL-ul de notificare                    |                             |
+| 9899   | Datele din Ds\_Merchant\_Data nu erau semnate corect                                               |                             |
+| 9900   | SafetyPay a returnat un KO                                                                         |                             |
+| 9909   | Eroare generică. Consultați Suportul                                                               |                             |
+| 9912   | Operațiunea a avut o problemă și trebuie generată o anulare automată                               |                             |
+| 9913   | Eroare la trimiterea notificării SOAP                                                              |                             |
+| 9914   | Răspuns KO din partea comerciantului la notificarea SOAP                                            |                             |
+| 9929   | Titularul a anulat operațiunea                                                                     |                             |
+| 9930   | Transferul este în așteptare                                                                       |                             |
+| 9966   | BIZUM a returnat un KO la autorizare                                                               |                             |
+| 9967   | IPA a returnat un KO la autorizare                                                                 |                             |
+| 9991   | Operațiuni Aplazame în care Aplazame returnează un KO                                              |                             |
+| 9992   | Solicitare PAE                                                                                     |                             |
+| 9994   | Nu a fost selectat niciun card din portofel.                                                       |                             |
+| 9997   | Cu același card există mai multe plăți "în zbor"                                                   |                             |
+| 9998   | Operațiune în curs de solicitare a datelor cardului                                                |                             |
+| 9999   | Operațiune redirecționată către emitent pentru autentificare                                       |                             |
+
+### SISXXXX
+
+| Cod    | SISXXXX    | Mesaj                                                                                                                                          | Note  |
+| ------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| 9005   | SIS0005    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9007   | SIS0007    | Mesajul trimis de comerciant nu este corect                                                                                                    |       |
+| 9008   | SIS0008    | Lipsește Ds\_Merchant\_MerchantCode                                                                                                            |       |
+| 9009   | SIS0009    | Eroare de format în Ds\_Merchant\_MerchantCode                                                                                                 |       |
+| 9010   | SIS0010    | Eroare, lipsește Ds\_Merchant\_Terminal                                                                                                        |       |
+| 9011   | SIS0011    | Eroare de format în Ds\_Merchant\_Terminal                                                                                                     |       |
+| 9012   | SIS0012    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9015   | SIS0015    | Lipsește Ds\_Merchant\_Currency                                                                                                                |       |
+| 9016   | SIS0016    | Eroare de format în Ds\_Merchant\_Currency                                                                                                     |       |
+| 9018   | SIS0018    | Lipsește Ds\_Merchant\_Amount                                                                                                                  |       |
+| 9019   | SIS0019    | Lipsește Ds\_Merchant\_Amount                                                                                                                  |       |
+| 9020   | SIS0020    | Lipsește câmpul de semnătură Ds\_Signature                                                                                                     |       |
+| 9022   | SIS0022    | Eroare de format în Ds\_Merchant\_TransactionType                                                                                              |       |
+| 9023   | SIS0023    | Ds\_Merchant\_TransactionType necunoscut                                                                                                       |       |
+| 9024   | SIS0024    | Eroare, Ds\_Merchant\_ConsumerLanguage are mai mult de 3 poziții                                                                               |       |
+| 9025   | SIS0025    | Eroare de format în Ds\_Merchant\_ConsumerLanguage                                                                                             |       |
+| 9026   | SIS0026    | Nu există comerciantul / terminalul trimis                                                                                                     |       |
+| 9027   | SIS0027    | Eroare monedă trimisă de comerciant                                                                                                            |       |
+| 9028   | SIS0028    | Comerciantul / terminalul este dezactivat                                                                                                      |       |
+| 9029   | SIS0029    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9031   | SIS0031    | Metodă de plată eronată                                                                                                                        |       |
+| 9034   | SIS0034    | Eroare la accesarea bazei de date                                                                                                              |       |
+| 9038   | SIS0038    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9040   | SIS0040    | Comerciantul / terminalul nu are nicio metodă de plată atribuită                                                                               |       |
+| 9042   | SIS0042    | Eroare la calcularea semnăturii                                                                                                                |       |
+| 9048   | SIS0048    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9051   | SIS0051    | Număr de comandă duplicat                                                                                                                      |       |
+| 9054   | SIS0054    | Nu există operațiune pentru care să se efectueze rambursarea                                                                                    |       |
+| 9055   | SIS0055    | Există mai mult de o plată cu același număr de comandă                                                                                         |       |
+| 9057   | SIS0057    | Suma de rambursat depășește limita permisă                                                                                                     |       |
+| 9058   | SIS0058    | Datele de validare sunt eronate                                                                                                                |       |
+| 9059   | SIS0059    | Nu există operațiune pentru care să se efectueze confirmarea                                                                                    |       |
+| 9060   | SIS0060    | Există deja o confirmare asociată preautorizării                                                                                                |       |
+| 9062   | SIS0062    | Suma de confirmat depășește limita permisă                                                                                                     |       |
+| 9063   | SIS0063    | Număr de card invalid.                                                                                                                         |       |
+| 9064   | SIS0064    | Număr de poziții al cardului incorect                                                                                                          |       |
+| 9065   | SIS0065    | Numărul cardului nu este numeric                                                                                                               |       |
+| 9067   | SIS0067    | Luna expirării nu este numerică                                                                                                                |       |
+| 9068   | SIS0068    | Luna expirării nu este validă                                                                                                                  |       |
+| 9070   | SIS0070    | Anul expirării nu este numeric                                                                                                                 |       |
+| 9072   | SIS0072    | Operațiune neanulabilă                                                                                                                         |       |
+| 9075   | SIS0075    | "Ds\_Merchant\_Order" are mai puțin de 4 sau mai mult de 12 poziții.                                                                           |       |
+| 9079   | SIS0079    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9080   | SIS0080    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9081   | SIS0081    | Datele sesiunii au fost pierdute                                                                                                               |       |
+| 9089   | SIS0089    | Valoarea expirării nu ocupă 4 poziții                                                                                                          |       |
+| 9092   | SIS0092    | Valoarea expirării este nulă                                                                                                                   |       |
+| 9093   | SIS0093    | Refuz emitent                                                                                                                                  |       |
+| 9098   | SIS0099    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9103   | SIS0103    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9104   | SIS0104    | Comerciant cu "titular sigur" și titular fără cheie de cumpărare sigură                                                                        |       |
+| 9113   | SIS0113    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9115   | SIS0115    | Nu există operațiune pentru care să se efectueze plata ratei                                                                                   |       |
+| 9118   | SIS0118    | Suma totală a ratelor a fost depășită                                                                                                          |       |
+| 9119   | SIS0119    | Valoare invalidă pentru câmpul Ds\_Merchant\_DateFrecuency                                                                                     |       |
+| 9120   | SIS0120    | Valoare invalidă pentru câmpul Ds\_Merchant\_ChargeExpiryDate                                                                                  |       |
+| 9121   | SIS0121    | Valoare invalidă pentru câmpul Ds\_Merchant\_SumTotal                                                                                          |       |
+| 9123   | SIS0123    | Data limită pentru efectuarea tranzacției a fost depășită                                                                                       |       |
+| 9124   | SIS0124    | Nu a trecut frecvența minimă într-o plată recurentă succesivă                                                                                  |       |
+| 9126   | SIS0126    | Operațiune Duplicată                                                                                                                           |       |
+| 9127   | SIS0127    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9128   | SIS0128    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9132   | SIS0132    | Data confirmării autorizării nu poate depăși cu mai mult de 7 zile data preautorizării.                                                         |       |
+| 9133   | SIS0133    | Data confirmării autentificării nu poate depăși cu mai mult de 45 de zile data autentificării prealabile                                        |       |
+| 9142   | SIS0142    | Timp depășit pentru plată                                                                                                                      |       |
+| 9186   | SIS0186    | Lipsesc date pentru operațiune                                                                                                                 |       |
+| 9194   | SIS0194    | Eroare la aplicarea cursului de schimb și afișarea către titular                                                                                |       |
+| 9214   | SIS0214    | Comerciantul nu permite rambursări. Este necesară utilizarea semnăturii extinse.                                                                |       |
+| 9216   | SIS0216    | CVV2 are mai mult de 3 poziții                                                                                                                 |       |
+| 9217   | SIS0217    | Eroare de format în CVV2                                                                                                                       |       |
+| 9218   | SIS0218    | Comerciantul permite doar operațiuni sigure și se trimite o operațiune NESIGURĂ prin intrări Host to Host                                      |       |
+| 9221   | SIS0221    | CVV2 este obligatoriu                                                                                                                          |       |
+| 9222   | SIS0222    | Există deja o anulare asociată preautorizării                                                                                                  |       |
+| 9223   | SIS0223    | Preautorizarea pe care doriți să o anulați nu este autorizată                                                                                  |       |
+| 9224   | SIS0224    | Comerciantul nu permite anulări deoarece nu are semnătură extinsă                                                                              |       |
+| 9226   | SIS0226    | Eroare în datele anulării                                                                                                                   |       |
+| 9227   | SIS0227    | Valoare invalidă pentru câmpul Ds\_Merchant\_TransactionDate                                                                                   |       |
+| 9228   | SIS0228    | Plata amânată se poate face doar cu card de credit On-us                                                                                       |       |
+| 9229   | SIS0229    | Nu există codul de plată amânată solicitat                                                                                                     |       |
+| 9230   | SIS0230    | Comerciantul nu este configurat să accepte plată fracționată sau codul de fracționare trimis nu este activat.                                   |       |
+| 9231   | SIS0231    | Nu există formă de plată aplicabilă                                                                                                            |       |
+| 9232   | SIS0232    | Formă de plată indisponibilă                                                                                                                   |       |
+| 9252   | SIS0252    | Conform configurării, nu puteți trimite cardul                                                                                                 |       |
+| 9253   | SIS0253    | Cardul nu îndeplinește check digit-ul                                                                                                          |       |
+| 9256   | SIS0256    | Comerciantul nu permite operațiuni de preautorizare                                                                                            |       |
+| 9257   | SIS0257    | Cardul nu permite operațiuni de preautorizare                                                                                                  |       |
+| 9258   | SIS0258    | Nu se dispune de IDETRA emitent necesar pentru efectuarea confirmării                                                                           |       |
+| 9260   | SIS0260    | Intrare incorectă în SIS                                                                                                                       |       |
+| 9261   | SIS0261    | Restricții depășite                                                                                                                            |       |
+| 9262   | SIS0262    | Monedă nepermisă pentru operațiunea de transfer sau domiciliere                                                                                |       |
+| 9267   | SIS0267    | Operațiunea nu poate fi procesată deoarece nu există Cod Cont Client                                                                           |       |
+| 9269   | SIS0269    | Nu se pot efectua rambursări ale operațiunilor de domiciliere nedescărcate                                                                     |       |
+| 9270   | SIS0270    | Comerciantul nu poate efectua preautorizări amânate                                                                                            |       |
+| 9274   | SIS0274    | Tip de operațiune necunoscut sau nepermis pentru această intrare în SIS                                                                         |       |
+| 9280   | SIS0280    | Blocare prin control de Securitate                                                                                                             |       |
+| 9281   | SIS0281    | Blocare prin control de Securitate                                                                                                             |       |
+| 9282   | SIS0282    | Blocare prin control de Securitate                                                                                                             |       |
+| 9283   | SIS0283    | Blocare prin control de Securitate                                                                                                             |       |
+| 9294   | SIS0294    | Cardul nu este Privat                                                                                                                          |       |
+| 9295   | SIS0295    | Eroare de duplicare a operațiunii. Se poate reîncerca                                                                                          |       |
+| 9298   | SIS0298    | Comerciantul nu permite operațiuni cu Card în Arhivă                                                                                           |       |
+| 9299   | SIS0299    | Eroare la plata cu PayPal                                                                                                                      |       |
+| 9300   | SIS0300    | Eroare la plata cu PayPal                                                                                                                      |       |
+| 9301   | SIS0301    | Eroare la plata cu PayPal                                                                                                                      |       |
+| 9319   | SIS0319    | Comerciantul nu aparține grupului trimis în Ds\_Merchant\_Group                                                                                |       |
+| 9321   | SIS0321    | Identificatorul indicat în Ds\_Merchant\_Identifier nu este asociat comerciantului                                                              |       |
+| 9322   | SIS0322    | Eroare de format în Ds\_Merchant\_Group                                                                                                        |       |
+| 9324   | SIS0324    | Imposibil de trimis link-ul titularului                                                                                                        |       |
+| 9328   | SIS0328    | Token de plată în două faze invalid                                                                                                            |       |
+| 9329   | SIS0329    | Nu se poate recupera Token-ul de plată în două faze                                                                                            |       |
+| 9330   | SIS0330    | Date incorecte de plată în două faze                                                                                                           |       |
+| 9331   | SIS0331    | Operațiunea nu are o stare validă sau nu există.                                                                                               |       |
+| 9334   | SIS0334    | Blocare prin control de Securitate                                                                                                             |       |
+| 9334   | SIS0334    | Blocare prin control de Securitate                                                                                                             |       |
+| 9342   | SIS0342    | Comerciantul nu permite operațiuni de plată a impozitelor                                                                                      |       |
+| 9343   | SIS0343    | Parametrul Ds\_Merchant\_Tax\_Reference lipsește sau este incorect                                                                             |       |
+| 9345   | SIS0345    | A fost ales un număr incorect de rate                                                                                                          |       |
+| 9359   | SIS0359    | Comerciantul permite doar plata impozitelor și câmpul Ds\_Merchant\_TaxReference nu este completat                                              |       |
+| 9406   | SIS0406    | Sectorul comerciantului nu este permis pentru efectuarea unei plăți de premiu de pariu (Gambling)                                               |       |
+| 9408   | SIS0408    | Cardul trebuie să fi operat în ultimul an pentru a putea efectua o plată de premiu de pariu (Gambling)                                         |       |
+| 9409   | SIS0409    | Cardul trebuie să fie Visa sau MasterCard național pentru a efectua o plată de premiu de pariu (Gambling)                                       |       |
+| 9410   | SIS0410    | Blocare pentru operațiune cu Card Privat Cajamar, la comerciant care nu este Cajamar                                                            |       |
+| 9413   | SIS0413    | Operațiunea a fost refuzată de Lynx                                                                                                            |       |
+| 9418   | SIS0418    | Nu există un plan de vânzări în vigoare                                                                                                        |       |
+| 9419   | SIS0419    | Tip de cont nepermis                                                                                                                           |       |
+| 9420   | SIS0420    | Comerciantul nu dispune de forme de plată pentru această operațiune                                                                            |       |
+| 9428   | SIS0428    | Operațiune debit nesigură                                                                                                                      |       |
+| 9429   | SIS0429    | Eroare în versiune (Ds\_SignatureVersion)                                                                                                      |       |
+| 9430   | SIS0430    | Eroare la decodificarea parametrului Ds\_MerchantParameters                                                                                    |       |
+| 9431   | SIS0431    | Eroare a obiectului JSON trimis codificat în parametrul Ds\_MerchantParameters                                                                 |       |
+| 9432   | SIS0432    | FUC al comerciantului eronat                                                                                                                   |       |
+| 9433   | SIS0433    | Terminalul comerciantului eronat                                                                                                               |       |
+| 9434   | SIS0434    | Format de comandă invalid                                                                                                                      |       |
+| 9435   | SIS0435    | Eroare generică. Consultați Suportul                                                                                                           |       |
+| 9436   | SIS0436    | Eroare la construcția elementului `<REQUEST>`                                                                                                  |       |
+| 9437   | SIS0437    | Eroare la construcția elementului `<DS_SIGNATUREVERSION>`                                                                                      |       |
+| 9438   | SIS0438    | Eroare la construcția elementului `<DATOSENTRADA>`                                                                                             |       |
+| 9439   | SIS0439    | Eroare la construcția elementului `<DS_SIGNATURE>`                                                                                             |       |
+| 9444   | SIS0444    | Se încearcă accesul folosind semnături vechi iar comerciantul este configurat ca HMAC SHA256                                                    |       |
+| 9448   | SIS0448    | Comerciantul nu are metoda de plată Diners                                                                                                     |       |
+| 9452   | SIS0452    | Eroare, cardul operațiunii este 4B și comerciantul nu are metoda de plată "Card 4B"                                                            |       |
+| 9453   | SIS0453    | Comerciantul nu are configurată metoda de plată "Plată JCB"                                                                                   |       |
+| 9454   | SIS0454    | Comerciantul nu are configurată metoda de plată "Plată Amex"                                                                                  |       |
+| 9463   | SIS0463    | Comerciantul încearcă să efectueze o operațiune nesigură fără metodă de plată nesigură                                                         |       |
+| 9467   | SIS0467    | Referința utilizată este dezactivată                                                                                                           |       |
+| 9473   | SIS0473    | Răspunsul la cererea de autentificare PPII este nul.                                                                                           |       |
+| 9475   | SIS0475    | idOperație din răspunsul la cererea de autentificare PPII este nul                                                                             |       |
+| 9476   | SIS0476    | Eroare la procesarea răspunsului de autentificare PPII                                                                                         |       |
+| 9477   | SIS0477    | Timpul definit între pasul 1 și 2 al PPI a fost depășit                                                                                       |       |
+| 9478   | SIS0478    | Eroare la procesarea răspunsului de autorizare PPII                                                                                            |       |
+| 9485   | SIS0485    | BIZUM a returnat un KO la rambursare                                                                                                           |       |
+| 9487   | SIS0487    | Comerciantul nu are activată metoda de plată Paygold                                                                                           |       |
+| 9488   | SIS0488    | Comerciantul nu are metoda de plată "Plată MOTO/Manual"                                                                                       |       |
+| 9493   | SIS0493    | Se primesc parametri MPI în operațiune nesigură                                                                                                |       |
+| 9494   | SIS0494    | Semnătură Obsoletă                                                                                                                             |       |
+| 9495   | SIS0495    | Configurare incorectă ApplePay, Google Pay sau Token                                                                                           |       |
+| 9496   | SIS0496    | Nu are activată metoda de plată Google Pay                                                                                                     |       |
+| 9497   | SIS0497    | Nu are activată metoda de plată ApplePay                                                                                                       |       |
+| 9498   | SIS0498    | Moneda / suma operațiunii ApplePay nu corespund                                                                                                |       |
+| 9499   | SIS0499    | Eroare la obținerea cheilor comerciantului în Google/Apple Pay                                                                                  |       |
+| 9502   | SIS0502    | Eroare la validarea Id Oper                                                                                                                    |       |
+| 9507   | SIS0507    | Id Oper nu mai este valabil                                                                                                                    |       |
+| 9508   | SIS0508    | Eroare la validarea Id Oper                                                                                                                    |       |
+| 9516   | SIS0516    | Eroare la construirea mesajului China Union Pay                                                                                                 |       |
+| 9523   | SIS0523    | Semnătura calculată nu corespunde cu cea primită în răspuns                                                                                    |       |
+| 9524   | SIS0524    | Rezultatul autentificării 3DSecure MasterCard este PARes="A" sau VERes="N" și nu primim CAVV de la emitent                                     |       |
+| 9525   | SIS0525    | Cardul privat nu poate fi utilizat la acest comerciant                                                                                          |       |
+| 9526   | SIS0526    | Cardul nu este chinezesc                                                                                                                       |       |
+| 9530   | SIS0530    | Data anulării nu poate depăși cu mai mult de 7 zile data preautorizării.                                                                        |       |
+| 9533   | SIS0533    | Suma impozitului din codul de bare nu corespunde cu cea returnată de entitate după validare                                                    |       |
+| 9535   | SIS0535    | Plată chitanță/impozit în afara termenului                                                                                                     |       |
+| 9536   | SIS0536    | Chitanță/impozit deja plătit                                                                                                                   |       |
+| 9537   | SIS0537    | Plată chitanță/impozit refuzată de entitate                                                                                                    |       |
+| 9538   | SIS0538    | Respingere la plata chitanței/impozitului                                                                                                      |       |
+| 9540   | SIS0540    | Numărul de mobil trimis este prea lung (mai mult de 12 poziții)                                                                                |       |
+| 9541   | SIS0541    | Referința trimisă este prea lungă (mai mult de 40 de poziții)                                                                                  |       |
+| 9543   | SIS0543    | Eroare, cardul operațiunii este DINERS și comerciantul nu are metoda de plată "Plată DINERS" sau "Plată Discover Nesigură"                     |       |
+| 9544   | SIS0544    | Eroare, cardul operațiunii este DINERS și comerciantul nu are metoda de plată "Plată Discover Nesigură"                                        |       |
+| 9548   | SIS0548    | Eroare DISCOVER                                                                                                                                |       |
+| 9552   | SIS0552    | EROARE, rezultatul autentificării PARes = 'U'                                                                                                  |       |
+| 9556   | SIS0556    | Se trimite plată Tradițională și comerciantul nu are plată Tradițională mondială nici Tradițională UE.                                         |       |
+| 9564   | SIS0564    | EROARE în operațiunea DCC                                                                                                                      |       |
+| 9565   | SIS0565    | Formatul sumei din câmpul Ds\_Merchant\_Amount depășește limita permisă.                                                                       |       |
+| 9567   | SIS0567    | EROARE, s-a încercat o plată cu un card chinezesc UPI și comerciantul nu are metoda de plată UPI                                               |       |
+| 9568   | SIS0568    | Operațiune de Inițiere Cerere respinsă, tip de tranzacție eronat                                                                               |       |
+| 9569   | SIS0569    | Operațiune de Inițiere Cerere respinsă, cardul nu a fost indicat                                                                               |       |
+| 9572   | SIS0572    | Operațiune de autentificare EMV3DS respinsă, protocolVersion nerecunoscut                                                                      |       |
+| 9573   | SIS0573    | Operațiune de autentificare EMV3DS respinsă, browserAcceptHeader neindicat                                                                     |       |
+| 9574   | SIS0574    | Operațiune de autentificare EMV3DS respinsă, browserUserAgent neindicat                                                                        |       |
+| 9575   | SIS0575    | Operațiune de autentificare EMV3DS respinsă, browserJavaEnabled neindicat                                                                      |       |
+| 9576   | SIS0576    | Operațiune de autentificare EMV3DS respinsă, browserLanguage neindicat                                                                         |       |
+| 9577   | SIS0577    | Operațiune de autentificare EMV3DS respinsă, browserColorDepth neindicat                                                                       |       |
+| 9578   | SIS0578    | Operațiune de autentificare EMV3DS respinsă, browserScreenHeight neindicat                                                                     |       |
+| 9580   | SIS0580    | Operațiune de autentificare EMV3DS respinsă, browserTZ neindicat                                                                               |       |
+| 9581   | SIS0581    | Operațiune de autentificare EMV3DS respinsă, datele DS\_MERCHANT\_EMV3DS nu sunt indicate sau sunt prea mari și nu pot fi convertite în JSON    |       |
+| 9582   | SIS0582    | Operațiune de autentificare EMV3DS respinsă, threeDSServerTransID neindicat                                                                    |       |
+| 9584   | SIS0584    | Operațiune de autentificare EMV3DS respinsă, notificationURL neindicat                                                                         |       |
+| 9585   | SIS0585    | Datele EMV 3DS trimise nu corespund cu datele obținute la inițierea cererii                                                                    |       |
+| 9589   | SIS0589    | Operațiune de autentificare EMV3DS respinsă, răspuns fără CRes                                                                                 |       |
+| 9590   | SIS0590    | Operațiune de autentificare EMV3DS respinsă, eroare la decodificarea răspunsului CRes                                                          |       |
+| 9593   | SIS0593    | Eroare în operațiunea de autentificare EMV3DS, transStatus din interogarea finală a operațiunii nu este definit.                                |       |
+| 9598   | SIS0598    | Eroare în operațiunea de autentificare EMV3DS, nu se permite fallback la 3DSecure v1.                                                          |       |
+| 9599   | SIS0599    | Eroare în operațiunea de autentificare EMV3DS                                                                                                  |       |
+| 9600   | SIS0600    | Banca emitentă indică faptul că nu este posibilă autentificarea cardului - Răspuns Areq N                                                     |       |
+| 9601   | SIS0601    | Banca emitentă indică faptul că nu este posibilă autentificarea cardului - Răspuns Areq R                                                     |       |
+| 9602   | SIS0602    | Eroare în procesul de autentificare 3DSecure v2 - Răspuns Areq U                                                                               |       |
+| 9603   | SIS0603    | Eroare în parametrul DS\_MERCHANT\_DCC de DCC trimis în operațiune H2H (REST și SOAP)                                                          |       |
+| 9604   | SIS0604    | Eroare în datele DCC trimise în parametrul DS\_MERCHANT\_DCC în operațiune H2H (REST și SOAP)                                                  |       |
+| 9606   | SIS0606    | Eroare în datele MPI trimise în parametrul DS\_MERCHANT\_MPIEXTERNAL în operațiune H2H (REST și SOAP)                                          |       |
+| 9611   | SIS0611    | Eroare, parametrul dsTransID al MPI trimis în DS\_MERCHANT\_MPIEXTERNAL în operațiune H2H (REST și SOAP) este eronat                           |       |
+| 9612   | SIS0612    | Eroare, parametrul authenticationValue al MPI trimis în DS\_MERCHANT\_MPIEXTERNAL în operațiune H2H (REST și SOAP) este eronat                 |       |
+| 9614   | SIS0614    | Eroare, parametrul Eci al MPI trimis în DS\_MERCHANT\_MPIEXTERNAL în operațiune H2H (REST și SOAP) este eronat                                 |       |
+| 9615   | SIS0615    | Eroare în MPI Extern, marcă de card nepermisă                                                                                                  |       |
+| 9616   | SIS0616    | Eroare, parametrul DS\_MERCHANT\_EXCEP\_SCA are o valoare eronată                                                                              |       |
+| 9617   | SIS0617    | Eroare, parametrul DS\_MERCHANT\_EXCEP\_SCA este de tip MIT și nu vin date COF sau de plată prin referință                                     |       |
+| 9618   | SIS0618    | Eroare, excepția trimisă nu este permisă și comerciantul nu este pregătit pentru autentificare                                                 |       |
+| 9625   | SIS0625    | Eroare la anularea plății, deoarece există deja o rambursare asociată acelei plăți                                                             |       |
+| 9627   | SIS0627    | Numărul de referință sau solicitare trimis de CRTM nu este valid.                                                                              |       |
+| 9629   | SIS0629    | Eroare, nu există operațiunea de confirmare separată pentru care să se efectueze anularea                                                      |       |
+| 9634   | SIS0634    | Eroare, nu există operațiunea de plată pentru care să se efectueze anularea                                                                    |       |
+| 9637   | SIS0637    | Data anulării nu poate depăși zilele configurate față de plată.                                                                                 |       |
+| 9638   | SIS0638    | Eroare, există mai mult de o rambursare care se dorește anulată și nu s-a specificat care.                                                     |       |
+| 9639   | SIS0639    | Eroare, nu există operațiunea de rambursare pentru care să se efectueze anularea                                                               |       |
+| 9641   | SIS0641    | Data anulării nu poate depăși zilele configurate față de rambursare.                                                                            |       |
+| 9642   | SIS0642    | Data preautorizării pe care doriți să o înlocuiți nu poate depăși 30 de zile vechime                                                           |       |
+| 9644   | SIS0644    | Eroare în procesul de autentificare 3DSecure v2 - Se trimit date de la intrarea InițiereCerere la intrarea ProcesareCerere                     |       |
+| 9650   | SIS0650    | Eroare, MAC-ul nu este corect în mesajeria de plată a impozitelor                                                                              |       |
+| 9653   | SIS0653    | Operațiune de autentificare respinsă, browserJavascriptEnabled neindicat                                                                       |       |
+| 9662   | SIS0662    | Eroare, comerciantul nu se află printre cei permiși pentru a efectua confirmări parțiale.                                                      |       |
+| 9663   | SIS0663    | Nu există date de Inițiere Cerere care să corespundă cu cele trimise de comerciant în mesajul Procesare Cerere                                 |       |
+| 9664   | SIS0664    | Nu se trimite elementul Id Tranzacție 3DS Server în mesajul Procesare Cerere și acel element există în mesajul Inițiere Cerere                 |       |
+| 9666   | SIS0666    | Suma indicată de comerciant în mesajul Procesare Cerere nu corespunde cu cea trimisă în mesajul Inițiere Cerere                                |       |
+| 9667   | SIS0667    | Tipul operațiunii indicat de comerciant în mesajul Procesare Cerere nu corespunde cu cel trimis în mesajul Inițiere Cerere                     |       |
+| 9668   | SIS0668    | Referința indicată de comerciant în mesajul Procesare Cerere nu corespunde cu cea trimisă în mesajul Inițiere Cerere                           |       |
+| 9669   | SIS0669    | Id Oper Insite indicat de comerciant în mesajul Procesare Cerere nu corespunde cu cel trimis în mesajul Inițiere Cerere                        |       |
+| 9670   | SIS0670    | Cardul indicat de comerciant în mesajul Procesare Cerere nu corespunde cu cel trimis în mesajul Inițiere Cerere                                |       |
+| 9672   | SIS0672    | Eșec la autentificare. Blocare după trei încercări.                                                                                            |       |
+| 9673   | SIS0673    | Operațiune anulată. Utilizatorul nu dorește să continue.                                                                                       |       |
+| 9674   | SIS0674    | Credit respins de beneficiar.                                                                                                                  |       |
+| 9675   | SIS0675    | Debit respins de ordonator.                                                                                                                    |       |
+| 9676   | SIS0676    | Procesatorul respinge operațiunea.                                                                                                             |       |
+| 9677   | SIS0677    | Sold disponibil insuficient.                                                                                                                   |       |
+| 9678   | SIS0678    | Versiunea 3DSecure indicată în Procesare Cerere este eronată sau este superioară celei returnate în Inițiere Cerere                            |       |
+| 9680   | SIS0680    | Eroare la autentificarea EMV3DS și marca nu permite fallback la 3dSecure 1.0                                                                   |       |
+| 9681   | SIS0681    | Eroare la inserarea datelor de autentificare într-o operațiune cu MPI Extern                                                                   |       |
+| 9692   | SIS0692    | Cerere de intrare PSP pentru un terminal care nu este asociat unui PSP                                                                         |       |
+| 9697   | SIS0697    | Eroare în parametrul DS\_MERCHANT\_MARKETPLACE trimis                                                                                          |       |
+| 9700   | SIS0700    | Eroare în datele obținute din interogarea REST a sistemului Marketplace                                                                        |       |
+| 9703   | SIS0703    | Eroare, comerciantul asociat indicat în operațiune nu corespunde niciunui asociat al Marketplace-ului                                           |       |
+| 9707   | SIS0707    | Marketplace                                                                                                                                    |       |
+| 9709   | SIS0709    | Marketplace                                                                                                                                    |       |
+| 9714   | SIS0714    | Eroare, XML-ul vine gol                                                                                                                        |       |
+| 9716   | SIS0716    | Comerciantul nu are un IBAN configurat                                                                                                         |       |
+| 9722   | SIS0722    | Eroare la autentificare. Cerere pentru afișarea login-ului entității către utilizator. Eroare de conexiune cu diferitele sisteme                |       |
+| 9724   | SIS0724    | S-a produs o eroare neașteptată la realizarea conexiunii cu IPA.                                                                               |       |
+| 9740   | SIS0740    | Eroare la validarea datelor AFT. Tip de operațiune sau sector de activitate eronat                                                             |       |
+| 9754   | SIS0754    | Cardul nu permite autentificare în versiunea 2                                                                                                 |       |
+| 9800   | SIS0800    | BIZUM. Eroare în răspunsul de inițiere RTP. (Verificați Ds\_RtpResponse și Ds\_RtpDescription)                                                 |       |
+| 9801   | SIS0801    | BIZUM RTP. Nu se specifică nr. de tel. sau URL-ul de notificare.                                                                               |       |
+| 9802   | SIS0802    | Trimite o valoare incorectă în parametrul DS\_MERCHANT\_COF\_TYPE                                                                               |       |
+| 9803   | SIS0803    | Eroare în datele trimise, DS\_MERCHANT\_COF\_TXID cu valoare eronată > 15 poziții                                                              |       |
+| 9812   | SIS0812    | Eroare la obținerea parametrilor XPAYDECODEDDATA                                                                                               |       |
+| 9815   | SIS0815    | Eroare, există deja o operațiune Paygold cu aceleași date în curs de autorizare sau deja autorizată                                             |       |
+| 9816   | SIS0816    | Eroare în operațiune cu XPAY. Operațiune cu token și fără criptogramă                                                                          |       |
+| 9817   | SIS0817    | Operațiune autentificată prin 3RI nu poate fi procesată din cauza stării incorecte                                                              |       |
+| 9836   | SIS0836    | Eroare, nu există operațiune originală Paygold cu datele furnizate                                                                             |       |
+| 9843   | SIS0843    | Eroare în datele Ds\_Merchant\_TokenData.                                                                                                      |       |
+| 9844   | SIS0844    | Profilul comerciantului nu este configurat pentru a accepta rambursări de impozite.                                                             |       |
+| 9845   | SIS0845    | Eroare, operațiunea este respinsă deoarece nu este Challenge și Carrefour o impune                                                             |       |
+|        | SIS0850-01 | Valoare eronată a parametrului Ds\_Merchant\_Off\_Transaction                                                                                  |       |
+|        | SIS0850-02 | Tip de operațiune nepermis în operativa OFF                                                                                                    |       |
+|        | SIS0850-03 | Comerciantul nu are metoda de plată Plată-OFF                                                                                                  |       |
+|        | SIS0850-04 | Nu se permite operativa OFF cu backup-ul activat                                                                                               |       |
+|        | SIS0850-05 | Nu se permite operativa OFF, comerciantul nu are metoda de plată nesigură corespunzătoare configurată                                          |       |
+| 9880   | SIS0880    | Operațiune MIT Bizum în care s-a trimis excepție și nu txId                                                                                    |       |
+| 9882   | SIS0882    | Operațiune MIT Bizum care nu este de tip 0                                                                                                     |       |
+| 9883   | SIS0883    | Eroare, nu se poate marca excepția MIT                                                                                                         |       |
+| 9884   | SIS0884    | Operațiune PUCE Data Only cu eroare în procesul DataOnly                                                                                       |       |
+| 9885   | SIS0885    | Eroare, operațiune respinsă deoarece există alta cu același card în ultimele 30 de zile refuzată cu cod care nu permite repetarea.              |       |
+| 9887   | SIS0887    | Id-ul de cookie utilizat pentru efectuarea plății nu este valid                                                                                 |       |
+| 9899   | SIS0899    | Datele trimise în Ds\_Merchant\_Data nu sunt semnate corect.                                                                                   |       |
+| 9915   | SIS9915    | La cererea utilizatorului, plata este anulată                                                                                                  |       |
+
+### Erori 8XXX și 9XXX
+
+| Cod    | Mesaj                                                                             | Note  |
+| ------ | --------------------------------------------------------------------------------- | ----- |
+| 8210   | Operațiune redirecționată către emitent pentru autentificare EMV3DS V2.1 (pentru H2H) |       |
+| 8220   | Operațiune redirecționată către emitent pentru autentificare EMV3DS V2.2 (pentru H2H) |       |
+| 9064   | Număr de poziții al cardului incorect                                             |       |
+| 9093   | Card inexistent                                                                   |       |
+| 9104   | Comerciant cu "titular sigur" și titular fără cheie de cumpărare sigură           |       |
+| 9218   | Comerciantul nu permite operațiuni sigure prin intrarea /operații                 |       |
+| 9253   | Cardul nu îndeplinește check-digit-ul                                             |       |
+| 9256   | Comerciantul nu poate efectua preautorizări                                        |       |
+| 9257   | Acest card nu permite operațiuni de preautorizare                                 |       |
+| 9261   | Operațiune oprită pentru depășirea controlului de restricții la intrarea în SIS    |       |
+| 9700   | PayPal a returnat un KO                                                           |       |
+| 9801   | Eroare în datele trimise. Nu s-a specificat nr. de tel. sau URL-ul de notificare  |       |
+| 9899   | Datele din Ds\_Merchant\_Data nu erau semnate corect                              |       |
+| 9900   | SafetyPay a returnat un KO                                                        |       |
+| 9909   | Eroare generică. Consultați Suportul                                              |       |
+| 9912   | Operațiunea a avut o problemă și trebuie generată o anulare automată              |       |
+| 9913   | Eroare la trimiterea notificării SOAP                                              |       |
+| 9914   | Răspuns KO din partea comerciantului la notificarea SOAP                           |       |
+| 9929   | Titularul a anulat operațiunea                                                    |       |
+| 9930   | Transferul este în așteptare                                                      |       |
+| 9966   | BIZUM a returnat un KO la autorizare                                              |       |
+| 9967   | IPA a returnat un KO la autorizare                                                |       |
+| 9991   | Operațiuni Aplazame în care Aplazame returnează un KO                             |       |
+| 9992   | Solicitare PAE                                                                    |       |
+| 9994   | Nu a fost selectat niciun card din portofel.                                       |       |
+| 9997   | Cu același card există mai multe plăți "în zbor"                                  |       |
+| 9998   | Operațiune în curs de solicitare a datelor cardului                               |       |
+| 9999   | Operațiune redirecționată către emitent pentru autentificare                      |       |

@@ -3,7 +3,7 @@ title: 'Redsys'
 description: 'Configuración e integración del servicio de pago Redsys en Paylands'
 ---
 
-Se admiten dos métodos de pago: Tarjeta y [Bizum](/docs/apm/apm-bizum). Las operaciones de devolución, confirmación, cancelación y recuperación de estado son compatibles con ambos métodos de pago. El resto de operaciones están orientadas solamente a tarjetas.
+Se admiten dos métodos de pago: Tarjeta y [Bizum](/guides/apm/bizum). Las operaciones de devolución, confirmación, cancelación y recuperación de estado son compatibles con ambos métodos de pago. El resto de operaciones están orientadas solamente a tarjetas.
 
 ## Restricciones y requisitos
 
@@ -181,7 +181,7 @@ Por ejemplo:
 | 9261   | Operación detenida por superar el control de restricciones en la entrada al SIS                    |                             |
 | 9700   | PayPal ha devuelto un KO                                                                           |                             |
 | 9801   | Error en datos enviados. No se ha especificado el Tlf. O la Url de notificación                    |                             |
-| 9899   | Los datos en Ds\_Merchant\_Data y no estaban correctamente firmados                                |                             |
+| 9899   | Los datos en Ds\_Merchant\_Data no estaban correctamente firmados                                  |                             |
 | 9900   | SafetyPay ha devuelto un KO                                                                        |                             |
 | 9909   | Error genérico. Consulte con Soporte                                                               |                             |
 | 9912   | La operación ha tenido algún problema y se ha de generar una anulación automática                  |                             |
@@ -357,7 +357,7 @@ Por ejemplo:
 | 9488   | SIS0488    | El comercio no tiene el método de pago "Pago MOTO/Manual"                                                                                      |       |
 | 9493   | SIS0493    | Se reciben parametros de MPI en operacion no segura                                                                                            |       |
 | 9494   | SIS0494    | Firma Obsoleta                                                                                                                                 |       |
-| 9495   | SIS0495    | Configuración incorrecta ApplePay,Google Pay o Token                                                                                           |       |
+| 9495   | SIS0495    | Configuración incorrecta ApplePay, Google Pay o Token                                                                                           |       |
 | 9496   | SIS0496    | No tiene dado de alta el método de pago Google Pay                                                                                             |       |
 | 9497   | SIS0497    | No tiene dado de alta el método de pago ApplePay                                                                                               |       |
 | 9498   | SIS0498    | moneda / importe de la operación de ApplePay no coinciden                                                                                      |       |
@@ -501,7 +501,7 @@ Por ejemplo:
 | 9261   | Operación detenida por superar el control de restricciones en la entrada al SIS   |       |
 | 9700   | PayPal ha devuelto un KO                                                          |       |
 | 9801   | Error en datos enviados. No se ha especificado el Tlf. O la Url de notificación   |       |
-| 9899   | Los datos en Ds\_Merchant\_Data y no estaban correctamente firmados               |       |
+| 9899   | Los datos en Ds\_Merchant\_Data no estaban correctamente firmados                 |       |
 | 9900   | SafetyPay ha devuelto un KO                                                       |       |
 | 9909   | Error genérico. Consulte con Soporte                                              |       |
 | 9912   | La operación ha tenido algún problema y se ha de generar una anulación automática |       |

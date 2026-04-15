@@ -210,7 +210,7 @@ Com esta tabela apresentamos possíveis erros que podem surgir no processo de pa
 | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | PAYMENT\_METHOD\_NOT\_ALLOWED                   | The payment method ID used in the request is not active or enabled, and cannot be used.                                                                                                                                                  |
 | PAYMENT\_PSP\_ERROR                             | Generic error message received from the PSP, normally originated from a timeout on the PSP side in high traffic instances.                                                                                                               |
-| PERSONAL\_ID\_VALIDATION\_FAILED                | The PersonalID doesn't exist or belongs to a minor, deceased individuals or PEP and associates. Also the payment will be blocked if the PersonalID is related to any international lists of money laundering and/or terrorist financing. |
+| PERSONAL\_ID\_VALIDATION\_FAILED                | The PersonalID doesn't exist or belongs to a minor, a deceased individual, or a PEP and associates. Also the payment will be blocked if the PersonalID is related to any international lists of money laundering and/or terrorist financing. |
 | TRANSACTION\_INVALID\_FIELD\_LANGUAGE           | The "Language" field of the request contains an invalid language value.                                                                                                                                                                  |
 | TRANSACTION\_INVALID\_FIELD\_CURRENCY           | The "Currency" field contains an unsupported or invalid currency value.                                                                                                                                                                  |
 | TRANSACTION\_INVALID\_FIELD\_COUNTRY            | The "Country" field contains an unsupported or invalid country value.                                                                                                                                                                    |
@@ -284,8 +284,8 @@ Existem dois métodos de payout:
 
 **Se o tipo de payout for `Transfer`:**
 
-* `bank_name` *(exceto Argentina)* – Este campo deve conter o **código** do banco do destinatário. Consulte a secção [Códigos de bancos por país](#c%C3%B3digos-de-bancos-por-pa%C3%ADs) para ver os valores válidos conforme o país.
-* `account` [Ver especificações](#especifica%C3%A7%C3%B5es-para-account-por-pa%C3%ADs-transfer)
+* `bank_name` *(exceto Argentina)* – Este campo deve conter o **código** do banco do destinatário. Consulte a secção [Códigos de bancos por país](#códigos-de-bancos-por-país) para ver os valores válidos conforme o país.
+* `account` [Ver especificações](#especificações-para-account-por-país-transfer)
 * `account_type` *(exceto Argentina e México)*
 * `account_agency_number` *(apenas Brasil, obrigatório)* – Código numérico da agência bancária, fornecido pelo banco. **Usar apenas os números antes do hífen** (ex: `"1234-5"` → enviar `"1234"`).
 * `aba_swift` *(opcional e apenas Brasil)*
@@ -369,7 +369,7 @@ O campo `document_identification_type` é incluído dentro de `profile`, é **op
 | Tipo de chave | Formato regex                                                  | Exemplo                                |
 | ------------- | -------------------------------------------------------------- | -------------------------------------- |
 | CPF           | `^[0-9]{11}$`                                                  | `12345678901`                          |
-| Telefone      | `^+[1-9][0-9]\d{1,14}$`                                        | `+5510998765432`                       |
+| Telefone      | `^\+[1-9][0-9]\d{1,14}$`                                        | `+5510998765432`                       |
 | Email         | `^[a-z0-9.!#$&'*+/=?^_{}~-]+@[a-z0-9.-]+$`                     | `pix@bcb.gov.br`                       |
 | Aleatório     | `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}` | `123e4567-e89b-12d3-a456-426655440000` |
 

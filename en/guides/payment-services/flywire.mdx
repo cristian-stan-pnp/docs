@@ -1,0 +1,146 @@
+---
+title: 'Flywire'
+description: 'Configuration and integration of the Flywire payment service in Paylands'
+---
+
+## Introduction
+
+Flywire is a solution specialized in **processing high-value cross-border payments**, especially in sectors such as education, healthcare, and tourism.
+
+Through this service, **single credit and debit card payments** are accepted. The user can pay in their **local currency**, while the system handles **currency conversion**, ensuring that the merchant receives the **exact net amount** and simplifying the reconciliation of international payments.
+
+***
+
+## Integration via redirection
+
+Flywire only supports **integration via redirection**. The payer must be present during the payment process, which will be carried out through the browser.
+
+First, you must [generate a payment order](/reference/#operation/generate-payment-order).
+
+As the service identifier, you must specify the **service\_uuid** of the **Flywire** service that you have enabled in your **Paylands Backend → Manage → Payment Services → List**.
+
+Finally, build the redirection URL by replacing the **token** with the value returned in the previous call:
+
+```
+https://api.paylands.com/v1/sandbox/payment/process/{token}
+```
+
+***
+
+## Payment page language
+
+You can specify the language of the payment page using the `lang` parameter in the redirection URL:
+
+```
+?lang=en
+```
+
+Supported languages:
+
+| Code   | Language              |
+| ------ | --------------------- |
+| en     | English               |
+| zh     | Chinese (Simplified)  |
+| ko     | Korean                |
+| pt     | Portuguese            |
+| ja     | Japanese              |
+| fr     | French                |
+| id     | Indonesian            |
+| ar     | Arabic                |
+| vi     | Vietnamese            |
+| it     | Italian               |
+| de     | German                |
+| es     | Spanish (default)     |
+
+If the `lang` parameter is not specified, the payment page will be displayed in **Spanish (es-ES)** by default.
+
+***
+
+## Supported currency
+
+* **EUR (Euro)**
+
+***
+
+## Extra Data
+
+### Payer data
+
+To process payments with Flywire, it is necessary to provide the **payer's data**. This data must **always correspond to the person making the payment**, not the beneficiary of the service.
+
+For example, in the case of educational institutions, if the payment is made by a student's parent, **the data must be the parent's**, never the student's.
+
+This data is sent via the `extra_data` field when creating the payment order, within the *profile* and *billing\_address* fields:
+
+```
+{  "extra_data": {    "profile": {      "first_name": "Peter",      "last_name": "Payer",      "email": "peterpayer@example.com",      "phone": {        "number": "625439533",        "prefix": "34"      }    },    "billing_address": {      "country": "ESP",      "address1": "Avenida del Mar",      "city": "Castellon",      "state_code": "CT",      "zip_code": "12006"    }  }}
+```
+
+> These fields are **not required** when creating the payment order. If any of them are not sent, they will be automatically requested from the user during the payment flow through a form on the Flywire page.
+
+### Dynamic merchant fields (context\_fields)
+
+Some Flywire merchants require **additional dynamic fields**. These fields **depend on the configured merchant** and may vary depending on the case (for example: student data, enrollment, internal reference, file number, etc.).
+
+When a merchant requires them, they must be sent **mandatorily when creating the payment order**. Unlike payer data, **if these additional data are missing, the order creation will fail** and the payment flow cannot be initiated.
+
+To send them, include the fields in `extra_data.payment.context_fields`. Example for an educational merchant:
+
+```
+{  "extra_data": {    "payment": {      "context_fields": {        "student_email": "al123456@uni.es",        "student_first_name": "Victor",        "student_last_name": "Test",        "student_id": "123456"      }    }  }}
+```
+
+> Dynamic fields depend on the merchant and its configuration in Flywire. If you do not know them, contact us. If your merchant does not require dynamic fields, you can omit `context_fields`.
+
+***
+
+## Sandbox testing
+
+### Test scenarios
+
+In sandbox, Flywire allows forcing different results based on the payer's `first_name` + `last_name` combination.
+
+These values correspond to:
+
+* `extra_data.profile.first_name`
+* `extra_data.profile.last_name`
+
+If you choose to send `extra_data.profile` when creating the order, you can use the following values to simulate each scenario:
+
+| first\_name | last\_name         | Result                                                                                           |
+| ----------- | ------------------ | ------------------------------------------------------------------------------------------------ |
+| MAGICVALUE  | AUTH               | Payment allowed (simulates **3DS** flow)                                                         |
+| MAGICVALUE  | APPROVED           | Payment allowed (simulates payment **without 3DS**)                                              |
+| PAYMENT     | DELIVERED          | Payment allowed and simulates a settled payment (from this point refunds can be made)            |
+| MAGICVALUE  | EXPIRED            | Payment rejected (expired card)                                                                  |
+| MAGICVALUE  | FRAUD              | Payment rejected (card declined)                                                                 |
+| MAGICVALUE  | NOT ENOUGH BALANCE | Payment rejected (insufficient balance)                                                          |
+
+> Note: Test cards must be used together with these value combinations.
+
+### Test cards
+
+#### Visa
+
+| Number              | Expiration | CVV | Currency | Issuing country | Type   |
+| ------------------- | ---------- | --- | -------- | --------------- | ------ |
+| 4010 1000 0000 0016 | 03/30      | 737 | EUR      | DE              | Debit  |
+| 4988 4388 4000 0012 | 03/30      | 737 | EUR      | ES              | Debit  |
+| 4242 4201 0000 0017 | 03/30      | 737 | GBP      | GB              | Credit |
+| 4761 3600 0000 0017 | 03/30      | 737 | INR      | IN              | Debit  |
+| 4111 1111 1111 1111 | 03/30      | 737 | USD      | US              | Credit |
+
+#### Mastercard
+
+| Number              | Expiration | CVV | Currency | Issuing country | Type   |
+| ------------------- | ---------- | --- | -------- | --------------- | ------ |
+| 2222 4000 1000 0016 | 03/30      | 737 | CAD      | CA              | Credit |
+| 5163 6136 0000 0014 | 03/30      | 737 | AUD      | AU              | Debit  |
+| 5252 5202 0000 0017 | 03/30      | 737 | JPY      | JP              | Debit  |
+| 5454 5454 5454 5454 | 03/30      | 737 | USD      | US              | Credit |
+
+#### American Express (Amex)
+
+| Number             | Expiration | CVV  | Currency | Issuing country | Type   |
+| ------------------ | ---------- | ---- | -------- | --------------- | ------ |
+| 3700 0000 0000 002 | 03/30      | 7373 | USD      | US              | Credit |

@@ -37,7 +37,7 @@
                   "guides/accept-payments/web-integration",
                   "guides/accept-payments/pos-integration",
                   "guides/accept-payments/no-integration",
-                  "guides/accept-payments/platformas-integration",
+                  "guides/accept-payments/plataformas-integration",
                   "guides/accept-payments/plugins-integration"
                 ]
               },
@@ -294,13 +294,41 @@
                 ]
               },
               {
+                "group": "Integration",
+                "pages": [
+                  "en/guides/accept-payments/email-sms-payments"
+                ]
+              },
+              {
                 "group": "Features",
                 "pages": [
                   "en/guides/features/tokenization",
+                  "en/guides/features/3ds",
                   "en/guides/features/subscriptions",
+                  "en/guides/features/3ds",
                   "en/guides/features/security",
+                  "en/guides/features/source-holder-verification",
                   "en/guides/features/customization",
                   "en/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Tools",
+                "pages": [
+                  {
+                    "group": "Proxy PCI",
+                    "pages": [
+                      "en/guides/tools/proxipci/javascript-library"
+                    ]
+                  }
+                "group": "Payment Services",
+                "pages": [
+                  "en/guides/payment-services/payretailers",
+                  "en/guides/payment-services/floa",
+                  "en/guides/payment-services/pagsmile",
+                  "en/guides/payment-services/flywire",
+                  "en/guides/payment-services/paypal",
+                  "en/guides/payment-services/tink"
                 ]
               },
               {
@@ -319,6 +347,15 @@
                   "en/guides/apm/servipag",
                   "en/guides/apm/webpay",
                   "en/guides/apm/spei"
+                ]
+              },
+              {
+                "group": "Payment Services",
+                "pages": [
+                  "en/guides/payment-services/redsys",
+                  "en/guides/payment-services/cecabank",
+                  "en/guides/payment-services/credorax",
+                  "en/guides/payment-services/firepay"
                 ]
               },
               {
@@ -443,13 +480,33 @@
                 ]
               },
               {
+                "group": "Integração",
+                "pages": [
+                  "pt/guides/accept-payments/email-sms-payments"
+                ]
+              },
+              {
                 "group": "Funcionalidades",
                 "pages": [
                   "pt/guides/features/tokenization",
+                  "pt/guides/features/3ds",
                   "pt/guides/features/subscriptions",
+                  "pt/guides/features/3ds",
                   "pt/guides/features/security",
+                  "pt/guides/features/source-holder-verification",
                   "pt/guides/features/customization",
                   "pt/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Serviços de Pagamento",
+                "pages": [
+                  "pt/guides/payment-services/payretailers",
+                  "pt/guides/payment-services/floa",
+                  "pt/guides/payment-services/pagsmile",
+                  "pt/guides/payment-services/flywire",
+                  "pt/guides/payment-services/paypal",
+                  "pt/guides/payment-services/tink"
                 ]
               },
               {
@@ -468,6 +525,15 @@
                   "pt/guides/apm/servipag",
                   "pt/guides/apm/webpay",
                   "pt/guides/apm/spei"
+                ]
+              },
+              {
+                "group": "Serviços de Pagamento",
+                "pages": [
+                  "pt/guides/payment-services/redsys",
+                  "pt/guides/payment-services/cecabank",
+                  "pt/guides/payment-services/credorax",
+                  "pt/guides/payment-services/firepay"
                 ]
               },
               {
@@ -592,13 +658,33 @@
                 ]
               },
               {
+                "group": "Integrare",
+                "pages": [
+                  "ro/guides/accept-payments/email-sms-payments"
+                ]
+              },
+              {
                 "group": "Funcționalități",
                 "pages": [
                   "ro/guides/features/tokenization",
+                  "ro/guides/features/3ds",
                   "ro/guides/features/subscriptions",
+                  "ro/guides/features/3ds",
                   "ro/guides/features/security",
+                  "ro/guides/features/source-holder-verification",
                   "ro/guides/features/customization",
                   "ro/guides/features/debt-collector"
+                ]
+              },
+              {
+                "group": "Servicii de Plată",
+                "pages": [
+                  "ro/guides/payment-services/payretailers",
+                  "ro/guides/payment-services/floa",
+                  "ro/guides/payment-services/pagsmile",
+                  "ro/guides/payment-services/flywire",
+                  "ro/guides/payment-services/paypal",
+                  "ro/guides/payment-services/tink"
                 ]
               },
               {
@@ -617,6 +703,15 @@
                   "ro/guides/apm/servipag",
                   "ro/guides/apm/webpay",
                   "ro/guides/apm/spei"
+                ]
+              },
+              {
+                "group": "Servicii de Plată",
+                "pages": [
+                  "ro/guides/payment-services/redsys",
+                  "ro/guides/payment-services/cecabank",
+                  "ro/guides/payment-services/credorax",
+                  "ro/guides/payment-services/firepay"
                 ]
               },
               {

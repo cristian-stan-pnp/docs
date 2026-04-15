@@ -1,0 +1,94 @@
+---
+title: 'Floa'
+description: 'Configuração e integração do serviço de pagamento Floa no Paylands'
+---
+
+## Introdução
+
+Floa é uma solução de pagamento francesa que permite financiar compras com opções de crédito ao consumidor, incluindo pagamentos parcelados. Entre as opções de parcelamento estão:
+
+* 3X: Pagamentos em 3 parcelas, com 30 dias de diferença entre cada uma.
+* 4X: Pagamentos em 4 parcelas, com 30 dias de diferença entre cada uma.
+
+## Dados extras obrigatórios
+
+Dependendo do tipo de produto ou serviço oferecido, será necessário indicar informações adicionais dentro do `extra_data` durante a criação da ordem, embora o país seja sempre obrigatório (`extra_data.billing_address.country`), juntamente com o nome e sobrenome (`extra_data.profile.first_name` e `extra_data.profile.last_name`, respectivamente).
+
+Na tabela a seguir são mostrados os campos adicionais que deverão ser enviados dentro de `extra_data.payment` de acordo com o tipo de produto oferecido:
+
+| Campo                    | Descrição                                                                                                                                                                                                                                                                                                                                                                                              | Tipo       | Obrigatório |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ----------- |
+| categorie\_1             | Categoria do produto mais caro. Para Travel/Stay usar um dos seguintes valores: **AIRLINE TICKET**, **TRAIN TICKET**, **BUS TICKET**, **HOTEL**, **CAMPING**, **STAY**, **CRUISE**, **CAR RENTAL**                                                                                                                                                                                                     | string(30) | Sim         |
+| categorie\_2             | Subcategoria do produto mais caro. Opcional para Travel.                                                                                                                                                                                                                                                                                                                                               | string(30) | Sim         |
+| cart\_item\_count        | Número de itens                                                                                                                                                                                                                                                                                                                                                                                        | int        | Sim         |
+| sale\_channel            | Canal de venda. Um dos seguintes valores: **DESKTOP**, **TABLET**, **TABLET\_IPAD**, **SMARTPHONE**, **SMARTPHONE\_ANDROID**, **SMARTPHONE\_IPHONE**                                                                                                                                                                                                                                                   | string(18) | Sim         |
+| merchant\_home\_url      | URL da página inicial do comerciante                                                                                                                                                                                                                                                                                                                                                                   | string     | Sim         |
+| merchant\_back\_url      | URL para retornar à página anterior do site do comerciante                                                                                                                                                                                                                                                                                                                                             | string     | Sim         |
+| departure\_date          | Formato de data de início: DD/MM/AAAA HH:MM                                                                                                                                                                                                                                                                                                                                                           | date       | Travel/Stay |
+| return\_date             | Formato de data de retorno: DD/MM/AAAA HH:MM                                                                                                                                                                                                                                                                                                                                                          | date       | Travel/Stay |
+| traveller\_count         | Número de viajantes                                                                                                                                                                                                                                                                                                                                                                                    | int        | Travel/Stay |
+| own\_ticket              | Campo para identificar se o titular do cartão de crédito utilizado para financiar a viagem participa.                                                                                                                                                                                                                                                                                                  | bool       | Travel/Stay |
+| room\_range              | Para pagamentos Stay, a classificação do hotel (estrelas)                                                                                                                                                                                                                                                                                                                                              | string     | Stay        |
+| insurance                | Se o cliente escolhe um seguro. Values: "yes", "no"                                                                                                                                                                                                                                                                                                                                                    | string     | Travel/Stay |
+| destination\_country     | Código do país de destino, no formato ISO 3166-2 (ex.: "ES" para Espanha)                                                                                                                                                                                                                                                                                                                              | string     | Travel/Stay |
+| travel\_type             | Um valor entre: **Unknown**, **OneWay** (ida), **TwoWay** (ida e volta), **Multiple** (Múltiplos destinos)                                                                                                                                                                                                                                                                                             | string(2)  | Travel/Stay |
+| departure\_airport       | Código IATA do aeroporto de partida                                                                                                                                                                                                                                                                                                                                                                    | string(3)  | Travel      |
+| arrival\_airport         | Código IATA do aeroporto de destino                                                                                                                                                                                                                                                                                                                                                                    | string(3)  | Travel      |
+| main\_departure\_company | No caso de viagens de avião, nome da companhia aérea do primeiro voo (código IATA)                                                                                                                                                                                                                                                                                                                     | string(3)  | Travel      |
+| shipping\_method         | Método de entrega do comércio. Se não for enviado, "VIR" por padrão. Valores: **STD** (Normal), **EXP** (Express Delivery), **TRK** (Tracked), **REG** (Registered), **COL** (Colissimo), **CHR** (Chronopost), **REL** (Mondial Relay), **TNT** (TNT), **UPS** (UPS), **TRP** (Transporter), **MAG** (Delivery in store), **LCK** (Lockers), **VIR** (Virtual), **RIM** (Immediate withdrawal in store) | string(3)  | Não         |
+| fees\_amount             | Valor total das taxas associadas ao pedido (em centavos)                                                                                                                                                                                                                                                                                                                                               | string     | Não         |
+| shipping\_cost           | Valor total dos custos de envio do pedido (em centavos)                                                                                                                                                                                                                                                                                                                                                | string     | Não         |
+| discount\_amount         | Valor total dos descontos associados ao pedido (em centavos)                                                                                                                                                                                                                                                                                                                                           | string     | Não         |
+
+Dependendo do produto, existem os seguintes setores de atividade: **General**, **Stay** (hotéis) e **Travel**.
+
+A seguir, é mostrado um exemplo de `extra_data` enviado para realizar um pagamento com cada setor de atividade:
+
+### General
+
+```
+"extra_data": {    "profile": {        "first_name": "John",        "last_name": "Doe"    },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avenida del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "Juego de mesa",        "categorie_2": "Virus 2",        "cart_item_count": 1,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/",        "shipping_method": "STD",        "shipping_cost": "500",        "discount_amount": "1000"    }}
+```
+
+### Stay (Hotel)
+
+```
+"extra_data":{    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@gmail.com"        },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avenida del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "HOTEL",        "categorie_2": "Room",        "departure_date": "05/05/2024 12:00",        "return_date": "12/05/2024 12:00",        "traveller_count": 2,        "own_ticket": true,        "room_range": 3,        "insurance": "no",        "destination_country": "ES",        "travel_type": "OneWay",        "cart_item_count": 2,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/"    }}
+```
+
+### Travel
+
+```
+"extra_data":{    "profile": {        "first_name": "John",        "last_name": "Doe",        "email": "test@gmail.com"        },    "billing_address": {        "city": "",        "country": "ESP",        "address1": "Avinguda del Mar",        "zip_code": "",        "state_code": ""    },    "payment": {        "categorie_1": "AIRLINE TICKET",        "departure_date": "30/04/2024 12:00",        "return_date": "05/05/2024 12:00",        "traveller_count": 2,        "own_ticket": true,        "insurance": "no",        "destination_country": "ES",        "travel_type": "TwoWay",        "cart_item_count": 2,        "sale_channel": "DESKTOP",        "merchant_home_url": "https://www.google.com/",        "merchant_back_url": "https://www.google.com/",        "departure_airport": "VLC",        "arrival_airport": "LEN",        "main_departure_company": "Iberia"    }}
+```
+
+## Métodos de pagamento em Sandbox
+
+É recomendável usar um valor entre 100€ e 250€ para aumentar as probabilidades de elegibilidade bem-sucedida.
+
+Os dados do cartão de teste são os seguintes:
+
+```
+- número do cartão OK: 5017 6791 1038 0400
+- número do cartão KO: 5017 6791 0090 0712
+- CVV: 000
+- data de validade: posterior à data da última prestação
+```
+
+## Moeda
+
+A moeda suportada para este serviço é o euro (EUR).
+
+## Códigos de erro
+
+A estrutura do erro tem o seguinte formato:
+
+```
+Código - Mensagem
+```
+
+Por exemplo:
+
+```
+3 - Failed (Technical failure)
+```
