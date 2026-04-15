@@ -10,7 +10,7 @@ description: 'Acepta pagos con Khipu en Chile a través de la API de Paylands'
 Para integrarlo mediante redirección, el usuario deberá estar presente en el momento del pago, el cual deberá procesarse a través de un navegador. En primer lugar debemos [generar una orden de pago](/reference/#operation/generate-payment-order), indicando el email.
 
 ```
-  "extra_data": {    "profile": {      "first_name": " ",      "last_name": " ",      "email": "test@gmail.com",    }  }
+  "extra_data": {    "profile": {      "first_name": " ",      "last_name": " ",      "email": "test@gmail.com"    }  }
 ```
 
 Como identificador de servicio, debe indicarse el **service\_uuid** del servicio de FLOW que tengas activado en tu **Backend de Paylands → Administrar → Servicios de pago → [Listado](https://backend.paylands.com/payment-services/list)**.
